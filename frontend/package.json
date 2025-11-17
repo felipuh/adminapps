@@ -1,0 +1,15 @@
+
+
+{
+  "name": "adminapps-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "start": "react-scripts start"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "axios": "^1.13.2"
+  }
+}
