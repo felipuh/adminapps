@@ -1,0 +1,6 @@
+[2026-01-27 17:02:39 -0600] [18133] [INFO] Starting gunicorn 21.2.0
+[2026-01-27 17:02:39 -0600] [18133] [INFO] Listening at: http://127.0.0.1:8000 (18133)
+[2026-01-27 17:02:39 -0600] [18133] [INFO] Using worker: sync
+[2026-01-27 17:02:39 -0600] [18137] [INFO] Booting worker with pid: 18137
+[2026-01-27 17:02:39 -0600] [18141] [INFO] Booting worker with pid: 18141
+[2026-01-27 17:02:39 -0600] [18142] [INFO] Booting worker with pid: 18142

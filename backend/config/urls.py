@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/auth/', include('apps.users.urls')),
     path('api/organizations/', include('apps.organizations.urls')),
     path('api/subscriptions/', include('apps.subscriptions.urls')),
+    path('api/products/', include('apps.products.urls')),
 ]
 
 if settings.DEBUG:
