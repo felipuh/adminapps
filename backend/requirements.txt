@@ -1,0 +1,23 @@
+# Django
+Django==4.2.9
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+django-filter==23.5
+
+# Database
+mysqlclient==2.2.1
+PyMySQL==1.1.0
+
+# Authentication
+djangorestframework-simplejwt==5.3.1
+PyJWT==2.8.0
+
+# Server
+gunicorn==21.2.0
+
+# Utilities
+python-dotenv==1.0.0
+Pillow==10.2.0
+
+# Development
+ipython==8.18.1
