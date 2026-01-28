@@ -1,1 +1,142 @@
 INFO 2026-01-27 13:40:50,232 autoreload 11165 140682417278016 Watching for file changes with StatReloader
+ERROR 2026-01-27 22:12:24,458 exception 18141 139854717922368 Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+WARNING 2026-01-27 22:12:26,338 log 18141 139854717922368 Bad Request: /api/auth/login/
+ERROR 2026-01-27 22:12:51,119 exception 18141 139854717922368 Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+WARNING 2026-01-27 22:12:51,181 log 18141 139854717922368 Bad Request: /api/auth/login/
+ERROR 2026-01-27 22:15:38,551 exception 18141 139854717922368 Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+WARNING 2026-01-27 22:15:38,634 log 18141 139854717922368 Bad Request: /api/auth/login/
+ERROR 2026-01-27 22:18:26,594 exception 18137 139854717922368 Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+WARNING 2026-01-27 22:18:31,241 log 18137 139854717922368 Bad Request: /api/auth/login/
+WARNING 2026-01-27 22:22:07,326 log 18142 139854717922368 Unauthorized: /api/auth/login/
+ERROR 2026-01-27 22:27:55,578 exception 18141 139854717922368 Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+WARNING 2026-01-27 22:27:55,640 log 18141 139854717922368 Bad Request: /api/auth/login/
+ERROR 2026-01-27 22:29:41,743 exception 18142 139854717922368 Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+WARNING 2026-01-27 22:29:42,565 log 18142 139854717922368 Bad Request: /api/auth/login/
+ERROR 2026-01-27 22:30:41,194 exception 18142 139854717922368 Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/utils/deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/middleware/common.py", line 48, in process_request
+    host = request.get_host()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/http/request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'adminapps.isosmart.local'. You may need to add 'adminapps.isosmart.local' to ALLOWED_HOSTS.
+WARNING 2026-01-27 22:30:41,250 log 18142 139854717922368 Bad Request: /api/auth/login/
+ERROR 2026-01-27 22:37:45,683 log 31058 139884889476160 Internal Server Error: /api/organizations/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 403, in initial
+    self.format_kwarg = self.get_format_suffix(**kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 253, in get_format_suffix
+    if self.settings.FORMAT_SUFFIX_KWARG:
+AttributeError: 'function' object has no attribute 'FORMAT_SUFFIX_KWARG'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 463, in handle_exception
+    exception_handler = self.get_exception_handler()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 298, in get_exception_handler
+    return self.settings.EXCEPTION_HANDLER
+AttributeError: 'function' object has no attribute 'EXCEPTION_HANDLER'
+ERROR 2026-01-27 22:37:46,014 log 31057 139884889476160 Internal Server Error: /api/organizations/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 403, in initial
+    self.format_kwarg = self.get_format_suffix(**kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 253, in get_format_suffix
+    if self.settings.FORMAT_SUFFIX_KWARG:
+AttributeError: 'function' object has no attribute 'FORMAT_SUFFIX_KWARG'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 463, in handle_exception
+    exception_handler = self.get_exception_handler()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 298, in get_exception_handler
+    return self.settings.EXCEPTION_HANDLER
+AttributeError: 'function' object has no attribute 'EXCEPTION_HANDLER'

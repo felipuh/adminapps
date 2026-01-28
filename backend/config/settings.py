@@ -16,7 +16,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'your-secret-key-change-in-prod
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.100.100').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.100.100,adminapps.isosmart.local').split(',')
 
 # Application definition
 INSTALLED_APPS = [

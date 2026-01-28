@@ -4,3 +4,14 @@
 [2026-01-27 17:02:39 -0600] [18137] [INFO] Booting worker with pid: 18137
 [2026-01-27 17:02:39 -0600] [18141] [INFO] Booting worker with pid: 18141
 [2026-01-27 17:02:39 -0600] [18142] [INFO] Booting worker with pid: 18142
+[2026-01-27 22:35:35 -0600] [18133] [INFO] Handling signal: term
+[2026-01-27 22:35:35 -0600] [18142] [INFO] Worker exiting (pid: 18142)
+[2026-01-27 22:35:35 -0600] [18141] [INFO] Worker exiting (pid: 18141)
+[2026-01-27 22:35:35 -0600] [18137] [INFO] Worker exiting (pid: 18137)
+[2026-01-27 22:35:40 -0600] [18133] [INFO] Shutting down: Master
+[2026-01-27 22:35:43 -0600] [31054] [INFO] Starting gunicorn 21.2.0
+[2026-01-27 22:35:43 -0600] [31054] [INFO] Listening at: http://127.0.0.1:8000 (31054)
+[2026-01-27 22:35:43 -0600] [31054] [INFO] Using worker: sync
+[2026-01-27 22:35:43 -0600] [31056] [INFO] Booting worker with pid: 31056
+[2026-01-27 22:35:43 -0600] [31057] [INFO] Booting worker with pid: 31057
+[2026-01-27 22:35:43 -0600] [31058] [INFO] Booting worker with pid: 31058
