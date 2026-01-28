@@ -3,3 +3,5 @@ backend/logs/gunicorn_access.log
 backend/logs/gunicorn_error.log
 frontend/logs/combined.log
 frontend/logs/out.log
+
+frontend/logs/out.log
