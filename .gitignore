@@ -5,3 +5,8 @@ frontend/logs/combined.log
 frontend/logs/out.log
 
 frontend/logs/out.log
+backend/logs/adminapps.log
+backend/logs/gunicorn_access.log
+frontend/logs/combined.log
+frontend/logs/combined.log
+frontend/logs/error.log
