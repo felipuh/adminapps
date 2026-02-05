@@ -81,9 +81,11 @@ def list_organizations(request):
     data = {
         'organizations': [
             {
-                'id': org.id,
+                'id': str(org.id),
                 'name': org.name,
                 'code': org.code,
+                'slug': org.code.lower(),
+                'status': org.status,
                 'is_active': org.is_active,
                 'created_at': org.created_at.isoformat(),
             }
@@ -110,9 +112,11 @@ def get_organization(request, org_id):
         }, status=404)
     
     data = {
-        'id': org.id,
+        'id': str(org.id),
         'name': org.name,
         'code': org.code,
+        'slug': org.code.lower(),
+        'status': org.status,
         'is_active': org.is_active,
         'created_at': org.created_at.isoformat(),
     }
