@@ -2,17 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Variables globales */
+/* ========================================
+   Admin Apps - Estilos Globales
+   Tema Oscuro con Glassmorphism
+======================================== */
+
 :root {
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(71, 85, 105, 0.3);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #06b6d4;
 }
 
-/* Estilos base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   @apply bg-dark-500 text-gray-100 antialiased;
-  background: linear-gradient(135deg, #0d1117 0%, #1a2332 50%, #0d1117 100%);
   min-height: 100vh;
 }
 
@@ -34,118 +45,200 @@ body {
   @apply bg-gray-500;
 }
 
-/* Componentes glass */
+/* ========================================
+   Glassmorphism Components
+======================================== */
+
 @layer components {
+  /* Card con efecto glassmorphism */
   .glass-card {
-    @apply bg-dark-200/70 backdrop-blur-md border border-gray-700/30 rounded-xl shadow-xl;
+    @apply bg-dark-300/60 backdrop-blur-xl border border-gray-700/50 rounded-xl;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
-  
+
   .glass-card-hover {
-    @apply glass-card transition-all duration-300 hover:bg-dark-200/80 hover:border-primary-500/30 hover:shadow-primary-500/10;
+    @apply glass-card transition-all duration-300;
   }
-  
-  .glass-input {
-    @apply w-full px-4 py-3 bg-dark-300/50 border border-gray-700/50 rounded-lg 
+
+  .glass-card-hover:hover {
+    @apply bg-dark-200/70 border-gray-600/60;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* Input fields */
+  .input-glass {
+    @apply w-full px-4 py-3 bg-dark-400/50 border border-gray-600/50 rounded-lg
            text-gray-100 placeholder-gray-500
-           focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50
+           focus:outline-none focus:border-primary-500/70 focus:ring-2 focus:ring-primary-500/20
            transition-all duration-200;
   }
-  
-  .glass-button {
-    @apply px-6 py-3 bg-primary-600 hover:bg-primary-500 
+
+  /* Buttons */
+  .btn-primary {
+    @apply px-6 py-2.5 bg-gradient-to-r from-primary-600 to-primary-500 
            text-white font-medium rounded-lg
-           transition-all duration-200 
+           hover:from-primary-500 hover:to-primary-400
            focus:outline-none focus:ring-2 focus:ring-primary-500/50
-           disabled:opacity-50 disabled:cursor-not-allowed;
+           transition-all duration-200 shadow-lg shadow-primary-500/25;
   }
-  
-  .glass-button-secondary {
-    @apply px-6 py-3 bg-dark-300/50 hover:bg-dark-300 
-           border border-gray-700/50 hover:border-gray-600
-           text-gray-100 font-medium rounded-lg
-           transition-all duration-200 
-           focus:outline-none focus:ring-2 focus:ring-gray-500/50;
+
+  .btn-secondary {
+    @apply px-6 py-2.5 bg-dark-300 border border-gray-600/50
+           text-gray-200 font-medium rounded-lg
+           hover:bg-dark-200 hover:border-gray-500/50
+           focus:outline-none focus:ring-2 focus:ring-gray-500/30
+           transition-all duration-200;
   }
-  
-  .glass-button-danger {
-    @apply px-6 py-3 bg-red-600/80 hover:bg-red-600 
+
+  .btn-danger {
+    @apply px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-500 
            text-white font-medium rounded-lg
-           transition-all duration-200 
-           focus:outline-none focus:ring-2 focus:ring-red-500/50;
+           hover:from-red-500 hover:to-red-400
+           focus:outline-none focus:ring-2 focus:ring-red-500/50
+           transition-all duration-200 shadow-lg shadow-red-500/25;
   }
-  
-  .glass-button-success {
-    @apply px-6 py-3 bg-emerald-600/80 hover:bg-emerald-600 
+
+  .btn-success {
+    @apply px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 
            text-white font-medium rounded-lg
-           transition-all duration-200 
-           focus:outline-none focus:ring-2 focus:ring-emerald-500/50;
+           hover:from-emerald-500 hover:to-emerald-400
+           focus:outline-none focus:ring-2 focus:ring-emerald-500/50
+           transition-all duration-200 shadow-lg shadow-emerald-500/25;
   }
-  
-  .stat-card {
-    @apply glass-card p-6 flex flex-col;
-  }
-  
-  .stat-value {
-    @apply text-3xl font-bold text-white;
-  }
-  
-  .stat-label {
-    @apply text-sm text-gray-400 mt-1;
-  }
-  
-  .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 
-           hover:text-white hover:bg-dark-300/50 transition-all duration-200;
-  }
-  
-  .sidebar-link.active {
-    @apply text-white bg-primary-600/20 border-l-2 border-primary-500;
-  }
-  
-  .table-header {
-    @apply text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4;
-  }
-  
-  .table-cell {
-    @apply px-6 py-4 text-sm text-gray-300;
-  }
-  
+
+  /* Status badges */
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
-  
+
   .badge-success {
-    @apply badge bg-emerald-500/20 text-emerald-400;
+    @apply badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30;
   }
-  
+
   .badge-warning {
-    @apply badge bg-amber-500/20 text-amber-400;
+    @apply badge bg-amber-500/20 text-amber-400 border border-amber-500/30;
   }
-  
+
   .badge-danger {
-    @apply badge bg-red-500/20 text-red-400;
+    @apply badge bg-red-500/20 text-red-400 border border-red-500/30;
   }
-  
+
   .badge-info {
-    @apply badge bg-blue-500/20 text-blue-400;
+    @apply badge bg-cyan-500/20 text-cyan-400 border border-cyan-500/30;
   }
-  
-  .badge-gray {
-    @apply badge bg-gray-500/20 text-gray-400;
+
+  .badge-neutral {
+    @apply badge bg-gray-500/20 text-gray-400 border border-gray-500/30;
+  }
+
+  /* Sidebar navigation */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg
+           text-gray-400 hover:text-gray-100 hover:bg-dark-200/50
+           transition-all duration-200 cursor-pointer;
+  }
+
+  .nav-item.active {
+    @apply text-primary-400 bg-primary-500/10 border-l-2 border-primary-500;
+  }
+
+  /* Stats cards */
+  .stat-card {
+    @apply glass-card p-6 relative overflow-hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    @apply absolute top-0 right-0 w-24 h-24 opacity-10 rounded-full -translate-y-1/2 translate-x-1/2;
+  }
+
+  /* Table styles */
+  .table-glass {
+    @apply w-full border-collapse;
+  }
+
+  .table-glass thead {
+    @apply bg-dark-400/50;
+  }
+
+  .table-glass th {
+    @apply px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider;
+  }
+
+  .table-glass tbody tr {
+    @apply border-b border-gray-700/30 hover:bg-dark-300/30 transition-colors;
+  }
+
+  .table-glass td {
+    @apply px-4 py-4 text-sm text-gray-300;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center;
+  }
+
+  .modal-content {
+    @apply glass-card p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto;
   }
 }
 
-/* Animaciones */
+/* ========================================
+   Animations
+======================================== */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.5); }
 }
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Loading spinner */
-.spinner {
-  @apply animate-spin rounded-full border-2 border-gray-600 border-t-primary-500;
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ========================================
+   Loading States
+======================================== */
+
+.skeleton {
+  @apply bg-gradient-to-r from-dark-300 via-dark-200 to-dark-300 bg-[length:200%_100%];
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ========================================
+   Responsive adjustments
+======================================== */
+
+@media (max-width: 768px) {
+  .glass-card {
+    @apply rounded-lg;
+  }
+  
+  .btn-primary, .btn-secondary {
+    @apply px-4 py-2;
+  }
 }

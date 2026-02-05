@@ -140,3 +140,342 @@ Traceback (most recent call last):
   File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 298, in get_exception_handler
     return self.settings.EXCEPTION_HANDLER
 AttributeError: 'function' object has no attribute 'EXCEPTION_HANDLER'
+WARNING 2026-02-04 18:15:06,309 log 25503 139930305858624 Unauthorized: /api/organizations/
+ERROR 2026-02-04 18:15:44,747 log 25503 139930305858624 Internal Server Error: /api/organizations/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/generics.py", line 171, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/pagination.py", line 216, in paginate_queryset
+    return list(self.page)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/paginator.py", line 174, in __len__
+    return len(self.object_list)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 380, in __len__
+    self._fetch_all()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 129, in __iter__
+    setattr(obj, attr_name, row[col_pos])
+AttributeError: can't set attribute
+ERROR 2026-02-04 18:15:47,175 log 25503 139930305858624 Internal Server Error: /api/organizations/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/generics.py", line 171, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/pagination.py", line 216, in paginate_queryset
+    return list(self.page)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/paginator.py", line 174, in __len__
+    return len(self.object_list)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 380, in __len__
+    self._fetch_all()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 129, in __iter__
+    setattr(obj, attr_name, row[col_pos])
+AttributeError: can't set attribute
+ERROR 2026-02-04 18:15:56,153 log 25503 139930305858624 Internal Server Error: /api/organizations/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/generics.py", line 171, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/pagination.py", line 216, in paginate_queryset
+    return list(self.page)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/paginator.py", line 174, in __len__
+    return len(self.object_list)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 380, in __len__
+    self._fetch_all()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 129, in __iter__
+    setattr(obj, attr_name, row[col_pos])
+AttributeError: can't set attribute
+WARNING 2026-02-04 18:17:02,863 log 25979 140104750804032 Unauthorized: /api/organizations/
+WARNING 2026-02-04 18:18:28,162 log 25979 140104750804032 Not Found: /api/organizations/new/
+ERROR 2026-02-04 18:18:28,302 log 25978 140104750804032 Internal Server Error: /api/products/modules/by_organization/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2688, in to_python
+    return uuid.UUID(**{input_form: value})
+  File "/usr/lib64/python3.9/uuid.py", line 177, in __init__
+    raise ValueError('badly formed hexadecimal UUID string')
+ValueError: badly formed hexadecimal UUID string
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/apps/products/views.py", line 157, in by_organization
+    organization = Organization.objects.get(pk=org_id)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 623, in get
+    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1436, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1454, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1461, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1546, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1577, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1492, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 27, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 341, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 85, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2672, in get_prep_value
+    return self.to_python(value)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2690, in to_python
+    raise exceptions.ValidationError(
+django.core.exceptions.ValidationError: ['“new” no es un UUID válido.']
+WARNING 2026-02-04 18:22:45,878 log 25977 140104750804032 Not Found: /api/modules/by_organization/
+WARNING 2026-02-04 18:22:48,524 log 25977 140104750804032 Not Found: /api/modules/by_organization/
+WARNING 2026-02-04 18:24:58,421 log 25977 140104750804032 Not Found: /api/organizations/new/
+ERROR 2026-02-04 18:25:00,038 log 25978 140104750804032 Internal Server Error: /api/products/modules/by_organization/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2688, in to_python
+    return uuid.UUID(**{input_form: value})
+  File "/usr/lib64/python3.9/uuid.py", line 177, in __init__
+    raise ValueError('badly formed hexadecimal UUID string')
+ValueError: badly formed hexadecimal UUID string
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/apps/products/views.py", line 157, in by_organization
+    organization = Organization.objects.get(pk=org_id)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 623, in get
+    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1436, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1454, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1461, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1546, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1577, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1492, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 27, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 341, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 85, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2672, in get_prep_value
+    return self.to_python(value)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2690, in to_python
+    raise exceptions.ValidationError(
+django.core.exceptions.ValidationError: ['“new” no es un UUID válido.']
+WARNING 2026-02-04 18:25:01,364 log 25978 140104750804032 Not Found: /api/organizations/new/
+ERROR 2026-02-04 18:25:01,801 log 25979 140104750804032 Internal Server Error: /api/products/modules/by_organization/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2688, in to_python
+    return uuid.UUID(**{input_form: value})
+  File "/usr/lib64/python3.9/uuid.py", line 177, in __init__
+    raise ValueError('badly formed hexadecimal UUID string')
+ValueError: badly formed hexadecimal UUID string
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/apps/products/views.py", line 157, in by_organization
+    organization = Organization.objects.get(pk=org_id)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 623, in get
+    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1436, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1454, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1461, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1546, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1577, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1492, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 27, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 341, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 85, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2672, in get_prep_value
+    return self.to_python(value)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2690, in to_python
+    raise exceptions.ValidationError(
+django.core.exceptions.ValidationError: ['“new” no es un UUID válido.']
+WARNING 2026-02-04 18:26:02,151 log 25979 140104750804032 Not Found: /api/organizations/new/
+ERROR 2026-02-04 18:26:02,291 log 25978 140104750804032 Internal Server Error: /api/products/modules/by_organization/
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2688, in to_python
+    return uuid.UUID(**{input_form: value})
+  File "/usr/lib64/python3.9/uuid.py", line 177, in __init__
+    raise ValueError('badly formed hexadecimal UUID string')
+ValueError: badly formed hexadecimal UUID string
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/apps/products/views.py", line 157, in by_organization
+    organization = Organization.objects.get(pk=org_id)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 623, in get
+    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1436, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1454, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/query.py", line 1461, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1546, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1577, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1492, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/sql/query.py", line 1319, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 27, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 341, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/lookups.py", line 85, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2672, in get_prep_value
+    return self.to_python(value)
+  File "/home/aplicacion/projects/adminapps/backend/venv_admin/lib64/python3.9/site-packages/django/db/models/fields/__init__.py", line 2690, in to_python
+    raise exceptions.ValidationError(
+django.core.exceptions.ValidationError: ['“new” no es un UUID válido.']

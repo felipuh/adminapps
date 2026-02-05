@@ -153,12 +153,24 @@ class OrganizationModuleViewSet(viewsets.ModelViewSet):
         org_id = request.query_params.get('organization_id')
         
         if org_id:
+            # Validar que org_id sea un UUID válido
+            if org_id == 'new' or len(org_id) < 10:
+                return Response(
+                    {'error': 'ID de organización inválido'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
             try:
                 organization = Organization.objects.get(pk=org_id)
             except Organization.DoesNotExist:
                 return Response(
                     {'error': 'Organización no encontrada'},
                     status=status.HTTP_404_NOT_FOUND
+                )
+            except Exception as e:
+                return Response(
+                    {'error': 'ID de organización inválido'},
+                    status=status.HTTP_400_BAD_REQUEST
                 )
             
             modules = OrganizationModule.objects.filter(
@@ -206,12 +218,24 @@ class OrganizationModuleViewSet(viewsets.ModelViewSet):
         iso_ids = request.data.get('iso_standards', [])
         initial_status = request.data.get('status', 'trial')
         
+        # Validar que org_id sea válido
+        if not org_id or org_id == 'new' or len(str(org_id)) < 10:
+            return Response(
+                {'error': 'ID de organización inválido'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
         try:
             organization = Organization.objects.get(pk=org_id)
         except Organization.DoesNotExist:
             return Response(
                 {'error': 'Organización no encontrada'},
                 status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'error': 'ID de organización inválido'},
+                status=status.HTTP_400_BAD_REQUEST
             )
         
         created = []

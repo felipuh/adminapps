@@ -1,54 +1,131 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from './context/AuthContext'
-import Layout from './components/Layout'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Organizations from './pages/Organizations'
-import OrganizationDetail from './pages/OrganizationDetail'
-import ISOModules from './pages/ISOModules'
-import ModuleAssignments from './pages/ModuleAssignments'
-import ActivityLogs from './pages/ActivityLogs'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-// Componente para rutas protegidas
+// Layouts
+import MainLayout from './components/layout/MainLayout';
+
+// Pages
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import OrganizationsPage from './pages/OrganizationsPage';
+import CreateOrganizationPage from './pages/CreateOrganizationPage';
+import OrganizationDetailPage from './pages/OrganizationDetailPage';
+import UsersPage from './pages/UsersPage';
+import SubscriptionsPage from './pages/SubscriptionsPage';
+import SettingsPage from './pages/SettingsPage';
+
+// Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth()
-  
+  const { isAuthenticated, loading } = useAuth();
+
   if (loading) {
     return (
       <div className="min-h-screen bg-dark-500 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-400">Cargando...</p>
+        </div>
       </div>
-    )
+    );
   }
-  
+
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" replace />;
   }
-  
-  return children
+
+  return children;
+};
+
+// Public Route (redirect if already authenticated)
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-dark-500 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        }
+      />
+
+      {/* Protected Routes */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<DashboardPage />} />
+        <Route path="organizations" element={<OrganizationsPage />} />
+        <Route path="organizations/new" element={<CreateOrganizationPage />} />
+        <Route path="organizations/:id" element={<OrganizationDetailPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="subscriptions" element={<SubscriptionsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+      </Route>
+
+      {/* Catch all - redirect to dashboard */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 }
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      
-      <Route path="/" element={
-        <ProtectedRoute>
-          <Layout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<Dashboard />} />
-        <Route path="organizations" element={<Organizations />} />
-        <Route path="organizations/:id" element={<OrganizationDetail />} />
-        <Route path="iso-standards" element={<ISOModules />} />
-        <Route path="modules" element={<ModuleAssignments />} />
-        <Route path="activity" element={<ActivityLogs />} />
-      </Route>
-      
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  )
+    <Router>
+      <AuthProvider>
+        <AppRoutes />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#1e293b',
+              color: '#f1f5f9',
+              border: '1px solid rgba(71, 85, 105, 0.5)',
+              borderRadius: '12px',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#f1f5f9',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#f1f5f9',
+              },
+            },
+          }}
+        />
+      </AuthProvider>
+    </Router>
+  );
 }
 
-export default App
+export default App;

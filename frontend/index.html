@@ -1,14 +1,30 @@
 <!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Apps - Comtech Backoffice</title>
-    <meta name="description" content="Panel de administración de Comtech para gestión de clientes y módulos ISO" />
-  </head>
-  <body class="bg-dark-500">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="Admin Apps - Comtech Backoffice - Sistema de Gestión de Organizaciones" />
+  <title>Admin Apps | Comtech Backoffice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      margin: 0;
+      padding: 0;
+    }
+    #root {
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <noscript>Necesitas habilitar JavaScript para usar esta aplicación.</noscript>
+  <div id="root"></div>
+  <script type="module" src="./src/index.jsx"></script>
+</body>
 </html>

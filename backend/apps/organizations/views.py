@@ -59,27 +59,25 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         if not user.is_admin:
             queryset = queryset.filter(id=user.organization_id)
         
-        return queryset.select_related('subscription__plan').annotate(
-            users_count=Count('users', filter=Q(users__is_active=True))
-        )
+        return queryset.select_related('subscription__plan')
     
     @action(detail=True, methods=['get', 'patch'])
-    def settings(self, request, pk=None):
+    def organization_settings(self, request, pk=None):
         """Obtener o actualizar configuración de la organización"""
         organization = self.get_object()
-        settings, created = OrganizationSettings.objects.get_or_create(
+        org_settings, created = OrganizationSettings.objects.get_or_create(
             organization=organization
         )
         
         if request.method == 'PATCH':
             serializer = OrganizationSettingsSerializer(
-                settings, data=request.data, partial=True
+                org_settings, data=request.data, partial=True
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
         
-        serializer = OrganizationSettingsSerializer(settings)
+        serializer = OrganizationSettingsSerializer(org_settings)
         return Response(serializer.data)
     
     @action(detail=True, methods=['get'])
