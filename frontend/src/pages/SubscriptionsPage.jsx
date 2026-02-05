@@ -168,7 +168,7 @@ const SubscriptionsPage = () => {
   }, []);
 
   const filteredSubscriptions = subscriptions.filter((sub) => {
-    const matchesSearch = sub.organization_name.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = (sub.organization_name || '').toLowerCase().includes(search.toLowerCase());
     const matchesStatus = !statusFilter || sub.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -225,7 +225,7 @@ const SubscriptionsPage = () => {
         </div>
         <div className="glass-card p-4">
           <p className="text-gray-500 text-sm">MRR</p>
-          <p className="text-2xl font-bold text-gray-100 mt-1">${stats.mrr.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-gray-100 mt-1">${(stats.mrr || 0).toLocaleString()}</p>
         </div>
       </div>
 

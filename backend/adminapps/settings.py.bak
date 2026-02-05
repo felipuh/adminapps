@@ -155,7 +155,7 @@ INTEGRATION_API_KEYS = {
     'isosmart': os.environ.get(
         'ISOSMART_API_KEY_HASH',
         # Hash de 'isosmart-integration-key-2025' para desarrollo
-        '20985646232d3504aeddb985345b81ec968ed8d86a6993ab7efcfdd35cd537e7'
+        '8a9c4f0e2b1d3e5f6a7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a'
     ),
 }
 

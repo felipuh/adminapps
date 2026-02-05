@@ -240,7 +240,7 @@ const OrganizationDetailPage = () => {
               <InfoRow icon={FileText} label="Razón Social" value={organization.legal_name} />
               <InfoRow icon={Building2} label="Industria" value={organization.industry} />
               <InfoRow icon={Users} label="Empleados" value={organization.employees_count?.toString()} />
-              <InfoRow icon={Calendar} label="Fecha de Registro" value={new Date(organization.created_at).toLocaleDateString('es-MX')} />
+              <InfoRow icon={Calendar} label="Fecha de Registro" value={organization.created_at ? new Date(organization.created_at).toLocaleDateString('es-MX') : '-'} />
             </div>
           </div>
 

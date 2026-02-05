@@ -223,7 +223,7 @@ const DashboardPage = () => {
         />
         <StatCard
           title="Ingresos Mensuales"
-          value={`$${stats.monthlyRevenue.toLocaleString()}`}
+          value={`$${(stats.monthlyRevenue || 0).toLocaleString()}`}
           change={5}
           changeType="increase"
           icon={TrendingUp}
