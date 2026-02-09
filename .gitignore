@@ -10,3 +10,4 @@ backend/logs/gunicorn_access.log
 frontend/logs/combined.log
 frontend/logs/combined.log
 frontend/logs/error.log
+frontend/logs/out.log
