@@ -1,7 +1,7 @@
 """
 Views for Users - Admin Apps
 """
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, status, filters, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -169,9 +169,9 @@ class UserViewSet(viewsets.ModelViewSet):
         return UserDetailSerializer
     
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action in ['create', 'activate', 'deactivate', 'reset_password']:
             return [IsOrgAdmin()]
-        elif self.action == 'destroy':
+        elif self.action in ['destroy', 'unlock']:
             return [IsAdmin()]
         return [IsAuthenticated()]
     

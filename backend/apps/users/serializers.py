@@ -125,6 +125,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 class UserCreateSerializer(serializers.ModelSerializer):
     """Serializer para crear usuarios"""
+    email = serializers.EmailField(validators=[])
     password = serializers.CharField(write_only=True, validators=[validate_password])
     password_confirm = serializers.CharField(write_only=True)
     
@@ -271,6 +272,7 @@ class UserActivityLogSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     """Serializer para registro público"""
+    email = serializers.EmailField(validators=[])
     password = serializers.CharField(write_only=True, validators=[validate_password])
     password_confirm = serializers.CharField(write_only=True)
     invitation_token = serializers.CharField(required=False, write_only=True)
