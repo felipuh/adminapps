@@ -34,6 +34,9 @@ from .serializers import (
 from .permissions import IsSuperAdmin, IsAdmin, IsOrgAdmin, IsOwnerOrAdmin
 
 
+PASSWORD_REUSE_REASON_CODE = 'PASSWORD_REUSE_RECENT'
+
+
 def _password_history_limit():
     return max(1, int(getattr(settings, 'PASSWORD_HISTORY_COUNT', 5)))
 
@@ -83,6 +86,7 @@ def _log_password_reuse_rejected(user, request, flow):
         new_values={
             'event': 'password_reuse_rejected',
             'flow': flow,
+            'reason_code': PASSWORD_REUSE_REASON_CODE,
         },
     )
 
@@ -227,14 +231,17 @@ class UserViewSet(viewsets.ModelViewSet):
         if _is_password_reused(user, new_password):
             _log_password_reuse_rejected(user, request, flow='change_password')
             return Response(
-                {'detail': 'No puedes reutilizar una contraseña reciente. Elige una nueva.'},
+                {
+                    'detail': 'No puedes reutilizar una contraseña reciente. Elige una nueva.',
+                    'reason_code': PASSWORD_REUSE_REASON_CODE,
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         _append_password_history_to_metadata(user)
         user.set_password(new_password)
         user.password_changed_at = timezone.now()
-        user.must_change_password = False
+        user.clear_temporary_password()
         user.save()
         
         # Registrar actividad
@@ -299,13 +306,16 @@ class UserViewSet(viewsets.ModelViewSet):
         if _is_password_reused(user, new_password):
             _log_password_reuse_rejected(user, request, flow='admin_reset_password')
             return Response(
-                {'error': 'No puedes reutilizar una contraseña reciente. Elige una nueva.'},
+                {
+                    'error': 'No puedes reutilizar una contraseña reciente. Elige una nueva.',
+                    'reason_code': PASSWORD_REUSE_REASON_CODE,
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         
         _append_password_history_to_metadata(user)
         user.set_password(new_password)
-        user.must_change_password = True
+        user.mark_temporary_password()
         user.save()
         
         return Response({'detail': 'Contraseña reseteada. El usuario debe cambiarla en su próximo inicio de sesión.'})

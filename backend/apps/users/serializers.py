@@ -3,8 +3,25 @@ Serializers for Users - Admin Apps
 """
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.conf import settings
+from django.contrib.auth.hashers import check_password
+from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
 from .models import User, UserOrganization, UserSession, UserActivityLog
+
+
+PASSWORD_REUSE_REASON_CODE = 'PASSWORD_REUSE_RECENT'
+TEMP_PASSWORD_EXPIRED_REASON_CODE = 'TEMP_PASSWORD_EXPIRED'
+
+
+def _is_password_reused(user, raw_password):
+    if check_password(raw_password, user.password):
+        return True
+    history = (user.metadata or {}).get('password_history') or []
+    for previous_hash in history:
+        if previous_hash and check_password(raw_password, previous_hash):
+            return True
+    return False
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -32,6 +49,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise serializers.ValidationError(
                 'Cuenta bloqueada temporalmente. Intente más tarde.'
             )
+
+        temporary_expiry = self.user.get_temporary_password_expiry()
+        if temporary_expiry and timezone.now() >= temporary_expiry:
+            raise serializers.ValidationError({
+                'detail': 'Tu contraseña temporal ha expirado. Solicita un restablecimiento con un administrador.',
+                'reason_code': TEMP_PASSWORD_EXPIRED_REASON_CODE,
+            })
         
         # Registrar login
         self.user.record_login()
@@ -47,6 +71,18 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'theme': self.user.theme,
             'must_change_password': self.user.must_change_password,
         }
+
+        if temporary_expiry:
+            warning_days = max(0, int(getattr(settings, 'TEMP_PASSWORD_WARNING_DAYS', 2)))
+            seconds_left = (temporary_expiry - timezone.now()).total_seconds()
+            if seconds_left > 0:
+                days_left = int((seconds_left - 1) // 86400) + 1
+                if days_left <= warning_days:
+                    data['security_alert'] = {
+                        'reason_code': 'TEMP_PASSWORD_EXPIRING',
+                        'days_left': days_left,
+                        'expires_at': temporary_expiry,
+                    }
         
         return data
 
@@ -105,12 +141,22 @@ class UserCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'password_confirm': 'Las contraseñas no coinciden'
             })
+
+        existing_user = User.objects.filter(email=attrs['email']).first()
+        if existing_user:
+            if _is_password_reused(existing_user, attrs['password']):
+                raise serializers.ValidationError({
+                    'detail': 'No puedes reutilizar una contraseña reciente en esta alta/invitación.',
+                    'reason_code': PASSWORD_REUSE_REASON_CODE,
+                })
+            raise serializers.ValidationError({'email': 'Este email ya está registrado'})
+
         return attrs
     
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = User(**validated_data)
-        user.must_change_password = True
+        user.mark_temporary_password()
         user.set_password(password)
         user.save()
         
@@ -242,11 +288,19 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'password_confirm': 'Las contraseñas no coinciden'
             })
+
+        existing_user = User.objects.filter(email=attrs['email']).first()
+        if existing_user:
+            if _is_password_reused(existing_user, attrs['password']):
+                raise serializers.ValidationError({
+                    'detail': 'No puedes reutilizar una contraseña reciente en esta alta/invitación.',
+                    'reason_code': PASSWORD_REUSE_REASON_CODE,
+                })
+            raise serializers.ValidationError({'email': 'Este email ya está registrado'})
+
         return attrs
     
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError('Este email ya está registrado')
         return value
     
     def create(self, validated_data):
@@ -254,7 +308,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         
         user = User(**validated_data)
-        user.must_change_password = True
+        user.mark_temporary_password()
         user.set_password(password)
         
         # Procesar invitación si existe

@@ -3,9 +3,12 @@ User Models - Admin Apps
 Sistema de usuarios con roles y permisos multi-organización
 """
 import uuid
+from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.conf import settings
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 
 class UserManager(BaseUserManager):
@@ -174,6 +177,39 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.failed_login_attempts >= 5:
             self.lock_account(30)
         self.save(update_fields=['failed_login_attempts', 'locked_until'])
+
+    def mark_temporary_password(self, when=None):
+        """Persist temporary-password state in metadata without schema changes."""
+        timestamp = when or timezone.now()
+        metadata = dict(self.metadata or {})
+        metadata['temporary_password_set_at'] = timestamp.isoformat()
+        self.metadata = metadata
+        self.must_change_password = True
+
+    def clear_temporary_password(self):
+        """Clear temporary-password state after user rotates credentials."""
+        metadata = dict(self.metadata or {})
+        metadata.pop('temporary_password_set_at', None)
+        self.metadata = metadata
+        self.must_change_password = False
+
+    def get_temporary_password_expiry(self):
+        """Compute expiry datetime for temporary password when it applies."""
+        if not self.must_change_password:
+            return None
+
+        raw_value = (self.metadata or {}).get('temporary_password_set_at')
+        if not raw_value:
+            return None
+
+        set_at = parse_datetime(raw_value)
+        if not set_at:
+            return None
+        if timezone.is_naive(set_at):
+            set_at = timezone.make_aware(set_at, timezone.get_current_timezone())
+
+        max_days = int(getattr(settings, 'TEMP_PASSWORD_MAX_AGE_DAYS', 7))
+        return set_at + timedelta(days=max_days)
 
 
 class UserOrganization(models.Model):

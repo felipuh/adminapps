@@ -13,6 +13,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [securityAlert, setSecurityAlert] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const mustChangePassword = Boolean(user?.must_change_password);
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         setUser(null);
+        setSecurityAlert(null);
         setIsAuthenticated(false);
       }
     }
@@ -51,12 +53,14 @@ export const AuthProvider = ({ children }) => {
       
       // Set user data
       setUser(response.user);
+      setSecurityAlert(response.security_alert || null);
       setIsAuthenticated(true);
       
       return {
         success: true,
         user: response.user,
         mustChangePassword: Boolean(response.user?.must_change_password),
+        securityAlert: response.security_alert || null,
       };
     } catch (error) {
       const message = error.response?.data?.detail || 
@@ -76,6 +80,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       setUser(null);
+      setSecurityAlert(null);
       setIsAuthenticated(false);
     }
   };
@@ -100,6 +105,7 @@ export const AuthProvider = ({ children }) => {
           ? { ...currentUser, must_change_password: false }
           : currentUser
       ));
+      setSecurityAlert(null);
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.detail ||
@@ -130,6 +136,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     isAuthenticated,
     mustChangePassword,
+    securityAlert,
     login,
     logout,
     updateProfile,

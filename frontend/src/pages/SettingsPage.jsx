@@ -142,7 +142,7 @@ const ProfileSettings = ({ user }) => {
 };
 
 // Security Settings
-const SecuritySettings = ({ changePassword, mustChangePassword }) => {
+const SecuritySettings = ({ changePassword, mustChangePassword, securityAlert }) => {
   const [formData, setFormData] = useState({
     current_password: '',
     new_password: '',
@@ -190,6 +190,11 @@ const SecuritySettings = ({ changePassword, mustChangePassword }) => {
       {mustChangePassword && (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
           Debes cambiar tu contraseña temporal antes de continuar. Usa una contraseña o frase de al menos 12 caracteres y evita datos previsibles.
+        </div>
+      )}
+      {mustChangePassword && securityAlert?.reason_code === 'TEMP_PASSWORD_EXPIRING' && (
+        <div className="rounded-lg border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-sm text-orange-200">
+          Tu contraseña temporal vence en {securityAlert.days_left} dia(s). Cámbiala ahora para evitar el bloqueo de acceso.
         </div>
       )}
 
@@ -436,7 +441,7 @@ const AppearanceSettings = () => {
 };
 
 const SettingsPage = () => {
-  const { user, changePassword, mustChangePassword } = useAuth();
+  const { user, changePassword, mustChangePassword, securityAlert } = useAuth();
   const [activeTab, setActiveTab] = useState(mustChangePassword ? 'security' : 'profile');
 
   useEffect(() => {
@@ -488,7 +493,13 @@ const SettingsPage = () => {
         <div className="lg:col-span-3">
           <div className="glass-card p-6">
             {!mustChangePassword && activeTab === 'profile' && <ProfileSettings user={user} />}
-            {activeTab === 'security' && <SecuritySettings changePassword={changePassword} mustChangePassword={mustChangePassword} />}
+            {activeTab === 'security' && (
+              <SecuritySettings
+                changePassword={changePassword}
+                mustChangePassword={mustChangePassword}
+                securityAlert={securityAlert}
+              />
+            )}
             {!mustChangePassword && activeTab === 'notifications' && <NotificationSettings />}
             {!mustChangePassword && activeTab === 'appearance' && <AppearanceSettings />}
           </div>
