@@ -80,7 +80,7 @@ const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
           {isOpen && (
             <div className="animate-fadeIn">
               <h1 className="text-lg font-bold text-gray-100">Admin Apps</h1>
-              <p className="text-xs text-gray-500">Comtech Backoffice</p>
+              <p className="text-xs text-gray-500">Smart3AI Control Center</p>
             </div>
           )}
         </div>

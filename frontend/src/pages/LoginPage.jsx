@@ -44,7 +44,7 @@ const LoginPage = () => {
             <Shield className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-100">Admin Apps</h1>
-          <p className="text-gray-500 mt-2">Comtech Backoffice</p>
+          <p className="text-gray-500 mt-2">Smart3AI Control Center</p>
         </div>
 
         {/* Form card */}
@@ -142,7 +142,7 @@ const LoginPage = () => {
 
         {/* Footer */}
         <p className="text-center text-gray-600 text-sm mt-6">
-          © 2026 Comtech. Todos los derechos reservados.
+          © 2026 Smart3AI. Todos los derechos reservados.
         </p>
       </div>
     </div>
