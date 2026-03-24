@@ -15,6 +15,7 @@ urlpatterns = [
     path('api/organizations/', include('apps.organizations.urls')),
     path('api/subscriptions/', include('apps.subscriptions.urls')),
     path('api/products/', include('apps.products.urls')),
+    path('api/billing/', include('apps.billing.urls')),
     
     # Integration API (for external services like ISO Smart)
     path('api/integration/', include('apps.integration.urls')),

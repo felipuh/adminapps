@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.subscriptions',
     'apps.products',
+    'apps.billing',
     'apps.api',
     'apps.integration',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -230,3 +232,10 @@ LOGGING = {
 
 # ISO Smart Integration
 ISOSMART_API_URL = os.environ.get('ISOSMART_API_URL', 'http://localhost:8000/api')
+
+# Billing Scheduler
+BILLING_SCHEDULER_ENABLED = os.environ.get('BILLING_SCHEDULER_ENABLED', 'true').lower() == 'true'
+BILLING_SCHEDULER_HOUR = int(os.environ.get('BILLING_SCHEDULER_HOUR', '6'))
+BILLING_SCHEDULER_MINUTE = int(os.environ.get('BILLING_SCHEDULER_MINUTE', '0'))
+APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
+APSCHEDULER_RUN_NOW_TIMEOUT = 25

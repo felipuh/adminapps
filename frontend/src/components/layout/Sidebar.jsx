@@ -5,6 +5,7 @@ import {
   Building2, 
   Users, 
   CreditCard, 
+  BarChart3,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -18,6 +19,7 @@ const navigation = [
   { name: 'Organizaciones', href: '/organizations', icon: Building2 },
   { name: 'Usuarios', href: '/users', icon: Users },
   { name: 'Suscripciones', href: '/subscriptions', icon: CreditCard },
+  { name: 'Finanzas', href: '/finance', icon: BarChart3 },
   { name: 'Configuración', href: '/settings', icon: Settings },
 ];
 

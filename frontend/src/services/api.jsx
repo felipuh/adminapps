@@ -295,3 +295,124 @@ export const moduleService = {
     return response.data;
   },
 };
+
+// ========================================
+// Billing Services
+// ========================================
+
+export const billingService = {
+  getSummary: async () => {
+    const response = await api.get('/billing/summary/');
+    return response.data;
+  },
+
+  getRevenueByProduct: async () => {
+    const response = await api.get('/billing/revenue/by-product/');
+    return response.data;
+  },
+
+  getRevenueByOrganization: async () => {
+    const response = await api.get('/billing/revenue/by-organization/');
+    return response.data;
+  },
+
+  getRevenueTimeline: async () => {
+    const response = await api.get('/billing/revenue/timeline/');
+    return response.data;
+  },
+
+  getAccountsReceivable: async () => {
+    const response = await api.get('/billing/accounts-receivable/');
+    return response.data;
+  },
+
+  getInvoices: async (params = {}) => {
+    const response = await api.get('/billing/invoices/', { params });
+    return response.data;
+  },
+
+  runBatch: async (data) => {
+    const response = await api.post('/billing/invoices/run_batch/', data);
+    return response.data;
+  },
+
+  getFiscalProfiles: async () => {
+    const response = await api.get('/billing/fiscal-profiles/');
+    return response.data.results || response.data;
+  },
+
+  getProducts: async () => {
+    const response = await api.get('/billing/products/?is_active=true');
+    return response.data.results || response.data;
+  },
+
+  getSchedulerStatus: async () => {
+    const response = await api.get('/billing/scheduler/');
+    return response.data;
+  },
+
+  triggerSchedulerNow: async () => {
+    const response = await api.post('/billing/scheduler/');
+    return response.data;
+  },
+
+  getInvoiceDetail: async (id) => {
+    const response = await api.get(`/billing/invoices/${id}/`);
+    return response.data;
+  },
+
+  getInvoiceXml: async (id) => {
+    const response = await api.post(`/billing/invoices/${id}/generate_xml/`, {}, {
+      responseType: 'text',
+    });
+    return response.data;
+  },
+
+  exportInvoicesCsv: async (params = {}) => {
+    const response = await api.get('/billing/invoices/export_csv/', {
+      params,
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  getChurnAnalytics: async () => {
+    const response = await api.get('/billing/churn/');
+    return response.data;
+  },
+
+  getReconciliationSummary: async (params = {}) => {
+    const response = await api.get('/billing/reconciliation/', { params });
+    return response.data;
+  },
+
+  registerPendingPayment: async (data) => {
+    const response = await api.post('/billing/reconciliation/', data);
+    return response.data;
+  },
+
+  confirmPayment: async (paymentId, notes = '') => {
+    const response = await api.post(`/billing/payments/${paymentId}/confirm/`, { notes });
+    return response.data;
+  },
+
+  rejectPayment: async (paymentId, notes = '') => {
+    const response = await api.post(`/billing/payments/${paymentId}/reject/`, { notes });
+    return response.data;
+  },
+
+  getProductDashboard: async () => {
+    const response = await api.get('/billing/products/dashboard/');
+    return response.data;
+  },
+
+  getAlerts: async () => {
+    const response = await api.get('/billing/alerts/');
+    return response.data;
+  },
+
+  createCreditNote: async (invoiceId, reason) => {
+    const response = await api.post(`/billing/invoices/${invoiceId}/credit_note/`, { reason });
+    return response.data;
+  },
+};
