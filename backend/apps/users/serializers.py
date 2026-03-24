@@ -75,7 +75,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
             'id', 'email', 'first_name', 'last_name', 'full_name',
             'phone', 'avatar', 'organization', 'organization_name',
             'role', 'job_title', 'department',
-            'is_active', 'is_staff', 'is_verified', 'is_locked',
+            'is_active', 'is_staff', 'is_verified', 'is_locked', 'must_change_password',
             'language', 'timezone', 'theme',
             'email_notifications', 'push_notifications',
             'last_login_at', 'last_activity_at',

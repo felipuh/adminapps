@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   User, 
   Lock, 
@@ -142,7 +142,7 @@ const ProfileSettings = ({ user }) => {
 };
 
 // Security Settings
-const SecuritySettings = () => {
+const SecuritySettings = ({ changePassword, mustChangePassword }) => {
   const [formData, setFormData] = useState({
     current_password: '',
     new_password: '',
@@ -164,9 +164,19 @@ const SecuritySettings = () => {
     }
 
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast.success('Contraseña actualizada correctamente');
-    setFormData({ current_password: '', new_password: '', confirm_password: '' });
+    const result = await changePassword(
+      formData.current_password,
+      formData.new_password,
+      formData.confirm_password,
+    );
+
+    if (result.success) {
+      toast.success('Contraseña actualizada correctamente');
+      setFormData({ current_password: '', new_password: '', confirm_password: '' });
+    } else {
+      toast.error(result.error);
+    }
+
     setLoading(false);
   };
 
@@ -176,6 +186,12 @@ const SecuritySettings = () => {
         <h2 className="text-xl font-semibold text-gray-100">Seguridad</h2>
         <p className="text-gray-500 mt-1">Gestiona tu contraseña y seguridad de la cuenta</p>
       </div>
+
+      {mustChangePassword && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+          Debes cambiar tu contraseña temporal antes de continuar. Usa una contraseña o frase de al menos 12 caracteres y evita datos previsibles.
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
         <div>
@@ -420,8 +436,14 @@ const AppearanceSettings = () => {
 };
 
 const SettingsPage = () => {
-  const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('profile');
+  const { user, changePassword, mustChangePassword } = useAuth();
+  const [activeTab, setActiveTab] = useState(mustChangePassword ? 'security' : 'profile');
+
+  useEffect(() => {
+    if (mustChangePassword) {
+      setActiveTab('security');
+    }
+  }, [mustChangePassword]);
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -431,32 +453,44 @@ const SettingsPage = () => {
         <p className="text-gray-500 mt-1">Gestiona tu cuenta y preferencias</p>
       </div>
 
+      {mustChangePassword && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+          El acceso al resto del sistema queda restringido hasta completar el cambio de contraseña inicial.
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar */}
         <div className="lg:col-span-1">
           <div className="glass-card p-4 space-y-1">
-            <Tab active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={User}>
-              Perfil
-            </Tab>
+            {!mustChangePassword && (
+              <Tab active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={User}>
+                Perfil
+              </Tab>
+            )}
             <Tab active={activeTab === 'security'} onClick={() => setActiveTab('security')} icon={Lock}>
               Seguridad
             </Tab>
-            <Tab active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')} icon={Bell}>
-              Notificaciones
-            </Tab>
-            <Tab active={activeTab === 'appearance'} onClick={() => setActiveTab('appearance')} icon={Palette}>
-              Apariencia
-            </Tab>
+            {!mustChangePassword && (
+              <Tab active={activeTab === 'notifications'} onClick={() => setActiveTab('notifications')} icon={Bell}>
+                Notificaciones
+              </Tab>
+            )}
+            {!mustChangePassword && (
+              <Tab active={activeTab === 'appearance'} onClick={() => setActiveTab('appearance')} icon={Palette}>
+                Apariencia
+              </Tab>
+            )}
           </div>
         </div>
 
         {/* Content */}
         <div className="lg:col-span-3">
           <div className="glass-card p-6">
-            {activeTab === 'profile' && <ProfileSettings user={user} />}
-            {activeTab === 'security' && <SecuritySettings />}
-            {activeTab === 'notifications' && <NotificationSettings />}
-            {activeTab === 'appearance' && <AppearanceSettings />}
+            {!mustChangePassword && activeTab === 'profile' && <ProfileSettings user={user} />}
+            {activeTab === 'security' && <SecuritySettings changePassword={changePassword} mustChangePassword={mustChangePassword} />}
+            {!mustChangePassword && activeTab === 'notifications' && <NotificationSettings />}
+            {!mustChangePassword && activeTab === 'appearance' && <AppearanceSettings />}
           </div>
         </div>
       </div>

@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const mustChangePassword = Boolean(user?.must_change_password);
 
   // Check if user is logged in on mount
   const checkAuth = useCallback(async () => {
@@ -52,7 +53,11 @@ export const AuthProvider = ({ children }) => {
       setUser(response.user);
       setIsAuthenticated(true);
       
-      return { success: true, user: response.user };
+      return {
+        success: true,
+        user: response.user,
+        mustChangePassword: Boolean(response.user?.must_change_password),
+      };
     } catch (error) {
       const message = error.response?.data?.detail || 
                       error.response?.data?.message ||
@@ -87,6 +92,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const changePassword = async (currentPassword, newPassword, newPasswordConfirm) => {
+    try {
+      await authService.changePassword(currentPassword, newPassword, newPasswordConfirm);
+      setUser((currentUser) => (
+        currentUser
+          ? { ...currentUser, must_change_password: false }
+          : currentUser
+      ));
+      return { success: true };
+    } catch (error) {
+      const message = error.response?.data?.detail ||
+        error.response?.data?.current_password?.[0] ||
+        error.response?.data?.new_password?.[0] ||
+        error.response?.data?.new_password_confirm?.[0] ||
+        'Error al cambiar la contraseña';
+      return { success: false, error: message };
+    }
+  };
+
   // Check if user has specific role
   const hasRole = (roles) => {
     if (!user) return false;
@@ -105,9 +129,11 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     isAuthenticated,
+    mustChangePassword,
     login,
     logout,
     updateProfile,
+    changePassword,
     hasRole,
     isAdmin,
     checkAuth,

@@ -8,6 +8,10 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 
@@ -28,6 +32,59 @@ from .serializers import (
     RegisterSerializer,
 )
 from .permissions import IsSuperAdmin, IsAdmin, IsOrgAdmin, IsOwnerOrAdmin
+
+
+def _password_history_limit():
+    return max(1, int(getattr(settings, 'PASSWORD_HISTORY_COUNT', 5)))
+
+
+def _password_history_from_metadata(user):
+    metadata = user.metadata or {}
+    history = metadata.get('password_history') or []
+    return list(history)
+
+
+def _is_password_reused(user, raw_password):
+    if check_password(raw_password, user.password):
+        return True
+
+    for previous_hash in _password_history_from_metadata(user):
+        if previous_hash and check_password(raw_password, previous_hash):
+            return True
+    return False
+
+
+def _append_password_history_to_metadata(user):
+    metadata = dict(user.metadata or {})
+    history = _password_history_from_metadata(user)
+    if user.password:
+        history.insert(0, user.password)
+
+    deduped = []
+    for item in history:
+        if item and item not in deduped:
+            deduped.append(item)
+
+    metadata['password_history'] = deduped[:_password_history_limit()]
+    user.metadata = metadata
+
+
+def _log_password_reuse_rejected(user, request, flow):
+    UserActivityLog.objects.create(
+        user=user,
+        organization=user.organization,
+        action='password_change',
+        module='users',
+        entity_type='User',
+        entity_id=str(user.id),
+        description='Intento bloqueado por reutilizacion de contrasena',
+        ip_address=request.META.get('REMOTE_ADDR'),
+        user_agent=request.META.get('HTTP_USER_AGENT', ''),
+        new_values={
+            'event': 'password_reuse_rejected',
+            'flow': flow,
+        },
+    )
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -165,7 +222,17 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         
         user = request.user
-        user.set_password(serializer.validated_data['new_password'])
+        new_password = serializer.validated_data['new_password']
+
+        if _is_password_reused(user, new_password):
+            _log_password_reuse_rejected(user, request, flow='change_password')
+            return Response(
+                {'detail': 'No puedes reutilizar una contraseña reciente. Elige una nueva.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        _append_password_history_to_metadata(user)
+        user.set_password(new_password)
         user.password_changed_at = timezone.now()
         user.must_change_password = False
         user.save()
@@ -223,7 +290,20 @@ class UserViewSet(viewsets.ModelViewSet):
                 {'error': 'Se requiere new_password'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        try:
+            validate_password(new_password, user)
+        except ValidationError as exc:
+            return Response({'error': exc.messages[0]}, status=status.HTTP_400_BAD_REQUEST)
+
+        if _is_password_reused(user, new_password):
+            _log_password_reuse_rejected(user, request, flow='admin_reset_password')
+            return Response(
+                {'error': 'No puedes reutilizar una contraseña reciente. Elige una nueva.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         
+        _append_password_history_to_metadata(user)
         user.set_password(new_password)
         user.must_change_password = True
         user.save()

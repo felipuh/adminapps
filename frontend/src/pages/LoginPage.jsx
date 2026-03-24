@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Shield, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
 const LoginPage = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -19,6 +21,7 @@ const LoginPage = () => {
     const result = await login(email, password);
     
     if (result.success) {
+      navigate(result.mustChangePassword ? '/settings' : '/', { replace: true });
       toast.success(`¡Bienvenido, ${result.user.full_name}!`);
     } else {
       setError(result.error);
