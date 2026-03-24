@@ -45,6 +45,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'organization_id': str(self.user.organization.id) if self.user.organization else None,
             'organization_name': self.user.organization.name if self.user.organization else None,
             'theme': self.user.theme,
+            'must_change_password': self.user.must_change_password,
         }
         
         return data
@@ -109,6 +110,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = User(**validated_data)
+        user.must_change_password = True
         user.set_password(password)
         user.save()
         
@@ -252,6 +254,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         
         user = User(**validated_data)
+        user.must_change_password = True
         user.set_password(password)
         
         # Procesar invitación si existe
