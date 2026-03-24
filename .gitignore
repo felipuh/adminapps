@@ -16,3 +16,7 @@ backend/logs/gunicorn_access.log
 backend/logs/gunicorn_error.log
 frontend/logs/combined.log
 frontend/logs/out.log
+
+# Python cache artifacts
+**/__pycache__/
+*.py[cod]
