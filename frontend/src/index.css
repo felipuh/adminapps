@@ -8,8 +8,9 @@
 ======================================== */
 
 :root {
-  --primary: #3b82f6;
-  --primary-dark: #2563eb;
+  --primary: #004990;
+  --primary-dark: #00356a;
+  --primary-soft: #85add6;
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
@@ -199,8 +200,8 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.5); }
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 73, 144, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 73, 144, 0.5); }
 }
 
 .animate-fadeIn {

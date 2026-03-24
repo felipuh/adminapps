@@ -16,9 +16,9 @@ import { dashboardService, organizationService } from '../services/api';
 // Stats Card Component
 const StatCard = ({ title, value, change, changeType, icon: Icon, color }) => {
   const colorClasses = {
-    blue: 'from-blue-500 to-blue-600 shadow-blue-500/25',
+    blue: 'from-primary-500 to-primary-600 shadow-primary-500/25',
     green: 'from-emerald-500 to-emerald-600 shadow-emerald-500/25',
-    purple: 'from-purple-500 to-purple-600 shadow-purple-500/25',
+    purple: 'from-primary-600 to-primary-700 shadow-primary-500/25',
     orange: 'from-orange-500 to-orange-600 shadow-orange-500/25',
   };
 
@@ -52,9 +52,9 @@ const StatCard = ({ title, value, change, changeType, icon: Icon, color }) => {
 // Recent Activity Item
 const ActivityItem = ({ activity }) => {
   const typeConfig = {
-    organization_created: { icon: Building2, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+    organization_created: { icon: Building2, color: 'text-primary-400', bg: 'bg-primary-500/10' },
     user_created: { icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-    subscription_updated: { icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+    subscription_updated: { icon: TrendingUp, color: 'text-primary-300', bg: 'bg-primary-500/10' },
     alert: { icon: AlertTriangle, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   };
 
@@ -252,8 +252,8 @@ const DashboardPage = () => {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorOrgs" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#004990" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#004990" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
@@ -274,7 +274,7 @@ const DashboardPage = () => {
                 <Area 
                   type="monotone" 
                   dataKey="organizations" 
-                  stroke="#3b82f6" 
+                  stroke="#004990" 
                   fillOpacity={1} 
                   fill="url(#colorOrgs)" 
                   name="Organizaciones"
@@ -344,10 +344,10 @@ const DashboardPage = () => {
               </div>
             </div>
 
-            <div className="flex items-start gap-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-              <Users className="w-5 h-5 text-blue-400 flex-shrink-0" />
+            <div className="flex items-start gap-4 p-4 bg-primary-500/10 border border-primary-500/30 rounded-lg">
+              <Users className="w-5 h-5 text-primary-400 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-blue-400">5 invitaciones pendientes</p>
+                <p className="text-sm font-medium text-primary-400">5 invitaciones pendientes</p>
                 <p className="text-xs text-gray-400 mt-1">Usuarios que aún no han aceptado</p>
               </div>
             </div>
