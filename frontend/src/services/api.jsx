@@ -104,6 +104,26 @@ export const authService = {
     });
     return response.data;
   },
+
+  requestPasswordReset: async (email) => {
+    const response = await api.post('/auth/password-reset/', { email });
+    return response.data;
+  },
+
+  confirmPasswordReset: async (uid, token, newPassword, newPasswordConfirm) => {
+    const response = await api.post('/auth/password-reset/confirm/', {
+      uid,
+      token,
+      new_password: newPassword,
+      new_password_confirm: newPasswordConfirm,
+    });
+    return response.data;
+  },
+
+  getMySessions: async () => {
+    const response = await api.get('/auth/users/sessions/');
+    return response.data;
+  },
 };
 
 // ========================================

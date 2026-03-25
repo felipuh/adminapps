@@ -10,10 +10,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from django.contrib.auth.hashers import check_password
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.db.models import Q
 
 from .models import User, UserOrganization, UserSession, UserActivityLog
@@ -514,11 +518,39 @@ class PasswordResetRequestView(APIView):
         serializer.is_valid(raise_exception=True)
         
         email = serializer.validated_data['email']
-        
+
         try:
             user = User.objects.get(email=email)
-            # TODO: Generar token y enviar email
-            # Por ahora solo confirmamos que el email existe
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+
+            frontend_base = getattr(settings, 'FRONTEND_BASE_URL', 'http://localhost:3000').rstrip('/')
+            reset_url = f"{frontend_base}/reset-password?uid={uid}&token={token}"
+
+            send_mail(
+                subject='[AdminApps] Restablecimiento de contraseña',
+                message=(
+                    'Recibimos una solicitud para restablecer tu contraseña.\n\n'
+                    f'Usa este enlace para continuar:\n{reset_url}\n\n'
+                    'Si no realizaste esta solicitud, puedes ignorar este correo.'
+                ),
+                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@adminapps.local'),
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            UserActivityLog.objects.create(
+                user=user,
+                organization=user.organization,
+                action='password_change',
+                module='users',
+                entity_type='User',
+                entity_id=str(user.id),
+                description='Solicitud de restablecimiento de contrasena',
+                ip_address=request.META.get('REMOTE_ADDR'),
+                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                new_values={'event': 'password_reset_requested'},
+            )
         except User.DoesNotExist:
             pass  # No revelar si el email existe o no
         
@@ -534,7 +566,45 @@ class PasswordResetConfirmView(APIView):
     def post(self, request):
         serializer = ResetPasswordConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
-        # TODO: Verificar token y actualizar contraseña
-        
+
+        try:
+            user_id = force_str(urlsafe_base64_decode(serializer.validated_data['uid']))
+            user = User.objects.get(pk=user_id)
+        except Exception:
+            return Response({'detail': 'Enlace de restablecimiento invalido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        token = serializer.validated_data['token']
+        if not default_token_generator.check_token(user, token):
+            return Response({'detail': 'El token es invalido o ya expiro.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        new_password = serializer.validated_data['new_password']
+        if _is_password_reused(user, new_password):
+            _log_password_reuse_rejected(user, request, flow='password_reset_confirm')
+            return Response(
+                {
+                    'detail': 'No puedes reutilizar una contraseña reciente. Elige una nueva.',
+                    'reason_code': PASSWORD_REUSE_REASON_CODE,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        _append_password_history_to_metadata(user)
+        user.set_password(new_password)
+        user.password_changed_at = timezone.now()
+        user.clear_temporary_password()
+        user.save()
+
+        UserActivityLog.objects.create(
+            user=user,
+            organization=user.organization,
+            action='password_change',
+            module='users',
+            entity_type='User',
+            entity_id=str(user.id),
+            description='Contrasena restablecida por flujo de recuperacion',
+            ip_address=request.META.get('REMOTE_ADDR'),
+            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+            new_values={'event': 'password_reset_confirmed'},
+        )
+
         return Response({'detail': 'Contraseña actualizada exitosamente'})

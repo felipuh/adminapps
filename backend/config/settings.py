@@ -239,6 +239,7 @@ LOGGING = {
 
 # ISO Smart Integration
 ISOSMART_API_URL = os.environ.get('ISOSMART_API_URL', 'http://localhost:8000/api')
+FRONTEND_BASE_URL = os.environ.get('FRONTEND_BASE_URL', 'http://localhost:3000')
 
 # Billing Scheduler
 BILLING_SCHEDULER_ENABLED = os.environ.get('BILLING_SCHEDULER_ENABLED', 'true').lower() == 'true'

@@ -1,7 +1,11 @@
 from datetime import timedelta
 
+from django.contrib.auth.tokens import default_token_generator
+from django.core import mail
 from django.test import override_settings
 from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -151,6 +155,89 @@ class AuthSecurityRegressionTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(self._reason_code(response), 'PASSWORD_REUSE_RECENT')
+
+
+@override_settings(
+    PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'],
+    EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+    FRONTEND_BASE_URL='http://localhost:3000',
+)
+class PasswordRecoveryFlowTests(APITestCase):
+    def setUp(self):
+        self.organization = Organization.objects.create(
+            code='ORG00003',
+            name='Recovery Org',
+            email='recovery@example.com',
+        )
+        self.user = User.objects.create(
+            email='recovery.user@example.com',
+            first_name='Recovery',
+            last_name='User',
+            organization=self.organization,
+            role='user',
+            is_active=True,
+        )
+        self.user.set_password('InitialPass123!')
+        self.user.save(update_fields=['password'])
+
+    def test_password_reset_request_returns_generic_message_for_missing_email(self):
+        response = self.client.post(
+            '/api/auth/password-reset/',
+            {'email': 'not-found@example.com'},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('Si el email existe', response.data['detail'])
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_password_reset_request_sends_email_with_reset_link(self):
+        response = self.client.post(
+            '/api/auth/password-reset/',
+            {'email': self.user.email},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Restablecimiento de contraseña', mail.outbox[0].subject)
+        self.assertIn('/reset-password?uid=', mail.outbox[0].body)
+        self.assertIn('&token=', mail.outbox[0].body)
+
+    def test_password_reset_confirm_updates_password(self):
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = default_token_generator.make_token(self.user)
+
+        response = self.client.post(
+            '/api/auth/password-reset/confirm/',
+            {
+                'uid': uid,
+                'token': token,
+                'new_password': 'BrandNewPass456!',
+                'new_password_confirm': 'BrandNewPass456!',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('BrandNewPass456!'))
+
+    def test_password_reset_confirm_rejects_invalid_token(self):
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+
+        response = self.client.post(
+            '/api/auth/password-reset/confirm/',
+            {
+                'uid': uid,
+                'token': 'invalid-token',
+                'new_password': 'BrandNewPass456!',
+                'new_password_confirm': 'BrandNewPass456!',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 @override_settings(

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Shield, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -120,9 +120,9 @@ const LoginPage = () => {
                 />
                 <span className="text-gray-400">Recordarme</span>
               </label>
-              <a href="#" className="text-primary-400 hover:text-primary-300 transition-colors">
+              <Link to="/forgot-password" className="text-primary-400 hover:text-primary-300 transition-colors">
                 ¿Olvidaste tu contraseña?
-              </a>
+              </Link>
             </div>
 
             {/* Submit button */}

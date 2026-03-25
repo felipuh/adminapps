@@ -10,6 +10,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { authService } from '../services/api';
 import toast from 'react-hot-toast';
 
 // Tab Component
@@ -30,7 +31,7 @@ const Tab = ({ active, onClick, icon: Icon, children }) => (
 );
 
 // Profile Settings
-const ProfileSettings = ({ user }) => {
+const ProfileSettings = ({ user, onSave }) => {
   const [formData, setFormData] = useState({
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
@@ -43,9 +44,12 @@ const ProfileSettings = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    toast.success('Perfil actualizado correctamente');
+    const result = await onSave(formData);
+    if (result.success) {
+      toast.success('Perfil actualizado correctamente');
+    } else {
+      toast.error(result.error || 'No se pudo actualizar el perfil');
+    }
     setLoading(false);
   };
 
@@ -154,6 +158,19 @@ const SecuritySettings = ({ changePassword, mustChangePassword, securityAlert })
     confirm: false,
   });
   const [loading, setLoading] = useState(false);
+  const [sessions, setSessions] = useState([]);
+
+  useEffect(() => {
+    const loadSessions = async () => {
+      try {
+        const data = await authService.getMySessions();
+        setSessions(Array.isArray(data) ? data : []);
+      } catch (error) {
+        setSessions([]);
+      }
+    };
+    loadSessions();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -270,13 +287,20 @@ const SecuritySettings = ({ changePassword, mustChangePassword, securityAlert })
       <div className="pt-6 border-t border-gray-700/50">
         <h3 className="font-semibold text-gray-200 mb-4">Sesiones Activas</h3>
         <div className="space-y-3">
-          <div className="flex items-center justify-between p-4 bg-dark-400/30 rounded-lg">
-            <div>
-              <p className="text-gray-200">Este dispositivo</p>
-              <p className="text-sm text-gray-500">Chrome en Windows • IP: 192.168.1.100</p>
+          {sessions.length === 0 && (
+            <div className="p-4 bg-dark-400/30 rounded-lg text-sm text-gray-500">
+              No hay sesiones activas adicionales para mostrar.
             </div>
-            <span className="badge-success">Actual</span>
-          </div>
+          )}
+          {sessions.map((session, index) => (
+            <div key={session.id} className="flex items-center justify-between p-4 bg-dark-400/30 rounded-lg">
+              <div>
+                <p className="text-gray-200">{session.browser || 'Navegador desconocido'} en {session.os || 'SO desconocido'}</p>
+                <p className="text-sm text-gray-500">{session.ip_address || 'IP no disponible'} • {session.device_type || 'dispositivo'}</p>
+              </div>
+              {index === 0 ? <span className="badge-success">Actual</span> : <span className="badge-neutral">Activa</span>}
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -284,18 +308,38 @@ const SecuritySettings = ({ changePassword, mustChangePassword, securityAlert })
 };
 
 // Notification Settings
-const NotificationSettings = () => {
+const NotificationSettings = ({ user, onSave }) => {
   const [settings, setSettings] = useState({
-    email_notifications: true,
-    push_notifications: true,
+    email_notifications: Boolean(user?.email_notifications),
+    push_notifications: Boolean(user?.push_notifications),
     notify_risk_critical: true,
     notify_risk_high: true,
     notify_objective_deadline: true,
     notify_document_expiry: true,
   });
 
-  const handleToggle = (key) => {
-    setSettings({ ...settings, [key]: !settings[key] });
+  useEffect(() => {
+    setSettings((prev) => ({
+      ...prev,
+      email_notifications: Boolean(user?.email_notifications),
+      push_notifications: Boolean(user?.push_notifications),
+    }));
+  }, [user]);
+
+  const handleToggle = async (key) => {
+    const nextValue = !settings[key];
+    const updated = { ...settings, [key]: nextValue };
+    setSettings(updated);
+
+    if (key === 'email_notifications' || key === 'push_notifications') {
+      const result = await onSave({ [key]: nextValue });
+      if (!result.success) {
+        setSettings(settings);
+        toast.error(result.error || 'No se pudo guardar la configuración');
+        return;
+      }
+    }
+
     toast.success('Configuración actualizada');
   };
 
@@ -387,9 +431,36 @@ const NotificationSettings = () => {
 };
 
 // Appearance Settings
-const AppearanceSettings = () => {
-  const [theme, setTheme] = useState('dark');
-  const [language, setLanguage] = useState('es');
+const AppearanceSettings = ({ user, onSave }) => {
+  const [theme, setTheme] = useState(user?.theme || 'dark');
+  const [language, setLanguage] = useState(user?.language || 'es');
+
+  useEffect(() => {
+    setTheme(user?.theme || 'dark');
+    setLanguage(user?.language || 'es');
+  }, [user]);
+
+  const saveTheme = async (nextTheme) => {
+    setTheme(nextTheme);
+    const result = await onSave({ theme: nextTheme });
+    if (!result.success) {
+      setTheme(user?.theme || 'dark');
+      toast.error(result.error || 'No se pudo guardar el tema');
+      return;
+    }
+    toast.success('Tema actualizado');
+  };
+
+  const saveLanguage = async (nextLanguage) => {
+    setLanguage(nextLanguage);
+    const result = await onSave({ language: nextLanguage });
+    if (!result.success) {
+      setLanguage(user?.language || 'es');
+      toast.error(result.error || 'No se pudo guardar el idioma');
+      return;
+    }
+    toast.success('Idioma actualizado');
+  };
 
   return (
     <div className="space-y-6">
@@ -404,7 +475,7 @@ const AppearanceSettings = () => {
           {['light', 'dark', 'system'].map((t) => (
             <button
               key={t}
-              onClick={() => setTheme(t)}
+              onClick={() => saveTheme(t)}
               className={`
                 p-4 rounded-lg border-2 transition-colors
                 ${theme === t 
@@ -429,7 +500,7 @@ const AppearanceSettings = () => {
         <label className="block text-sm font-medium text-gray-400 mb-2">Idioma</label>
         <select
           value={language}
-          onChange={(e) => setLanguage(e.target.value)}
+          onChange={(e) => saveLanguage(e.target.value)}
           className="input-glass w-auto"
         >
           <option value="es">Español</option>
@@ -441,7 +512,7 @@ const AppearanceSettings = () => {
 };
 
 const SettingsPage = () => {
-  const { user, changePassword, mustChangePassword, securityAlert } = useAuth();
+  const { user, changePassword, updateProfile, mustChangePassword, securityAlert } = useAuth();
   const [activeTab, setActiveTab] = useState(mustChangePassword ? 'security' : 'profile');
 
   useEffect(() => {
@@ -492,7 +563,7 @@ const SettingsPage = () => {
         {/* Content */}
         <div className="lg:col-span-3">
           <div className="glass-card p-6">
-            {!mustChangePassword && activeTab === 'profile' && <ProfileSettings user={user} />}
+            {!mustChangePassword && activeTab === 'profile' && <ProfileSettings user={user} onSave={updateProfile} />}
             {activeTab === 'security' && (
               <SecuritySettings
                 changePassword={changePassword}
@@ -500,8 +571,8 @@ const SettingsPage = () => {
                 securityAlert={securityAlert}
               />
             )}
-            {!mustChangePassword && activeTab === 'notifications' && <NotificationSettings />}
-            {!mustChangePassword && activeTab === 'appearance' && <AppearanceSettings />}
+            {!mustChangePassword && activeTab === 'notifications' && <NotificationSettings user={user} onSave={updateProfile} />}
+            {!mustChangePassword && activeTab === 'appearance' && <AppearanceSettings user={user} onSave={updateProfile} />}
           </div>
         </div>
       </div>
