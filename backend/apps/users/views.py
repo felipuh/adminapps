@@ -527,17 +527,21 @@ class PasswordResetRequestView(APIView):
             frontend_base = getattr(settings, 'FRONTEND_BASE_URL', 'http://localhost:3000').rstrip('/')
             reset_url = f"{frontend_base}/reset-password?uid={uid}&token={token}"
 
-            send_mail(
-                subject='[AdminApps] Restablecimiento de contraseña',
-                message=(
-                    'Recibimos una solicitud para restablecer tu contraseña.\n\n'
-                    f'Usa este enlace para continuar:\n{reset_url}\n\n'
-                    'Si no realizaste esta solicitud, puedes ignorar este correo.'
-                ),
-                from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@adminapps.local'),
-                recipient_list=[email],
-                fail_silently=False,
-            )
+            try:
+                send_mail(
+                    subject='[AdminApps] Restablecimiento de contraseña',
+                    message=(
+                        'Recibimos una solicitud para restablecer tu contraseña.\n\n'
+                        f'Usa este enlace para continuar:\n{reset_url}\n\n'
+                        'Si no realizaste esta solicitud, puedes ignorar este correo.'
+                    ),
+                    from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@adminapps.local'),
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+            except Exception:
+                # Keep response generic and avoid disclosing operational failures.
+                pass
 
             UserActivityLog.objects.create(
                 user=user,
