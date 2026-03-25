@@ -1,4 +1,6 @@
 import uuid
+from datetime import datetime, time as dt_time, timedelta
+from calendar import monthrange
 from decimal import Decimal
 
 from django.db import models
@@ -422,4 +424,72 @@ class SchedulerJobLog(models.Model):
 
     def __str__(self):
         return f'{self.job_id} @ {self.triggered_at:%Y-%m-%d %H:%M} — {self.status}'
+
+
+class RecurringReportSchedule(models.Model):
+    REPORT_TYPE_CHOICES = [
+        ('billing_summary', 'Billing Summary'),
+        ('collections_snapshot', 'Collections Snapshot'),
+    ]
+
+    FREQUENCY_CHOICES = [
+        ('daily', 'Diario'),
+        ('weekly', 'Semanal'),
+        ('monthly', 'Mensual'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=120)
+    report_type = models.CharField(max_length=40, choices=REPORT_TYPE_CHOICES, default='billing_summary')
+    frequency = models.CharField(max_length=20, choices=FREQUENCY_CHOICES, default='daily')
+    day_of_week = models.PositiveSmallIntegerField(null=True, blank=True)
+    day_of_month = models.PositiveSmallIntegerField(null=True, blank=True)
+    hour = models.PositiveSmallIntegerField(default=7)
+    minute = models.PositiveSmallIntegerField(default=0)
+    timezone = models.CharField(max_length=64, default='America/Costa_Rica')
+    recipients = models.JSONField(default=list, blank=True)
+    is_active = models.BooleanField(default=True)
+    last_run_at = models.DateTimeField(null=True, blank=True)
+    next_run_at = models.DateTimeField(null=True, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'billing_recurring_report_schedules'
+        ordering = ['name']
+
+    def __str__(self):
+        return f'{self.name} ({self.frequency})'
+
+    def compute_next_run(self, from_dt=None):
+        base_dt = from_dt or timezone.now()
+        base_dt = timezone.localtime(base_dt)
+        schedule_time = dt_time(hour=int(self.hour), minute=int(self.minute), second=0)
+
+        for offset in range(0, 370):
+            candidate_date = base_dt.date() + timedelta(days=offset)
+
+            if self.frequency == 'weekly':
+                target_weekday = int(self.day_of_week if self.day_of_week is not None else 0)
+                if candidate_date.weekday() != target_weekday:
+                    continue
+
+            if self.frequency == 'monthly':
+                month_last_day = monthrange(candidate_date.year, candidate_date.month)[1]
+                target_day = int(self.day_of_month if self.day_of_month is not None else 1)
+                target_day = min(max(target_day, 1), month_last_day)
+                if candidate_date.day != target_day:
+                    continue
+
+            candidate_dt = timezone.make_aware(
+                datetime.combine(candidate_date, schedule_time),
+                timezone.get_current_timezone(),
+            )
+
+            if candidate_dt > base_dt:
+                return candidate_dt
+
+        # Fallback safety to avoid returning None in edge cases.
+        return base_dt + timedelta(days=1)
 

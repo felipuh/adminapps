@@ -270,6 +270,19 @@ class UserActivityLogSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UserNotificationSerializer(serializers.Serializer):
+    """Serializer for in-app notification items built from activity logs."""
+
+    id = serializers.CharField()
+    title = serializers.CharField()
+    message = serializers.CharField()
+    module = serializers.CharField(allow_blank=True)
+    severity = serializers.CharField()
+    actor = serializers.CharField(allow_null=True)
+    is_read = serializers.BooleanField()
+    created_at = serializers.DateTimeField()
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     """Serializer para registro público"""
     email = serializers.EmailField(validators=[])

@@ -14,6 +14,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
+from django.db.models import Q
 
 from .models import User, UserOrganization, UserSession, UserActivityLog
 from .serializers import (
@@ -29,6 +30,7 @@ from .serializers import (
     UserOrganizationSerializer,
     UserSessionSerializer,
     UserActivityLogSerializer,
+    UserNotificationSerializer,
     RegisterSerializer,
 )
 from .permissions import IsSuperAdmin, IsAdmin, IsOrgAdmin, IsOwnerOrAdmin
@@ -89,6 +91,41 @@ def _log_password_reuse_rejected(user, request, flow):
             'reason_code': PASSWORD_REUSE_REASON_CODE,
         },
     )
+
+
+def _notification_severity_from_log(log):
+    severity = (log.new_values or {}).get('severity')
+    if severity in {'low', 'medium', 'high', 'critical'}:
+        return severity
+
+    if log.action in {'delete'}:
+        return 'high'
+    if log.action in {'password_change'}:
+        return 'medium'
+    return 'low'
+
+
+def _notification_title_from_log(log):
+    if log.description:
+        return log.description[:90]
+    if log.module:
+        return f"Actividad en {log.module}"
+    return 'Nueva actividad del sistema'
+
+
+def _get_read_notification_ids(user):
+    return {
+        str(item)
+        for item in ((user.metadata or {}).get('read_notification_ids') or [])
+        if item
+    }
+
+
+def _set_read_notification_ids(user, ids_set):
+    metadata = dict(user.metadata or {})
+    metadata['read_notification_ids'] = list(ids_set)[-2000:]
+    user.metadata = metadata
+    user.save(update_fields=['metadata'])
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -389,6 +426,83 @@ class UserActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
         if user.is_admin:
             return UserActivityLog.objects.all()
         return UserActivityLog.objects.filter(organization=user.organization)
+
+
+class UserNotificationViewSet(viewsets.ViewSet):
+    """In-app notification center built from activity and alert logs."""
+
+    permission_classes = [IsAuthenticated]
+
+    def _base_queryset(self, request):
+        queryset = UserActivityLog.objects.select_related('user', 'organization').filter(
+            Q(module='notifications') | Q(module='billing') | Q(module='users') | Q(module='subscriptions')
+        )
+        if request.user.is_admin:
+            return queryset
+        return queryset.filter(organization=request.user.organization)
+
+    def list(self, request):
+        unread_only = str(request.query_params.get('unread', 'false')).lower() == 'true'
+        limit = min(max(int(request.query_params.get('limit', 20)), 1), 100)
+
+        read_ids = _get_read_notification_ids(request.user)
+        queryset = self._base_queryset(request).order_by('-created_at')
+
+        if unread_only:
+            queryset = queryset.exclude(id__in=read_ids)
+
+        logs = list(queryset[:limit])
+        notifications = [
+            {
+                'id': str(log.id),
+                'title': _notification_title_from_log(log),
+                'message': log.description or 'Sin detalle adicional',
+                'module': log.module or '',
+                'severity': _notification_severity_from_log(log),
+                'actor': log.user.email if log.user else None,
+                'is_read': str(log.id) in read_ids,
+                'created_at': log.created_at,
+            }
+            for log in logs
+        ]
+
+        unread_count = self._base_queryset(request).exclude(id__in=read_ids).count()
+        serializer = UserNotificationSerializer(notifications, many=True)
+        return Response({
+            'notifications': serializer.data,
+            'unread_count': unread_count,
+            'total': self._base_queryset(request).count(),
+        })
+
+    @action(detail=False, methods=['get'])
+    def unread_count(self, request):
+        read_ids = _get_read_notification_ids(request.user)
+        count = self._base_queryset(request).exclude(id__in=read_ids).count()
+        return Response({'unread_count': count})
+
+    @action(detail=False, methods=['post'])
+    def mark_read(self, request):
+        notification_id = str(request.data.get('notification_id') or '').strip()
+        if not notification_id:
+            return Response({'error': 'notification_id es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+
+        exists = self._base_queryset(request).filter(id=notification_id).exists()
+        if not exists:
+            return Response({'error': 'Notificacion no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        read_ids = _get_read_notification_ids(request.user)
+        read_ids.add(notification_id)
+        _set_read_notification_ids(request.user, read_ids)
+        return Response({'detail': 'Notificacion marcada como leida'})
+
+    @action(detail=False, methods=['post'])
+    def mark_all_read(self, request):
+        all_ids = {
+            str(notification_id)
+            for notification_id in self._base_queryset(request).values_list('id', flat=True)
+        }
+        _set_read_notification_ids(request.user, all_ids)
+        return Response({'detail': 'Todas las notificaciones fueron marcadas como leidas'})
 
 
 class PasswordResetRequestView(APIView):

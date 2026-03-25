@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 _scheduler = None
 JOB_ID = 'billing_daily_batch'
+REPORTS_JOB_ID = 'billing_recurring_reports'
 
 
 def _run_billing_batch_job():
@@ -66,6 +67,17 @@ def _run_billing_batch_job():
     logger.info('[billing_scheduler] Daily batch complete: %d profile/product pairs processed.', len(profiles_run))
 
 
+def _run_recurring_reports_job():
+    from apps.billing.services import process_due_recurring_reports
+
+    result = process_due_recurring_reports(triggered_at=timezone.now())
+    logger.info(
+        '[billing_scheduler] Recurring reports run: processed=%s errors=%s',
+        result.get('processed', 0),
+        result.get('errors', 0),
+    )
+
+
 def start_scheduler():
     global _scheduler
     if _scheduler and _scheduler.running:
@@ -82,6 +94,15 @@ def start_scheduler():
         name='Billing Daily Batch',
         replace_existing=True,
         misfire_grace_time=3600,
+        coalesce=True,
+    )
+    _scheduler.add_job(
+        _run_recurring_reports_job,
+        trigger=CronTrigger(minute='*/15'),
+        id=REPORTS_JOB_ID,
+        name='Billing Recurring Reports',
+        replace_existing=True,
+        misfire_grace_time=300,
         coalesce=True,
     )
     _scheduler.start()

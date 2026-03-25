@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
-  AlertTriangle, BarChart3, Building2, CheckCircle2, Coins, Clock,
-  Download, ExternalLink, FileWarning, FileX2, Landmark, Plus, PlayCircle, Receipt,
-  RefreshCw, TrendingDown, Wallet, X,
+  AlertTriangle, BarChart3, Building2, Calendar, CheckCircle2, Coins, Clock,
+  Download, ExternalLink, FileWarning, FileX2, Landmark, Mail, Plus, PlayCircle, Receipt,
+  RefreshCw, Send, TrendingDown, Users, Wallet, X,
 } from 'lucide-react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
@@ -78,6 +78,262 @@ const BatchModal = ({ fiscalProfiles, products, onClose, onSubmit, loading }) =>
             <PlayCircle className="h-4 w-4" />
             {loading ? 'Ejecutando...' : 'Ejecutar Batch'}
           </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DAYS_OF_WEEK_LABELS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+const ReportScheduleModal = ({ onClose, onSubmit, loading }) => {
+  const [form, setForm] = useState({
+    name: '',
+    report_type: 'billing_summary',
+    frequency: 'daily',
+    day_of_week: 1,
+    day_of_month: 1,
+    hour: 7,
+    minute: 0,
+    recipients: '',
+    is_active: true,
+  });
+
+  const canSubmit = form.name.trim() && form.recipients.trim() && !loading;
+
+  const submit = () => {
+    const recipients = form.recipients
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    onSubmit({
+      ...form,
+      recipients,
+      day_of_week: form.frequency === 'weekly' ? Number(form.day_of_week) : null,
+      day_of_month: form.frequency === 'monthly' ? Number(form.day_of_month) : null,
+      hour: Number(form.hour),
+      minute: Number(form.minute),
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div className="glass-card w-full max-w-lg overflow-hidden shadow-2xl">
+
+        {/* Header */}
+        <div className="flex items-start gap-4 px-6 pt-6 pb-5 border-b border-gray-700/50">
+          <div className="flex-shrink-0 p-2.5 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/25">
+            <Calendar className="h-5 w-5 text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-lg font-semibold text-gray-100">Nueva Programación</h2>
+            <p className="mt-0.5 text-sm text-gray-500">Envíos automáticos de reportes por email</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-gray-500 hover:text-gray-200 hover:bg-dark-300 transition-colors -mr-1 flex-shrink-0"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="px-6 py-5 space-y-5 max-h-[62vh] overflow-y-auto">
+
+          {/* Name */}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-gray-500">
+              Nombre del reporte
+            </label>
+            <input
+              className="input-glass w-full"
+              placeholder="Ej. Resumen financiero semanal"
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+            />
+          </div>
+
+          {/* Report type — card selector */}
+          <div>
+            <label className="mb-2 block text-xs font-medium tracking-wide uppercase text-gray-500">
+              Tipo de reporte
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { value: 'billing_summary', icon: Receipt, label: 'Resumen Billing', desc: 'Ingresos, facturas, KPIs' },
+                { value: 'collections_snapshot', icon: BarChart3, label: 'Snapshot Cobranza', desc: 'Cuentas pendientes' },
+              ].map(({ value, icon: Icon, label, desc }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, report_type: value }))}
+                  className={`p-3.5 rounded-xl border text-left transition-all ${
+                    form.report_type === value
+                      ? 'border-primary-500/60 bg-primary-500/10 text-primary-200'
+                      : 'border-gray-700/50 bg-dark-400/40 text-gray-400 hover:border-gray-600/70 hover:bg-dark-300/30'
+                  }`}
+                >
+                  <Icon className="h-5 w-5 mb-2 opacity-80" />
+                  <p className="text-sm font-medium">{label}</p>
+                  <p className="text-xs opacity-60 mt-0.5">{desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Frequency — pill buttons */}
+          <div>
+            <label className="mb-2 block text-xs font-medium tracking-wide uppercase text-gray-500">
+              Frecuencia
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { value: 'daily', label: 'Diaria' },
+                { value: 'weekly', label: 'Semanal' },
+                { value: 'monthly', label: 'Mensual' },
+              ].map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, frequency: value }))}
+                  className={`py-2.5 rounded-lg text-sm font-medium transition-all ${
+                    form.frequency === value
+                      ? 'bg-primary-500 text-white shadow-md shadow-primary-500/30'
+                      : 'bg-dark-400/50 text-gray-400 hover:bg-dark-300/60'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Weekday selector */}
+          {form.frequency === 'weekly' && (
+            <div>
+              <label className="mb-2 block text-xs font-medium tracking-wide uppercase text-gray-500">
+                Día de la semana
+              </label>
+              <div className="flex gap-1.5">
+                {DAYS_OF_WEEK_LABELS.map((day, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, day_of_week: i }))}
+                    className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
+                      Number(form.day_of_week) === i
+                        ? 'bg-primary-500 text-white shadow-sm shadow-primary-500/30'
+                        : 'bg-dark-400/50 text-gray-400 hover:bg-dark-300/60'
+                    }`}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Day of month */}
+          {form.frequency === 'monthly' && (
+            <div>
+              <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-gray-500">
+                Día del mes
+              </label>
+              <select
+                className="input-glass w-full"
+                value={form.day_of_month}
+                onChange={(e) => setForm((f) => ({ ...f, day_of_month: e.target.value }))}
+              >
+                {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                  <option key={d} value={d}>Día {d}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Time picker */}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-gray-500">
+              Hora de envío
+            </label>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+                <input
+                  type="number"
+                  min="0"
+                  max="23"
+                  className="input-glass w-full pl-9"
+                  placeholder="07"
+                  value={form.hour}
+                  onChange={(e) => setForm((f) => ({ ...f, hour: e.target.value }))}
+                />
+              </div>
+              <span className="text-xl text-gray-600 font-mono select-none pb-0.5">:</span>
+              <input
+                type="number"
+                min="0"
+                max="59"
+                className="input-glass flex-1"
+                placeholder="00"
+                value={form.minute}
+                onChange={(e) => setForm((f) => ({ ...f, minute: e.target.value }))}
+              />
+              <span className="text-xs text-gray-500 whitespace-nowrap pr-1">CR (UTC−6)</span>
+            </div>
+          </div>
+
+          {/* Recipients */}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-gray-500">
+              Destinatarios
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+              <input
+                type="text"
+                className="input-glass w-full pl-9"
+                placeholder="finance@empresa.com, cfo@empresa.com"
+                value={form.recipients}
+                onChange={(e) => setForm((f) => ({ ...f, recipients: e.target.value }))}
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-600">Separa múltiples correos con coma.</p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-gray-700/50 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setForm((f) => ({ ...f, is_active: !f.is_active }))}
+              className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors ${
+                form.is_active ? 'bg-primary-500' : 'bg-gray-600'
+              }`}
+            >
+              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
+                form.is_active ? 'translate-x-4' : 'translate-x-0.5'
+              }`} />
+            </button>
+            <span className="text-xs text-gray-400">
+              {form.is_active ? 'Activo al crear' : 'Inactivo al crear'}
+            </span>
+          </div>
+          <div className="flex gap-3">
+            <button type="button" onClick={onClose} className="btn-secondary text-sm">Cancelar</button>
+            <button
+              type="button"
+              onClick={submit}
+              disabled={!canSubmit}
+              className="btn-primary inline-flex items-center gap-2 text-sm"
+            >
+              <Send className="h-4 w-4" />
+              {loading ? 'Guardando…' : 'Crear programación'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -458,6 +714,10 @@ const FinancePage = () => {
   const [batchReport, setBatchReport] = useState(null);
   const [scheduler, setScheduler] = useState(null);
   const [triggeringScheduler, setTriggeringScheduler] = useState(false);
+  const [reportSchedules, setReportSchedules] = useState([]);
+  const [showReportScheduleModal, setShowReportScheduleModal] = useState(false);
+  const [creatingReportSchedule, setCreatingReportSchedule] = useState(false);
+  const [runningReportScheduleId, setRunningReportScheduleId] = useState(null);
   const [alerts, setAlerts] = useState([]);
   const [churnData, setChurnData] = useState(null);
   const [reconciliation, setReconciliation] = useState(null);
@@ -468,7 +728,7 @@ const FinancePage = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [summaryData, productData, organizationData, timelineData, receivableData, invoiceData, fpData, prodData, schedData, alertsData, churnData_, reconciliationData, dashboardData] = await Promise.all([
+      const [summaryData, productData, organizationData, timelineData, receivableData, invoiceData, fpData, prodData, schedData, reportSchedulesData, alertsData, churnData_, reconciliationData, dashboardData] = await Promise.all([
         billingService.getSummary(),
         billingService.getRevenueByProduct(),
         billingService.getRevenueByOrganization(),
@@ -478,6 +738,7 @@ const FinancePage = () => {
         billingService.getFiscalProfiles(),
         billingService.getProducts(),
         billingService.getSchedulerStatus().catch(() => null),
+        billingService.getReportSchedules().catch(() => []),
         billingService.getAlerts().catch(() => ({ alerts: [] })),
         billingService.getChurnAnalytics().catch(() => null),
         billingService.getReconciliationSummary().catch(() => null),
@@ -494,6 +755,7 @@ const FinancePage = () => {
       setFiscalProfiles(fpData);
       setProducts(prodData);
       if (schedData) setScheduler(schedData);
+      setReportSchedules(reportSchedulesData.results || reportSchedulesData || []);
       setAlerts((alertsData?.alerts || alertsData || []));
       setChurnData(churnData_);
       setReconciliation(reconciliationData);
@@ -568,6 +830,33 @@ const FinancePage = () => {
     }
   };
 
+  const createReportSchedule = async (payload) => {
+    try {
+      setCreatingReportSchedule(true);
+      await billingService.createReportSchedule(payload);
+      toast.success('Programación de reporte creada.');
+      setShowReportScheduleModal(false);
+      await loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'No se pudo crear la programación.');
+    } finally {
+      setCreatingReportSchedule(false);
+    }
+  };
+
+  const runReportScheduleNow = async (scheduleId) => {
+    try {
+      setRunningReportScheduleId(scheduleId);
+      await billingService.runReportScheduleNow(scheduleId);
+      toast.success('Reporte ejecutado y enviado por email.');
+      await loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'No se pudo ejecutar el reporte.');
+    } finally {
+      setRunningReportScheduleId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6 animate-fadeIn">
@@ -594,6 +883,13 @@ const FinancePage = () => {
           loading={runningBatch}
           onClose={() => setShowBatchModal(false)}
           onSubmit={runBatch}
+        />
+      )}
+      {showReportScheduleModal && (
+        <ReportScheduleModal
+          onClose={() => setShowReportScheduleModal(false)}
+          onSubmit={createReportSchedule}
+          loading={creatingReportSchedule}
         />
       )}
       {showRegisterPayment && (
@@ -1140,6 +1436,135 @@ const FinancePage = () => {
         ) : (
           <div className="rounded-xl border border-dashed border-gray-700/60 bg-dark-400/30 p-6 text-sm text-gray-500">
             Aún no hay ejecuciones de scheduler registradas.
+          </div>
+        )}
+      </div>
+
+      {/* Recurring Email Reports — professional panel */}
+      <div className="glass-card overflow-hidden">
+        <div className="px-6 pt-6 pb-5 border-b border-gray-700/40 flex flex-wrap items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 p-2.5 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-500 shadow-lg shadow-emerald-500/20">
+              <Mail className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-100">Reportes por Email</h2>
+              <p className="text-sm text-gray-500 mt-0.5">Programaciones automáticas recurrentes</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-5">
+            <div className="hidden sm:flex items-center gap-4 text-sm">
+              <span className="text-gray-500">
+                <span className="font-semibold text-gray-100">{reportSchedules.length}</span> total
+              </span>
+              <span className="text-gray-500">
+                <span className="font-semibold text-emerald-400">
+                  {reportSchedules.filter((s) => s.is_active).length}
+                </span>{' '}activas
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowReportScheduleModal(true)}
+              className="btn-primary inline-flex items-center gap-2 text-sm"
+            >
+              <Plus className="h-4 w-4" />
+              Nueva
+            </button>
+          </div>
+        </div>
+
+        {reportSchedules.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="table-glass">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                  <th>Frecuencia</th>
+                  <th>Destinatarios</th>
+                  <th>Próxima ejecución</th>
+                  <th>Estado</th>
+                  <th className="text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reportSchedules.map((schedule) => (
+                  <tr key={schedule.id}>
+                    <td>
+                      <p className="font-medium text-gray-200">{schedule.name}</p>
+                    </td>
+                    <td>
+                      <div className="flex items-center gap-1.5 text-sm text-gray-400">
+                        {schedule.report_type === 'billing_summary' ? (
+                          <><Receipt className="h-3.5 w-3.5 text-primary-400 flex-shrink-0" /><span>Billing</span></>
+                        ) : (
+                          <><BarChart3 className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0" /><span>Cobranza</span></>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        schedule.frequency === 'daily'
+                          ? 'bg-sky-500/10 text-sky-300'
+                          : schedule.frequency === 'weekly'
+                          ? 'bg-violet-500/10 text-violet-300'
+                          : 'bg-amber-500/10 text-amber-300'
+                      }`}>
+                        {schedule.frequency === 'daily' ? 'Diaria' : schedule.frequency === 'weekly' ? 'Semanal' : 'Mensual'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                        <Users className="h-3.5 w-3.5 flex-shrink-0" />
+                        <span>{schedule.recipients?.length ?? 0} correo{schedule.recipients?.length !== 1 ? 's' : ''}</span>
+                      </div>
+                    </td>
+                    <td className="text-xs text-gray-400">
+                      {schedule.next_run_at
+                        ? new Date(schedule.next_run_at).toLocaleString('es-CR')
+                        : '—'}
+                    </td>
+                    <td>
+                      <span className={schedule.is_active ? 'badge-success' : 'badge-neutral'}>
+                        {schedule.is_active ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </td>
+                    <td className="text-right">
+                      <button
+                        type="button"
+                        onClick={() => runReportScheduleNow(schedule.id)}
+                        disabled={runningReportScheduleId === schedule.id}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 transition-colors hover:bg-emerald-500/20 disabled:opacity-50"
+                      >
+                        <PlayCircle className="h-3.5 w-3.5" />
+                        {runningReportScheduleId === schedule.id ? 'Enviando…' : 'Ejecutar'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-4 py-16 px-6 text-center">
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-dark-300 to-dark-400/60 border border-gray-700/40">
+              <Mail className="h-9 w-9 text-gray-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-300">Sin programaciones todavía</p>
+              <p className="text-xs text-gray-500 mt-1 max-w-xs">
+                Crea tu primera programación para recibir reportes automáticos en tu bandeja.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowReportScheduleModal(true)}
+              className="btn-primary inline-flex items-center gap-2 text-sm mt-1"
+            >
+              <Plus className="h-4 w-4" />
+              Crear primera programación
+            </button>
           </div>
         )}
       </div>

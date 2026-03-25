@@ -16,6 +16,7 @@ import UsersPage from './pages/UsersPage';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 import SettingsPage from './pages/SettingsPage';
 import FinancePage from './pages/FinancePage';
+import NotificationsPage from './pages/NotificationsPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -92,6 +93,7 @@ function AppRoutes() {
         <Route path="users" element={<UsersPage />} />
         <Route path="subscriptions" element={<SubscriptionsPage />} />
         <Route path="finance" element={<FinancePage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
 

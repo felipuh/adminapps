@@ -196,6 +196,30 @@ export const userService = {
   },
 };
 
+export const notificationService = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/auth/notifications/', { params });
+    return response.data;
+  },
+
+  getUnreadCount: async () => {
+    const response = await api.get('/auth/notifications/unread_count/');
+    return response.data;
+  },
+
+  markRead: async (notificationId) => {
+    const response = await api.post('/auth/notifications/mark_read/', {
+      notification_id: notificationId,
+    });
+    return response.data;
+  },
+
+  markAllRead: async () => {
+    const response = await api.post('/auth/notifications/mark_all_read/', {});
+    return response.data;
+  },
+};
+
 // ========================================
 // Subscription Services
 // ========================================
@@ -413,6 +437,21 @@ export const billingService = {
 
   createCreditNote: async (invoiceId, reason) => {
     const response = await api.post(`/billing/invoices/${invoiceId}/credit_note/`, { reason });
+    return response.data;
+  },
+
+  getReportSchedules: async (params = {}) => {
+    const response = await api.get('/billing/reports/schedules/', { params });
+    return response.data;
+  },
+
+  createReportSchedule: async (data) => {
+    const response = await api.post('/billing/reports/schedules/', data);
+    return response.data;
+  },
+
+  runReportScheduleNow: async (scheduleId) => {
+    const response = await api.post(`/billing/reports/schedules/${scheduleId}/run_now/`, {});
     return response.data;
   },
 };

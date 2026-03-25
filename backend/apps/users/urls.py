@@ -10,6 +10,7 @@ from .views import (
     RegisterView,
     LogoutView,
     UserViewSet,
+    UserNotificationViewSet,
     UserOrganizationViewSet,
     UserActivityLogViewSet,
     PasswordResetRequestView,
@@ -18,6 +19,7 @@ from .views import (
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
+router.register(r'notifications', UserNotificationViewSet, basename='notification')
 router.register(r'memberships', UserOrganizationViewSet, basename='membership')
 router.register(r'activity-logs', UserActivityLogViewSet, basename='activity-log')
 

@@ -5,10 +5,20 @@ import logging
 import xml.etree.ElementTree as ET
 
 from django.db import transaction
+from django.core.mail import send_mail
+from django.conf import settings
+from django.db.models import Sum
 from django.utils import timezone
 
 from apps.organizations.models import Organization
-from .models import ElectronicInvoice, InvoiceLine, PaymentRecord, RevenueSnapshot
+from .models import (
+    ElectronicInvoice,
+    InvoiceLine,
+    PaymentRecord,
+    RecurringReportSchedule,
+    RevenueSnapshot,
+    SchedulerJobLog,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -765,4 +775,117 @@ def get_reconciliation_summary(*, date_from=None, date_to=None):
         'overdue_invoices': overdue_cnt,
         'overdue_amount': overdue_amt,
         'unmatched_invoices': unmatched_cnt,
+    }
+
+
+def build_recurring_report_payload(report_type='billing_summary'):
+    paid_qs = ElectronicInvoice.objects.filter(status='paid')
+    pending_qs = ElectronicInvoice.objects.filter(status__in=['pending', 'accepted'])
+    now_local = timezone.localtime(timezone.now())
+
+    payload = {
+        'generated_at': now_local.isoformat(),
+        'report_type': report_type,
+        'totals': {
+            'total_invoices': ElectronicInvoice.objects.count(),
+            'paid_invoices': paid_qs.count(),
+            'pending_invoices': pending_qs.count(),
+            'gross_revenue': str(paid_qs.aggregate(value=Sum('subtotal'))['value'] or Decimal('0.00')),
+            'net_revenue': str(paid_qs.aggregate(value=Sum('total'))['value'] or Decimal('0.00')),
+            'accounts_receivable': str(pending_qs.aggregate(value=Sum('total'))['value'] or Decimal('0.00')),
+        },
+    }
+
+    if report_type == 'collections_snapshot':
+        reconciliation = get_reconciliation_summary()
+        payload['collections'] = {k: str(v) if isinstance(v, Decimal) else v for k, v in reconciliation.items()}
+
+    return payload
+
+
+def send_recurring_report_email(*, schedule, payload):
+    recipients = schedule.recipients or []
+    subject = f"[Smart3AI Billing] {schedule.name}"
+    totals = payload.get('totals', {})
+    body = (
+        f"Reporte: {payload.get('report_type')}\n"
+        f"Generado: {payload.get('generated_at')}\n\n"
+        f"Facturas totales: {totals.get('total_invoices', 0)}\n"
+        f"Facturas pagadas: {totals.get('paid_invoices', 0)}\n"
+        f"Facturas pendientes: {totals.get('pending_invoices', 0)}\n"
+        f"Revenue neto: {totals.get('net_revenue', '0.00')}\n"
+        f"Cuentas por cobrar: {totals.get('accounts_receivable', '0.00')}\n"
+    )
+    if payload.get('collections'):
+        body += "\nConciliacion:\n"
+        for key, value in payload['collections'].items():
+            body += f"- {key}: {value}\n"
+
+    sent_count = send_mail(
+        subject=subject,
+        message=body,
+        from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@smart3ai.local'),
+        recipient_list=recipients,
+        fail_silently=False,
+    )
+    return sent_count
+
+
+def execute_recurring_report_schedule(schedule, *, run_time=None):
+    run_time = run_time or timezone.now()
+    payload = build_recurring_report_payload(schedule.report_type)
+    sent = send_recurring_report_email(schedule=schedule, payload=payload)
+
+    schedule.last_run_at = run_time
+    schedule.next_run_at = schedule.compute_next_run(from_dt=run_time)
+    schedule.save(update_fields=['last_run_at', 'next_run_at', 'updated_at'])
+
+    return {
+        'schedule_id': str(schedule.id),
+        'schedule_name': schedule.name,
+        'report_type': schedule.report_type,
+        'emails_sent': sent,
+        'next_run_at': schedule.next_run_at.isoformat() if schedule.next_run_at else None,
+    }
+
+
+def process_due_recurring_reports(*, triggered_at=None):
+    triggered_at = triggered_at or timezone.now()
+    due_schedules = RecurringReportSchedule.objects.filter(
+        is_active=True,
+        next_run_at__isnull=False,
+        next_run_at__lte=triggered_at,
+    ).order_by('next_run_at')
+
+    log = SchedulerJobLog.objects.create(
+        job_id='billing_recurring_reports',
+        triggered_at=triggered_at,
+        status='running',
+    )
+
+    if not due_schedules.exists():
+        log.status = 'skipped'
+        log.finished_at = timezone.now()
+        log.result_summary = {'reason': 'No due recurring report schedules.'}
+        log.save(update_fields=['status', 'finished_at', 'result_summary'])
+        return {'processed': 0, 'errors': 0, 'runs': []}
+
+    runs = []
+    errors = []
+    for schedule in due_schedules:
+        try:
+            runs.append(execute_recurring_report_schedule(schedule, run_time=triggered_at))
+        except Exception as exc:  # noqa: BLE001
+            logger.exception('[billing_reports_scheduler] Failed schedule=%s', schedule.id)
+            errors.append({'schedule_id': str(schedule.id), 'error': str(exc)})
+
+    log.status = 'error' if errors else 'success'
+    log.finished_at = timezone.now()
+    log.result_summary = {'runs': runs, 'errors': errors}
+    log.save(update_fields=['status', 'finished_at', 'result_summary'])
+
+    return {
+        'processed': len(runs),
+        'errors': len(errors),
+        'runs': runs,
     }

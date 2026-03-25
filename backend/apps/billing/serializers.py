@@ -7,6 +7,7 @@ from .models import (
     PaymentRecord,
     ProductCatalog,
     ProductPrice,
+    RecurringReportSchedule,
     RevenueSnapshot,
 )
 
@@ -312,3 +313,36 @@ class ProductDashboardSerializer(serializers.Serializer):
     pending_invoices = serializers.IntegerField()
     mrr = serializers.DecimalField(max_digits=14, decimal_places=2)
     arr = serializers.DecimalField(max_digits=14, decimal_places=2)
+
+
+class RecurringReportScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecurringReportSchedule
+        fields = '__all__'
+        read_only_fields = ['last_run_at', 'next_run_at', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        frequency = attrs.get('frequency', getattr(self.instance, 'frequency', 'daily'))
+        day_of_week = attrs.get('day_of_week', getattr(self.instance, 'day_of_week', None))
+        day_of_month = attrs.get('day_of_month', getattr(self.instance, 'day_of_month', None))
+        hour = attrs.get('hour', getattr(self.instance, 'hour', 7))
+        minute = attrs.get('minute', getattr(self.instance, 'minute', 0))
+        recipients = attrs.get('recipients', getattr(self.instance, 'recipients', []))
+
+        if not recipients:
+            raise serializers.ValidationError({'recipients': 'Debe indicar al menos un correo receptor.'})
+
+        if hour < 0 or hour > 23:
+            raise serializers.ValidationError({'hour': 'La hora debe estar entre 0 y 23.'})
+        if minute < 0 or minute > 59:
+            raise serializers.ValidationError({'minute': 'El minuto debe estar entre 0 y 59.'})
+
+        if frequency == 'weekly':
+            if day_of_week is None or day_of_week < 0 or day_of_week > 6:
+                raise serializers.ValidationError({'day_of_week': 'Para frecuencia semanal use un día entre 0 (lunes) y 6 (domingo).'})
+        elif frequency == 'monthly':
+            if day_of_month is None or day_of_month < 1 or day_of_month > 31:
+                raise serializers.ValidationError({'day_of_month': 'Para frecuencia mensual use un día entre 1 y 31.'})
+
+        return attrs

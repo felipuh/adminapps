@@ -16,6 +16,7 @@ from .views import (
     RevenueByOrganizationView,
     RevenueByProductView,
     RevenueTimelineView,
+    RecurringReportScheduleViewSet,
     RevenueSnapshotViewSet,
     SchedulerStatusView,
 )
@@ -27,6 +28,7 @@ router.register(r'prices', ProductPriceViewSet, basename='billing-price')
 router.register(r'invoices', ElectronicInvoiceViewSet, basename='billing-invoice')
 router.register(r'payments', PaymentRecordViewSet, basename='billing-payment')
 router.register(r'revenue-snapshots', RevenueSnapshotViewSet, basename='billing-revenue-snapshot')
+router.register(r'reports/schedules', RecurringReportScheduleViewSet, basename='billing-report-schedule')
 
 urlpatterns = [
     path('summary/', BillingSummaryView.as_view(), name='billing-summary'),

@@ -6,6 +6,7 @@ import {
   Users, 
   CreditCard, 
   BarChart3,
+  Bell,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -20,6 +21,7 @@ const navigation = [
   { name: 'Usuarios', href: '/users', icon: Users },
   { name: 'Suscripciones', href: '/subscriptions', icon: CreditCard },
   { name: 'Finanzas', href: '/finance', icon: BarChart3 },
+  { name: 'Notificaciones', href: '/notifications', icon: Bell },
   { name: 'Configuración', href: '/settings', icon: Settings },
 ];
 

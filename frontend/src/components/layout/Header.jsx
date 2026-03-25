@@ -10,13 +10,19 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { notificationService } from '../../services/api';
 
 const Header = ({ onMenuClick, sidebarOpen }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
   const dropdownRef = useRef(null);
+  const notificationsRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -24,10 +30,69 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setNotificationsOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const loadUnreadCount = async () => {
+      try {
+        const data = await notificationService.getUnreadCount();
+        setUnreadCount(data.unread_count || 0);
+      } catch (error) {
+        setUnreadCount(0);
+      }
+    };
+
+    loadUnreadCount();
+  }, []);
+
+  const loadNotifications = async () => {
+    setLoadingNotifications(true);
+    try {
+      const data = await notificationService.getAll({ limit: 8 });
+      setNotifications(data.notifications || []);
+      setUnreadCount(data.unread_count || 0);
+    } catch (error) {
+      setNotifications([]);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  const handleToggleNotifications = async () => {
+    const nextState = !notificationsOpen;
+    setNotificationsOpen(nextState);
+    if (nextState) {
+      await loadNotifications();
+    }
+  };
+
+  const handleMarkRead = async (notificationId) => {
+    try {
+      await notificationService.markRead(notificationId);
+      setNotifications((prev) => prev.map((item) => (
+        item.id === notificationId ? { ...item, is_read: true } : item
+      )));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (error) {
+      // Keep UI stable if API fails.
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationService.markAllRead();
+      setNotifications((prev) => prev.map((item) => ({ ...item, is_read: true })));
+      setUnreadCount(0);
+    } catch (error) {
+      // Keep UI stable if API fails.
+    }
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -78,14 +143,89 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
         {/* Right side */}
         <div className="flex items-center gap-2">
           {/* Notifications */}
-          <button className="
-            relative p-2 rounded-lg
-            text-gray-400 hover:text-gray-200 hover:bg-dark-300
-            transition-colors
-          ">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-primary-500 rounded-full" />
-          </button>
+          <div className="relative" ref={notificationsRef}>
+            <button
+              onClick={handleToggleNotifications}
+              className="
+                relative p-2 rounded-lg
+                text-gray-400 hover:text-gray-200 hover:bg-dark-300
+                transition-colors
+              "
+            >
+              <Bell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="
+                  absolute -top-1 -right-1 min-w-5 h-5 px-1
+                  bg-red-500 text-white text-[10px] font-semibold
+                  rounded-full flex items-center justify-center
+                ">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </button>
+
+            {notificationsOpen && (
+              <div className="
+                absolute right-0 mt-2 w-96 max-w-[90vw]
+                bg-dark-200 border border-gray-700/50 rounded-xl
+                shadow-xl shadow-black/30 overflow-hidden
+                animate-fadeIn
+              ">
+                <div className="p-3 border-b border-gray-700/50 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-100">Notificaciones</p>
+                    <p className="text-xs text-gray-500">{unreadCount} sin leer</p>
+                  </div>
+                  <button
+                    onClick={handleMarkAllRead}
+                    className="text-xs text-primary-300 hover:text-primary-200 transition-colors"
+                  >
+                    Marcar todas leídas
+                  </button>
+                </div>
+
+                <div className="max-h-96 overflow-y-auto">
+                  {loadingNotifications && (
+                    <div className="p-4 text-sm text-gray-400">Cargando notificaciones...</div>
+                  )}
+
+                  {!loadingNotifications && notifications.length === 0 && (
+                    <div className="p-4 text-sm text-gray-500">No hay notificaciones recientes.</div>
+                  )}
+
+                  {!loadingNotifications && notifications.map((notification) => (
+                    <button
+                      key={notification.id}
+                      onClick={() => handleMarkRead(notification.id)}
+                      className={`
+                        w-full text-left px-4 py-3 border-b border-gray-700/40 last:border-b-0
+                        hover:bg-dark-300/60 transition-colors
+                        ${notification.is_read ? 'opacity-70' : ''}
+                      `}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm text-gray-100 line-clamp-1">{notification.title}</p>
+                        {!notification.is_read && <span className="w-2 h-2 rounded-full bg-primary-400 mt-1.5" />}
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1 line-clamp-2">{notification.message}</p>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="p-3 border-t border-gray-700/50">
+                  <button
+                    onClick={() => {
+                      setNotificationsOpen(false);
+                      navigate('/notifications');
+                    }}
+                    className="w-full text-sm text-primary-300 hover:text-primary-200 transition-colors"
+                  >
+                    Ver historial completo
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* User dropdown */}
           <div className="relative" ref={dropdownRef}>

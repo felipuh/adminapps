@@ -15,18 +15,21 @@ from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.users.permissions import IsAdmin, IsSuperAdmin
+from apps.users.models import UserActivityLog
 from .models import (
     ElectronicInvoice,
     FiscalProfile,
     PaymentRecord,
     ProductCatalog,
     ProductPrice,
+    RecurringReportSchedule,
     RevenueSnapshot,
     SchedulerJobLog,
 )
 from .services import issue_invoice_for_organization, record_invoice_payment, run_billing_cycle_batch, run_subscription_billing_cycle
 from .services import prepare_invoice_for_hacienda, update_hacienda_status, poll_hacienda_status, generate_invoice_xml, create_credit_note_for_invoice
 from .services import register_pending_payment, confirm_payment_record, reject_payment_record, get_reconciliation_summary
+from .services import execute_recurring_report_schedule, process_due_recurring_reports
 from .serializers import (
     AccountsReceivableSerializer,
     BatchBillingReportSerializer,
@@ -48,9 +51,28 @@ from .serializers import (
     RevenueByProductSerializer,
     RevenueTimelineSerializer,
     RevenueSnapshotSerializer,
+    RecurringReportScheduleSerializer,
     RunBatchBillingCycleSerializer,
     RunSubscriptionBillingCycleSerializer,
 )
+
+
+def _create_notification_event(*, user, organization, action, description, severity='low', module='billing', payload=None):
+    """Persist an in-app notification event via shared activity log infrastructure."""
+    UserActivityLog.objects.create(
+        user=user,
+        organization=organization,
+        action=action,
+        module='notifications',
+        entity_type='BillingEvent',
+        entity_id=str(getattr(organization, 'id', '') or ''),
+        description=description,
+        new_values={
+            'severity': severity,
+            'source_module': module,
+            **(payload or {}),
+        },
+    )
 
 
 class BillingSummaryView(APIView):
@@ -320,6 +342,15 @@ class ElectronicInvoiceViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
         response_serializer = ElectronicInvoiceDetailSerializer(invoice)
+        _create_notification_event(
+            user=request.user,
+            organization=invoice.organization,
+            action='create',
+            description=f'Factura emitida: {invoice.invoice_number} ({invoice.organization.name})',
+            severity='medium',
+            module='billing',
+            payload={'event': 'invoice_issued', 'invoice_id': str(invoice.id)},
+        )
         return Response(response_serializer.data, status=201)
 
     @action(detail=False, methods=['post'])
@@ -362,6 +393,16 @@ class ElectronicInvoiceViewSet(viewsets.ReadOnlyModelViewSet):
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=400)
 
+        _create_notification_event(
+            user=request.user,
+            organization=invoice.organization,
+            action='update',
+            description=f'Factura pagada: {invoice.invoice_number} ({invoice.organization.name})',
+            severity='medium',
+            module='billing',
+            payload={'event': 'invoice_paid', 'invoice_id': str(invoice.id)},
+        )
+
         return Response(ElectronicInvoiceDetailSerializer(invoice).data)
 
     @action(detail=False, methods=['post'])
@@ -395,6 +436,20 @@ class ElectronicInvoiceViewSet(viewsets.ReadOnlyModelViewSet):
             organization_ids=serializer.validated_data.get('organization_ids') or None,
             issued_by=request.user,
             mark_paid=serializer.validated_data['mark_paid'],
+        )
+        report_errors = report.get('errors', []) if isinstance(report, dict) else []
+        _create_notification_event(
+            user=request.user,
+            organization=None,
+            action='create',
+            description='Ejecucion de batch de billing completada',
+            severity='high' if report_errors else 'low',
+            module='billing',
+            payload={
+                'event': 'billing_batch_run',
+                'processed': report.get('processed_count', 0) if isinstance(report, dict) else 0,
+                'errors': len(report_errors),
+            },
         )
         return Response(BatchBillingReportSerializer(report).data)
 
@@ -476,6 +531,20 @@ class ElectronicInvoiceViewSet(viewsets.ReadOnlyModelViewSet):
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=400)
 
+        _create_notification_event(
+            user=request.user,
+            organization=note.organization,
+            action='create',
+            description=f'Nota de credito emitida para {original_invoice.invoice_number}',
+            severity='high',
+            module='billing',
+            payload={
+                'event': 'credit_note_created',
+                'invoice_id': str(original_invoice.id),
+                'credit_note_id': str(note.id),
+            },
+        )
+
         return Response(ElectronicInvoiceDetailSerializer(note).data, status=201)
 
 
@@ -506,6 +575,16 @@ class PaymentRecordViewSet(viewsets.ReadOnlyModelViewSet):
             )
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=400)
+
+        _create_notification_event(
+            user=request.user,
+            organization=invoice.organization,
+            action='create',
+            description=f'Pago pendiente registrado para {invoice.invoice_number}',
+            severity='medium',
+            module='billing',
+            payload={'event': 'payment_pending_registered', 'payment_id': str(payment.id), 'invoice_id': str(invoice.id)},
+        )
         return Response(PaymentRecordSerializer(payment).data, status=201)
 
     @action(detail=True, methods=['post'])
@@ -516,6 +595,16 @@ class PaymentRecordViewSet(viewsets.ReadOnlyModelViewSet):
             invoice, payment, _ = confirm_payment_record(payment=payment, notes=notes)
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=400)
+
+        _create_notification_event(
+            user=request.user,
+            organization=invoice.organization,
+            action='update',
+            description=f'Pago confirmado para {invoice.invoice_number}',
+            severity='medium',
+            module='billing',
+            payload={'event': 'payment_confirmed', 'payment_id': str(payment.id), 'invoice_id': str(invoice.id)},
+        )
         return Response(PaymentRecordSerializer(payment).data)
 
     @action(detail=True, methods=['post'])
@@ -526,6 +615,17 @@ class PaymentRecordViewSet(viewsets.ReadOnlyModelViewSet):
             payment = reject_payment_record(payment=payment, notes=notes)
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=400)
+
+        invoice = payment.invoice
+        _create_notification_event(
+            user=request.user,
+            organization=invoice.organization if invoice else None,
+            action='update',
+            description=f'Pago rechazado para {invoice.invoice_number if invoice else "factura"}',
+            severity='high',
+            module='billing',
+            payload={'event': 'payment_rejected', 'payment_id': str(payment.id), 'invoice_id': str(invoice.id) if invoice else None},
+        )
         return Response(PaymentRecordSerializer(payment).data)
 
 
@@ -538,6 +638,42 @@ class RevenueSnapshotViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ['-snapshot_date']
 
 
+class RecurringReportScheduleViewSet(viewsets.ModelViewSet):
+    queryset = RecurringReportSchedule.objects.all()
+    serializer_class = RecurringReportScheduleSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['is_active', 'report_type', 'frequency']
+    ordering = ['name']
+
+    def perform_create(self, serializer):
+        schedule = serializer.save()
+        schedule.next_run_at = schedule.compute_next_run()
+        schedule.save(update_fields=['next_run_at', 'updated_at'])
+
+    def perform_update(self, serializer):
+        schedule = serializer.save()
+        schedule.next_run_at = schedule.compute_next_run(from_dt=timezone.now())
+        schedule.save(update_fields=['next_run_at', 'updated_at'])
+
+    @action(detail=True, methods=['post'])
+    def run_now(self, request, pk=None):
+        schedule = self.get_object()
+        try:
+            result = execute_recurring_report_schedule(schedule, run_time=timezone.now())
+        except Exception as exc:  # noqa: BLE001
+            return Response({'detail': str(exc)}, status=500)
+        return Response(result)
+
+    @action(detail=False, methods=['post'])
+    def run_due(self, request):
+        try:
+            result = process_due_recurring_reports(triggered_at=timezone.now())
+        except Exception as exc:  # noqa: BLE001
+            return Response({'detail': str(exc)}, status=500)
+        return Response(result)
+
+
 class SchedulerStatusView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
@@ -548,11 +684,14 @@ class SchedulerStatusView(APIView):
         scheduler = get_scheduler()
         running = bool(scheduler and scheduler.running)
         next_run = None
+        reports_next_run = None
         if running:
             jobs = scheduler.get_jobs()
             for job in jobs:
                 if job.id == 'billing_daily_batch' and job.next_run_time:
                     next_run = job.next_run_time.isoformat()
+                if job.id == 'billing_recurring_reports' and job.next_run_time:
+                    reports_next_run = job.next_run_time.isoformat()
 
         last_logs = list(
             SchedulerJobLog.objects.order_by('-triggered_at')[:20].values(
@@ -568,6 +707,7 @@ class SchedulerStatusView(APIView):
                 'minute': getattr(settings, 'BILLING_SCHEDULER_MINUTE', 0),
             },
             'next_run': next_run,
+            'reports_next_run': reports_next_run,
             'last_logs': last_logs,
         })
 
@@ -679,6 +819,16 @@ class BillingReconciliationView(APIView):
             )
         except ValueError as exc:
             return Response({'detail': str(exc)}, status=400)
+
+        _create_notification_event(
+            user=request.user,
+            organization=invoice.organization,
+            action='create',
+            description=f'Pago pendiente registrado desde conciliacion para {invoice.invoice_number}',
+            severity='medium',
+            module='billing',
+            payload={'event': 'reconciliation_payment_pending_registered', 'payment_id': str(payment.id), 'invoice_id': str(invoice.id)},
+        )
         return Response(PaymentRecordSerializer(payment).data, status=201)
 
 

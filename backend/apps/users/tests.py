@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.organizations.models import Organization
-from apps.users.models import User
+from apps.users.models import User, UserActivityLog
 
 
 @override_settings(
@@ -442,3 +442,78 @@ class OrganizationIsolationTests(APITestCase):
 
         # user_b belongs to org_b, invisible to org_admin_a → 404
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+@override_settings(
+    PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'],
+)
+class NotificationCenterTests(APITestCase):
+    def setUp(self):
+        self.org_a = Organization.objects.create(
+            code='ORG00031',
+            name='Org A Notifications',
+            email='orga-notify@example.com',
+        )
+        self.org_b = Organization.objects.create(
+            code='ORG00032',
+            name='Org B Notifications',
+            email='orgb-notify@example.com',
+        )
+
+        self.user_a = self._create_user('a@example.com', self.org_a, role='org_admin')
+        self.user_b = self._create_user('b@example.com', self.org_b, role='org_admin')
+
+        self.log_a = UserActivityLog.objects.create(
+            user=self.user_a,
+            organization=self.org_a,
+            action='update',
+            module='billing',
+            description='Factura pendiente de conciliacion',
+        )
+        UserActivityLog.objects.create(
+            user=self.user_b,
+            organization=self.org_b,
+            action='update',
+            module='billing',
+            description='Pago rechazado en otra organizacion',
+        )
+
+    def _create_user(self, email, organization, role='user'):
+        user = User.objects.create(
+            email=email,
+            first_name='Test',
+            last_name='User',
+            organization=organization,
+            role=role,
+            is_active=True,
+        )
+        user.set_password('Pass123!Pass!')
+        user.save(update_fields=['password'])
+        return user
+
+    def test_notifications_list_isolation_and_unread_count(self):
+        self.client.force_authenticate(user=self.user_a)
+
+        response = self.client.get('/api/auth/notifications/', format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['total'], 1)
+        self.assertEqual(response.data['unread_count'], 1)
+        self.assertEqual(response.data['notifications'][0]['id'], str(self.log_a.id))
+
+    def test_mark_read_and_mark_all_read(self):
+        self.client.force_authenticate(user=self.user_a)
+
+        mark_response = self.client.post(
+            '/api/auth/notifications/mark_read/',
+            {'notification_id': str(self.log_a.id)},
+            format='json',
+        )
+        self.assertEqual(mark_response.status_code, status.HTTP_200_OK)
+
+        unread_response = self.client.get('/api/auth/notifications/unread_count/', format='json')
+        self.assertEqual(unread_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(unread_response.data['unread_count'], 0)
+
+        mark_all_response = self.client.post('/api/auth/notifications/mark_all_read/', {}, format='json')
+        self.assertEqual(mark_all_response.status_code, status.HTTP_200_OK)

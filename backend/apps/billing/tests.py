@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.test import override_settings
 from django.utils import timezone
+from django.core import mail
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -11,11 +12,12 @@ from apps.billing.models import (
     InvoiceLine,
     ProductCatalog,
     ProductPrice,
+    RecurringReportSchedule,
     RevenueSnapshot,
 )
 from apps.organizations.models import Organization
 from apps.subscriptions.models import Plan, Subscription
-from apps.users.models import User
+from apps.users.models import User, UserActivityLog
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
@@ -337,6 +339,13 @@ class BillingModelAndApiTests(APITestCase):
         self.assertEqual(response.data['status'], 'confirmed')
         invoice.refresh_from_db()
         self.assertEqual(invoice.status, 'paid')
+        self.assertTrue(
+            UserActivityLog.objects.filter(
+                module='notifications',
+                organization=self.organization,
+                new_values__event='payment_confirmed',
+            ).exists()
+        )
 
     def test_payment_reject_action_via_api(self):
         from apps.billing.services import register_pending_payment
@@ -351,3 +360,94 @@ class BillingModelAndApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], 'failed')
+        self.assertTrue(
+            UserActivityLog.objects.filter(
+                module='notifications',
+                organization=self.organization,
+                new_values__event='payment_rejected',
+            ).exists()
+        )
+
+    def test_register_pending_action_via_api_creates_notification(self):
+        invoice = self._pending_invoice('140.00')
+
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.post(
+            '/api/billing/payments/register_pending/',
+            {
+                'invoice': str(invoice.id),
+                'method': 'sinpe',
+                'reference': 'SINPE-API-140',
+                'amount': '140.00',
+                'notes': 'Pendiente de verificacion',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            UserActivityLog.objects.filter(
+                module='notifications',
+                organization=self.organization,
+                new_values__event='payment_pending_registered',
+            ).exists()
+        )
+
+    def test_create_recurring_report_schedule_sets_next_run(self):
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.post(
+            '/api/billing/reports/schedules/',
+            {
+                'name': 'Reporte Diario Billing',
+                'report_type': 'billing_summary',
+                'frequency': 'daily',
+                'hour': 8,
+                'minute': 30,
+                'recipients': ['finance@example.com'],
+                'is_active': True,
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        schedule = RecurringReportSchedule.objects.get(id=response.data['id'])
+        self.assertIsNotNone(schedule.next_run_at)
+
+    def test_run_now_recurring_report_schedule_sends_email(self):
+        schedule = RecurringReportSchedule.objects.create(
+            name='Cobranza Semanal',
+            report_type='collections_snapshot',
+            frequency='weekly',
+            day_of_week=0,
+            hour=9,
+            minute=0,
+            recipients=['finance@example.com'],
+            is_active=True,
+            next_run_at=timezone.now(),
+        )
+
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.post(f'/api/billing/reports/schedules/{schedule.id}/run_now/', {}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('Cobranza Semanal', mail.outbox[0].subject)
+
+    def test_run_due_recurring_reports_processes_due_schedules(self):
+        RecurringReportSchedule.objects.create(
+            name='Reporte Due',
+            report_type='billing_summary',
+            frequency='daily',
+            hour=7,
+            minute=0,
+            recipients=['ops@example.com'],
+            is_active=True,
+            next_run_at=timezone.now() - timezone.timedelta(minutes=1),
+        )
+
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.post('/api/billing/reports/schedules/run_due/', {}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['processed'], 1)
+        self.assertEqual(len(mail.outbox), 1)
