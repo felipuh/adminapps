@@ -1,4 +1,0 @@
-2026-01-27T18:27:25: (node:21420) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/aplicacion/projects/adminapps/frontend/postcss.config.js?t=1769560045681 is not specified and it doesn't parse as CommonJS.
-2026-01-27T18:27:25: Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
-2026-01-27T18:27:25: To eliminate this warning, add "type": "module" to /home/aplicacion/projects/adminapps/frontend/package.json.
-2026-01-27T18:27:25: (Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,21 +1,5 @@
-backend/logs/adminapps.log
-backend/logs/gunicorn_access.log
-backend/logs/gunicorn_error.log
-frontend/logs/combined.log
-frontend/logs/out.log
-
-frontend/logs/out.log
-backend/logs/adminapps.log
-backend/logs/gunicorn_access.log
-frontend/logs/combined.log
-frontend/logs/combined.log
-frontend/logs/error.log
-frontend/logs/out.log
-backend/logs/adminapps.log
-backend/logs/gunicorn_access.log
-backend/logs/gunicorn_error.log
-frontend/logs/combined.log
-frontend/logs/out.log
+# Logs
+*.log
 
 # Python cache artifacts
 **/__pycache__/
