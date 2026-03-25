@@ -4,6 +4,7 @@ Sistema de Gestión de Organizaciones y Usuarios para ISO Smart
 """
 
 import os
+import sys
 from pathlib import Path
 from datetime import timedelta
 
@@ -91,6 +92,12 @@ DATABASES = {
         },
     }
 }
+
+if 'test' in sys.argv or os.environ.get('USE_SQLITE_FOR_TESTS', '').lower() == 'true':
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'test_default.sqlite3',
+    }
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
