@@ -432,6 +432,10 @@ class BillingModelAndApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn('Cobranza Semanal', mail.outbox[0].subject)
+        self.assertIn('Reporte:', mail.outbox[0].body)
+        self.assertTrue(mail.outbox[0].alternatives)
+        self.assertEqual(mail.outbox[0].alternatives[0][1], 'text/html')
+        self.assertIn('<html>', mail.outbox[0].alternatives[0][0])
 
     def test_run_due_recurring_reports_processes_due_schedules(self):
         RecurringReportSchedule.objects.create(

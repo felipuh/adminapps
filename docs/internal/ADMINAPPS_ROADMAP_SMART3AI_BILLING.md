@@ -134,7 +134,7 @@ La capa financiera debe nacer multi-producto. Aunque hoy solo exista ISO Smart, 
 ### Backend (45/45 tests ✅)
 - Modelos: FiscalProfile, ProductCatalog, ProductPrice, ElectronicInvoice, InvoiceLine, PaymentRecord, RevenueSnapshot
 - Migraciones: 0001_initial, 0002_fiscalprofile_credentials, 0003_paymentrecord_notes
-- Reportes recurrentes (MVP): RecurringReportSchedule + envio por email + ejecucion manual y programada
+- Reportes recurrentes (MVP): RecurringReportSchedule + envio por email (texto + HTML) + ejecucion manual y programada
 - Migraciones: 0001_initial, 0002_fiscalprofile_credentials, 0003_paymentrecord_notes, 0004_recurringreportschedule
 - Hacienda CR: OAuth2 token (sandbox+prod), submit_invoice, check_status, XAdES-EPES firma digital
 - Notas de crédito: create_credit_note_for_invoice, consecutivo NC, reversal de factura original
@@ -154,4 +154,5 @@ La capa financiera debe nacer multi-producto. Aunque hoy solo exista ISO Smart, 
 - Batch modal: ejecutar batch de cobro para perfil fiscal + producto
 - Scheduler panel: estado, próxima ejecución, log de ejecuciones, trigger manual
 - Scheduler de reportes: programacion desde FinancePage, listado de horarios y ejecucion manual por horario
+- Gestion de horarios desde UI: crear, editar, activar/desactivar y eliminar programaciones
 - api.jsx: todos los endpoints cubiertos (14 métodos billingService)

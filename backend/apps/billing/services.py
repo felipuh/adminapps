@@ -1,5 +1,6 @@
 from decimal import Decimal
 from calendar import monthrange
+from html import escape
 import json
 import logging
 import xml.etree.ElementTree as ET
@@ -803,6 +804,76 @@ def build_recurring_report_payload(report_type='billing_summary'):
     return payload
 
 
+def _render_recurring_report_html(*, schedule, payload):
+        totals = payload.get('totals', {})
+        report_type_label = 'Resumen de Billing' if payload.get('report_type') == 'billing_summary' else 'Snapshot de Cobranza'
+
+        summary_rows = [
+                ('Facturas totales', totals.get('total_invoices', 0)),
+                ('Facturas pagadas', totals.get('paid_invoices', 0)),
+                ('Facturas pendientes', totals.get('pending_invoices', 0)),
+                ('Revenue neto', totals.get('net_revenue', '0.00')),
+                ('Cuentas por cobrar', totals.get('accounts_receivable', '0.00')),
+        ]
+
+        rows_html = ''.join(
+                f"""
+                <tr>
+                    <td style=\"padding:8px 10px;border-bottom:1px solid #e5e7eb;color:#334155;font-size:13px;\">{escape(str(label))}</td>
+                    <td style=\"padding:8px 10px;border-bottom:1px solid #e5e7eb;color:#0f172a;font-size:13px;font-weight:600;text-align:right;\">{escape(str(value))}</td>
+                </tr>
+                """
+                for label, value in summary_rows
+        )
+
+        collections_html = ''
+        if payload.get('collections'):
+                collection_items = ''.join(
+                        f"<li style=\"margin-bottom:4px;\"><strong>{escape(str(k))}:</strong> {escape(str(v))}</li>"
+                        for k, v in payload['collections'].items()
+                )
+                collections_html = f"""
+                <div style=\"margin-top:20px;padding:14px;border:1px solid #e5e7eb;border-radius:10px;background:#f8fafc;\">
+                    <p style=\"margin:0 0 8px 0;font-size:14px;font-weight:700;color:#0f172a;\">Conciliacion</p>
+                    <ul style=\"margin:0;padding-left:18px;color:#334155;font-size:13px;\">{collection_items}</ul>
+                </div>
+                """
+
+        return f"""
+        <html>
+            <body style=\"margin:0;padding:24px;background:#f1f5f9;font-family:Segoe UI,Arial,sans-serif;color:#0f172a;\">
+                <div style=\"max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;\">
+                    <div style=\"padding:18px 22px;background:linear-gradient(135deg,#003f7d,#004990);color:#ffffff;\">
+                        <p style=\"margin:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.85;\">Smart3AI Billing</p>
+                        <h1 style=\"margin:6px 0 0 0;font-size:18px;line-height:1.25;\">{escape(schedule.name)}</h1>
+                    </div>
+
+                    <div style=\"padding:20px 22px;\">
+                        <p style=\"margin:0 0 12px 0;font-size:14px;color:#334155;\">
+                            <strong>Reporte:</strong> {escape(report_type_label)}<br/>
+                            <strong>Generado:</strong> {escape(str(payload.get('generated_at', '')))}
+                        </p>
+
+                        <table style=\"width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;\">
+                            <thead>
+                                <tr>
+                                    <th style=\"padding:10px;text-align:left;background:#f8fafc;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:.04em;\">Metrica</th>
+                                    <th style=\"padding:10px;text-align:right;background:#f8fafc;color:#475569;font-size:12px;text-transform:uppercase;letter-spacing:.04em;\">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rows_html}
+                            </tbody>
+                        </table>
+
+                        {collections_html}
+                    </div>
+                </div>
+            </body>
+        </html>
+        """
+
+
 def send_recurring_report_email(*, schedule, payload):
     recipients = schedule.recipients or []
     subject = f"[Smart3AI Billing] {schedule.name}"
@@ -821,9 +892,12 @@ def send_recurring_report_email(*, schedule, payload):
         for key, value in payload['collections'].items():
             body += f"- {key}: {value}\n"
 
+    html_message = _render_recurring_report_html(schedule=schedule, payload=payload)
+
     sent_count = send_mail(
         subject=subject,
         message=body,
+        html_message=html_message,
         from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@smart3ai.local'),
         recipient_list=recipients,
         fail_silently=False,

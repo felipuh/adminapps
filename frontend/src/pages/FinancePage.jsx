@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import {
   AlertTriangle, BarChart3, Building2, Calendar, CheckCircle2, Coins, Clock,
   Download, ExternalLink, FileWarning, FileX2, Landmark, Mail, Plus, PlayCircle, Receipt,
-  RefreshCw, Send, TrendingDown, Users, Wallet, X,
+  RefreshCw, Send, TrendingDown, Users, Wallet, X, PenSquare, Trash2,
 } from 'lucide-react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
@@ -86,7 +86,7 @@ const BatchModal = ({ fiscalProfiles, products, onClose, onSubmit, loading }) =>
 
 const DAYS_OF_WEEK_LABELS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-const ReportScheduleModal = ({ onClose, onSubmit, loading }) => {
+const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null }) => {
   const [form, setForm] = useState({
     name: '',
     report_type: 'billing_summary',
@@ -98,6 +98,37 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading }) => {
     recipients: '',
     is_active: true,
   });
+
+  const isEditMode = Boolean(initialData?.id);
+
+  useEffect(() => {
+    if (!initialData) {
+      setForm({
+        name: '',
+        report_type: 'billing_summary',
+        frequency: 'daily',
+        day_of_week: 1,
+        day_of_month: 1,
+        hour: 7,
+        minute: 0,
+        recipients: '',
+        is_active: true,
+      });
+      return;
+    }
+
+    setForm({
+      name: initialData.name || '',
+      report_type: initialData.report_type || 'billing_summary',
+      frequency: initialData.frequency || 'daily',
+      day_of_week: initialData.day_of_week ?? 1,
+      day_of_month: initialData.day_of_month ?? 1,
+      hour: initialData.hour ?? 7,
+      minute: initialData.minute ?? 0,
+      recipients: Array.isArray(initialData.recipients) ? initialData.recipients.join(', ') : '',
+      is_active: Boolean(initialData.is_active),
+    });
+  }, [initialData]);
 
   const canSubmit = form.name.trim() && form.recipients.trim() && !loading;
 
@@ -127,7 +158,9 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading }) => {
             <Calendar className="h-5 w-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-semibold text-gray-100">Nueva Programación</h2>
+            <h2 className="text-lg font-semibold text-gray-100">
+              {isEditMode ? 'Editar Programación' : 'Nueva Programación'}
+            </h2>
             <p className="mt-0.5 text-sm text-gray-500">Envíos automáticos de reportes por email</p>
           </div>
           <button
@@ -319,7 +352,7 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading }) => {
               }`} />
             </button>
             <span className="text-xs text-gray-400">
-              {form.is_active ? 'Activo al crear' : 'Inactivo al crear'}
+              {form.is_active ? 'Activo' : 'Inactivo'}
             </span>
           </div>
           <div className="flex gap-3">
@@ -331,7 +364,7 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading }) => {
               className="btn-primary inline-flex items-center gap-2 text-sm"
             >
               <Send className="h-4 w-4" />
-              {loading ? 'Guardando…' : 'Crear programación'}
+              {loading ? 'Guardando…' : isEditMode ? 'Guardar cambios' : 'Crear programación'}
             </button>
           </div>
         </div>
@@ -716,8 +749,11 @@ const FinancePage = () => {
   const [triggeringScheduler, setTriggeringScheduler] = useState(false);
   const [reportSchedules, setReportSchedules] = useState([]);
   const [showReportScheduleModal, setShowReportScheduleModal] = useState(false);
-  const [creatingReportSchedule, setCreatingReportSchedule] = useState(false);
+  const [editingReportSchedule, setEditingReportSchedule] = useState(null);
+  const [savingReportSchedule, setSavingReportSchedule] = useState(false);
   const [runningReportScheduleId, setRunningReportScheduleId] = useState(null);
+  const [togglingReportScheduleId, setTogglingReportScheduleId] = useState(null);
+  const [deletingReportScheduleId, setDeletingReportScheduleId] = useState(null);
   const [alerts, setAlerts] = useState([]);
   const [churnData, setChurnData] = useState(null);
   const [reconciliation, setReconciliation] = useState(null);
@@ -830,18 +866,34 @@ const FinancePage = () => {
     }
   };
 
-  const createReportSchedule = async (payload) => {
+  const saveReportSchedule = async (payload) => {
     try {
-      setCreatingReportSchedule(true);
-      await billingService.createReportSchedule(payload);
-      toast.success('Programación de reporte creada.');
+      setSavingReportSchedule(true);
+      if (editingReportSchedule?.id) {
+        await billingService.updateReportSchedule(editingReportSchedule.id, payload);
+        toast.success('Programación de reporte actualizada.');
+      } else {
+        await billingService.createReportSchedule(payload);
+        toast.success('Programación de reporte creada.');
+      }
       setShowReportScheduleModal(false);
+      setEditingReportSchedule(null);
       await loadData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'No se pudo crear la programación.');
+      toast.error(error.response?.data?.detail || 'No se pudo guardar la programación.');
     } finally {
-      setCreatingReportSchedule(false);
+      setSavingReportSchedule(false);
     }
+  };
+
+  const openCreateReportSchedule = () => {
+    setEditingReportSchedule(null);
+    setShowReportScheduleModal(true);
+  };
+
+  const openEditReportSchedule = (schedule) => {
+    setEditingReportSchedule(schedule);
+    setShowReportScheduleModal(true);
   };
 
   const runReportScheduleNow = async (scheduleId) => {
@@ -854,6 +906,37 @@ const FinancePage = () => {
       toast.error(error.response?.data?.detail || 'No se pudo ejecutar el reporte.');
     } finally {
       setRunningReportScheduleId(null);
+    }
+  };
+
+  const toggleReportSchedule = async (schedule) => {
+    try {
+      setTogglingReportScheduleId(schedule.id);
+      await billingService.updateReportSchedule(schedule.id, {
+        is_active: !schedule.is_active,
+      });
+      toast.success(`Programación ${!schedule.is_active ? 'activada' : 'desactivada'}.`);
+      await loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'No se pudo actualizar el estado.');
+    } finally {
+      setTogglingReportScheduleId(null);
+    }
+  };
+
+  const deleteReportSchedule = async (schedule) => {
+    const confirmed = window.confirm(`¿Eliminar la programación "${schedule.name}"?`);
+    if (!confirmed) return;
+
+    try {
+      setDeletingReportScheduleId(schedule.id);
+      await billingService.deleteReportSchedule(schedule.id);
+      toast.success('Programación eliminada.');
+      await loadData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'No se pudo eliminar la programación.');
+    } finally {
+      setDeletingReportScheduleId(null);
     }
   };
 
@@ -887,9 +970,13 @@ const FinancePage = () => {
       )}
       {showReportScheduleModal && (
         <ReportScheduleModal
-          onClose={() => setShowReportScheduleModal(false)}
-          onSubmit={createReportSchedule}
-          loading={creatingReportSchedule}
+          onClose={() => {
+            setShowReportScheduleModal(false);
+            setEditingReportSchedule(null);
+          }}
+          onSubmit={saveReportSchedule}
+          loading={savingReportSchedule}
+          initialData={editingReportSchedule}
         />
       )}
       {showRegisterPayment && (
@@ -1465,7 +1552,7 @@ const FinancePage = () => {
             </div>
             <button
               type="button"
-              onClick={() => setShowReportScheduleModal(true)}
+              onClick={openCreateReportSchedule}
               className="btn-primary inline-flex items-center gap-2 text-sm"
             >
               <Plus className="h-4 w-4" />
@@ -1485,7 +1572,7 @@ const FinancePage = () => {
                   <th>Destinatarios</th>
                   <th>Próxima ejecución</th>
                   <th>Estado</th>
-                  <th className="text-right">Acción</th>
+                  <th className="text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -1531,15 +1618,45 @@ const FinancePage = () => {
                       </span>
                     </td>
                     <td className="text-right">
-                      <button
-                        type="button"
-                        onClick={() => runReportScheduleNow(schedule.id)}
-                        disabled={runningReportScheduleId === schedule.id}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 transition-colors hover:bg-emerald-500/20 disabled:opacity-50"
-                      >
-                        <PlayCircle className="h-3.5 w-3.5" />
-                        {runningReportScheduleId === schedule.id ? 'Enviando…' : 'Ejecutar'}
-                      </button>
+                      <div className="inline-flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => runReportScheduleNow(schedule.id)}
+                          disabled={runningReportScheduleId === schedule.id}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-300 transition-colors hover:bg-emerald-500/20 disabled:opacity-50"
+                          title="Ejecutar ahora"
+                        >
+                          <PlayCircle className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openEditReportSchedule(schedule)}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-blue-500/10 px-2.5 py-1.5 text-xs font-medium text-blue-300 transition-colors hover:bg-blue-500/20"
+                          title="Editar"
+                        >
+                          <PenSquare className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => toggleReportSchedule(schedule)}
+                          disabled={togglingReportScheduleId === schedule.id}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-1.5 text-xs font-medium text-amber-300 transition-colors hover:bg-amber-500/20 disabled:opacity-50"
+                          title={schedule.is_active ? 'Desactivar' : 'Activar'}
+                        >
+                          {togglingReportScheduleId === schedule.id
+                            ? '…'
+                            : schedule.is_active ? 'Off' : 'On'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteReportSchedule(schedule)}
+                          disabled={deletingReportScheduleId === schedule.id}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/20 disabled:opacity-50"
+                          title="Eliminar"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -1559,7 +1676,7 @@ const FinancePage = () => {
             </div>
             <button
               type="button"
-              onClick={() => setShowReportScheduleModal(true)}
+              onClick={openCreateReportSchedule}
               className="btn-primary inline-flex items-center gap-2 text-sm mt-1"
             >
               <Plus className="h-4 w-4" />

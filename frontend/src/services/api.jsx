@@ -450,6 +450,16 @@ export const billingService = {
     return response.data;
   },
 
+  updateReportSchedule: async (scheduleId, data) => {
+    const response = await api.patch(`/billing/reports/schedules/${scheduleId}/`, data);
+    return response.data;
+  },
+
+  deleteReportSchedule: async (scheduleId) => {
+    const response = await api.delete(`/billing/reports/schedules/${scheduleId}/`);
+    return response.data;
+  },
+
   runReportScheduleNow: async (scheduleId) => {
     const response = await api.post(`/billing/reports/schedules/${scheduleId}/run_now/`, {});
     return response.data;
