@@ -166,7 +166,26 @@ class RevenueByOrganizationView(APIView):
             )
             .order_by('organization__name')
         )
-        return Response(RevenueByOrganizationSerializer(queryset, many=True).data)
+        owner_id = str(getattr(settings, 'BILLING_OWNER_ORG_ID', '') or '').strip()
+        owner_code = str(getattr(settings, 'BILLING_OWNER_ORG_CODE', '') or '').strip().lower()
+        owner_name = str(getattr(settings, 'BILLING_OWNER_ORG_NAME', '') or '').strip().lower()
+        payload = []
+        for item in queryset:
+            org_id = str(item.get('organization__id') or '').strip()
+            org_name = str(item.get('organization__name') or '').strip().lower()
+            billing_exempt = False
+            if getattr(settings, 'BILLING_OWNER_ORG_EXEMPT_ENABLED', True):
+                if owner_id and org_id == owner_id:
+                    billing_exempt = True
+                elif owner_name and org_name == owner_name:
+                    billing_exempt = True
+                elif owner_code:
+                    billing_exempt = RevenueSnapshot.objects.filter(
+                        organization_id=item['organization__id'],
+                        organization__code__iexact=owner_code,
+                    ).exists()
+            payload.append({**item, 'billing_exempt': billing_exempt})
+        return Response(RevenueByOrganizationSerializer(payload, many=True).data)
 
 
 class RevenueTimelineView(APIView):

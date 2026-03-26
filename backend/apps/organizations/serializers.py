@@ -1,8 +1,29 @@
 """
 Serializers for Organizations - Admin Apps
 """
+from django.conf import settings
 from rest_framework import serializers
 from .models import Organization, OrganizationSettings, OrganizationInvitation
+
+
+def _is_billing_exempt_owner_org(organization):
+    if not getattr(settings, 'BILLING_OWNER_ORG_EXEMPT_ENABLED', True):
+        return False
+
+    organization_id = str(organization.id)
+    configured_id = getattr(settings, 'BILLING_OWNER_ORG_ID', '').strip()
+    if configured_id and organization_id == configured_id:
+        return True
+
+    configured_code = getattr(settings, 'BILLING_OWNER_ORG_CODE', '').strip().lower()
+    if configured_code and (organization.code or '').strip().lower() == configured_code:
+        return True
+
+    configured_name = getattr(settings, 'BILLING_OWNER_ORG_NAME', '').strip().lower()
+    if configured_name and (organization.name or '').strip().lower() == configured_name:
+        return True
+
+    return False
 
 
 class OrganizationSettingsSerializer(serializers.ModelSerializer):
@@ -15,12 +36,16 @@ class OrganizationListSerializer(serializers.ModelSerializer):
     """Serializer ligero para listados"""
     users_count = serializers.ReadOnlyField()
     subscription_name = serializers.CharField(source='subscription.plan.name', read_only=True, default=None)
+    billing_exempt = serializers.SerializerMethodField()
+
+    def get_billing_exempt(self, obj):
+        return _is_billing_exempt_owner_org(obj)
     
     class Meta:
         model = Organization
         fields = [
             'id', 'code', 'name', 'email', 'industry', 'size',
-            'status', 'users_count', 'max_users', 'subscription_name',
+            'status', 'users_count', 'max_users', 'subscription_name', 'billing_exempt',
             'created_at'
         ]
 
@@ -33,6 +58,10 @@ class OrganizationDetailSerializer(serializers.ModelSerializer):
     trial_expired = serializers.ReadOnlyField()
     subscription_expired = serializers.ReadOnlyField()
     subscription_name = serializers.CharField(source='subscription.plan.name', read_only=True, default=None)
+    billing_exempt = serializers.SerializerMethodField()
+
+    def get_billing_exempt(self, obj):
+        return _is_billing_exempt_owner_org(obj)
     
     class Meta:
         model = Organization

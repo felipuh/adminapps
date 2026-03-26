@@ -11,7 +11,8 @@ import {
   Clock,
   XCircle,
   ExternalLink,
-  FileText
+  FileText,
+  BadgeCheck
 } from 'lucide-react';
 import { subscriptionService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -42,7 +43,15 @@ const SubscriptionCard = ({ subscription, t, isEnglish, onView, onManage }) => {
             <Building2 className="w-6 h-6 text-primary-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-100">{orgName}</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="font-semibold text-gray-100">{orgName}</h3>
+              {subscription.billing_exempt && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                  <BadgeCheck className="h-3 w-3" />
+                  {t.billingExempt}
+                </span>
+              )}
+            </div>
             <p className="text-sm text-gray-500">{subscription.plan_name}</p>
           </div>
         </div>
@@ -58,7 +67,7 @@ const SubscriptionCard = ({ subscription, t, isEnglish, onView, onManage }) => {
             <DollarSign className="w-4 h-4" />
             <span>{t.amount}</span>
           </div>
-          <p className="text-lg font-semibold text-gray-100">${Number(amount).toLocaleString()}/{isEnglish ? 'month' : 'mes'}</p>
+          <p className="text-lg font-semibold text-gray-100">{subscription.billing_exempt ? t.exemptAmount : `$${Number(amount).toLocaleString()}/${isEnglish ? 'month' : 'mes'}`}</p>
         </div>
         <div className="p-3 bg-dark-400/30 rounded-lg">
           <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
@@ -181,20 +190,33 @@ const SubscriptionDetailModal = ({
         <div className="border-b border-gray-700/50 px-5 py-4 md:px-6 md:py-5 flex items-center justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-primary-300">{isEnglish ? 'Subscription detail' : 'Detalle de suscripcion'}</p>
-            <h2 className="mt-1 text-xl font-semibold text-gray-100">{details.plan?.name || details.plan_name || '-'}</h2>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <h2 className="text-xl font-semibold text-gray-100">{details.plan?.name || details.plan_name || '-'}</h2>
+              {details.billing_exempt && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                  <BadgeCheck className="h-3 w-3" />
+                  {t.billingExempt}
+                </span>
+              )}
+            </div>
+            {details.organization_name && <p className="mt-1 text-sm text-gray-500">{details.organization_name}</p>}
           </div>
           <button onClick={onClose} className="rounded-lg p-2 text-gray-400 hover:bg-dark-300 hover:text-gray-200 transition-colors">✕</button>
         </div>
 
         <div className="px-5 py-5 md:px-6 md:py-6 space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4">
               <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">{isEnglish ? 'Status' : 'Estado'}</p>
               <p className="text-base font-semibold text-gray-100">{details.status}</p>
             </div>
             <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4">
               <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">{t.nextPayment}</p>
-              <p className="text-base font-semibold text-gray-100">{nextDate ? new Date(nextDate).toLocaleDateString(isEnglish ? 'en-US' : 'es-MX') : '-'}</p>
+              <p className="text-base font-semibold text-gray-100">{details.billing_exempt ? t.noChargeCycle : (nextDate ? new Date(nextDate).toLocaleDateString(isEnglish ? 'en-US' : 'es-MX') : '-')}</p>
+            </div>
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4">
+              <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">{t.amount}</p>
+              <p className="text-base font-semibold text-gray-100">{details.billing_exempt ? t.exemptAmount : `$${Number(details.amount || details.plan?.price || 0).toLocaleString()}`}</p>
             </div>
           </div>
 
@@ -222,27 +244,33 @@ const SubscriptionDetailModal = ({
 
           <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4 space-y-3">
             <p className="text-xs uppercase tracking-widest text-gray-500">{t.changePlan}</p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <select
-                value={selectedPlanId}
-                onChange={(e) => setSelectedPlanId(e.target.value)}
-                className="input-glass flex-1"
-              >
-                <option value="">{t.selectPlan}</option>
-                {plans.map((plan) => (
-                  <option key={plan.id} value={plan.id}>
-                    {plan.name} - ${Number(plan.price || 0).toLocaleString()}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={handleChangePlan}
-                disabled={actionLoading || !selectedPlanId || selectedPlanId === currentPlanId}
-                className="btn-secondary disabled:opacity-60"
-              >
-                {actionLoading ? t.processing : t.updatePlan}
-              </button>
-            </div>
+            {details.billing_exempt ? (
+              <div className="rounded-lg border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
+                {t.ownerExemptNote}
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-3">
+                <select
+                  value={selectedPlanId}
+                  onChange={(e) => setSelectedPlanId(e.target.value)}
+                  className="input-glass flex-1"
+                >
+                  <option value="">{t.selectPlan}</option>
+                  {plans.map((plan) => (
+                    <option key={plan.id} value={plan.id}>
+                      {plan.name} - ${Number(plan.price || 0).toLocaleString()}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleChangePlan}
+                  disabled={actionLoading || !selectedPlanId || selectedPlanId === currentPlanId}
+                  className="btn-secondary disabled:opacity-60"
+                >
+                  {actionLoading ? t.processing : t.updatePlan}
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4 space-y-3">
@@ -257,9 +285,17 @@ const SubscriptionDetailModal = ({
                   <div key={invoice.id} className="flex items-center justify-between rounded-lg border border-gray-700/40 px-3 py-2">
                     <div>
                       <p className="text-sm text-gray-200">{invoice.number || `INV-${String(invoice.id).slice(0, 8)}`}</p>
-                      <span className={`inline-flex items-center px-2 py-0.5 mt-1 rounded-full border text-[11px] ${getInvoiceStatusBadge(invoice.status)}`}>
-                        {invoice.status || '-'}
-                      </span>
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[11px] ${getInvoiceStatusBadge(invoice.status)}`}>
+                          {invoice.status || '-'}
+                        </span>
+                        {invoice.billing_exempt && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                            <BadgeCheck className="h-3 w-3" />
+                            {t.billingExempt}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div className="text-right flex items-center gap-3">
                       <button
@@ -379,6 +415,10 @@ const SubscriptionsPage = () => {
     markPaidOk: isEnglish ? 'Invoice marked as paid.' : 'Factura marcada como pagada.',
     markPaidError: isEnglish ? 'Could not mark invoice as paid.' : 'No se pudo marcar la factura como pagada.',
     paymentRefPlaceholder: isEnglish ? 'Payment reference (optional)' : 'Referencia de pago (opcional)',
+    billingExempt: isEnglish ? 'Billing exempt' : 'Exenta de cobro',
+    exemptAmount: isEnglish ? 'Exempt' : 'Exento',
+    noChargeCycle: isEnglish ? 'No charge cycle' : 'Sin ciclo de cobro',
+    ownerExemptNote: isEnglish ? 'This owner organization is exempt from billing, so manual plan changes and charge cycles do not apply.' : 'Esta organizacion dueña esta exenta de cobro, por lo que no aplican cambios manuales de plan ni ciclos de cobro.',
   };
   const [subscriptions, setSubscriptions] = useState([]);
   const [plans, setPlans] = useState([]);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Building2, 
+  BadgeCheck,
   Plus, 
   Search, 
   Filter,
@@ -42,7 +43,15 @@ const OrganizationRow = ({ org, onView, onEdit, onDelete, t }) => {
           </div>
           <div>
             <p className="font-medium text-gray-200">{org.name}</p>
-            <p className="text-xs text-gray-500">{org.code}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <p className="text-xs text-gray-500">{org.code}</p>
+              {org.billing_exempt && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                  <BadgeCheck className="h-3 w-3" />
+                  {t.billingExempt}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </td>
@@ -356,6 +365,7 @@ const OrganizationsPage = () => {
     organization: isEnglish ? 'Organization' : 'Organizacion',
     users: isEnglish ? 'Users' : 'Usuarios',
     status: isEnglish ? 'Status' : 'Estado',
+    billingExempt: isEnglish ? 'Billing exempt' : 'Exenta de cobro',
   };
   const navigate = useNavigate();
   const [organizations, setOrganizations] = useState([]);

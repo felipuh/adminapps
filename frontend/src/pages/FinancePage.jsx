@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
-  AlertTriangle, BarChart3, Building2, Calendar, CheckCircle2, Coins, Clock,
+  AlertTriangle, BadgeCheck, BarChart3, Building2, Calendar, CheckCircle2, Coins, Clock,
   Download, ExternalLink, FileWarning, FileX2, Landmark, Mail, Plus, PlayCircle, Receipt,
   RefreshCw, Send, TrendingDown, Users, Wallet, X, PenSquare, Trash2,
 } from 'lucide-react';
@@ -932,6 +932,9 @@ const FinancePage = () => {
     errors: isEnglish ? 'Errors' : 'Errores',
     runDate: isEnglish ? 'Run date' : 'Fecha de ejecucion',
     latestProcessed: isEnglish ? 'Latest processed' : 'Ultimas procesadas',
+    billingExempt: isEnglish ? 'Billing exempt' : 'Exenta de cobro',
+    exemptAmount: isEnglish ? 'Exempt' : 'Exento',
+    exemptSkippedReason: isEnglish ? 'Owner organization exempt from billing' : 'Organizacion dueña exenta de cobro',
     noBatchYet: isEnglish ? 'No batch has been run from this screen yet. Once you run one, the latest operational report will appear here.' : 'Aun no se ha ejecutado un batch desde esta pantalla. Cuando lo corras, aqui quedara el ultimo reporte operativo.',
     productDashboardSubtitle: isEnglish ? 'MRR, ARR and subscriptions by catalog product' : 'MRR, ARR y suscripciones por producto del catalogo',
     product: isEnglish ? 'Product' : 'Producto',
@@ -1511,7 +1514,17 @@ const FinancePage = () => {
               <tbody>
                 {byOrganization.map((item) => (
                   <tr key={item.organization__id}>
-                    <td>{item.organization__name}</td>
+                    <td>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span>{item.organization__name}</span>
+                        {item.billing_exempt && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                            <BadgeCheck className="h-3 w-3" />
+                            {t.billingExempt}
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td>{formatMoney(item.net_revenue)}</td>
                     <td>{formatMoney(item.tax_collected)}</td>
                     <td>{item.invoices_issued}</td>
@@ -1592,8 +1605,18 @@ const FinancePage = () => {
                       {invoice.invoice_number}
                       <ExternalLink className="h-3 w-3 text-primary-400 opacity-60" />
                     </td>
-                    <td>{invoice.organization_name}</td>
-                    <td>{formatMoney(invoice.total)}</td>
+                    <td>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span>{invoice.organization_name}</span>
+                        {invoice.billing_exempt && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                            <BadgeCheck className="h-3 w-3" />
+                            {t.billingExempt}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td>{invoice.billing_exempt ? t.exemptAmount : formatMoney(invoice.total)}</td>
                     <td>
                       <span className={invoice.status === 'paid' ? 'badge-success' : invoice.status === 'accepted' ? 'badge-info' : invoice.status === 'reversed' ? 'badge-danger' : 'badge-warning'}>
                         {invoice.status}
@@ -1644,8 +1667,28 @@ const FinancePage = () => {
                 <div className="space-y-2">
                   {batchReport.processed.slice(0, 4).map((item) => (
                     <div key={item.invoice_id} className="flex items-center justify-between gap-4 text-gray-300">
-                      <span>{item.organization_name}</span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span>{item.organization_name}</span>
+                        {item.billing_exempt && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                            <BadgeCheck className="h-3 w-3" />
+                            {t.billingExempt}
+                          </span>
+                        )}
+                      </div>
                       <span className="text-primary-300">{item.invoice_number}</span>
+                    </div>
+                  ))}
+                  {batchReport.skipped?.slice(0, 4).map((item, index) => (
+                    <div key={`skipped-${item.organization_id || index}`} className="flex items-center justify-between gap-4 text-gray-400">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span>{item.organization_name}</span>
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                          <BadgeCheck className="h-3 w-3" />
+                          {t.billingExempt}
+                        </span>
+                      </div>
+                      <span className="text-xs text-amber-300">{item.reason === 'owner_billing_exempt' ? t.exemptSkippedReason : item.reason}</span>
                     </div>
                   ))}
                 </div>

@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from .models import (
@@ -10,6 +11,31 @@ from .models import (
     RecurringReportSchedule,
     RevenueSnapshot,
 )
+
+
+def _normalize_text(value):
+    return str(value or '').strip().lower()
+
+
+def _is_billing_exempt_owner_org(organization):
+    if not organization or not getattr(settings, 'BILLING_OWNER_ORG_EXEMPT_ENABLED', True):
+        return False
+
+    configured_id = str(getattr(settings, 'BILLING_OWNER_ORG_ID', '') or '').strip()
+    configured_code = _normalize_text(getattr(settings, 'BILLING_OWNER_ORG_CODE', ''))
+    configured_name = _normalize_text(getattr(settings, 'BILLING_OWNER_ORG_NAME', ''))
+
+    org_id = str(getattr(organization, 'id', '') or '').strip()
+    org_code = _normalize_text(getattr(organization, 'code', ''))
+    org_name = _normalize_text(getattr(organization, 'name', ''))
+
+    if configured_id and org_id == configured_id:
+        return True
+    if configured_code and org_code == configured_code:
+        return True
+    if configured_name and org_name == configured_name:
+        return True
+    return False
 
 
 class IssueInvoiceSerializer(serializers.Serializer):
@@ -177,12 +203,16 @@ class InvoiceLineSerializer(serializers.ModelSerializer):
 class ElectronicInvoiceListSerializer(serializers.ModelSerializer):
     organization_name = serializers.CharField(source='organization.name', read_only=True)
     product_name = serializers.CharField(source='product.name', read_only=True)
+    billing_exempt = serializers.SerializerMethodField()
+
+    def get_billing_exempt(self, obj):
+        return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))
 
     class Meta:
         model = ElectronicInvoice
         fields = [
             'id', 'invoice_number', 'organization_name', 'product_name',
-            'currency', 'total', 'status', 'hacienda_status', 'issued_at', 'due_date', 'paid_at'
+            'currency', 'total', 'status', 'hacienda_status', 'issued_at', 'due_date', 'paid_at', 'billing_exempt'
         ]
 
 
@@ -190,6 +220,10 @@ class ElectronicInvoiceDetailSerializer(serializers.ModelSerializer):
     lines = InvoiceLineSerializer(many=True, read_only=True)
     organization_name = serializers.CharField(source='organization.name', read_only=True)
     product_name = serializers.CharField(source='product.name', read_only=True)
+    billing_exempt = serializers.SerializerMethodField()
+
+    def get_billing_exempt(self, obj):
+        return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))
 
     class Meta:
         model = ElectronicInvoice
@@ -199,6 +233,10 @@ class ElectronicInvoiceDetailSerializer(serializers.ModelSerializer):
 class PaymentRecordSerializer(serializers.ModelSerializer):
     organization_name = serializers.CharField(source='organization.name', read_only=True)
     invoice_number = serializers.CharField(source='invoice.invoice_number', read_only=True)
+    billing_exempt = serializers.SerializerMethodField()
+
+    def get_billing_exempt(self, obj):
+        return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))
 
     class Meta:
         model = PaymentRecord
@@ -209,6 +247,10 @@ class RevenueSnapshotSerializer(serializers.ModelSerializer):
     product_code = serializers.CharField(source='product.code', read_only=True)
     product_name = serializers.CharField(source='product.name', read_only=True)
     organization_name = serializers.CharField(source='organization.name', read_only=True, default=None)
+    billing_exempt = serializers.SerializerMethodField()
+
+    def get_billing_exempt(self, obj):
+        return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))
 
     class Meta:
         model = RevenueSnapshot
@@ -258,6 +300,7 @@ class BillingSummarySerializer(serializers.Serializer):
 class RevenueByOrganizationSerializer(serializers.Serializer):
     organization__id = serializers.UUIDField()
     organization__name = serializers.CharField()
+    billing_exempt = serializers.BooleanField(required=False, default=False)
     gross_revenue = serializers.DecimalField(max_digits=14, decimal_places=2)
     net_revenue = serializers.DecimalField(max_digits=14, decimal_places=2)
     tax_collected = serializers.DecimalField(max_digits=14, decimal_places=2)

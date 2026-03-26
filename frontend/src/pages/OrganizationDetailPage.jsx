@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Building2, 
   ArrowLeft,
+  BadgeCheck,
   Users,
   Mail,
   Phone,
@@ -103,6 +104,7 @@ const OrganizationDetailPage = () => {
           size: 'medium',
           employees_count: 150,
           status: 'active',
+          billing_exempt: false,
           max_users: 20,
           max_documents: 500,
           max_storage_mb: 2048,
@@ -186,6 +188,12 @@ const OrganizationDetailPage = () => {
               <div className="flex items-center gap-3">
                 <h1 className="text-2xl font-bold text-gray-100">{organization.name}</h1>
                 <span className={statusColors[organization.status]}>{organization.status}</span>
+                {organization.billing_exempt && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300">
+                    <BadgeCheck className="h-3.5 w-3.5" />
+                    Exenta de cobro
+                  </span>
+                )}
               </div>
               <p className="text-gray-500">{organization.code}</p>
             </div>
@@ -239,6 +247,7 @@ const OrganizationDetailPage = () => {
             <div className="divide-y divide-gray-700/30">
               <InfoRow icon={FileText} label="Razón Social" value={organization.legal_name} />
               <InfoRow icon={Building2} label="Industria" value={organization.industry} />
+              <InfoRow icon={Shield} label="Facturación" value={organization.billing_exempt ? 'Exenta por organización dueña' : 'Facturación estándar'} />
               <InfoRow icon={Users} label="Empleados" value={organization.employees_count?.toString()} />
               <InfoRow icon={Calendar} label="Fecha de Registro" value={organization.created_at ? new Date(organization.created_at).toLocaleDateString('es-MX') : '-'} />
             </div>
@@ -389,9 +398,14 @@ const OrganizationDetailPage = () => {
             </div>
             <div className="p-4 bg-dark-400/30 rounded-lg">
               <p className="text-sm text-gray-500">Monto Mensual</p>
-              <p className="text-2xl font-bold text-gray-100 mt-1">$499 MXN</p>
+              <p className="text-2xl font-bold text-gray-100 mt-1">{organization.billing_exempt ? 'Exento' : '$499 MXN'}</p>
             </div>
           </div>
+          {organization.billing_exempt && (
+            <div className="mt-6 rounded-xl border border-emerald-400/25 bg-emerald-500/10 p-4 text-sm text-emerald-200">
+              Smart3AI está marcada como organización dueña y no participa en ciclos de cobro ni en facturación manual.
+            </div>
+          )}
         </div>
       )}
     </div>
