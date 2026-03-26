@@ -5,7 +5,7 @@ import {
   Download, ExternalLink, FileWarning, FileX2, Landmark, Mail, Plus, PlayCircle, Receipt,
   RefreshCw, Send, TrendingDown, Users, Wallet, X, PenSquare, Trash2,
 } from 'lucide-react';
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { billingService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -417,7 +417,8 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
   );
 };
 
-const PAYMENT_METHODS = ['transfer', 'cash', 'card', 'check', 'other'];
+const PAYMENT_METHODS = ['sinpe', 'bank_transfer', 'cash', 'card', 'check', 'deposit', 'other'];
+const PAYMENT_CHART_METRIC_KEY = 'finance.paymentMethodChartMetric';
 
 const RegisterPaymentModal = ({ invoices, onClose, onRegistered }) => {
   const isEnglish = document.documentElement.lang === 'en';
@@ -436,7 +437,7 @@ const RegisterPaymentModal = ({ invoices, onClose, onRegistered }) => {
     registering: isEnglish ? 'Registering...' : 'Registrando...',
     register: isEnglish ? 'Register Payment' : 'Registrar Pago',
   };
-  const [form, setForm] = useState({ invoice: '', method: 'transfer', reference: '', amount: '', notes: '' });
+  const [form, setForm] = useState({ invoice: '', method: 'bank_transfer', reference: '', amount: '', notes: '' });
   const [saving, setSaving] = useState(false);
   const canSubmit = form.invoice && form.method && Number(form.amount) > 0 && !saving;
 
@@ -500,7 +501,7 @@ const RegisterPaymentModal = ({ invoices, onClose, onRegistered }) => {
             <label className="block text-sm text-gray-400 mb-1.5">{t.method}</label>
             <select className="input-glass w-full" value={form.method}
               onChange={(e) => setForm((f) => ({ ...f, method: e.target.value }))}>
-              {PAYMENT_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
+              {PAYMENT_METHODS.map((m) => <option key={m} value={m}>{paymentMethodLabel(m, isEnglish)}</option>)}
             </select>
           </div>
           {field('reference', t.reference)}
@@ -763,6 +764,20 @@ const formatMoney = (value, isEnglish = false) => {
   return new Intl.NumberFormat(isEnglish ? 'en-US' : 'es-CR', { style: 'currency', currency: 'CRC', maximumFractionDigits: 2 }).format(amount);
 };
 
+const paymentMethodLabel = (method, isEnglish = false) => {
+  const labels = {
+    sinpe: isEnglish ? 'SINPE' : 'SINPE',
+    bank_transfer: isEnglish ? 'Bank transfer' : 'Transferencia bancaria',
+    cash: isEnglish ? 'Cash' : 'Efectivo',
+    card: isEnglish ? 'Card (offline)' : 'Tarjeta (offline)',
+    check: isEnglish ? 'Check' : 'Cheque',
+    deposit: isEnglish ? 'Bank deposit' : 'Deposito bancario',
+    other: isEnglish ? 'Other' : 'Otro',
+  };
+
+  return labels[method] || method;
+};
+
 const PendingPaymentsList = ({ payments, onAction }) => {
   const isEnglish = document.documentElement.lang === 'en';
   const t = {
@@ -809,7 +824,7 @@ const PendingPaymentsList = ({ payments, onAction }) => {
           {payments.map((p) => (
             <tr key={p.id}>
               <td className="font-mono text-xs">{p.reference || '—'}</td>
-              <td>{p.method}</td>
+              <td>{paymentMethodLabel(p.method, isEnglish)}</td>
               <td>{formatMoney(p.amount, isEnglish)}</td>
               <td className="text-xs text-gray-400">{p.notes || '—'}</td>
               <td>
@@ -931,6 +946,13 @@ const FinancePage = () => {
     unmatched: isEnglish ? 'Unmatched' : 'Sin conciliar',
     paidInvoicesNoPayment: isEnglish ? 'Paid invoices without payment record' : 'Facturas pagadas sin registro de pago',
     pendingToReconcile: isEnglish ? 'Pending payments to reconcile' : 'Pagos pendientes de conciliar',
+    byPaymentMethod: isEnglish ? 'By payment method' : 'Por tipo de pago',
+    byPaymentMethodSubtitle: isEnglish ? 'Counts and amounts registered in reconciliation.' : 'Conteos y montos registrados en conciliacion.',
+    byPaymentMethodChart: isEnglish ? 'Payment method amount distribution' : 'Distribucion de montos por metodo de pago',
+    byPaymentMethodChartSubtitle: isEnglish ? 'Visual comparison by registered amount.' : 'Comparativo visual por monto registrado.',
+    byPaymentMethodChartSubtitleCount: isEnglish ? 'Visual comparison by number of records.' : 'Comparativo visual por cantidad de registros.',
+    viewAmount: isEnglish ? 'Amount' : 'Monto',
+    viewCount: isEnglish ? 'Count' : 'Cantidad',
     schedulerActiveAt: isEnglish ? 'Active - runs daily at' : 'Activo - corre diario a las',
     schedulerTz: isEnglish ? 'CR time' : 'hora CR',
     schedulerDisabled: isEnglish ? 'BILLING_SCHEDULER_ENABLED=false in this environment' : 'BILLING_SCHEDULER_ENABLED=false en este entorno',
@@ -999,6 +1021,14 @@ const FinancePage = () => {
   const [productDashboard, setProductDashboard] = useState([]);
   const [pendingPayments, setPendingPayments] = useState([]);
   const [showRegisterPayment, setShowRegisterPayment] = useState(false);
+  const [paymentChartMetric, setPaymentChartMetric] = useState(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? window.localStorage.getItem(PAYMENT_CHART_METRIC_KEY) : null;
+      return saved === 'count' ? 'count' : 'amount';
+    } catch {
+      return 'amount';
+    }
+  });
 
   const loadData = async () => {
     try {
@@ -1053,6 +1083,16 @@ const FinancePage = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(PAYMENT_CHART_METRIC_KEY, paymentChartMetric);
+      }
+    } catch {
+      // Ignore localStorage write errors (private mode, quota, etc.)
+    }
+  }, [paymentChartMetric]);
 
   const runBatch = async ({ fiscal_profile, product }) => {
     if (!fiscal_profile || !product) {
@@ -1178,6 +1218,26 @@ const FinancePage = () => {
       setDeletingReportScheduleId(null);
     }
   };
+
+  const methodOrder = ['sinpe', 'bank_transfer', 'cash', 'card', 'check', 'deposit', 'other'];
+  const methodColors = {
+    sinpe: '#22c55e',
+    bank_transfer: '#3b82f6',
+    cash: '#f59e0b',
+    card: '#8b5cf6',
+    check: '#ef4444',
+    deposit: '#06b6d4',
+    other: '#64748b',
+  };
+
+  const paymentMethodChartData = methodOrder
+    .map((method) => ({
+      key: method,
+      label: paymentMethodLabel(method, isEnglish),
+      amount: Number(reconciliation?.payment_methods_amount?.[method] || 0),
+      count: Number(reconciliation?.payment_methods_count?.[method] || 0),
+    }))
+    .filter((item) => item.amount > 0 || item.count > 0);
 
   if (loading) {
     return (
@@ -1685,6 +1745,87 @@ const FinancePage = () => {
               <p className="mt-1 text-xs text-gray-500">{t.paidInvoicesNoPayment}</p>
             </div>
           </div>
+
+          {reconciliation.payment_methods_count && (
+            <div className="mt-6">
+              <p className="text-xs uppercase tracking-widest text-gray-500">{t.byPaymentMethod}</p>
+              <p className="mt-1 text-sm text-gray-500">{t.byPaymentMethodSubtitle}</p>
+              <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {['sinpe', 'bank_transfer', 'cash', 'card', 'check', 'deposit', 'other']
+                  .filter((method) => Number(reconciliation.payment_methods_count?.[method] || 0) > 0 || Number(reconciliation.payment_methods_amount?.[method] || 0) > 0)
+                  .map((method) => (
+                    <div key={method} className="rounded-xl border border-gray-700/50 bg-dark-400/30 p-3">
+                      <p className="text-xs text-gray-400 uppercase tracking-wide">{paymentMethodLabel(method, isEnglish)}</p>
+                      <p className="mt-1 text-lg font-semibold text-gray-100">{reconciliation.payment_methods_count?.[method] || 0}</p>
+                      <p className="text-sm text-primary-300">{formatMoney(reconciliation.payment_methods_amount?.[method], isEnglish)}</p>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {paymentMethodChartData.length > 0 && (
+            <div className="mt-6 rounded-xl border border-gray-700/50 bg-dark-400/30 p-4">
+              <div className="mb-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-gray-500">{t.byPaymentMethodChart}</p>
+                    <p className="mt-1 text-sm text-gray-500">{paymentChartMetric === 'amount' ? t.byPaymentMethodChartSubtitle : t.byPaymentMethodChartSubtitleCount}</p>
+                  </div>
+                  <div className="inline-flex rounded-lg border border-gray-700/50 bg-dark-300/40 p-1">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentChartMetric('amount')}
+                      className={`px-2.5 py-1 text-xs rounded-md transition-colors ${paymentChartMetric === 'amount' ? 'bg-primary-500/20 text-primary-300' : 'text-gray-400 hover:text-gray-200'}`}
+                    >
+                      {t.viewAmount}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentChartMetric('count')}
+                      className={`px-2.5 py-1 text-xs rounded-md transition-colors ${paymentChartMetric === 'count' ? 'bg-primary-500/20 text-primary-300' : 'text-gray-400 hover:text-gray-200'}`}
+                    >
+                      {t.viewCount}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={paymentMethodChartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" />
+                    <XAxis dataKey="label" tick={{ fill: '#94a3b8', fontSize: 12 }} />
+                    <YAxis
+                      tick={{ fill: '#94a3b8', fontSize: 12 }}
+                      tickFormatter={(value) => {
+                        if (paymentChartMetric === 'count') return Number(value).toLocaleString(isEnglish ? 'en-US' : 'es-CR');
+                        return Number(value).toLocaleString(isEnglish ? 'en-US' : 'es-CR');
+                      }}
+                    />
+                    <Tooltip
+                      formatter={(value, _name, props) => {
+                        if (paymentChartMetric === 'count') {
+                          return [Number(value).toLocaleString(isEnglish ? 'en-US' : 'es-CR'), t.viewCount];
+                        }
+                        return [formatMoney(value, isEnglish), `${t.amount} (${props?.payload?.count || 0})`];
+                      }}
+                      contentStyle={{
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        border: '1px solid rgba(148, 163, 184, 0.25)',
+                        borderRadius: '12px',
+                        color: '#e2e8f0',
+                      }}
+                    />
+                    <Bar dataKey={paymentChartMetric === 'amount' ? 'amount' : 'count'} radius={[8, 8, 0, 0]}>
+                      {paymentMethodChartData.map((entry) => (
+                        <Cell key={entry.key} fill={methodColors[entry.key] || '#64748b'} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
 
           {pendingPayments.length > 0 && (
             <div className="mt-6">

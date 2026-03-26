@@ -1,6 +1,22 @@
 # Logs
 *.log
 
+# Environment and secrets
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Virtual environments and Node
+venv/
+env/
+**/venv*/
+**/env*/
+**/node_modules/
+
 # Python cache artifacts
 **/__pycache__/
 *.py[cod]

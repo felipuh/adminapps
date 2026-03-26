@@ -10,13 +10,18 @@ NC='\033[0m' # No Color
 
 # Configuración
 ADMIN_APPS_URL="http://127.0.0.1:8000"
-USERNAME="felipe@comtech.local"
-PASSWORD="F3l1p32191"
-API_KEY="isosmart-integration-key-2025"
+USERNAME="${ADMIN_TEST_USERNAME:-}"
+PASSWORD="${ADMIN_TEST_PASSWORD:-}"
+API_KEY="${INTEGRATION_API_KEY:-}"
 ISO_BASE_URL="http://127.0.0.1"
 ISO_PORTS=(8001)
 ISO_USERNAME="$USERNAME"
 ISO_PASSWORD="$PASSWORD"
+
+if [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$API_KEY" ]; then
+    echo -e "${RED}Faltan variables requeridas. Define: ADMIN_TEST_USERNAME, ADMIN_TEST_PASSWORD, INTEGRATION_API_KEY${NC}"
+    exit 1
+fi
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}   PRUEBAS DE INTEGRACIÓN ISO SMART    ${NC}"

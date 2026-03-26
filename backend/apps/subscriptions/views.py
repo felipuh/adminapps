@@ -4,7 +4,7 @@ Views for Subscriptions - Admin Apps
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from django.db.models import Sum, Count, Q
@@ -42,7 +42,7 @@ class PlanViewSet(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
-            return [AllowAny()]
+            return [IsAuthenticated()]
         return [IsSuperAdmin()]
     
     def get_queryset(self):
@@ -102,7 +102,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         if not user.is_admin:
             # Solo ver suscripción de su organización
             if user.organization:
-                queryset = queryset.filter(organizations=user.organization)
+                queryset = queryset.filter(invoices__organization=user.organization).distinct()
             else:
                 queryset = queryset.none()
         
@@ -175,6 +175,14 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         }
         
         serializer = SubscriptionStatsSerializer(stats)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
+    def invoices(self, request, pk=None):
+        """Listar facturas de una suscripción"""
+        subscription = self.get_object()
+        invoices_qs = Invoice.objects.filter(subscription=subscription).select_related('organization').order_by('-issued_at')
+        serializer = InvoiceListSerializer(invoices_qs, many=True)
         return Response(serializer.data)
 
 

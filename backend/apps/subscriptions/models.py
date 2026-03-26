@@ -302,6 +302,9 @@ class PaymentMethod(models.Model):
     TYPE_CHOICES = [
         ('card', 'Tarjeta de Crédito/Débito'),
         ('bank_transfer', 'Transferencia Bancaria'),
+        ('cash', 'Efectivo'),
+        ('check', 'Cheque'),
+        ('deposit', 'Deposito Bancario'),
         ('paypal', 'PayPal'),
         ('other', 'Otro'),
     ]

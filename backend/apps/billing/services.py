@@ -32,6 +32,35 @@ _DOCUMENT_TYPE_ROOT = {
 }
 
 
+def _normalize_text(value):
+    return str(value or '').strip().lower()
+
+
+def _is_owner_billing_exempt(organization):
+    if not getattr(settings, 'BILLING_OWNER_ORG_EXEMPT_ENABLED', False):
+        return False
+
+    owner_id = str(getattr(settings, 'BILLING_OWNER_ORG_ID', '') or '').strip()
+    owner_code = _normalize_text(getattr(settings, 'BILLING_OWNER_ORG_CODE', ''))
+    owner_name = _normalize_text(getattr(settings, 'BILLING_OWNER_ORG_NAME', ''))
+
+    org_id = str(getattr(organization, 'id', '') or '').strip()
+    org_code = _normalize_text(getattr(organization, 'code', ''))
+    org_name = _normalize_text(getattr(organization, 'name', ''))
+
+    if owner_id and org_id == owner_id:
+        return True
+    if owner_code and org_code == owner_code:
+        return True
+    if owner_name and org_name == owner_name:
+        return True
+    return False
+
+
+def _owner_billing_exempt_message():
+    return 'La organizacion duena Smart3AI esta exenta de cobro y no se le generan facturas.'
+
+
 def _tax_id_type_code(tax_id):
     """Return CR identification type code: 01=física, 02=jurídica, 03=NITE/other."""
     digits = ''.join(c for c in (tax_id or '') if c.isdigit())
@@ -366,6 +395,9 @@ def issue_invoice_for_organization(
     due_date=None,
     mark_paid=False,
 ):
+    if _is_owner_billing_exempt(organization):
+        raise ValueError(_owner_billing_exempt_message())
+
     subscription = _resolve_subscription(organization, subscription)
     product_price = _resolve_product_price(product, product_price, subscription)
     _require_costa_rica_compliance(fiscal_profile, organization, product_price)
@@ -588,6 +620,14 @@ def run_billing_cycle_batch(*, fiscal_profile, product, product_price=None, orga
     }
 
     for organization in queryset:
+        if _is_owner_billing_exempt(organization):
+            report['skipped'].append({
+                'organization_id': str(organization.id),
+                'organization_name': organization.name,
+                'reason': 'owner_billing_exempt',
+            })
+            continue
+
         subscription = organization.subscription
         if subscription is None:
             report['skipped'].append({
@@ -759,6 +799,23 @@ def get_reconciliation_summary(*, date_from=None, date_to=None):
     pending_cnt, pending_amt = _agg('pending')
     confirmed_cnt, confirmed_amt = _agg('confirmed')
 
+    method_order = ['sinpe', 'bank_transfer', 'cash', 'card', 'check', 'deposit', 'other']
+    method_counts = {method: 0 for method in method_order}
+    method_amounts = {method: '0.00' for method in method_order}
+    method_rows = (
+        qs.values('method')
+        .annotate(cnt=Count('id'), total=Coalesce(Sum('amount'), _D('0.00')))
+        .order_by('method')
+    )
+
+    for row in method_rows:
+        method = row.get('method') or 'other'
+        if method not in method_counts:
+            method_counts[method] = 0
+            method_amounts[method] = '0.00'
+        method_counts[method] = int(row.get('cnt') or 0)
+        method_amounts[method] = str(row.get('total') or _D('0.00'))
+
     # Overdue: due_date is set, past today, invoice not paid
     overdue_qs = invoice_qs.filter(due_date__lt=today, due_date__isnull=False)
     overdue_agg = overdue_qs.aggregate(cnt=Count('id'), total=Sum('total'))
@@ -776,6 +833,8 @@ def get_reconciliation_summary(*, date_from=None, date_to=None):
         'overdue_invoices': overdue_cnt,
         'overdue_amount': overdue_amt,
         'unmatched_invoices': unmatched_cnt,
+        'payment_methods_count': method_counts,
+        'payment_methods_amount': method_amounts,
     }
 
 

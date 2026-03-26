@@ -338,6 +338,8 @@ class PaymentRecord(models.Model):
         ('bank_transfer', 'Bank Transfer'),
         ('card', 'Card'),
         ('cash', 'Cash'),
+        ('check', 'Check'),
+        ('deposit', 'Deposit'),
         ('other', 'Other'),
     ]
 

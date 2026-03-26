@@ -137,7 +137,7 @@ class CreditNoteSerializer(serializers.Serializer):
 
 
 class RecordPaymentSerializer(serializers.Serializer):
-    method = serializers.ChoiceField(choices=['sinpe', 'bank_transfer', 'card', 'cash', 'other'])
+    method = serializers.ChoiceField(choices=['sinpe', 'bank_transfer', 'card', 'cash', 'check', 'deposit', 'other'])
     reference = serializers.CharField(required=False, allow_blank=True)
     paid_at = serializers.DateTimeField(required=False, allow_null=True)
 
@@ -223,11 +223,13 @@ class ReconciliationSummarySerializer(serializers.Serializer):
     overdue_invoices = serializers.IntegerField()
     overdue_amount = serializers.DecimalField(max_digits=14, decimal_places=2)
     unmatched_invoices = serializers.IntegerField()
+    payment_methods_count = serializers.DictField(child=serializers.IntegerField(), required=False)
+    payment_methods_amount = serializers.DictField(child=serializers.CharField(), required=False)
 
 
 class CreatePendingPaymentSerializer(serializers.Serializer):
     invoice = serializers.UUIDField()
-    method = serializers.ChoiceField(choices=['sinpe', 'bank_transfer', 'card', 'cash', 'other'])
+    method = serializers.ChoiceField(choices=['sinpe', 'bank_transfer', 'card', 'cash', 'check', 'deposit', 'other'])
     reference = serializers.CharField(max_length=255, required=False, default='')
     amount = serializers.DecimalField(max_digits=12, decimal_places=2)
     notes = serializers.CharField(max_length=1000, required=False, default='')

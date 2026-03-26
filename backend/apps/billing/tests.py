@@ -209,6 +209,35 @@ class BillingModelAndApiTests(APITestCase):
         self.assertEqual(response.data[0]['organization__name'], 'Finance Org')
         self.assertEqual(Decimal(response.data[0]['net_revenue']), Decimal('113.00'))
 
+    @override_settings(BILLING_OWNER_ORG_EXEMPT_ENABLED=True, BILLING_OWNER_ORG_NAME='Smart3AI')
+    def test_run_billing_cycle_batch_skips_owner_org(self):
+        from apps.billing.services import run_billing_cycle_batch
+
+        owner_org = Organization.objects.create(
+            code='ORG88888',
+            name='Smart3AI',
+            email='owner@smart3ai.com',
+            tax_id='3101000002',
+            country='Costa Rica',
+            subscription=self.subscription,
+        )
+        self.subscription.next_billing_date = timezone.localdate() - timezone.timedelta(days=1)
+        self.subscription.save(update_fields=['next_billing_date'])
+
+        report = run_billing_cycle_batch(
+            fiscal_profile=self.fiscal_profile,
+            product=self.product,
+            product_price=self.product_price,
+            organization_ids=[owner_org.id],
+            issued_by=self.admin_user,
+        )
+
+        self.assertEqual(report['summary']['processed_count'], 0)
+        self.assertEqual(report['summary']['error_count'], 0)
+        self.assertEqual(report['summary']['skipped_count'], 1)
+        self.assertEqual(report['skipped'][0]['reason'], 'owner_billing_exempt')
+        self.assertFalse(ElectronicInvoice.objects.filter(organization=owner_org).exists())
+
     def test_revenue_timeline_and_accounts_receivable_endpoints(self):
         self.invoice.status = 'pending'
         self.invoice.due_date = timezone.now().date() - timezone.timedelta(days=10)

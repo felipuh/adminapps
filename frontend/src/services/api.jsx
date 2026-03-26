@@ -282,8 +282,30 @@ export const subscriptionService = {
     return response.data;
   },
 
+  activate: async (id) => {
+    const response = await api.post(`/subscriptions/${id}/activate/`);
+    return response.data;
+  },
+
+  changePlan: async (id, planId) => {
+    const response = await api.post(`/subscriptions/${id}/change_plan/`, { plan_id: planId });
+    return response.data;
+  },
+
   getInvoices: async (subscriptionId) => {
     const response = await api.get(`/subscriptions/${subscriptionId}/invoices/`);
+    return response.data;
+  },
+
+  downloadInvoice: async (invoiceId) => {
+    const response = await api.get(`/subscriptions/invoices/${invoiceId}/download/`);
+    return response.data;
+  },
+
+  markInvoicePaid: async (invoiceId, paymentReference = '') => {
+    const response = await api.post(`/subscriptions/invoices/${invoiceId}/mark_paid/`, {
+      payment_reference: paymentReference,
+    });
     return response.data;
   },
 };

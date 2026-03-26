@@ -8,9 +8,16 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+def _env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in ('1', 'true', 'yes', 'on')
+
 # SECURITY
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key-change-in-production')
-DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'change-this-dev-secret-key-before-deploy')
+DEBUG = _env_bool('DEBUG', default=True)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'adminapps.isosmart.local', '192.168.100.100']
 
 # APLICACIONES
@@ -72,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('DB_NAME', 'adminapps_db'),
         'USER': os.environ.get('DB_USER', 'adminapps_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'AdminApps2025!'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '3306'),
         'OPTIONS': {

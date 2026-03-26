@@ -11,13 +11,28 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+def _env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in ('1', 'true', 'yes', 'on')
+
+
+def _env_list(name, default=''):
+    value = os.environ.get(name, default)
+    return [item.strip() for item in value.split(',') if item.strip()]
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'your-secret-key-change-in-production')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'change-this-dev-secret-key-before-deploy')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = _env_bool('DEBUG', default=True)
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,192.168.100.100,adminapps.isosmart.local').split(',')
+ALLOWED_HOSTS = _env_list(
+    'ALLOWED_HOSTS',
+    default='localhost,127.0.0.1,192.168.100.100,adminapps.isosmart.local'
+)
 
 # Application definition
 INSTALLED_APPS = [
@@ -83,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('DB_NAME', 'adminapps_db'),
         'USER': os.environ.get('DB_USER', 'adminapps_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'AdminApps2026!'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
         'HOST': os.environ.get('DB_HOST', '192.168.100.105'),
         'PORT': os.environ.get('DB_PORT', '3306'),
         'OPTIONS': {
@@ -144,6 +159,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': os.environ.get('THROTTLE_ANON_RATE', '60/minute'),
+        'user': os.environ.get('THROTTLE_USER_RATE', '300/minute'),
+    },
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
     ],
@@ -167,18 +190,26 @@ PASSWORD_HISTORY_COUNT = int(os.environ.get('PASSWORD_HISTORY_COUNT', '5'))
 TEMP_PASSWORD_MAX_AGE_DAYS = int(os.environ.get('TEMP_PASSWORD_MAX_AGE_DAYS', '7'))
 TEMP_PASSWORD_WARNING_DAYS = int(os.environ.get('TEMP_PASSWORD_WARNING_DAYS', '2'))
 
+# Billing policy for owner organization (Smart3AI)
+BILLING_OWNER_ORG_EXEMPT_ENABLED = _env_bool('BILLING_OWNER_ORG_EXEMPT_ENABLED', default=True)
+BILLING_OWNER_ORG_ID = os.environ.get('BILLING_OWNER_ORG_ID', '').strip()
+BILLING_OWNER_ORG_CODE = os.environ.get('BILLING_OWNER_ORG_CODE', '').strip()
+BILLING_OWNER_ORG_NAME = os.environ.get('BILLING_OWNER_ORG_NAME', 'Smart3AI').strip()
+
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:3001",
-    "http://192.168.100.100:3000",
-    "http://192.168.100.100:3001",
+    *(_env_list(
+        'CORS_ALLOWED_ORIGINS',
+        default='http://localhost:3000,http://localhost:3001,http://localhost:3002,http://127.0.0.1:3000,http://127.0.0.1:3001,http://192.168.100.100:3000,http://192.168.100.100:3001'
+    )),
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = _env_list(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001,http://192.168.100.100:3000,http://192.168.100.100:3001'
+)
 
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -231,11 +262,23 @@ LOGGING = {
         },
         'apps': {
             'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'level': os.environ.get('APPS_LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
     },
 }
+
+# Security headers and cookies (TLS-related settings intentionally omitted for dev phase)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = _env_bool('SESSION_COOKIE_SECURE', default=not DEBUG)
+CSRF_COOKIE_SECURE = _env_bool('CSRF_COOKIE_SECURE', default=not DEBUG)
 
 # ISO Smart Integration
 ISOSMART_API_URL = os.environ.get('ISOSMART_API_URL', 'http://localhost:8000/api')

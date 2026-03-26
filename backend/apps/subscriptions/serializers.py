@@ -29,14 +29,20 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
     """Serializer ligero para listados de suscripciones"""
     plan_name = serializers.CharField(source='plan.name', read_only=True)
     days_remaining = serializers.ReadOnlyField()
+    organization_name = serializers.SerializerMethodField()
     
     class Meta:
         model = Subscription
         fields = [
-            'id', 'plan', 'plan_name', 'status', 'days_remaining',
+            'id', 'plan', 'plan_name', 'organization_name', 'status', 'days_remaining',
+            'amount', 'next_billing_date',
             'current_period_start', 'current_period_end',
             'current_users', 'current_documents', 'current_storage_mb'
         ]
+
+    def get_organization_name(self, obj):
+        invoice = obj.invoices.select_related('organization').order_by('-issued_at').first()
+        return invoice.organization.name if invoice and invoice.organization else None
 
 
 class SubscriptionDetailSerializer(serializers.ModelSerializer):
