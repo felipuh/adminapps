@@ -5,7 +5,6 @@ import {
   Plus, 
   Search, 
   Filter,
-  MoreVertical,
   Eye,
   Edit,
   Trash2,
@@ -16,11 +15,10 @@ import {
 } from 'lucide-react';
 import { organizationService } from '../services/api';
 import toast from 'react-hot-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 // Organization Row Component
-const OrganizationRow = ({ org, onView, onEdit, onDelete }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
+const OrganizationRow = ({ org, onView, onEdit, onDelete, t }) => {
   const statusColors = {
     active: 'badge-success',
     trial: 'badge-info',
@@ -29,10 +27,10 @@ const OrganizationRow = ({ org, onView, onEdit, onDelete }) => {
   };
 
   const statusLabels = {
-    active: 'Activa',
+    active: t.active,
     trial: 'Trial',
-    suspended: 'Suspendida',
-    inactive: 'Inactiva',
+    suspended: t.suspended,
+    inactive: t.inactive,
   };
 
   return (
@@ -62,42 +60,28 @@ const OrganizationRow = ({ org, onView, onEdit, onDelete }) => {
         </span>
       </td>
       <td className="px-4 py-4">
-        <div className="relative">
+        <div className="flex items-center gap-2 whitespace-nowrap">
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 rounded-lg hover:bg-dark-200 text-gray-400 hover:text-gray-200 transition-colors"
+            onClick={() => onView(org)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-gray-200 hover:bg-dark-200 transition-colors"
           >
-            <MoreVertical className="w-4 h-4" />
+            <Eye className="w-3.5 h-3.5" />
+            {t.viewDetails}
           </button>
-          
-          {menuOpen && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 mt-2 w-48 bg-dark-200 border border-gray-700/50 rounded-xl shadow-xl z-20 overflow-hidden">
-                <button
-                  onClick={() => { onView(org); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-dark-300 transition-colors"
-                >
-                  <Eye className="w-4 h-4" />
-                  Ver detalles
-                </button>
-                <button
-                  onClick={() => { onEdit(org); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-dark-300 transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                  Editar
-                </button>
-                <button
-                  onClick={() => { onDelete(org); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Eliminar
-                </button>
-              </div>
-            </>
-          )}
+          <button
+            onClick={() => onEdit(org)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-gray-200 hover:bg-dark-200 transition-colors"
+          >
+            <Edit className="w-3.5 h-3.5" />
+            {t.edit}
+          </button>
+          <button
+            onClick={() => onDelete(org)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {t.delete}
+          </button>
         </div>
       </td>
     </tr>
@@ -105,7 +89,7 @@ const OrganizationRow = ({ org, onView, onEdit, onDelete }) => {
 };
 
 // Create/Edit Organization Modal
-const OrganizationModal = ({ isOpen, onClose, organization, onSave }) => {
+const OrganizationModal = ({ isOpen, onClose, organization, onSave, t, isEnglish }) => {
   const [formData, setFormData] = useState({
     name: '',
     legal_name: '',
@@ -116,7 +100,7 @@ const OrganizationModal = ({ isOpen, onClose, organization, onSave }) => {
     size: 'small',
     address: '',
     city: '',
-    country: 'México',
+    country: isEnglish ? 'Mexico' : 'Mexico',
   });
   const [loading, setLoading] = useState(false);
 
@@ -132,7 +116,7 @@ const OrganizationModal = ({ isOpen, onClose, organization, onSave }) => {
         size: organization.size || 'small',
         address: organization.address || '',
         city: organization.city || '',
-        country: organization.country || 'México',
+        country: organization.country || (isEnglish ? 'Mexico' : 'Mexico'),
       });
     } else {
       setFormData({
@@ -145,10 +129,10 @@ const OrganizationModal = ({ isOpen, onClose, organization, onSave }) => {
         size: 'small',
         address: '',
         city: '',
-        country: 'México',
+        country: isEnglish ? 'Mexico' : 'Mexico',
       });
     }
-  }, [organization]);
+  }, [organization, isEnglish]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -157,15 +141,15 @@ const OrganizationModal = ({ isOpen, onClose, organization, onSave }) => {
     try {
       if (organization) {
         await organizationService.update(organization.id, formData);
-        toast.success('Organización actualizada correctamente');
+        toast.success(t.orgUpdated);
       } else {
         await organizationService.create(formData);
-        toast.success('Organización creada correctamente');
+        toast.success(t.orgCreated);
       }
       onSave();
       onClose();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Error al guardar la organización');
+      toast.error(error.response?.data?.detail || t.orgSaveError);
     } finally {
       setLoading(false);
     }
@@ -174,155 +158,153 @@ const OrganizationModal = ({ isOpen, onClose, organization, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content max-w-2xl" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-100">
-            {organization ? 'Editar Organización' : 'Nueva Organización'}
-          </h2>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-dark-300 text-gray-400">
-            <X className="w-5 h-5" />
-          </button>
+    <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm p-4 md:p-6" onClick={onClose}>
+      <div
+        className="glass-card mx-auto w-full max-w-3xl h-full md:h-auto md:max-h-[90vh] overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="border-b border-gray-700/50 px-5 py-4 md:px-6 md:py-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary-300">{isEnglish ? 'Organization form' : 'Formulario organizacion'}</p>
+              <h2 className="mt-1 text-xl font-semibold text-gray-100">{organization ? t.editOrg : t.newOrg}</h2>
+              <p className="mt-1 text-sm text-gray-500">{isEnglish ? 'Complete business and contact information.' : 'Completa la informacion comercial y de contacto.'}</p>
+            </div>
+            <button onClick={onClose} className="rounded-lg p-2 text-gray-400 hover:bg-dark-300 hover:text-gray-200 transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Nombre de la Organización *
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="input-glass"
-                required
-              />
+        <form onSubmit={handleSubmit} className="flex h-[calc(100%-78px)] md:h-auto md:max-h-[calc(90vh-88px)] flex-col">
+          <div className="flex-1 overflow-y-auto px-5 py-5 md:px-6 md:py-6 space-y-6">
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4 md:p-5">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">{isEnglish ? 'General data' : 'Datos generales'}</p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.orgName} *</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="input-glass"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.legalName}</label>
+                  <input
+                    type="text"
+                    value={formData.legal_name}
+                    onChange={(e) => setFormData({ ...formData, legal_name: e.target.value })}
+                    className="input-glass"
+                  />
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Razón Social
-              </label>
-              <input
-                type="text"
-                value={formData.legal_name}
-                onChange={(e) => setFormData({ ...formData, legal_name: e.target.value })}
-                className="input-glass"
-              />
+
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4 md:p-5">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">{isEnglish ? 'Contact' : 'Contacto'}</p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.email} *</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="input-glass"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.phone}</label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="input-glass"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.website}</label>
+                  <input
+                    type="url"
+                    value={formData.website}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    className="input-glass"
+                    placeholder="https://"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4 md:p-5">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">{isEnglish ? 'Business profile' : 'Perfil comercial'}</p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.industry}</label>
+                  <select
+                    value={formData.industry}
+                    onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                    className="input-glass"
+                  >
+                    <option value="manufacturing">{isEnglish ? 'Manufacturing' : 'Manufactura'}</option>
+                    <option value="technology">{isEnglish ? 'Technology' : 'Tecnologia'}</option>
+                    <option value="healthcare">{isEnglish ? 'Healthcare' : 'Salud'}</option>
+                    <option value="finance">{isEnglish ? 'Finance' : 'Finanzas'}</option>
+                    <option value="education">{isEnglish ? 'Education' : 'Educacion'}</option>
+                    <option value="construction">{isEnglish ? 'Construction' : 'Construccion'}</option>
+                    <option value="retail">{isEnglish ? 'Retail' : 'Comercio'}</option>
+                    <option value="services">{isEnglish ? 'Services' : 'Servicios'}</option>
+                    <option value="government">{isEnglish ? 'Government' : 'Gobierno'}</option>
+                    <option value="other">{isEnglish ? 'Other' : 'Otro'}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.size}</label>
+                  <select
+                    value={formData.size}
+                    onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                    className="input-glass"
+                  >
+                    <option value="micro">{isEnglish ? 'Micro' : 'Micro'} (1-10)</option>
+                    <option value="small">{isEnglish ? 'Small' : 'Pequena'} (11-50)</option>
+                    <option value="medium">{isEnglish ? 'Medium' : 'Mediana'} (51-250)</option>
+                    <option value="large">{isEnglish ? 'Large' : 'Grande'} (251-1000)</option>
+                    <option value="enterprise">{isEnglish ? 'Enterprise' : 'Corporativo'} (1000+)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.city}</label>
+                  <input
+                    type="text"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    className="input-glass"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.country}</label>
+                  <input
+                    type="text"
+                    value={formData.country}
+                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                    className="input-glass"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Email *
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="input-glass"
-                required
-              />
+          <div className="border-t border-gray-700/50 bg-dark-400/20 px-5 py-4 md:px-6">
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button type="button" onClick={onClose} className="btn-secondary w-full sm:w-auto">
+                {t.cancel}
+              </button>
+              <button type="submit" disabled={loading} className="btn-primary w-full sm:w-auto">
+                {loading ? t.saving : (organization ? t.update : t.create)}
+              </button>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Teléfono
-              </label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="input-glass"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              Sitio Web
-            </label>
-            <input
-              type="url"
-              value={formData.website}
-              onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-              className="input-glass"
-              placeholder="https://"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Industria
-              </label>
-              <select
-                value={formData.industry}
-                onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-                className="input-glass"
-              >
-                <option value="manufacturing">Manufactura</option>
-                <option value="technology">Tecnología</option>
-                <option value="healthcare">Salud</option>
-                <option value="finance">Finanzas</option>
-                <option value="education">Educación</option>
-                <option value="construction">Construcción</option>
-                <option value="retail">Comercio</option>
-                <option value="services">Servicios</option>
-                <option value="government">Gobierno</option>
-                <option value="other">Otro</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Tamaño
-              </label>
-              <select
-                value={formData.size}
-                onChange={(e) => setFormData({ ...formData, size: e.target.value })}
-                className="input-glass"
-              >
-                <option value="micro">Micro (1-10)</option>
-                <option value="small">Pequeña (11-50)</option>
-                <option value="medium">Mediana (51-250)</option>
-                <option value="large">Grande (251-1000)</option>
-                <option value="enterprise">Corporativo (1000+)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                Ciudad
-              </label>
-              <input
-                type="text"
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className="input-glass"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
-                País
-              </label>
-              <input
-                type="text"
-                value={formData.country}
-                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                className="input-glass"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="btn-secondary">
-              Cancelar
-            </button>
-            <button type="submit" disabled={loading} className="btn-primary">
-              {loading ? 'Guardando...' : (organization ? 'Actualizar' : 'Crear')}
-            </button>
           </div>
         </form>
       </div>
@@ -331,6 +313,50 @@ const OrganizationModal = ({ isOpen, onClose, organization, onSave }) => {
 };
 
 const OrganizationsPage = () => {
+  const { user } = useAuth();
+  const isEnglish = user?.language === 'en';
+  const t = {
+    active: isEnglish ? 'Active' : 'Activa',
+    suspended: isEnglish ? 'Suspended' : 'Suspendida',
+    inactive: isEnglish ? 'Inactive' : 'Inactiva',
+    viewDetails: isEnglish ? 'View details' : 'Ver detalles',
+    edit: isEnglish ? 'Edit' : 'Editar',
+    delete: isEnglish ? 'Delete' : 'Eliminar',
+    orgUpdated: isEnglish ? 'Organization updated successfully' : 'Organizacion actualizada correctamente',
+    orgCreated: isEnglish ? 'Organization created successfully' : 'Organizacion creada correctamente',
+    orgSaveError: isEnglish ? 'Error saving organization' : 'Error al guardar la organizacion',
+    editOrg: isEnglish ? 'Edit Organization' : 'Editar Organizacion',
+    newOrg: isEnglish ? 'New Organization' : 'Nueva Organizacion',
+    orgName: isEnglish ? 'Organization Name' : 'Nombre de la Organizacion',
+    legalName: isEnglish ? 'Legal Name' : 'Razon Social',
+    email: 'Email',
+    phone: isEnglish ? 'Phone' : 'Telefono',
+    website: isEnglish ? 'Website' : 'Sitio Web',
+    industry: isEnglish ? 'Industry' : 'Industria',
+    size: isEnglish ? 'Size' : 'Tamano',
+    city: isEnglish ? 'City' : 'Ciudad',
+    country: isEnglish ? 'Country' : 'Pais',
+    cancel: isEnglish ? 'Cancel' : 'Cancelar',
+    saving: isEnglish ? 'Saving...' : 'Guardando...',
+    update: isEnglish ? 'Update' : 'Actualizar',
+    create: isEnglish ? 'Create' : 'Crear',
+    confirmDelete: isEnglish ? 'Are you sure you want to delete' : 'Estas seguro de eliminar',
+    orgDeleted: isEnglish ? 'Organization deleted' : 'Organizacion eliminada',
+    orgDeleteError: isEnglish ? 'Error deleting organization' : 'Error al eliminar la organizacion',
+    pageTitle: isEnglish ? 'Organizations' : 'Organizaciones',
+    pageSubtitle: isEnglish ? 'Manage customer organizations' : 'Gestiona las organizaciones cliente',
+    newOrganization: isEnglish ? 'New Organization' : 'Nueva Organizacion',
+    searchPlaceholder: isEnglish ? 'Search organizations...' : 'Buscar organizaciones...',
+    allStatuses: isEnglish ? 'All statuses' : 'Todos los estados',
+    activePlural: isEnglish ? 'Active' : 'Activas',
+    suspendedPlural: isEnglish ? 'Suspended' : 'Suspendidas',
+    inactivePlural: isEnglish ? 'Inactive' : 'Inactivas',
+    loadingOrganizations: isEnglish ? 'Loading organizations...' : 'Cargando organizaciones...',
+    noOrganizations: isEnglish ? 'No organizations found' : 'No se encontraron organizaciones',
+    organization: isEnglish ? 'Organization' : 'Organizacion',
+    users: isEnglish ? 'Users' : 'Usuarios',
+    status: isEnglish ? 'Status' : 'Estado',
+  };
   const navigate = useNavigate();
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -375,13 +401,13 @@ const OrganizationsPage = () => {
   };
 
   const handleDelete = async (org) => {
-    if (window.confirm(`¿Estás seguro de eliminar "${org.name}"?`)) {
+    if (window.confirm(`${t.confirmDelete} "${org.name}"?`)) {
       try {
         await organizationService.delete(org.id);
-        toast.success('Organización eliminada');
+        toast.success(t.orgDeleted);
         fetchOrganizations();
       } catch (error) {
-        toast.error('Error al eliminar la organización');
+        toast.error(t.orgDeleteError);
       }
     }
   };
@@ -396,12 +422,12 @@ const OrganizationsPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-100">Organizaciones</h1>
-          <p className="text-gray-500 mt-1">Gestiona las organizaciones cliente</p>
+          <h1 className="text-2xl font-bold text-gray-100">{t.pageTitle}</h1>
+          <p className="text-gray-500 mt-1">{t.pageSubtitle}</p>
         </div>
         <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
           <Plus className="w-5 h-5" />
-          Nueva Organización
+          {t.newOrganization}
         </button>
       </div>
 
@@ -414,7 +440,7 @@ const OrganizationsPage = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar organizaciones..."
+              placeholder={t.searchPlaceholder}
               className="input-glass pl-11"
             />
           </div>
@@ -424,11 +450,11 @@ const OrganizationsPage = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="input-glass w-auto"
             >
-              <option value="">Todos los estados</option>
-              <option value="active">Activas</option>
+              <option value="">{t.allStatuses}</option>
+              <option value="active">{t.activePlural}</option>
               <option value="trial">Trial</option>
-              <option value="suspended">Suspendidas</option>
-              <option value="inactive">Inactivas</option>
+              <option value="suspended">{t.suspendedPlural}</option>
+              <option value="inactive">{t.inactivePlural}</option>
             </select>
           </div>
         </div>
@@ -439,23 +465,23 @@ const OrganizationsPage = () => {
         {loading ? (
           <div className="p-8 text-center">
             <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-gray-500 mt-4">Cargando organizaciones...</p>
+            <p className="text-gray-500 mt-4">{t.loadingOrganizations}</p>
           </div>
         ) : organizations.length === 0 ? (
           <div className="p-8 text-center">
             <Building2 className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">No se encontraron organizaciones</p>
+            <p className="text-gray-400">{t.noOrganizations}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="table-glass">
               <thead>
                 <tr>
-                  <th>Organización</th>
+                  <th>{t.organization}</th>
                   <th>Email</th>
-                  <th>Industria</th>
-                  <th>Usuarios</th>
-                  <th>Estado</th>
+                  <th>{t.industry}</th>
+                  <th>{t.users}</th>
+                  <th>{t.status}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -467,6 +493,7 @@ const OrganizationsPage = () => {
                     onView={handleView}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    t={t}
                   />
                 ))}
               </tbody>
@@ -481,6 +508,8 @@ const OrganizationsPage = () => {
         onClose={() => setModalOpen(false)}
         organization={selectedOrg}
         onSave={fetchOrganizations}
+        t={t}
+        isEnglish={isEnglish}
       />
     </div>
   );

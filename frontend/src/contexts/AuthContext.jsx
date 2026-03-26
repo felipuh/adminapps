@@ -18,6 +18,20 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const mustChangePassword = Boolean(user?.must_change_password);
 
+  const applyTheme = useCallback((theme) => {
+    const root = document.documentElement;
+    root.classList.remove('theme-light', 'theme-dark');
+
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : (theme || 'dark');
+
+    root.classList.add(resolved === 'light' ? 'theme-light' : 'theme-dark');
+  }, []);
+
+  const applyLanguage = useCallback((language) => {
+    document.documentElement.lang = language || 'es';
+  }, []);
+
   // Check if user is logged in on mount
   const checkAuth = useCallback(async () => {
     const token = localStorage.getItem('access_token');
@@ -41,6 +55,26 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    const persistedTheme = localStorage.getItem('ui_theme') || 'dark';
+    const persistedLanguage = localStorage.getItem('ui_language') || 'es';
+    applyTheme(persistedTheme);
+    applyLanguage(persistedLanguage);
+  }, [applyTheme, applyLanguage]);
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    const nextTheme = user.theme || 'dark';
+    const nextLanguage = user.language || 'es';
+    applyTheme(nextTheme);
+    applyLanguage(nextLanguage);
+    localStorage.setItem('ui_theme', nextTheme);
+    localStorage.setItem('ui_language', nextLanguage);
+  }, [user, applyTheme, applyLanguage]);
 
   // Login function
   const login = async (email, password) => {
@@ -82,6 +116,8 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setSecurityAlert(null);
       setIsAuthenticated(false);
+      applyTheme(localStorage.getItem('ui_theme') || 'dark');
+      applyLanguage(localStorage.getItem('ui_language') || 'es');
     }
   };
 

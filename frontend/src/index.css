@@ -243,3 +243,85 @@ body {
     @apply px-4 py-2;
   }
 }
+
+/* ========================================
+   Runtime Theme Overrides
+======================================== */
+
+html.theme-light body {
+  background: radial-gradient(circle at top right, #f3f8ff 0%, #eef3fb 35%, #e8eef7 100%);
+  color: #0f172a;
+}
+
+html.theme-light .glass-card {
+  background: rgba(255, 255, 255, 0.84);
+  border-color: rgba(148, 163, 184, 0.35);
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+}
+
+html.theme-light .input-glass {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(148, 163, 184, 0.5);
+  color: #0f172a;
+}
+
+html.theme-light .btn-secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1e293b;
+  border-color: rgba(148, 163, 184, 0.6);
+}
+
+html.theme-light [class*='bg-dark-'] {
+  background-color: #f8fafc !important;
+}
+
+html.theme-light [class*='text-gray-100'],
+html.theme-light [class*='text-gray-200'] {
+  color: #0f172a !important;
+}
+
+html.theme-light [class*='text-gray-300'],
+html.theme-light [class*='text-gray-400'] {
+  color: #334155 !important;
+}
+
+html.theme-light [class*='text-gray-500'] {
+  color: #64748b !important;
+}
+
+html.theme-light [class*='border-gray-700'],
+html.theme-light [class*='border-gray-600'] {
+  border-color: rgba(148, 163, 184, 0.45) !important;
+}
+
+html.theme-light .table-glass thead {
+  background: rgba(226, 232, 240, 0.65);
+}
+
+html.theme-light .table-glass tbody tr:hover {
+  background: rgba(226, 232, 240, 0.45) !important;
+}
+
+/* Action menu dropdowns in light theme */
+html.theme-light [class*='bg-dark-300/95'] {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+}
+
+html.theme-light [class*='fixed'][class*='w-48'][class*='border-gray-600/50'] {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1) !important;
+}
+
+html.theme-light [class*='fixed'][class*='w-48'][class*='border-gray-600/50'] button {
+  color: #1e293b !important;
+}
+
+html.theme-light [class*='fixed'][class*='w-48'][class*='border-gray-600/50'] button:hover {
+  background: rgba(226, 232, 240, 0.6) !important;
+}
+
+html.theme-light [class*='fixed'][class*='w-48'][class*='border-gray-600/50'] button svg {
+  color: #0f172a !important;
+}

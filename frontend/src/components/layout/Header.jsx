@@ -14,6 +14,16 @@ import { notificationService } from '../../services/api';
 
 const Header = ({ onMenuClick, sidebarOpen }) => {
   const { user, logout } = useAuth();
+  const isEnglish = user?.language === 'en';
+  const t = {
+    search: isEnglish ? 'Search...' : 'Buscar...',
+    notifications: isEnglish ? 'Notifications' : 'Notificaciones',
+    unreadSuffix: isEnglish ? 'unread' : 'sin leer',
+    markAllRead: isEnglish ? 'Mark all as read' : 'Marcar todas leidas',
+    loadingNotifications: isEnglish ? 'Loading notifications...' : 'Cargando notificaciones...',
+    noNotifications: isEnglish ? 'No recent notifications.' : 'No hay notificaciones recientes.',
+    fullHistory: isEnglish ? 'View full history' : 'Ver historial completo',
+  };
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -126,7 +136,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
             <Search className="absolute left-3 w-4 h-4 text-gray-500" />
             <input
               type="text"
-              placeholder="Buscar..."
+              placeholder={t.search}
               className="
                 w-full pl-10 pr-4 py-2
                 bg-dark-300/50 border border-gray-700/50 rounded-lg
@@ -173,24 +183,24 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
               ">
                 <div className="p-3 border-b border-gray-700/50 flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-gray-100">Notificaciones</p>
-                    <p className="text-xs text-gray-500">{unreadCount} sin leer</p>
+                    <p className="text-sm font-semibold text-gray-100">{t.notifications}</p>
+                    <p className="text-xs text-gray-500">{unreadCount} {t.unreadSuffix}</p>
                   </div>
                   <button
                     onClick={handleMarkAllRead}
                     className="text-xs text-primary-300 hover:text-primary-200 transition-colors"
                   >
-                    Marcar todas leídas
+                    {t.markAllRead}
                   </button>
                 </div>
 
                 <div className="max-h-96 overflow-y-auto">
                   {loadingNotifications && (
-                    <div className="p-4 text-sm text-gray-400">Cargando notificaciones...</div>
+                    <div className="p-4 text-sm text-gray-400">{t.loadingNotifications}</div>
                   )}
 
                   {!loadingNotifications && notifications.length === 0 && (
-                    <div className="p-4 text-sm text-gray-500">No hay notificaciones recientes.</div>
+                    <div className="p-4 text-sm text-gray-500">{t.noNotifications}</div>
                   )}
 
                   {!loadingNotifications && notifications.map((notification) => (
@@ -220,7 +230,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
                     }}
                     className="w-full text-sm text-primary-300 hover:text-primary-200 transition-colors"
                   >
-                    Ver historial completo
+                    {t.fullHistory}
                   </button>
                 </div>
               </div>
@@ -270,7 +280,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
                   <button
                     onClick={() => {
                       setDropdownOpen(false);
-                      navigate('/settings');
+                      navigate('/settings?tab=profile');
                     }}
                     className="
                       w-full flex items-center gap-3 px-3 py-2 rounded-lg
@@ -279,13 +289,13 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
                     "
                   >
                     <User className="w-4 h-4" />
-                    <span className="text-sm">Mi Perfil</span>
+                    <span className="text-sm">{isEnglish ? 'My Profile' : 'Mi Perfil'}</span>
                   </button>
 
                   <button
                     onClick={() => {
                       setDropdownOpen(false);
-                      navigate('/settings');
+                      navigate('/settings?tab=appearance');
                     }}
                     className="
                       w-full flex items-center gap-3 px-3 py-2 rounded-lg
@@ -294,7 +304,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
                     "
                   >
                     <Settings className="w-4 h-4" />
-                    <span className="text-sm">Configuración</span>
+                    <span className="text-sm">{isEnglish ? 'Preferences' : 'Configuracion'}</span>
                   </button>
                 </div>
 
@@ -308,7 +318,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
                     "
                   >
                     <LogOut className="w-4 h-4" />
-                    <span className="text-sm">Cerrar Sesión</span>
+                    <span className="text-sm">{isEnglish ? 'Sign Out' : 'Cerrar Sesion'}</span>
                   </button>
                 </div>
               </div>

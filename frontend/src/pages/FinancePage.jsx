@@ -8,6 +8,7 @@ import {
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { billingService } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const MetricCard = ({ title, value, helper, icon: Icon, tone = 'primary' }) => {
   const toneClasses = {
@@ -33,6 +34,18 @@ const MetricCard = ({ title, value, helper, icon: Icon, tone = 'primary' }) => {
 };
 
 const BatchModal = ({ fiscalProfiles, products, onClose, onSubmit, loading }) => {
+  const isEnglish = document.documentElement.lang === 'en';
+  const t = {
+    title: isEnglish ? 'Run Billing Batch' : 'Ejecutar Batch de Cobro',
+    subtitle: isEnglish ? 'Invoice all organizations with overdue billing.' : 'Factura todas las organizaciones con cobro vencido.',
+    fiscalProfile: isEnglish ? 'Fiscal Profile' : 'Perfil Fiscal',
+    selectFiscal: isEnglish ? 'Select a fiscal profile...' : 'Selecciona un perfil fiscal...',
+    billedProduct: isEnglish ? 'Product to bill' : 'Producto a facturar',
+    selectProduct: isEnglish ? 'Select a product...' : 'Selecciona un producto...',
+    cancel: isEnglish ? 'Cancel' : 'Cancelar',
+    running: isEnglish ? 'Running...' : 'Ejecutando...',
+    run: isEnglish ? 'Run Batch' : 'Ejecutar Batch',
+  };
   const [form, setForm] = useState({ fiscal_profile: '', product: '' });
   const canSubmit = form.fiscal_profile && form.product && !loading;
   return (
@@ -40,9 +53,9 @@ const BatchModal = ({ fiscalProfiles, products, onClose, onSubmit, loading }) =>
       <div className="glass-card w-full max-w-md p-6">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-100">Ejecutar Batch de Cobro</h2>
+            <h2 className="text-lg font-semibold text-gray-100">{t.title}</h2>
             <p className="mt-1 text-sm text-gray-400">
-              Factura todas las organizaciones con cobro vencido.
+              {t.subtitle}
             </p>
           </div>
           <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-200">
@@ -51,20 +64,20 @@ const BatchModal = ({ fiscalProfiles, products, onClose, onSubmit, loading }) =>
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Perfil Fiscal</label>
+            <label className="block text-sm text-gray-400 mb-1.5">{t.fiscalProfile}</label>
             <select className="input-glass w-full" value={form.fiscal_profile}
               onChange={(e) => setForm((f) => ({ ...f, fiscal_profile: e.target.value }))}>
-              <option value="">Selecciona un perfil fiscal...</option>
+              <option value="">{t.selectFiscal}</option>
               {fiscalProfiles.map((fp) => (
                 <option key={fp.id} value={fp.id}>{fp.legal_name} — {fp.tax_id}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Producto a facturar</label>
+            <label className="block text-sm text-gray-400 mb-1.5">{t.billedProduct}</label>
             <select className="input-glass w-full" value={form.product}
               onChange={(e) => setForm((f) => ({ ...f, product: e.target.value }))}>
-              <option value="">Selecciona un producto...</option>
+              <option value="">{t.selectProduct}</option>
               {products.map((p) => (
                 <option key={p.id} value={p.id}>{p.name} ({p.code})</option>
               ))}
@@ -72,11 +85,11 @@ const BatchModal = ({ fiscalProfiles, products, onClose, onSubmit, loading }) =>
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="btn-secondary">Cancelar</button>
+          <button type="button" onClick={onClose} className="btn-secondary">{t.cancel}</button>
           <button type="button" onClick={() => onSubmit(form)} disabled={!canSubmit}
             className="btn-primary inline-flex items-center gap-2">
             <PlayCircle className="h-4 w-4" />
-            {loading ? 'Ejecutando...' : 'Ejecutar Batch'}
+            {loading ? t.running : t.run}
           </button>
         </div>
       </div>
@@ -84,9 +97,40 @@ const BatchModal = ({ fiscalProfiles, products, onClose, onSubmit, loading }) =>
   );
 };
 
-const DAYS_OF_WEEK_LABELS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+const DAYS_OF_WEEK_LABELS_ES = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+const DAYS_OF_WEEK_LABELS_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null }) => {
+  const isEnglish = document.documentElement.lang === 'en';
+  const t = {
+    edit: isEnglish ? 'Edit Schedule' : 'Editar Programacion',
+    create: isEnglish ? 'New Schedule' : 'Nueva Programacion',
+    subtitle: isEnglish ? 'Automatic report delivery by email' : 'Envios automaticos de reportes por email',
+    reportName: isEnglish ? 'Report name' : 'Nombre del reporte',
+    reportNamePlaceholder: isEnglish ? 'Ex. Weekly financial summary' : 'Ej. Resumen financiero semanal',
+    reportType: isEnglish ? 'Report type' : 'Tipo de reporte',
+    billingSummary: isEnglish ? 'Billing Summary' : 'Resumen Billing',
+    billingSummaryDesc: isEnglish ? 'Revenue, invoices, KPIs' : 'Ingresos, facturas, KPIs',
+    collectionSnapshot: isEnglish ? 'Collections Snapshot' : 'Snapshot Cobranza',
+    collectionSnapshotDesc: isEnglish ? 'Pending balances' : 'Cuentas pendientes',
+    frequency: isEnglish ? 'Frequency' : 'Frecuencia',
+    daily: isEnglish ? 'Daily' : 'Diaria',
+    weekly: isEnglish ? 'Weekly' : 'Semanal',
+    monthly: isEnglish ? 'Monthly' : 'Mensual',
+    weekday: isEnglish ? 'Day of week' : 'Dia de la semana',
+    dayOfMonth: isEnglish ? 'Day of month' : 'Dia del mes',
+    dayPrefix: isEnglish ? 'Day' : 'Dia',
+    sendTime: isEnglish ? 'Send time' : 'Hora de envio',
+    recipients: isEnglish ? 'Recipients' : 'Destinatarios',
+    recipientsHelp: isEnglish ? 'Separate multiple emails with comma.' : 'Separa multiples correos con coma.',
+    statusActive: isEnglish ? 'Active' : 'Activo',
+    statusInactive: isEnglish ? 'Inactive' : 'Inactivo',
+    cancel: isEnglish ? 'Cancel' : 'Cancelar',
+    saving: isEnglish ? 'Saving...' : 'Guardando...',
+    saveChanges: isEnglish ? 'Save changes' : 'Guardar cambios',
+    createSchedule: isEnglish ? 'Create schedule' : 'Crear programacion',
+  };
+  const dayLabels = isEnglish ? DAYS_OF_WEEK_LABELS_EN : DAYS_OF_WEEK_LABELS_ES;
   const [form, setForm] = useState({
     name: '',
     report_type: 'billing_summary',
@@ -159,9 +203,9 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-semibold text-gray-100">
-              {isEditMode ? 'Editar Programación' : 'Nueva Programación'}
+              {isEditMode ? t.edit : t.create}
             </h2>
-            <p className="mt-0.5 text-sm text-gray-500">Envíos automáticos de reportes por email</p>
+            <p className="mt-0.5 text-sm text-gray-500">{t.subtitle}</p>
           </div>
           <button
             type="button"
@@ -178,11 +222,11 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
           {/* Name */}
           <div>
             <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-gray-500">
-              Nombre del reporte
+              {t.reportName}
             </label>
             <input
               className="input-glass w-full"
-              placeholder="Ej. Resumen financiero semanal"
+              placeholder={t.reportNamePlaceholder}
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             />
@@ -191,12 +235,12 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
           {/* Report type — card selector */}
           <div>
             <label className="mb-2 block text-xs font-medium tracking-wide uppercase text-gray-500">
-              Tipo de reporte
+              {t.reportType}
             </label>
             <div className="grid grid-cols-2 gap-3">
               {[
-                { value: 'billing_summary', icon: Receipt, label: 'Resumen Billing', desc: 'Ingresos, facturas, KPIs' },
-                { value: 'collections_snapshot', icon: BarChart3, label: 'Snapshot Cobranza', desc: 'Cuentas pendientes' },
+                { value: 'billing_summary', icon: Receipt, label: t.billingSummary, desc: t.billingSummaryDesc },
+                { value: 'collections_snapshot', icon: BarChart3, label: t.collectionSnapshot, desc: t.collectionSnapshotDesc },
               ].map(({ value, icon: Icon, label, desc }) => (
                 <button
                   key={value}
@@ -219,13 +263,13 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
           {/* Frequency — pill buttons */}
           <div>
             <label className="mb-2 block text-xs font-medium tracking-wide uppercase text-gray-500">
-              Frecuencia
+              {t.frequency}
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { value: 'daily', label: 'Diaria' },
-                { value: 'weekly', label: 'Semanal' },
-                { value: 'monthly', label: 'Mensual' },
+                { value: 'daily', label: t.daily },
+                { value: 'weekly', label: t.weekly },
+                { value: 'monthly', label: t.monthly },
               ].map(({ value, label }) => (
                 <button
                   key={value}
@@ -247,10 +291,10 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
           {form.frequency === 'weekly' && (
             <div>
               <label className="mb-2 block text-xs font-medium tracking-wide uppercase text-gray-500">
-                Día de la semana
+                {t.weekday}
               </label>
               <div className="flex gap-1.5">
-                {DAYS_OF_WEEK_LABELS.map((day, i) => (
+                {dayLabels.map((day, i) => (
                   <button
                     key={i}
                     type="button"
@@ -272,7 +316,7 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
           {form.frequency === 'monthly' && (
             <div>
               <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-gray-500">
-                Día del mes
+                {t.dayOfMonth}
               </label>
               <select
                 className="input-glass w-full"
@@ -280,7 +324,7 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
                 onChange={(e) => setForm((f) => ({ ...f, day_of_month: e.target.value }))}
               >
                 {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                  <option key={d} value={d}>Día {d}</option>
+                  <option key={d} value={d}>{t.dayPrefix} {d}</option>
                 ))}
               </select>
             </div>
@@ -289,7 +333,7 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
           {/* Time picker */}
           <div>
             <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-gray-500">
-              Hora de envío
+              {t.sendTime}
             </label>
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
@@ -321,7 +365,7 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
           {/* Recipients */}
           <div>
             <label className="mb-1.5 block text-xs font-medium tracking-wide uppercase text-gray-500">
-              Destinatarios
+              {t.recipients}
             </label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
@@ -333,7 +377,7 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
                 onChange={(e) => setForm((f) => ({ ...f, recipients: e.target.value }))}
               />
             </div>
-            <p className="mt-1 text-xs text-gray-600">Separa múltiples correos con coma.</p>
+            <p className="mt-1 text-xs text-gray-600">{t.recipientsHelp}</p>
           </div>
         </div>
 
@@ -352,11 +396,11 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
               }`} />
             </button>
             <span className="text-xs text-gray-400">
-              {form.is_active ? 'Activo' : 'Inactivo'}
+              {form.is_active ? t.statusActive : t.statusInactive}
             </span>
           </div>
           <div className="flex gap-3">
-            <button type="button" onClick={onClose} className="btn-secondary text-sm">Cancelar</button>
+            <button type="button" onClick={onClose} className="btn-secondary text-sm">{t.cancel}</button>
             <button
               type="button"
               onClick={submit}
@@ -364,7 +408,7 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
               className="btn-primary inline-flex items-center gap-2 text-sm"
             >
               <Send className="h-4 w-4" />
-              {loading ? 'Guardando…' : isEditMode ? 'Guardar cambios' : 'Crear programación'}
+              {loading ? t.saving : isEditMode ? t.saveChanges : t.createSchedule}
             </button>
           </div>
         </div>
@@ -376,6 +420,22 @@ const ReportScheduleModal = ({ onClose, onSubmit, loading, initialData = null })
 const PAYMENT_METHODS = ['transfer', 'cash', 'card', 'check', 'other'];
 
 const RegisterPaymentModal = ({ invoices, onClose, onRegistered }) => {
+  const isEnglish = document.documentElement.lang === 'en';
+  const t = {
+    saved: isEnglish ? 'Pending payment registered successfully.' : 'Pago pendiente registrado correctamente.',
+    saveError: isEnglish ? 'Could not register payment.' : 'No se pudo registrar el pago.',
+    title: isEnglish ? 'Register Pending Payment' : 'Registrar Pago Pendiente',
+    subtitle: isEnglish ? 'Payment remains pending until reconciliation.' : 'El pago quedara en estado pendiente hasta ser conciliado.',
+    invoice: isEnglish ? 'Invoice' : 'Factura',
+    selectInvoice: isEnglish ? 'Select an invoice...' : 'Selecciona una factura...',
+    method: isEnglish ? 'Payment method' : 'Metodo de pago',
+    reference: isEnglish ? 'Reference / transfer No.' : 'Referencia / N de transferencia',
+    amount: isEnglish ? 'Amount (CRC)' : 'Monto (CRC)',
+    notes: isEnglish ? 'Notes (optional)' : 'Notas (opcional)',
+    cancel: isEnglish ? 'Cancel' : 'Cancelar',
+    registering: isEnglish ? 'Registering...' : 'Registrando...',
+    register: isEnglish ? 'Register Payment' : 'Registrar Pago',
+  };
   const [form, setForm] = useState({ invoice: '', method: 'transfer', reference: '', amount: '', notes: '' });
   const [saving, setSaving] = useState(false);
   const canSubmit = form.invoice && form.method && Number(form.amount) > 0 && !saving;
@@ -390,11 +450,11 @@ const RegisterPaymentModal = ({ invoices, onClose, onRegistered }) => {
         amount: form.amount,
         notes: form.notes,
       });
-      toast.success('Pago pendiente registrado correctamente.');
+      toast.success(t.saved);
       onRegistered();
       onClose();
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'No se pudo registrar el pago.');
+      toast.error(err.response?.data?.detail || t.saveError);
     } finally {
       setSaving(false);
     }
@@ -418,8 +478,8 @@ const RegisterPaymentModal = ({ invoices, onClose, onRegistered }) => {
       <div className="glass-card w-full max-w-md p-6">
         <div className="flex items-start justify-between gap-4 mb-5">
           <div>
-            <h2 className="text-lg font-semibold text-gray-100">Registrar Pago Pendiente</h2>
-            <p className="mt-1 text-sm text-gray-400">El pago quedará en estado pendiente hasta ser conciliado.</p>
+            <h2 className="text-lg font-semibold text-gray-100">{t.title}</h2>
+            <p className="mt-1 text-sm text-gray-400">{t.subtitle}</p>
           </div>
           <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-200">
             <X className="h-5 w-5" />
@@ -427,36 +487,36 @@ const RegisterPaymentModal = ({ invoices, onClose, onRegistered }) => {
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Factura</label>
+            <label className="block text-sm text-gray-400 mb-1.5">{t.invoice}</label>
             <select className="input-glass w-full" value={form.invoice}
               onChange={(e) => setForm((f) => ({ ...f, invoice: e.target.value }))}>
-              <option value="">Selecciona una factura...</option>
+              <option value="">{t.selectInvoice}</option>
               {invoices.filter((inv) => ['accepted', 'pending'].includes(inv.status)).map((inv) => (
                 <option key={inv.id} value={inv.id}>{inv.invoice_number} — {inv.organization_name}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Método de pago</label>
+            <label className="block text-sm text-gray-400 mb-1.5">{t.method}</label>
             <select className="input-glass w-full" value={form.method}
               onChange={(e) => setForm((f) => ({ ...f, method: e.target.value }))}>
               {PAYMENT_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
           </div>
-          {field('reference', 'Referencia / N° de transferencia')}
-          {field('amount', 'Monto (CRC)', 'number', { min: 0, step: '0.01' })}
+          {field('reference', t.reference)}
+          {field('amount', t.amount, 'number', { min: 0, step: '0.01' })}
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Notas (opcional)</label>
+            <label className="block text-sm text-gray-400 mb-1.5">{t.notes}</label>
             <textarea rows={2} className="input-glass w-full resize-none" value={form.notes}
               onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="btn-secondary">Cancelar</button>
+          <button type="button" onClick={onClose} className="btn-secondary">{t.cancel}</button>
           <button type="button" onClick={submit} disabled={!canSubmit}
             className="btn-primary inline-flex items-center gap-2">
             <Plus className="h-4 w-4" />
-            {saving ? 'Registrando...' : 'Registrar Pago'}
+            {saving ? t.registering : t.register}
           </button>
         </div>
       </div>
@@ -465,6 +525,43 @@ const RegisterPaymentModal = ({ invoices, onClose, onRegistered }) => {
 };
 
 const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
+  const isEnglish = document.documentElement.lang === 'en';
+  const t = {
+    loadError: isEnglish ? 'Could not load invoice.' : 'No se pudo cargar la factura.',
+    creditReasonRequired: isEnglish ? 'Enter credit note reason.' : 'Ingresa el motivo de la nota de credito.',
+    creditIssued: isEnglish ? 'Credit Note issued' : 'Nota de Credito emitida',
+    creditIssueError: isEnglish ? 'Could not issue credit note.' : 'No se pudo emitir la nota de credito.',
+    xmlError: isEnglish ? 'Could not generate XML.' : 'No se pudo generar el XML.',
+    invoiceDetail: isEnglish ? 'Invoice Detail' : 'Detalle de Factura',
+    commercialStatus: isEnglish ? 'Commercial status' : 'Estado comercial',
+    taxStatus: isEnglish ? 'Tax authority status' : 'Estado Hacienda',
+    receiver: isEnglish ? 'Receiver' : 'Receptor',
+    taxId: isEnglish ? 'Tax ID' : 'RUC/Cedula',
+    email: 'Email',
+    currency: isEnglish ? 'Currency' : 'Moneda',
+    issuedAt: isEnglish ? 'Issued' : 'Emitido',
+    dueAt: isEnglish ? 'Due date' : 'Vence',
+    subtotal: isEnglish ? 'Subtotal' : 'Subtotal',
+    discount: isEnglish ? 'Discount' : 'Descuento',
+    tax: isEnglish ? 'Tax' : 'Impuesto',
+    total: isEnglish ? 'Total' : 'Total',
+    taxData: isEnglish ? 'Tax authority data' : 'Datos Hacienda CR',
+    seq: isEnglish ? 'Sequence' : 'Consecutivo',
+    key: isEnglish ? 'Numeric key' : 'Clave numerica',
+    trackId: isEnglish ? 'Track ID' : 'Track ID',
+    submitted: isEnglish ? 'Submitted' : 'Enviado',
+    replied: isEnglish ? 'Responded' : 'Respondido',
+    message: isEnglish ? 'Message' : 'Mensaje',
+    lineItems: isEnglish ? 'Line items' : 'Lineas de detalle',
+    cabys: 'CAByS',
+    generatingXml: isEnglish ? 'Generating XML...' : 'Generando XML...',
+    downloadXml: isEnglish ? 'Download Tax XML' : 'Descargar XML Hacienda',
+    cancel: isEnglish ? 'Cancel' : 'Cancelar',
+    issueCredit: isEnglish ? 'Issue Credit Note' : 'Emitir Nota de Credito',
+    reasonPlaceholder: isEnglish ? 'Credit note reason...' : 'Motivo de la nota de credito...',
+    issuing: isEnglish ? 'Issuing...' : 'Emitiendo...',
+    confirmCredit: isEnglish ? 'Confirm Credit Note' : 'Confirmar Nota de Credito',
+  };
   const [detail, setDetail] = useState(null);
   const [downloading, setDownloading] = useState(false);
   const [showCreditNoteForm, setShowCreditNoteForm] = useState(false);
@@ -473,24 +570,24 @@ const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
 
   useEffect(() => {
     if (!invoiceId) return;
-    billingService.getInvoiceDetail(invoiceId).then(setDetail).catch(() => toast.error('No se pudo cargar la factura.'));
+    billingService.getInvoiceDetail(invoiceId).then(setDetail).catch(() => toast.error(t.loadError));
   }, [invoiceId]);
 
   const issueCreditNote = async () => {
     if (!creditNoteReason.trim()) {
-      toast.error('Ingresa el motivo de la nota de crédito.');
+      toast.error(t.creditReasonRequired);
       return;
     }
     try {
       setIssuingCreditNote(true);
       const result = await billingService.createCreditNote(invoiceId, creditNoteReason.trim());
-      toast.success(`Nota de Crédito ${result.credit_note_number} emitida.`);
+      toast.success(`${t.creditIssued}: ${result.credit_note_number}`);
       setShowCreditNoteForm(false);
       setCreditNoteReason('');
       if (onCreditNoteIssued) onCreditNoteIssued();
       onClose();
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'No se pudo emitir la nota de crédito.');
+      toast.error(err.response?.data?.detail || t.creditIssueError);
     } finally {
       setIssuingCreditNote(false);
     }
@@ -508,7 +605,7 @@ const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      toast.error('No se pudo generar el XML.');
+      toast.error(t.xmlError);
     } finally {
       setDownloading(false);
     }
@@ -533,7 +630,7 @@ const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
       <div className="glass-card h-full w-full max-w-lg overflow-y-auto p-6 rounded-none" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <p className="text-xs uppercase tracking-widest text-primary-300">Detalle de Factura</p>
+            <p className="text-xs uppercase tracking-widest text-primary-300">{t.invoiceDetail}</p>
             <h2 className="mt-1 text-xl font-bold text-gray-100">{detail?.invoice_number || '...'}</h2>
           </div>
           <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-200">
@@ -549,56 +646,56 @@ const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
           <div className="space-y-5 text-sm">
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-xl bg-dark-400/40 border border-gray-700/50 p-4">
-                <p className="text-xs text-gray-500 mb-1">Estado comercial</p>
+                <p className="text-xs text-gray-500 mb-1">{t.commercialStatus}</p>
                 <span className={statusBadge(detail.status)}>{detail.status}</span>
               </div>
               <div className="rounded-xl bg-dark-400/40 border border-gray-700/50 p-4">
-                <p className="text-xs text-gray-500 mb-1">Estado Hacienda</p>
+                <p className="text-xs text-gray-500 mb-1">{t.taxStatus}</p>
                 <span className={haciendaBadge(detail.hacienda_status)}>{detail.hacienda_status}</span>
               </div>
             </div>
 
             <div className="rounded-xl bg-dark-400/40 border border-gray-700/50 p-4 space-y-2">
-              <Row label="Receptor" value={detail.receiver_name} />
-              <Row label="RUC/Cédula" value={detail.receiver_tax_id || '—'} />
-              <Row label="Email" value={detail.receiver_email || '—'} />
-              <Row label="Moneda" value={detail.currency} />
-              <Row label="Emitido" value={detail.issued_at ? new Date(detail.issued_at).toLocaleString('es-CR') : '—'} />
-              <Row label="Vence" value={detail.due_date || '—'} />
+              <Row label={t.receiver} value={detail.receiver_name} />
+              <Row label={t.taxId} value={detail.receiver_tax_id || '—'} />
+              <Row label={t.email} value={detail.receiver_email || '—'} />
+              <Row label={t.currency} value={detail.currency} />
+              <Row label={t.issuedAt} value={detail.issued_at ? new Date(detail.issued_at).toLocaleString(isEnglish ? 'en-US' : 'es-CR') : '—'} />
+              <Row label={t.dueAt} value={detail.due_date || '—'} />
             </div>
 
             <div className="rounded-xl bg-dark-400/40 border border-gray-700/50 p-4 space-y-2">
-              <Row label="Subtotal" value={formatMoney(detail.subtotal)} />
-              <Row label="Descuento" value={formatMoney(detail.discount_total)} />
-              <Row label="Impuesto" value={formatMoney(detail.tax_total)} />
+              <Row label={t.subtotal} value={formatMoney(detail.subtotal, isEnglish)} />
+              <Row label={t.discount} value={formatMoney(detail.discount_total, isEnglish)} />
+              <Row label={t.tax} value={formatMoney(detail.tax_total, isEnglish)} />
               <div className="border-t border-gray-700/50 pt-2">
-                <Row label="Total" value={<span className="text-lg font-bold text-primary-300">{formatMoney(detail.total)}</span>} />
+                <Row label={t.total} value={<span className="text-lg font-bold text-primary-300">{formatMoney(detail.total, isEnglish)}</span>} />
               </div>
             </div>
 
             {detail.consecutive_number && (
               <div className="rounded-xl bg-dark-400/40 border border-gray-700/50 p-4 space-y-2">
-                <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">Datos Hacienda CR</p>
-                <Row label="Consecutivo" value={<code className="text-xs text-primary-200">{detail.consecutive_number}</code>} />
-                <Row label="Clave numérica" value={<code className="text-[10px] text-primary-200 break-all">{detail.numeric_key}</code>} />
-                {detail.hacienda_track_id && <Row label="Track ID" value={detail.hacienda_track_id} />}
-                {detail.submitted_at && <Row label="Enviado" value={new Date(detail.submitted_at).toLocaleString('es-CR')} />}
-                {detail.responded_at && <Row label="Respondido" value={new Date(detail.responded_at).toLocaleString('es-CR')} />}
-                {detail.hacienda_message && <Row label="Mensaje" value={detail.hacienda_message} />}
+                <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">{t.taxData}</p>
+                <Row label={t.seq} value={<code className="text-xs text-primary-200">{detail.consecutive_number}</code>} />
+                <Row label={t.key} value={<code className="text-[10px] text-primary-200 break-all">{detail.numeric_key}</code>} />
+                {detail.hacienda_track_id && <Row label={t.trackId} value={detail.hacienda_track_id} />}
+                {detail.submitted_at && <Row label={t.submitted} value={new Date(detail.submitted_at).toLocaleString(isEnglish ? 'en-US' : 'es-CR')} />}
+                {detail.responded_at && <Row label={t.replied} value={new Date(detail.responded_at).toLocaleString(isEnglish ? 'en-US' : 'es-CR')} />}
+                {detail.hacienda_message && <Row label={t.message} value={detail.hacienda_message} />}
               </div>
             )}
 
             {detail.lines && detail.lines.length > 0 && (
               <div className="rounded-xl bg-dark-400/40 border border-gray-700/50 p-4">
-                <p className="text-xs uppercase tracking-widest text-gray-500 mb-3">Líneas de detalle</p>
+                <p className="text-xs uppercase tracking-widest text-gray-500 mb-3">{t.lineItems}</p>
                 <div className="space-y-2">
                   {detail.lines.map((line, i) => (
                     <div key={i} className="flex items-start justify-between gap-2 border-b border-gray-700/30 pb-2 last:border-0 last:pb-0">
                       <div>
                         <p className="text-gray-200">{line.description}</p>
-                        {line.cabys_code && <p className="text-xs text-gray-500">CAByS: {line.cabys_code}</p>}
+                        {line.cabys_code && <p className="text-xs text-gray-500">{t.cabys}: {line.cabys_code}</p>}
                       </div>
-                      <p className="shrink-0 text-primary-300 font-medium">{formatMoney(line.total)}</p>
+                      <p className="shrink-0 text-primary-300 font-medium">{formatMoney(line.total, isEnglish)}</p>
                     </div>
                   ))}
                 </div>
@@ -612,7 +709,7 @@ const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
               className="btn-secondary w-full inline-flex items-center justify-center gap-2"
             >
               <Download className="h-4 w-4" />
-              {downloading ? 'Generando XML...' : 'Descargar XML Hacienda'}
+              {downloading ? t.generatingXml : t.downloadXml}
             </button>
 
             {['accepted', 'paid'].includes(detail.status) && detail.status !== 'reversed' && (
@@ -623,13 +720,13 @@ const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
                   className="inline-flex items-center gap-2 text-sm text-red-300 hover:text-red-100 transition-colors"
                 >
                   <FileX2 className="h-4 w-4" />
-                  {showCreditNoteForm ? 'Cancelar' : 'Emitir Nota de Crédito'}
+                  {showCreditNoteForm ? t.cancel : t.issueCredit}
                 </button>
                 {showCreditNoteForm && (
                   <div className="space-y-3">
                     <textarea
                       rows={2}
-                      placeholder="Motivo de la nota de crédito..."
+                      placeholder={t.reasonPlaceholder}
                       value={creditNoteReason}
                       onChange={(e) => setCreditNoteReason(e.target.value)}
                       className="input-glass w-full resize-none text-sm"
@@ -641,7 +738,7 @@ const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
                       className="btn-primary w-full inline-flex items-center justify-center gap-2 text-sm"
                     >
                       <FileX2 className="h-4 w-4" />
-                      {issuingCreditNote ? 'Emitiendo...' : 'Confirmar Nota de Crédito'}
+                      {issuingCreditNote ? t.issuing : t.confirmCredit}
                     </button>
                   </div>
                 )}
@@ -661,12 +758,25 @@ const Row = ({ label, value }) => (
   </div>
 );
 
-const formatMoney = (value) => {
+const formatMoney = (value, isEnglish = false) => {
   const amount = Number(value || 0);
-  return new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC', maximumFractionDigits: 2 }).format(amount);
+  return new Intl.NumberFormat(isEnglish ? 'en-US' : 'es-CR', { style: 'currency', currency: 'CRC', maximumFractionDigits: 2 }).format(amount);
 };
 
 const PendingPaymentsList = ({ payments, onAction }) => {
+  const isEnglish = document.documentElement.lang === 'en';
+  const t = {
+    confirmed: isEnglish ? 'Payment confirmed.' : 'Pago confirmado.',
+    rejected: isEnglish ? 'Payment rejected.' : 'Pago rechazado.',
+    actionError: isEnglish ? 'Action could not be processed.' : 'No se pudo procesar la accion.',
+    reference: isEnglish ? 'Reference' : 'Referencia',
+    method: isEnglish ? 'Method' : 'Metodo',
+    amount: isEnglish ? 'Amount' : 'Monto',
+    notes: isEnglish ? 'Notes' : 'Notas',
+    actions: isEnglish ? 'Actions' : 'Acciones',
+    confirm: isEnglish ? 'Confirm' : 'Confirmar',
+    reject: isEnglish ? 'Reject' : 'Rechazar',
+  };
   const [actingId, setActingId] = useState(null);
 
   const act = async (paymentId, action) => {
@@ -674,10 +784,10 @@ const PendingPaymentsList = ({ payments, onAction }) => {
       setActingId(paymentId);
       if (action === 'confirm') await billingService.confirmPayment(paymentId);
       else await billingService.rejectPayment(paymentId);
-      toast.success(action === 'confirm' ? 'Pago confirmado.' : 'Pago rechazado.');
+      toast.success(action === 'confirm' ? t.confirmed : t.rejected);
       onAction();
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'No se pudo procesar la acción.');
+      toast.error(err.response?.data?.detail || t.actionError);
     } finally {
       setActingId(null);
     }
@@ -688,11 +798,11 @@ const PendingPaymentsList = ({ payments, onAction }) => {
       <table className="table-glass">
         <thead>
           <tr>
-            <th>Referencia</th>
-            <th>Método</th>
-            <th>Monto</th>
-            <th>Notas</th>
-            <th>Acciones</th>
+            <th>{t.reference}</th>
+            <th>{t.method}</th>
+            <th>{t.amount}</th>
+            <th>{t.notes}</th>
+            <th>{t.actions}</th>
           </tr>
         </thead>
         <tbody>
@@ -700,7 +810,7 @@ const PendingPaymentsList = ({ payments, onAction }) => {
             <tr key={p.id}>
               <td className="font-mono text-xs">{p.reference || '—'}</td>
               <td>{p.method}</td>
-              <td>{formatMoney(p.amount)}</td>
+              <td>{formatMoney(p.amount, isEnglish)}</td>
               <td className="text-xs text-gray-400">{p.notes || '—'}</td>
               <td>
                 <div className="flex items-center gap-2">
@@ -710,7 +820,7 @@ const PendingPaymentsList = ({ payments, onAction }) => {
                     onClick={() => act(p.id, 'confirm')}
                     className="rounded-lg bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 text-xs text-emerald-300 hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
                   >
-                    Confirmar
+                    {t.confirm}
                   </button>
                   <button
                     type="button"
@@ -718,7 +828,7 @@ const PendingPaymentsList = ({ payments, onAction }) => {
                     onClick={() => act(p.id, 'reject')}
                     className="rounded-lg bg-red-500/15 border border-red-500/30 px-3 py-1 text-xs text-red-300 hover:bg-red-500/25 transition-colors disabled:opacity-50"
                   >
-                    Rechazar
+                    {t.reject}
                   </button>
                 </div>
               </td>
@@ -732,6 +842,135 @@ const PendingPaymentsList = ({ payments, onAction }) => {
 
 
 const FinancePage = () => {
+  const { user } = useAuth();
+  const isEnglish = user?.language === 'en';
+  const t = {
+    panelLoadError: isEnglish ? 'Could not load the finance panel.' : 'No fue posible cargar el panel financiero.',
+    batchRequired: isEnglish ? 'Fiscal profile and product are required to run batch.' : 'Se requiere perfil fiscal y producto para ejecutar el batch.',
+    batchSuccess: isEnglish ? 'Batch executed' : 'Batch ejecutado',
+    batchRunError: isEnglish ? 'Could not execute batch.' : 'No fue posible ejecutar el batch.',
+    csvError: isEnglish ? 'Could not export CSV.' : 'No se pudo exportar el CSV.',
+    schedulerRun: isEnglish ? 'Scheduler executed: status' : 'Scheduler ejecutado: estado',
+    schedulerRunError: isEnglish ? 'Could not execute scheduler.' : 'No se pudo ejecutar el scheduler.',
+    reportUpdated: isEnglish ? 'Report schedule updated.' : 'Programacion de reporte actualizada.',
+    reportCreated: isEnglish ? 'Report schedule created.' : 'Programacion de reporte creada.',
+    reportSaveError: isEnglish ? 'Could not save schedule.' : 'No se pudo guardar la programacion.',
+    reportRunOk: isEnglish ? 'Report executed and sent by email.' : 'Reporte ejecutado y enviado por email.',
+    reportRunError: isEnglish ? 'Could not execute report.' : 'No se pudo ejecutar el reporte.',
+    scheduleDeleted: isEnglish ? 'Schedule deleted.' : 'Programacion eliminada.',
+    scheduleDeleteError: isEnglish ? 'Could not delete schedule.' : 'No se pudo eliminar la programacion.',
+    deleteScheduleConfirm: isEnglish ? 'Delete schedule' : 'Eliminar la programacion',
+    alerts: isEnglish ? 'Operational Alerts' : 'Alertas Operativas',
+    financeTitle: isEnglish ? 'Multi-product financial control' : 'Control financiero multi-producto',
+    financeSubtitle: isEnglish ? 'Total revenue, receivables, product performance, customer behavior and backoffice batch operations.' : 'Revenue total, cuentas por cobrar, rendimiento por producto, comportamiento por cliente y operaciones de batch para el backoffice de Smart3AI.',
+    runningBatch: isEnglish ? 'Running batch...' : 'Ejecutando batch...',
+    runBatch: isEnglish ? 'Run Billing Batch' : 'Ejecutar Batch de Cobro',
+    netRevenue: isEnglish ? 'Net Revenue' : 'Ingresos Netos',
+    receivables: isEnglish ? 'Accounts Receivable' : 'Cuentas por Cobrar',
+    taxCollected: isEnglish ? 'Tax Collected' : 'Impuesto Recaudado',
+    activeProducts: isEnglish ? 'Active Products' : 'Productos Activos',
+    activeSubscriptions: isEnglish ? 'Active Subscriptions' : 'Suscripciones Activas',
+    trialConversion: isEnglish ? 'Trial Conversion' : 'Conversion de Trials',
+    revenueTimeline: isEnglish ? 'Revenue Timeline' : 'Timeline de Revenue',
+    revenueByProduct: isEnglish ? 'Revenue by Product' : 'Revenue por Producto',
+    revenueByOrg: isEnglish ? 'Revenue by Organization' : 'Revenue por Organizacion',
+    recentInvoices: isEnglish ? 'Recent invoices' : 'Facturas recientes',
+    latestBatch: isEnglish ? 'Latest Batch' : 'Ultimo Batch',
+    productDashboard: isEnglish ? 'Product Dashboard' : 'Dashboard por Producto',
+    reconciliation: isEnglish ? 'Bank Reconciliation' : 'Conciliacion Bancaria',
+    scheduler: isEnglish ? 'Automatic Scheduler' : 'Scheduler Automatico',
+    emailReports: isEnglish ? 'Email Reports' : 'Reportes por Email',
+    paidInvoicesHelper: isEnglish ? 'paid invoices' : 'facturas pagadas',
+    pendingDocsHelper: isEnglish ? 'pending documents' : 'documentos pendientes',
+    crTaxBase: isEnglish ? 'CR operating base for tax authority' : 'Base operativa CR para Hacienda',
+    catalogedProducts: isEnglish ? 'cataloged products' : 'productos catalogados',
+    monthlyRecurringRevenue: isEnglish ? 'Monthly Recurring Revenue' : 'Ingresos Recurrentes Mensuales',
+    annualRecurringRevenue: isEnglish ? 'Annual Recurring Revenue' : 'Ingresos Recurrentes Anuales',
+    activeSubsHelper: isEnglish ? 'Active subscriptions' : 'Suscripciones en estado activo',
+    churnLast30: isEnglish ? 'Cancellations in the last 30 days' : 'Cancelaciones ultimos 30 dias',
+    activeTrials: isEnglish ? 'Active Trials' : 'Trials Activos',
+    trialsInPeriod: isEnglish ? 'Subscriptions in trial period' : 'Suscripciones en periodo de prueba',
+    trialConverted30: isEnglish ? 'Trials converted in the last 30 days' : 'Trials convertidos en ultimos 30 dias',
+    monthlyEvolution: isEnglish ? 'Consolidated monthly trend' : 'Evolucion mensual consolidada',
+    netRevenueComparison: isEnglish ? 'Net revenue comparison' : 'Comparativo de ingresos netos',
+    topCustomers: isEnglish ? 'Top contributing customers' : 'Clientes que mas aportan a Smart3AI',
+    organization: isEnglish ? 'Organization' : 'Organizacion',
+    netRevenueLabel: isEnglish ? 'Net Revenue' : 'Revenue Neto',
+    issued: isEnglish ? 'Issued' : 'Emitidas',
+    paid: isEnglish ? 'Paid' : 'Pagadas',
+    aging: 'Aging',
+    agingSubtitle: isEnglish ? 'Receivables by due bucket' : 'Cuentas por cobrar por vencimiento',
+    current: isEnglish ? 'Current' : 'Corriente',
+    days1to30: isEnglish ? '1 to 30 days' : '1 a 30 dias',
+    days31to60: isEnglish ? '31 to 60 days' : '31 a 60 dias',
+    days61Plus: isEnglish ? '61+ days' : '61+ dias',
+    commercialOperationalStatus: isEnglish ? 'Commercial and operational status' : 'Estado comercial y operativo',
+    exportCsvTitle: isEnglish ? 'Export invoices to CSV' : 'Exportar facturas a CSV',
+    exportCsv: isEnglish ? 'Export CSV' : 'Exportar CSV',
+    invoice: isEnglish ? 'Invoice' : 'Factura',
+    customer: isEnglish ? 'Customer' : 'Cliente',
+    status: isEnglish ? 'Status' : 'Estado',
+    taxAuthority: isEnglish ? 'Tax authority' : 'Hacienda',
+    latestBatchSubtitle: isEnglish ? 'Operational execution report' : 'Reporte de ejecucion operativa',
+    processed: isEnglish ? 'Processed' : 'Procesadas',
+    skipped: isEnglish ? 'Skipped' : 'Omitidas',
+    errors: isEnglish ? 'Errors' : 'Errores',
+    runDate: isEnglish ? 'Run date' : 'Fecha de ejecucion',
+    latestProcessed: isEnglish ? 'Latest processed' : 'Ultimas procesadas',
+    noBatchYet: isEnglish ? 'No batch has been run from this screen yet. Once you run one, the latest operational report will appear here.' : 'Aun no se ha ejecutado un batch desde esta pantalla. Cuando lo corras, aqui quedara el ultimo reporte operativo.',
+    productDashboardSubtitle: isEnglish ? 'MRR, ARR and subscriptions by catalog product' : 'MRR, ARR y suscripciones por producto del catalogo',
+    product: isEnglish ? 'Product' : 'Producto',
+    model: isEnglish ? 'Model' : 'Modelo',
+    subscriptions: isEnglish ? 'Subscriptions' : 'Suscripciones',
+    invoicesLabel: isEnglish ? 'Invoices' : 'Facturas',
+    reconciliationSubtitle: isEnglish ? 'Pending payment reconciliation status' : 'Estado de pagos pendientes de conciliacion',
+    registerPayment: isEnglish ? 'Register Payment' : 'Registrar Pago',
+    pendingPaymentsLabel: isEnglish ? 'Pending Payments' : 'Pagos pendientes',
+    confirmedLabel: isEnglish ? 'Confirmed' : 'Confirmados',
+    overdueInvoices: isEnglish ? 'Overdue invoices' : 'Facturas vencidas',
+    unmatched: isEnglish ? 'Unmatched' : 'Sin conciliar',
+    paidInvoicesNoPayment: isEnglish ? 'Paid invoices without payment record' : 'Facturas pagadas sin registro de pago',
+    pendingToReconcile: isEnglish ? 'Pending payments to reconcile' : 'Pagos pendientes de conciliar',
+    schedulerActiveAt: isEnglish ? 'Active - runs daily at' : 'Activo - corre diario a las',
+    schedulerTz: isEnglish ? 'CR time' : 'hora CR',
+    schedulerDisabled: isEnglish ? 'BILLING_SCHEDULER_ENABLED=false in this environment' : 'BILLING_SCHEDULER_ENABLED=false en este entorno',
+    running: isEnglish ? 'Running' : 'Corriendo',
+    stopped: isEnglish ? 'Stopped' : 'Detenido',
+    runNow: isEnglish ? 'Run now' : 'Ejecutar ahora',
+    nextRun: isEnglish ? 'Next run' : 'Proxima ejecucion',
+    triggered: isEnglish ? 'Triggered' : 'Disparado',
+    finished: isEnglish ? 'Finished' : 'Finalizado',
+    result: isEnglish ? 'Result' : 'Resultado',
+    runsProcessed: isEnglish ? 'pairs processed' : 'pares procesados',
+    noSchedulerRuns: isEnglish ? 'No scheduler runs registered yet.' : 'Aun no hay ejecuciones de scheduler registradas.',
+    recurringSchedules: isEnglish ? 'Recurring automatic schedules' : 'Programaciones automaticas recurrentes',
+    total: isEnglish ? 'total' : 'total',
+    activePlural: isEnglish ? 'active' : 'activas',
+    newLabel: isEnglish ? 'New' : 'Nueva',
+    name: isEnglish ? 'Name' : 'Nombre',
+    type: isEnglish ? 'Type' : 'Tipo',
+    frequencyLabel: isEnglish ? 'Frequency' : 'Frecuencia',
+    recipientsLabel: isEnglish ? 'Recipients' : 'Destinatarios',
+    nextRunAt: isEnglish ? 'Next run' : 'Proxima ejecucion',
+    daily: isEnglish ? 'Daily' : 'Diaria',
+    weekly: isEnglish ? 'Weekly' : 'Semanal',
+    monthly: isEnglish ? 'Monthly' : 'Mensual',
+    collections: isEnglish ? 'Collections' : 'Cobranza',
+    emailsCount: isEnglish ? 'email' : 'correo',
+    active: isEnglish ? 'Active' : 'Activo',
+    inactive: isEnglish ? 'Inactive' : 'Inactivo',
+    runNowTitle: isEnglish ? 'Run now' : 'Ejecutar ahora',
+    editTitle: isEnglish ? 'Edit' : 'Editar',
+    deactivate: isEnglish ? 'Deactivate' : 'Desactivar',
+    activate: isEnglish ? 'Activate' : 'Activar',
+    delete: isEnglish ? 'Delete' : 'Eliminar',
+    noSchedulesYet: isEnglish ? 'No schedules yet' : 'Sin programaciones todavia',
+    createFirstScheduleDesc: isEnglish ? 'Create your first schedule to receive automatic reports in your inbox.' : 'Crea tu primera programacion para recibir reportes automaticos en tu bandeja.',
+    createFirstSchedule: isEnglish ? 'Create first schedule' : 'Crear primera programacion',
+    scheduleActivated: isEnglish ? 'Schedule activated.' : 'Programacion activada.',
+    scheduleDeactivated: isEnglish ? 'Schedule deactivated.' : 'Programacion desactivada.',
+    scheduleToggleError: isEnglish ? 'Could not update status.' : 'No se pudo actualizar el estado.',
+  };
   const [loading, setLoading] = useState(true);
   const [runningBatch, setRunningBatch] = useState(false);
   const [showBatchModal, setShowBatchModal] = useState(false);
@@ -805,7 +1044,7 @@ const FinancePage = () => {
       }).catch(() => {});
     } catch (error) {
       console.error('Finance dashboard error:', error);
-      toast.error('No fue posible cargar el panel financiero.');
+      toast.error(t.panelLoadError);
     } finally {
       setLoading(false);
     }
@@ -817,7 +1056,7 @@ const FinancePage = () => {
 
   const runBatch = async ({ fiscal_profile, product }) => {
     if (!fiscal_profile || !product) {
-      toast.error('Se requiere perfil fiscal y producto para ejecutar el batch.');
+      toast.error(t.batchRequired);
       return;
     }
 
@@ -826,11 +1065,11 @@ const FinancePage = () => {
       const report = await billingService.runBatch({ fiscal_profile, product });
       setBatchReport(report);
       setShowBatchModal(false);
-      toast.success(`Batch ejecutado: ${report.summary.processed_count} procesadas`);
+      toast.success(`${t.batchSuccess}: ${report.summary.processed_count}`);
       await loadData();
     } catch (error) {
       console.error('Batch billing error:', error);
-      toast.error(error.response?.data?.detail || 'No fue posible ejecutar el batch.');
+      toast.error(error.response?.data?.detail || t.batchRunError);
     } finally {
       setRunningBatch(false);
     }
@@ -848,7 +1087,7 @@ const FinancePage = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch {
-      toast.error('No se pudo exportar el CSV.');
+      toast.error(t.csvError);
     }
   };
 
@@ -856,11 +1095,11 @@ const FinancePage = () => {
     try {
       setTriggeringScheduler(true);
       const result = await billingService.triggerSchedulerNow();
-      toast.success(`Scheduler ejecutado: estado ${result.status}`);
+      toast.success(`${t.schedulerRun} ${result.status}`);
       const schedData = await billingService.getSchedulerStatus().catch(() => null);
       if (schedData) setScheduler(schedData);
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'No se pudo ejecutar el scheduler.');
+      toast.error(error.response?.data?.detail || t.schedulerRunError);
     } finally {
       setTriggeringScheduler(false);
     }
@@ -871,16 +1110,16 @@ const FinancePage = () => {
       setSavingReportSchedule(true);
       if (editingReportSchedule?.id) {
         await billingService.updateReportSchedule(editingReportSchedule.id, payload);
-        toast.success('Programación de reporte actualizada.');
+        toast.success(t.reportUpdated);
       } else {
         await billingService.createReportSchedule(payload);
-        toast.success('Programación de reporte creada.');
+        toast.success(t.reportCreated);
       }
       setShowReportScheduleModal(false);
       setEditingReportSchedule(null);
       await loadData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'No se pudo guardar la programación.');
+      toast.error(error.response?.data?.detail || t.reportSaveError);
     } finally {
       setSavingReportSchedule(false);
     }
@@ -900,10 +1139,10 @@ const FinancePage = () => {
     try {
       setRunningReportScheduleId(scheduleId);
       await billingService.runReportScheduleNow(scheduleId);
-      toast.success('Reporte ejecutado y enviado por email.');
+      toast.success(t.reportRunOk);
       await loadData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'No se pudo ejecutar el reporte.');
+      toast.error(error.response?.data?.detail || t.reportRunError);
     } finally {
       setRunningReportScheduleId(null);
     }
@@ -915,26 +1154,26 @@ const FinancePage = () => {
       await billingService.updateReportSchedule(schedule.id, {
         is_active: !schedule.is_active,
       });
-      toast.success(`Programación ${!schedule.is_active ? 'activada' : 'desactivada'}.`);
+      toast.success(!schedule.is_active ? t.scheduleActivated : t.scheduleDeactivated);
       await loadData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'No se pudo actualizar el estado.');
+      toast.error(error.response?.data?.detail || t.scheduleToggleError);
     } finally {
       setTogglingReportScheduleId(null);
     }
   };
 
   const deleteReportSchedule = async (schedule) => {
-    const confirmed = window.confirm(`¿Eliminar la programación "${schedule.name}"?`);
+    const confirmed = window.confirm(`${t.deleteScheduleConfirm} "${schedule.name}"?`);
     if (!confirmed) return;
 
     try {
       setDeletingReportScheduleId(schedule.id);
       await billingService.deleteReportSchedule(schedule.id);
-      toast.success('Programación eliminada.');
+      toast.success(t.scheduleDeleted);
       await loadData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'No se pudo eliminar la programación.');
+      toast.error(error.response?.data?.detail || t.scheduleDeleteError);
     } finally {
       setDeletingReportScheduleId(null);
     }
@@ -999,7 +1238,7 @@ const FinancePage = () => {
         <div className="glass-card p-5">
           <div className="mb-4 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-amber-400" />
-            <h2 className="text-base font-semibold text-gray-100">Alertas Operativas</h2>
+            <h2 className="text-base font-semibold text-gray-100">{t.alerts}</h2>
             <span className="ml-auto rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-medium text-amber-300">{alerts.length}</span>
           </div>
           <div className="space-y-2">
@@ -1026,9 +1265,9 @@ const FinancePage = () => {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-primary-300">Smart3AI Finance Desk</p>
-            <h1 className="mt-2 text-3xl font-bold text-gray-100">Control financiero multi-producto</h1>
+            <h1 className="mt-2 text-3xl font-bold text-gray-100">{t.financeTitle}</h1>
             <p className="mt-2 max-w-3xl text-sm text-gray-400">
-              Revenue total, cuentas por cobrar, rendimiento por producto, comportamiento por cliente y operaciones de batch para el backoffice de Smart3AI.
+              {t.financeSubtitle}
             </p>
           </div>
           <button
@@ -1038,37 +1277,37 @@ const FinancePage = () => {
             className="btn-primary inline-flex items-center gap-2"
           >
             <PlayCircle className="h-4 w-4" />
-            {runningBatch ? 'Ejecutando batch...' : 'Ejecutar Batch de Cobro'}
+            {runningBatch ? t.runningBatch : t.runBatch}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          title="Ingresos Netos"
+          title={t.netRevenue}
           value={formatMoney(summary?.net_revenue)}
-          helper={`${summary?.paid_invoices || 0} facturas pagadas`}
+          helper={`${summary?.paid_invoices || 0} ${t.paidInvoicesHelper}`}
           icon={Coins}
           tone="success"
         />
         <MetricCard
-          title="Cuentas por Cobrar"
+          title={t.receivables}
           value={formatMoney(summary?.accounts_receivable)}
-          helper={`${summary?.pending_invoices || 0} documentos pendientes`}
+          helper={`${summary?.pending_invoices || 0} ${t.pendingDocsHelper}`}
           icon={Wallet}
           tone="warning"
         />
         <MetricCard
-          title="Impuesto Recaudado"
+          title={t.taxCollected}
           value={formatMoney(summary?.tax_collected)}
-          helper="Base operativa CR para Hacienda"
+          helper={t.crTaxBase}
           icon={Landmark}
           tone="primary"
         />
         <MetricCard
-          title="Productos Activos"
+          title={t.activeProducts}
           value={summary?.active_products || 0}
-          helper={`${summary?.total_products || 0} productos catalogados`}
+          helper={`${summary?.total_products || 0} ${t.catalogedProducts}`}
           icon={BarChart3}
           tone="danger"
         />
@@ -1078,21 +1317,21 @@ const FinancePage = () => {
         <MetricCard
           title="MRR"
           value={formatMoney(summary?.mrr)}
-          helper="Ingresos Recurrentes Mensuales"
+          helper={t.monthlyRecurringRevenue}
           icon={RefreshCw}
           tone="success"
         />
         <MetricCard
           title="ARR"
           value={formatMoney(summary?.arr)}
-          helper="Ingresos Recurrentes Anuales"
+          helper={t.annualRecurringRevenue}
           icon={BarChart3}
           tone="primary"
         />
         <MetricCard
-          title="Suscripciones Activas"
+          title={t.activeSubscriptions}
           value={summary?.active_subscriptions || 0}
-          helper="Suscripciones en estado activo"
+          helper={t.activeSubsHelper}
           icon={Building2}
           tone="warning"
         />
@@ -1103,21 +1342,21 @@ const FinancePage = () => {
         <MetricCard
           title="Churn Rate"
           value={churnData ? `${(churnData.churn_rate * 100).toFixed(1)}%` : '—'}
-          helper="Cancelaciones últimos 30 días"
+          helper={t.churnLast30}
           icon={TrendingDown}
           tone="danger"
         />
         <MetricCard
-          title="Trials Activos"
+          title={t.activeTrials}
           value={churnData?.trial_subscriptions ?? (summary?.trial_subscriptions ?? '—')}
-          helper="Suscripciones en período de prueba"
+          helper={t.trialsInPeriod}
           icon={Clock}
           tone="warning"
         />
         <MetricCard
-          title="Conversión de Trials"
+          title={t.trialConversion}
           value={churnData ? `${(churnData.trial_conversion_rate * 100).toFixed(1)}%` : '—'}
-          helper="Trials convertidos en últimos 30 días"
+          helper={t.trialConverted30}
           icon={CheckCircle2}
           tone="success"
         />
@@ -1127,8 +1366,8 @@ const FinancePage = () => {
         <div className="glass-card p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Timeline de Revenue</h2>
-              <p className="text-sm text-gray-500">Evolución mensual consolidada</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.revenueTimeline}</h2>
+              <p className="text-sm text-gray-500">{t.monthlyEvolution}</p>
             </div>
             <Receipt className="h-5 w-5 text-primary-300" />
           </div>
@@ -1162,8 +1401,8 @@ const FinancePage = () => {
         <div className="glass-card p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Revenue por Producto</h2>
-              <p className="text-sm text-gray-500">Comparativo de ingresos netos</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.revenueByProduct}</h2>
+              <p className="text-sm text-gray-500">{t.netRevenueComparison}</p>
             </div>
             <BarChart3 className="h-5 w-5 text-primary-300" />
           </div>
@@ -1193,8 +1432,8 @@ const FinancePage = () => {
         <div className="glass-card p-6 xl:col-span-2">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Revenue por Organización</h2>
-              <p className="text-sm text-gray-500">Clientes que más aportan a Smart3AI</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.revenueByOrg}</h2>
+              <p className="text-sm text-gray-500">{t.topCustomers}</p>
             </div>
             <Building2 className="h-5 w-5 text-primary-300" />
           </div>
@@ -1202,11 +1441,11 @@ const FinancePage = () => {
             <table className="table-glass">
               <thead>
                 <tr>
-                  <th>Organización</th>
-                  <th>Revenue Neto</th>
-                  <th>Impuesto</th>
-                  <th>Emitidas</th>
-                  <th>Pagadas</th>
+                  <th>{t.organization}</th>
+                  <th>{t.netRevenueLabel}</th>
+                  <th>{t.tax}</th>
+                  <th>{t.issued}</th>
+                  <th>{t.paid}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1228,25 +1467,25 @@ const FinancePage = () => {
           <div className="mb-5 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-gray-100">Aging</h2>
-              <p className="text-sm text-gray-500">Cuentas por cobrar por vencimiento</p>
+              <p className="text-sm text-gray-500">{t.agingSubtitle}</p>
             </div>
             <FileWarning className="h-5 w-5 text-amber-300" />
           </div>
           <div className="space-y-4 text-sm">
             <div className="rounded-xl border border-gray-700/50 bg-dark-400/40 p-4">
-              <p className="text-gray-400">Corriente</p>
+              <p className="text-gray-400">{t.current}</p>
               <p className="mt-1 text-xl font-semibold text-gray-100">{formatMoney(receivables?.current)}</p>
             </div>
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-              <p className="text-amber-300">1 a 30 días</p>
+              <p className="text-amber-300">{t.days1to30}</p>
               <p className="mt-1 text-xl font-semibold text-amber-100">{formatMoney(receivables?.overdue_1_30)}</p>
             </div>
             <div className="rounded-xl border border-orange-500/30 bg-orange-500/10 p-4">
-              <p className="text-orange-300">31 a 60 días</p>
+              <p className="text-orange-300">{t.days31to60}</p>
               <p className="mt-1 text-xl font-semibold text-orange-100">{formatMoney(receivables?.overdue_31_60)}</p>
             </div>
             <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
-              <p className="text-red-300">61+ días</p>
+              <p className="text-red-300">{t.days61Plus}</p>
               <p className="mt-1 text-xl font-semibold text-red-100">{formatMoney(receivables?.overdue_61_plus)}</p>
             </div>
           </div>
@@ -1257,17 +1496,17 @@ const FinancePage = () => {
         <div className="glass-card p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Facturas recientes</h2>
-              <p className="text-sm text-gray-500">Estado comercial y operativo</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.recentInvoices}</h2>
+              <p className="text-sm text-gray-500">{t.commercialOperationalStatus}</p>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={exportCsv}
                 className="btn-secondary inline-flex items-center gap-1.5 text-sm py-1.5 px-3"
-                title="Exportar facturas a CSV"
+                title={t.exportCsvTitle}
               >
                 <Download className="h-3.5 w-3.5" />
-                Exportar CSV
+                {t.exportCsv}
               </button>
               <Receipt className="h-5 w-5 text-primary-300" />
             </div>
@@ -1276,11 +1515,11 @@ const FinancePage = () => {
             <table className="table-glass">
               <thead>
                 <tr>
-                  <th>Factura</th>
-                  <th>Cliente</th>
-                  <th>Total</th>
-                  <th>Estado</th>
-                  <th>Hacienda</th>
+                  <th>{t.invoice}</th>
+                  <th>{t.customer}</th>
+                  <th>{t.total}</th>
+                  <th>{t.status}</th>
+                  <th>{t.taxAuthority}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1315,8 +1554,8 @@ const FinancePage = () => {
         <div className="glass-card p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Último Batch</h2>
-              <p className="text-sm text-gray-500">Reporte de ejecución operativa</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.latestBatch}</h2>
+              <p className="text-sm text-gray-500">{t.latestBatchSubtitle}</p>
             </div>
             <PlayCircle className="h-5 w-5 text-primary-300" />
           </div>
@@ -1324,24 +1563,24 @@ const FinancePage = () => {
             <div className="space-y-4 text-sm">
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-xl bg-emerald-500/10 p-4 border border-emerald-500/25">
-                  <p className="text-emerald-300">Procesadas</p>
+                  <p className="text-emerald-300">{t.processed}</p>
                   <p className="mt-1 text-2xl font-semibold text-emerald-100">{batchReport.summary.processed_count}</p>
                 </div>
                 <div className="rounded-xl bg-amber-500/10 p-4 border border-amber-500/25">
-                  <p className="text-amber-300">Omitidas</p>
+                  <p className="text-amber-300">{t.skipped}</p>
                   <p className="mt-1 text-2xl font-semibold text-amber-100">{batchReport.summary.skipped_count}</p>
                 </div>
                 <div className="rounded-xl bg-red-500/10 p-4 border border-red-500/25">
-                  <p className="text-red-300">Errores</p>
+                  <p className="text-red-300">{t.errors}</p>
                   <p className="mt-1 text-2xl font-semibold text-red-100">{batchReport.summary.error_count}</p>
                 </div>
               </div>
               <div className="rounded-xl border border-gray-700/50 bg-dark-400/40 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Fecha de ejecución</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{t.runDate}</p>
                 <p className="mt-2 text-gray-100">{batchReport.run_date}</p>
               </div>
               <div className="rounded-xl border border-gray-700/50 bg-dark-400/40 p-4">
-                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gray-500">Últimas procesadas</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gray-500">{t.latestProcessed}</p>
                 <div className="space-y-2">
                   {batchReport.processed.slice(0, 4).map((item) => (
                     <div key={item.invoice_id} className="flex items-center justify-between gap-4 text-gray-300">
@@ -1354,7 +1593,7 @@ const FinancePage = () => {
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-gray-700/60 bg-dark-400/30 p-6 text-sm text-gray-500">
-              Aún no se ha ejecutado un batch desde esta pantalla. Cuando lo corras, aquí quedará el último reporte operativo.
+              {t.noBatchYet}
             </div>
           )}
         </div>
@@ -1365,8 +1604,8 @@ const FinancePage = () => {
         <div className="glass-card p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Dashboard por Producto</h2>
-              <p className="text-sm text-gray-500">MRR, ARR y suscripciones por producto del catálogo</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.productDashboard}</h2>
+              <p className="text-sm text-gray-500">{t.productDashboardSubtitle}</p>
             </div>
             <BarChart3 className="h-5 w-5 text-primary-300" />
           </div>
@@ -1374,13 +1613,13 @@ const FinancePage = () => {
             <table className="table-glass">
               <thead>
                 <tr>
-                  <th>Producto</th>
-                  <th>Modelo</th>
-                  <th>Revenue</th>
+                  <th>{t.product}</th>
+                  <th>{t.model}</th>
+                  <th>{t.netRevenueLabel}</th>
                   <th>MRR</th>
                   <th>ARR</th>
-                  <th>Suscripciones</th>
-                  <th>Facturas</th>
+                  <th>{t.subscriptions}</th>
+                  <th>{t.invoicesLabel}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1409,8 +1648,8 @@ const FinancePage = () => {
         <div className="glass-card p-6">
           <div className="mb-5 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Conciliación Bancaria</h2>
-              <p className="text-sm text-gray-500">Estado de pagos pendientes de conciliación</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.reconciliation}</h2>
+              <p className="text-sm text-gray-500">{t.reconciliationSubtitle}</p>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -1419,37 +1658,37 @@ const FinancePage = () => {
                 className="btn-secondary inline-flex items-center gap-2 text-sm"
               >
                 <Plus className="h-4 w-4" />
-                Registrar Pago
+                {t.registerPayment}
               </button>
               <Wallet className="h-5 w-5 text-primary-300" />
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-              <p className="text-xs text-amber-300 uppercase tracking-wider">Pagos pendientes</p>
+              <p className="text-xs text-amber-300 uppercase tracking-wider">{t.pendingPaymentsLabel}</p>
               <p className="mt-1 text-2xl font-semibold text-amber-100">{reconciliation.pending_payments}</p>
               <p className="mt-1 text-sm text-amber-300">{formatMoney(reconciliation.pending_amount)}</p>
             </div>
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-              <p className="text-xs text-emerald-300 uppercase tracking-wider">Confirmados</p>
+              <p className="text-xs text-emerald-300 uppercase tracking-wider">{t.confirmedLabel}</p>
               <p className="mt-1 text-2xl font-semibold text-emerald-100">{reconciliation.confirmed_payments}</p>
               <p className="mt-1 text-sm text-emerald-300">{formatMoney(reconciliation.confirmed_amount)}</p>
             </div>
             <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
-              <p className="text-xs text-red-300 uppercase tracking-wider">Facturas vencidas</p>
+              <p className="text-xs text-red-300 uppercase tracking-wider">{t.overdueInvoices}</p>
               <p className="mt-1 text-2xl font-semibold text-red-100">{reconciliation.overdue_invoices}</p>
               <p className="mt-1 text-sm text-red-300">{formatMoney(reconciliation.overdue_amount)}</p>
             </div>
             <div className="rounded-xl border border-gray-700/50 bg-dark-400/40 p-4">
-              <p className="text-xs text-gray-400 uppercase tracking-wider">Sin conciliar</p>
+              <p className="text-xs text-gray-400 uppercase tracking-wider">{t.unmatched}</p>
               <p className="mt-1 text-2xl font-semibold text-gray-100">{reconciliation.unmatched_invoices}</p>
-              <p className="mt-1 text-xs text-gray-500">Facturas pagadas sin registro de pago</p>
+              <p className="mt-1 text-xs text-gray-500">{t.paidInvoicesNoPayment}</p>
             </div>
           </div>
 
           {pendingPayments.length > 0 && (
             <div className="mt-6">
-              <p className="mb-3 text-xs uppercase tracking-widest text-gray-500">Pagos pendientes de conciliar</p>
+              <p className="mb-3 text-xs uppercase tracking-widest text-gray-500">{t.pendingToReconcile}</p>
               <PendingPaymentsList payments={pendingPayments} onAction={loadData} />
             </div>
           )}
@@ -1460,16 +1699,16 @@ const FinancePage = () => {
       <div className="glass-card p-6">
         <div className="mb-5 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-100">Scheduler Automático</h2>
+            <h2 className="text-lg font-semibold text-gray-100">{t.scheduler}</h2>
             <p className="text-sm text-gray-500">
               {scheduler?.enabled
-                ? `Activo — corre diario a las ${String(scheduler.cron?.hour ?? 6).padStart(2, '0')}:${String(scheduler.cron?.minute ?? 0).padStart(2, '0')} hora CR`
-                : 'BILLING_SCHEDULER_ENABLED=false en este entorno'}
+                ? `${t.schedulerActiveAt} ${String(scheduler.cron?.hour ?? 6).padStart(2, '0')}:${String(scheduler.cron?.minute ?? 0).padStart(2, '0')} ${t.schedulerTz}`
+                : t.schedulerDisabled}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <div className={`h-2.5 w-2.5 rounded-full ${scheduler?.running ? 'bg-emerald-400 animate-pulse' : 'bg-gray-600'}`} />
-            <span className="text-sm text-gray-400">{scheduler?.running ? 'Corriendo' : 'Detenido'}</span>
+            <span className="text-sm text-gray-400">{scheduler?.running ? t.running : t.stopped}</span>
             <button
               type="button"
               onClick={triggerSchedulerNow}
@@ -1477,7 +1716,7 @@ const FinancePage = () => {
               className="btn-secondary inline-flex items-center gap-2 text-sm"
             >
               <RefreshCw className={`h-4 w-4 ${triggeringScheduler ? 'animate-spin' : ''}`} />
-              Ejecutar ahora
+              {t.runNow}
             </button>
           </div>
         </div>
@@ -1485,7 +1724,7 @@ const FinancePage = () => {
         {scheduler?.next_run && (
           <div className="mb-4 rounded-xl bg-primary-500/10 border border-primary-500/20 px-4 py-3 text-sm text-primary-200 inline-flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            Próxima ejecución: {new Date(scheduler.next_run).toLocaleString('es-CR')}
+            {t.nextRun}: {new Date(scheduler.next_run).toLocaleString(isEnglish ? 'en-US' : 'es-CR')}
           </div>
         )}
 
@@ -1494,17 +1733,17 @@ const FinancePage = () => {
             <table className="table-glass">
               <thead>
                 <tr>
-                  <th>Disparado</th>
-                  <th>Finalizado</th>
-                  <th>Estado</th>
-                  <th>Resultado</th>
+                  <th>{t.triggered}</th>
+                  <th>{t.finished}</th>
+                  <th>{t.status}</th>
+                  <th>{t.result}</th>
                 </tr>
               </thead>
               <tbody>
                 {scheduler.last_logs.slice(0, 8).map((log) => (
                   <tr key={log.id}>
-                    <td>{log.triggered_at ? new Date(log.triggered_at).toLocaleString('es-CR') : '—'}</td>
-                    <td>{log.finished_at ? new Date(log.finished_at).toLocaleString('es-CR') : '—'}</td>
+                    <td>{log.triggered_at ? new Date(log.triggered_at).toLocaleString(isEnglish ? 'en-US' : 'es-CR') : '—'}</td>
+                    <td>{log.finished_at ? new Date(log.finished_at).toLocaleString(isEnglish ? 'en-US' : 'es-CR') : '—'}</td>
                     <td>
                       <span className={log.status === 'success' ? 'badge-success' : log.status === 'running' ? 'badge-info' : log.status === 'skipped' ? 'badge-warning' : 'badge-danger'}>
                         {log.status}
@@ -1512,7 +1751,7 @@ const FinancePage = () => {
                     </td>
                     <td className="text-xs text-gray-400">
                       {log.result_summary?.runs
-                        ? `${log.result_summary.runs.length} pares procesados`
+                        ? `${log.result_summary.runs.length} ${t.runsProcessed}`
                         : log.result_summary?.reason || '—'}
                     </td>
                   </tr>
@@ -1522,7 +1761,7 @@ const FinancePage = () => {
           </div>
         ) : (
           <div className="rounded-xl border border-dashed border-gray-700/60 bg-dark-400/30 p-6 text-sm text-gray-500">
-            Aún no hay ejecuciones de scheduler registradas.
+            {t.noSchedulerRuns}
           </div>
         )}
       </div>
@@ -1535,19 +1774,19 @@ const FinancePage = () => {
               <Mail className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Reportes por Email</h2>
-              <p className="text-sm text-gray-500 mt-0.5">Programaciones automáticas recurrentes</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.emailReports}</h2>
+              <p className="text-sm text-gray-500 mt-0.5">{t.recurringSchedules}</p>
             </div>
           </div>
           <div className="flex items-center gap-5">
             <div className="hidden sm:flex items-center gap-4 text-sm">
               <span className="text-gray-500">
-                <span className="font-semibold text-gray-100">{reportSchedules.length}</span> total
+                <span className="font-semibold text-gray-100">{reportSchedules.length}</span> {t.total}
               </span>
               <span className="text-gray-500">
                 <span className="font-semibold text-emerald-400">
                   {reportSchedules.filter((s) => s.is_active).length}
-                </span>{' '}activas
+                </span>{' '}{t.activePlural}
               </span>
             </div>
             <button
@@ -1556,7 +1795,7 @@ const FinancePage = () => {
               className="btn-primary inline-flex items-center gap-2 text-sm"
             >
               <Plus className="h-4 w-4" />
-              Nueva
+              {t.newLabel}
             </button>
           </div>
         </div>
@@ -1566,13 +1805,13 @@ const FinancePage = () => {
             <table className="table-glass">
               <thead>
                 <tr>
-                  <th>Nombre</th>
-                  <th>Tipo</th>
-                  <th>Frecuencia</th>
-                  <th>Destinatarios</th>
-                  <th>Próxima ejecución</th>
-                  <th>Estado</th>
-                  <th className="text-right">Acciones</th>
+                  <th>{t.name}</th>
+                  <th>{t.type}</th>
+                  <th>{t.frequencyLabel}</th>
+                  <th>{t.recipientsLabel}</th>
+                  <th>{t.nextRunAt}</th>
+                  <th>{t.status}</th>
+                  <th className="text-right">{t.actions}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1586,7 +1825,7 @@ const FinancePage = () => {
                         {schedule.report_type === 'billing_summary' ? (
                           <><Receipt className="h-3.5 w-3.5 text-primary-400 flex-shrink-0" /><span>Billing</span></>
                         ) : (
-                          <><BarChart3 className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0" /><span>Cobranza</span></>
+                          <><BarChart3 className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0" /><span>{t.collections}</span></>
                         )}
                       </div>
                     </td>
@@ -1598,23 +1837,23 @@ const FinancePage = () => {
                           ? 'bg-violet-500/10 text-violet-300'
                           : 'bg-amber-500/10 text-amber-300'
                       }`}>
-                        {schedule.frequency === 'daily' ? 'Diaria' : schedule.frequency === 'weekly' ? 'Semanal' : 'Mensual'}
+                        {schedule.frequency === 'daily' ? t.daily : schedule.frequency === 'weekly' ? t.weekly : t.monthly}
                       </span>
                     </td>
                     <td>
                       <div className="flex items-center gap-1.5 text-xs text-gray-400">
                         <Users className="h-3.5 w-3.5 flex-shrink-0" />
-                        <span>{schedule.recipients?.length ?? 0} correo{schedule.recipients?.length !== 1 ? 's' : ''}</span>
+                        <span>{schedule.recipients?.length ?? 0} {t.emailsCount}{schedule.recipients?.length !== 1 ? 's' : ''}</span>
                       </div>
                     </td>
                     <td className="text-xs text-gray-400">
                       {schedule.next_run_at
-                        ? new Date(schedule.next_run_at).toLocaleString('es-CR')
+                        ? new Date(schedule.next_run_at).toLocaleString(isEnglish ? 'en-US' : 'es-CR')
                         : '—'}
                     </td>
                     <td>
                       <span className={schedule.is_active ? 'badge-success' : 'badge-neutral'}>
-                        {schedule.is_active ? 'Activo' : 'Inactivo'}
+                        {schedule.is_active ? t.active : t.inactive}
                       </span>
                     </td>
                     <td className="text-right">
@@ -1624,7 +1863,7 @@ const FinancePage = () => {
                           onClick={() => runReportScheduleNow(schedule.id)}
                           disabled={runningReportScheduleId === schedule.id}
                           className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-medium text-emerald-300 transition-colors hover:bg-emerald-500/20 disabled:opacity-50"
-                          title="Ejecutar ahora"
+                          title={t.runNowTitle}
                         >
                           <PlayCircle className="h-3.5 w-3.5" />
                         </button>
@@ -1632,7 +1871,7 @@ const FinancePage = () => {
                           type="button"
                           onClick={() => openEditReportSchedule(schedule)}
                           className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-blue-500/10 px-2.5 py-1.5 text-xs font-medium text-blue-300 transition-colors hover:bg-blue-500/20"
-                          title="Editar"
+                          title={t.editTitle}
                         >
                           <PenSquare className="h-3.5 w-3.5" />
                         </button>
@@ -1641,7 +1880,7 @@ const FinancePage = () => {
                           onClick={() => toggleReportSchedule(schedule)}
                           disabled={togglingReportScheduleId === schedule.id}
                           className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-1.5 text-xs font-medium text-amber-300 transition-colors hover:bg-amber-500/20 disabled:opacity-50"
-                          title={schedule.is_active ? 'Desactivar' : 'Activar'}
+                          title={schedule.is_active ? t.deactivate : t.activate}
                         >
                           {togglingReportScheduleId === schedule.id
                             ? '…'
@@ -1652,7 +1891,7 @@ const FinancePage = () => {
                           onClick={() => deleteReportSchedule(schedule)}
                           disabled={deletingReportScheduleId === schedule.id}
                           className="inline-flex items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/20 disabled:opacity-50"
-                          title="Eliminar"
+                          title={t.delete}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -1669,9 +1908,9 @@ const FinancePage = () => {
               <Mail className="h-9 w-9 text-gray-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-300">Sin programaciones todavía</p>
+              <p className="text-sm font-medium text-gray-300">{t.noSchedulesYet}</p>
               <p className="text-xs text-gray-500 mt-1 max-w-xs">
-                Crea tu primera programación para recibir reportes automáticos en tu bandeja.
+                {t.createFirstScheduleDesc}
               </p>
             </div>
             <button
@@ -1680,7 +1919,7 @@ const FinancePage = () => {
               className="btn-primary inline-flex items-center gap-2 text-sm mt-1"
             >
               <Plus className="h-4 w-4" />
-              Crear primera programación
+              {t.createFirstSchedule}
             </button>
           </div>
         )}

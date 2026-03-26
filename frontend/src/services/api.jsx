@@ -92,7 +92,14 @@ export const authService = {
   },
 
   updateProfile: async (data) => {
-    const response = await api.patch('/auth/users/me/', data);
+    const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+    const response = await api.patch('/auth/users/me/', data, isFormData
+      ? {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      : undefined);
     return response.data;
   },
 

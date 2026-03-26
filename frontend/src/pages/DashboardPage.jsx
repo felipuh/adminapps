@@ -12,9 +12,10 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { dashboardService, organizationService } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 // Stats Card Component
-const StatCard = ({ title, value, change, changeType, icon: Icon, color }) => {
+const StatCard = ({ title, value, change, changeType, icon: Icon, color, changeLabel }) => {
   const colorClasses = {
     blue: 'from-primary-500 to-primary-600 shadow-primary-500/25',
     green: 'from-emerald-500 to-emerald-600 shadow-emerald-500/25',
@@ -37,7 +38,7 @@ const StatCard = ({ title, value, change, changeType, icon: Icon, color }) => {
               ) : (
                 <ArrowDownRight className="w-4 h-4" />
               )}
-              <span>{change}% vs mes anterior</span>
+              <span>{change}% {changeLabel}</span>
             </div>
           )}
         </div>
@@ -75,7 +76,7 @@ const ActivityItem = ({ activity }) => {
 };
 
 // Organization Status Card
-const OrganizationStatusCard = ({ org }) => {
+const OrganizationStatusCard = ({ org, usersLabel }) => {
   const statusColors = {
     active: 'badge-success',
     trial: 'badge-info',
@@ -91,7 +92,7 @@ const OrganizationStatusCard = ({ org }) => {
         </div>
         <div>
           <p className="text-sm font-medium text-gray-200">{org.name}</p>
-          <p className="text-xs text-gray-500">{org.users_count} usuarios</p>
+          <p className="text-xs text-gray-500">{org.users_count} {usersLabel}</p>
         </div>
       </div>
       <span className={statusColors[org.status]}>{org.status}</span>
@@ -100,6 +101,42 @@ const OrganizationStatusCard = ({ org }) => {
 };
 
 const DashboardPage = () => {
+  const { user } = useAuth();
+  const isEnglish = user?.language === 'en';
+  const t = {
+    users: isEnglish ? 'users' : 'usuarios',
+    title: isEnglish ? 'Dashboard' : 'Dashboard',
+    subtitle: isEnglish ? 'System overview' : 'Resumen general del sistema',
+    changeVsMonth: isEnglish ? 'vs previous month' : 'vs mes anterior',
+    totalOrganizations: isEnglish ? 'Organizations' : 'Organizaciones',
+    activeOrganizations: isEnglish ? 'Active Organizations' : 'Organizaciones Activas',
+    totalUsers: isEnglish ? 'Total Users' : 'Usuarios Totales',
+    monthlyRevenue: isEnglish ? 'Monthly Revenue' : 'Ingresos Mensuales',
+    growth: isEnglish ? 'Growth' : 'Crecimiento',
+    growthSubtitle: isEnglish ? 'Organizations and users by month' : 'Organizaciones y usuarios por mes',
+    period6m: isEnglish ? 'Last 6 months' : 'Ultimos 6 meses',
+    period1y: isEnglish ? 'Last year' : 'Ultimo ano',
+    periodAll: isEnglish ? 'All time' : 'Todo el tiempo',
+    organizationsLegend: isEnglish ? 'Organizations' : 'Organizaciones',
+    usersLegend: isEnglish ? 'Users' : 'Usuarios',
+    recentActivity: isEnglish ? 'Recent Activity' : 'Actividad Reciente',
+    recentOrganizations: isEnglish ? 'Recent Organizations' : 'Organizaciones Recientes',
+    viewAll: isEnglish ? 'View all ->' : 'Ver todas ->',
+    alertsTitle: isEnglish ? 'Alerts and Pending' : 'Alertas y Pendientes',
+    trialsExpiring: isEnglish ? '3 trials expiring soon' : '3 trials por expirar',
+    trialsDesc: isEnglish ? 'Organizations with trial expiring in less than 7 days' : 'Organizaciones con trial que expira en menos de 7 dias',
+    expiredSubs: isEnglish ? '2 expired subscriptions' : '2 suscripciones vencidas',
+    expiredDesc: isEnglish ? 'Require immediate attention' : 'Requieren atencion inmediata',
+    pendingInvites: isEnglish ? '5 pending invitations' : '5 invitaciones pendientes',
+    pendingInvitesDesc: isEnglish ? 'Users who have not accepted yet' : 'Usuarios que aun no han aceptado',
+    jan: isEnglish ? 'Jan' : 'Ene',
+    feb: isEnglish ? 'Feb' : 'Feb',
+    mar: isEnglish ? 'Mar' : 'Mar',
+    apr: isEnglish ? 'Apr' : 'Abr',
+    may: isEnglish ? 'May' : 'May',
+    jun: isEnglish ? 'Jun' : 'Jun',
+  };
+
   const [stats, setStats] = useState({
     totalOrganizations: 0,
     activeOrganizations: 0,
@@ -111,12 +148,12 @@ const DashboardPage = () => {
 
   // Mock data for chart
   const chartData = [
-    { name: 'Ene', organizations: 4, users: 24 },
-    { name: 'Feb', organizations: 6, users: 35 },
-    { name: 'Mar', organizations: 8, users: 47 },
-    { name: 'Abr', organizations: 10, users: 62 },
-    { name: 'May', organizations: 12, users: 78 },
-    { name: 'Jun', organizations: 15, users: 95 },
+    { name: t.jan, organizations: 4, users: 24 },
+    { name: t.feb, organizations: 6, users: 35 },
+    { name: t.mar, organizations: 8, users: 47 },
+    { name: t.apr, organizations: 10, users: 62 },
+    { name: t.may, organizations: 12, users: 78 },
+    { name: t.jun, organizations: 15, users: 95 },
   ];
 
   // Mock recent activity
@@ -191,43 +228,47 @@ const DashboardPage = () => {
     <div className="space-y-6 animate-fadeIn">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-100">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Resumen general del sistema</p>
+        <h1 className="text-2xl font-bold text-gray-100">{t.title}</h1>
+        <p className="text-gray-500 mt-1">{t.subtitle}</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          title="Organizaciones"
+          title={t.totalOrganizations}
           value={stats.totalOrganizations}
           change={12}
           changeType="increase"
           icon={Building2}
           color="blue"
+          changeLabel={t.changeVsMonth}
         />
         <StatCard
-          title="Organizaciones Activas"
+          title={t.activeOrganizations}
           value={stats.activeOrganizations}
           change={8}
           changeType="increase"
           icon={CheckCircle}
           color="green"
+          changeLabel={t.changeVsMonth}
         />
         <StatCard
-          title="Usuarios Totales"
+          title={t.totalUsers}
           value={stats.totalUsers}
           change={15}
           changeType="increase"
           icon={Users}
           color="purple"
+          changeLabel={t.changeVsMonth}
         />
         <StatCard
-          title="Ingresos Mensuales"
+          title={t.monthlyRevenue}
           value={`$${(stats.monthlyRevenue || 0).toLocaleString()}`}
           change={5}
           changeType="increase"
           icon={TrendingUp}
           color="orange"
+          changeLabel={t.changeVsMonth}
         />
       </div>
 
@@ -237,13 +278,13 @@ const DashboardPage = () => {
         <div className="lg:col-span-2 glass-card p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">Crecimiento</h2>
-              <p className="text-sm text-gray-500">Organizaciones y usuarios por mes</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.growth}</h2>
+              <p className="text-sm text-gray-500">{t.growthSubtitle}</p>
             </div>
             <select className="bg-dark-400 border border-gray-700/50 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-primary-500/50">
-              <option>Últimos 6 meses</option>
-              <option>Último año</option>
-              <option>Todo el tiempo</option>
+              <option>{t.period6m}</option>
+              <option>{t.period1y}</option>
+              <option>{t.periodAll}</option>
             </select>
           </div>
           
@@ -277,7 +318,7 @@ const DashboardPage = () => {
                   stroke="#004990" 
                   fillOpacity={1} 
                   fill="url(#colorOrgs)" 
-                  name="Organizaciones"
+                  name={t.organizationsLegend}
                 />
                 <Area 
                   type="monotone" 
@@ -285,7 +326,7 @@ const DashboardPage = () => {
                   stroke="#10b981" 
                   fillOpacity={1} 
                   fill="url(#colorUsers)" 
-                  name="Usuarios"
+                  name={t.usersLegend}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -295,7 +336,7 @@ const DashboardPage = () => {
         {/* Recent Activity */}
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-100">Actividad Reciente</h2>
+            <h2 className="text-lg font-semibold text-gray-100">{t.recentActivity}</h2>
             <Activity className="w-5 h-5 text-gray-500" />
           </div>
           <div className="space-y-1 -mx-4">
@@ -311,44 +352,44 @@ const DashboardPage = () => {
         {/* Recent Organizations */}
         <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-100">Organizaciones Recientes</h2>
+            <h2 className="text-lg font-semibold text-gray-100">{t.recentOrganizations}</h2>
             <a href="/organizations" className="text-sm text-primary-400 hover:text-primary-300 transition-colors">
-              Ver todas →
+              {t.viewAll}
             </a>
           </div>
           <div className="space-y-1 -mx-4">
             {recentOrgs.map((org) => (
-              <OrganizationStatusCard key={org.id} org={org} />
+              <OrganizationStatusCard key={org.id} org={org} usersLabel={t.users} />
             ))}
           </div>
         </div>
 
         {/* Quick Actions / Alerts */}
         <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-gray-100 mb-4">Alertas y Pendientes</h2>
+          <h2 className="text-lg font-semibold text-gray-100 mb-4">{t.alertsTitle}</h2>
           
           <div className="space-y-4">
             <div className="flex items-start gap-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
               <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-amber-400">3 trials por expirar</p>
-                <p className="text-xs text-gray-400 mt-1">Organizaciones con trial que expira en menos de 7 días</p>
+                <p className="text-sm font-medium text-amber-400">{t.trialsExpiring}</p>
+                <p className="text-xs text-gray-400 mt-1">{t.trialsDesc}</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
               <Clock className="w-5 h-5 text-red-400 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-red-400">2 suscripciones vencidas</p>
-                <p className="text-xs text-gray-400 mt-1">Requieren atención inmediata</p>
+                <p className="text-sm font-medium text-red-400">{t.expiredSubs}</p>
+                <p className="text-xs text-gray-400 mt-1">{t.expiredDesc}</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4 p-4 bg-primary-500/10 border border-primary-500/30 rounded-lg">
               <Users className="w-5 h-5 text-primary-400 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-primary-400">5 invitaciones pendientes</p>
-                <p className="text-xs text-gray-400 mt-1">Usuarios que aún no han aceptado</p>
+                <p className="text-sm font-medium text-primary-400">{t.pendingInvites}</p>
+                <p className="text-xs text-gray-400 mt-1">{t.pendingInvitesDesc}</p>
               </div>
             </div>
           </div>

@@ -15,19 +15,20 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Organizaciones', href: '/organizations', icon: Building2 },
-  { name: 'Usuarios', href: '/users', icon: Users },
-  { name: 'Suscripciones', href: '/subscriptions', icon: CreditCard },
-  { name: 'Finanzas', href: '/finance', icon: BarChart3 },
-  { name: 'Notificaciones', href: '/notifications', icon: Bell },
-  { name: 'Configuración', href: '/settings', icon: Settings },
-];
-
 const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
   const location = useLocation();
   const { user } = useAuth();
+  const isEnglish = user?.language === 'en';
+
+  const navigation = [
+    { name: isEnglish ? 'Dashboard' : 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: isEnglish ? 'Organizations' : 'Organizaciones', href: '/organizations', icon: Building2 },
+    { name: isEnglish ? 'Users' : 'Usuarios', href: '/users', icon: Users },
+    { name: isEnglish ? 'Subscriptions' : 'Suscripciones', href: '/subscriptions', icon: CreditCard },
+    { name: isEnglish ? 'Finance' : 'Finanzas', href: '/finance', icon: BarChart3 },
+    { name: isEnglish ? 'Notifications' : 'Notificaciones', href: '/notifications', icon: Bell },
+    { name: isEnglish ? 'Settings' : 'Configuracion', href: '/settings', icon: Settings },
+  ];
 
   const NavItem = ({ item, collapsed }) => {
     const isActive = location.pathname === item.href || 
@@ -84,7 +85,7 @@ const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
           {isOpen && (
             <div className="animate-fadeIn">
               <h1 className="text-lg font-bold text-gray-100">Admin Apps</h1>
-              <p className="text-xs text-gray-500">Smart3AI Control Center</p>
+              <p className="text-xs text-gray-500">{isEnglish ? 'Smart3AI Control Center' : 'Centro de Control Smart3AI'}</p>
             </div>
           )}
         </div>

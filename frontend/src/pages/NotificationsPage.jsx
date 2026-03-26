@@ -1,55 +1,77 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, AlertTriangle, Bell, CheckCheck, Info } from 'lucide-react';
 import { notificationService } from '../services/api';
-
-/* ─── Severity configuration ─────────────────────────────────────── */
-const SEVERITY = {
-  critical: {
-    label: 'Crítico',
-    bar: 'bg-red-500',
-    badge: 'bg-red-500/10 text-red-300 border border-red-500/20',
-    icon: AlertTriangle,
-    iconColor: 'text-red-400',
-    iconBg: 'bg-red-500/10',
-  },
-  high: {
-    label: 'Alto',
-    bar: 'bg-orange-500',
-    badge: 'bg-orange-500/10 text-orange-300 border border-orange-500/20',
-    icon: AlertCircle,
-    iconColor: 'text-orange-400',
-    iconBg: 'bg-orange-500/10',
-  },
-  medium: {
-    label: 'Medio',
-    bar: 'bg-amber-500',
-    badge: 'bg-amber-500/10 text-amber-300 border border-amber-500/20',
-    icon: Info,
-    iconColor: 'text-amber-400',
-    iconBg: 'bg-amber-500/10',
-  },
-  low: {
-    label: 'Bajo',
-    bar: 'bg-sky-500',
-    badge: 'bg-sky-500/10 text-sky-300 border border-sky-500/20',
-    icon: Info,
-    iconColor: 'text-sky-400',
-    iconBg: 'bg-sky-500/10',
-  },
-};
-
-const FILTER_TABS = [
-  { value: 'all', label: 'Todas' },
-  { value: 'unread', label: 'Sin leer' },
-  { value: 'critical', label: 'Críticas' },
-  { value: 'high', label: 'Urgentes' },
-];
+import { useAuth } from '../contexts/AuthContext';
 
 /* ─── Page component ──────────────────────────────────────────────── */
 const NotificationsPage = () => {
+  const { user } = useAuth();
+  const isEnglish = user?.language === 'en';
+  const t = {
+    pageTitle: isEnglish ? 'Notification Center' : 'Centro de Notificaciones',
+    pageSubtitle: isEnglish ? 'System alerts and events timeline' : 'Historial de alertas y eventos del sistema',
+    markAllRead: isEnglish ? 'Mark all as read' : 'Marcar todas leidas',
+    total: isEnglish ? 'Total' : 'Total',
+    unread: isEnglish ? 'Unread' : 'Sin leer',
+    critical: isEnglish ? 'Critical' : 'Criticas',
+    urgent: isEnglish ? 'Urgent' : 'Urgentes',
+    all: isEnglish ? 'All' : 'Todas',
+    loading: isEnglish ? 'Loading notifications...' : 'Cargando notificaciones...',
+    emptyTitle: isEnglish ? 'No notifications' : 'Sin notificaciones',
+    emptySubtitle: isEnglish ? 'No events for this filter.' : 'No hay eventos para este filtro.',
+    markRead: isEnglish ? 'Mark as read' : 'Marcar leida',
+    new: isEnglish ? 'New' : 'Nueva',
+    sevCritical: isEnglish ? 'Critical' : 'Critico',
+    sevHigh: isEnglish ? 'High' : 'Alto',
+    sevMedium: isEnglish ? 'Medium' : 'Medio',
+    sevLow: isEnglish ? 'Low' : 'Bajo',
+  };
+
+  const filterTabs = [
+    { value: 'all', label: t.all },
+    { value: 'unread', label: t.unread },
+    { value: 'critical', label: t.critical },
+    { value: 'high', label: t.urgent },
+  ];
+
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
+
+  const severityConfig = {
+    critical: {
+      label: t.sevCritical,
+      bar: 'bg-red-500',
+      badge: 'bg-red-500/10 text-red-300 border border-red-500/20',
+      icon: AlertTriangle,
+      iconColor: 'text-red-400',
+      iconBg: 'bg-red-500/10',
+    },
+    high: {
+      label: t.sevHigh,
+      bar: 'bg-orange-500',
+      badge: 'bg-orange-500/10 text-orange-300 border border-orange-500/20',
+      icon: AlertCircle,
+      iconColor: 'text-orange-400',
+      iconBg: 'bg-orange-500/10',
+    },
+    medium: {
+      label: t.sevMedium,
+      bar: 'bg-amber-500',
+      badge: 'bg-amber-500/10 text-amber-300 border border-amber-500/20',
+      icon: Info,
+      iconColor: 'text-amber-400',
+      iconBg: 'bg-amber-500/10',
+    },
+    low: {
+      label: t.sevLow,
+      bar: 'bg-sky-500',
+      badge: 'bg-sky-500/10 text-sky-300 border border-sky-500/20',
+      icon: Info,
+      iconColor: 'text-sky-400',
+      iconBg: 'bg-sky-500/10',
+    },
+  };
 
   /* Aggregate counts */
   const counts = useMemo(() => ({
@@ -105,8 +127,8 @@ const NotificationsPage = () => {
             <Bell className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-100">Centro de Notificaciones</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Historial de alertas y eventos del sistema</p>
+            <h1 className="text-2xl font-bold text-gray-100">{t.pageTitle}</h1>
+            <p className="text-sm text-gray-500 mt-0.5">{t.pageSubtitle}</p>
           </div>
         </div>
         {counts.unread > 0 && (
@@ -115,7 +137,7 @@ const NotificationsPage = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-dark-300 text-gray-200 border border-gray-700/60 hover:bg-dark-200 transition-colors"
           >
             <CheckCheck className="w-4 h-4" />
-            Marcar todas leídas
+            {t.markAllRead}
           </button>
         )}
       </div>
@@ -124,25 +146,25 @@ const NotificationsPage = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="rounded-xl bg-dark-300/60 border border-gray-700/40 px-4 py-3">
           <p className="text-2xl font-bold text-gray-100">{counts.total}</p>
-          <p className="text-xs text-gray-500 mt-0.5">Total</p>
+          <p className="text-xs text-gray-500 mt-0.5">{t.total}</p>
         </div>
         <div className="rounded-xl bg-primary-500/10 border border-primary-500/20 px-4 py-3">
           <p className="text-2xl font-bold text-primary-300">{counts.unread}</p>
-          <p className="text-xs text-gray-500 mt-0.5">Sin leer</p>
+          <p className="text-xs text-gray-500 mt-0.5">{t.unread}</p>
         </div>
         <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3">
           <p className="text-2xl font-bold text-red-300">{counts.critical}</p>
-          <p className="text-xs text-gray-500 mt-0.5">Críticas</p>
+          <p className="text-xs text-gray-500 mt-0.5">{t.critical}</p>
         </div>
         <div className="rounded-xl bg-orange-500/10 border border-orange-500/20 px-4 py-3">
           <p className="text-2xl font-bold text-orange-300">{counts.high}</p>
-          <p className="text-xs text-gray-500 mt-0.5">Urgentes</p>
+          <p className="text-xs text-gray-500 mt-0.5">{t.urgent}</p>
         </div>
       </div>
 
       {/* ── Filter tabs ── */}
       <div className="flex items-center gap-1 w-fit bg-dark-400/40 p-1 rounded-xl border border-gray-700/40">
-        {FILTER_TABS.map((tab) => (
+        {filterTabs.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setActiveFilter(tab.value)}
@@ -174,7 +196,7 @@ const NotificationsPage = () => {
         {loading && (
           <div className="flex flex-col items-center gap-3 py-14 text-gray-500">
             <div className="w-6 h-6 border-2 border-gray-600 border-t-primary-400 rounded-full animate-spin" />
-            <p className="text-sm">Cargando notificaciones…</p>
+            <p className="text-sm">{t.loading}</p>
           </div>
         )}
 
@@ -185,15 +207,15 @@ const NotificationsPage = () => {
               <Bell className="w-9 h-9 text-gray-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-300">Sin notificaciones</p>
-              <p className="text-xs text-gray-500 mt-1">No hay eventos para este filtro.</p>
+              <p className="text-sm font-medium text-gray-300">{t.emptyTitle}</p>
+              <p className="text-xs text-gray-500 mt-1">{t.emptySubtitle}</p>
             </div>
           </div>
         )}
 
         {/* Items */}
         {!loading && filtered.map((notification) => {
-          const cfg = SEVERITY[notification.severity] || SEVERITY.low;
+          const cfg = severityConfig[notification.severity] || severityConfig.low;
           const Icon = cfg.icon;
 
           return (
@@ -225,7 +247,7 @@ const NotificationsPage = () => {
                       onClick={() => markRead(notification.id)}
                       className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-xs px-2.5 py-1 rounded-md bg-primary-500/20 text-primary-200 hover:bg-primary-500/30 whitespace-nowrap"
                     >
-                      Marcar leída
+                      {t.markRead}
                     </button>
                   )}
                 </div>
@@ -243,7 +265,7 @@ const NotificationsPage = () => {
                   {!notification.is_read && (
                     <span className="flex items-center gap-1 text-xs text-primary-400 font-medium">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary-400 inline-block animate-pulse" />
-                      Nueva
+                      {t.new}
                     </span>
                   )}
                 </div>

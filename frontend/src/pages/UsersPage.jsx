@@ -3,7 +3,6 @@ import {
   Users, 
   Plus, 
   Search, 
-  MoreVertical,
   Eye,
   Edit,
   Trash2,
@@ -13,18 +12,17 @@ import {
 } from 'lucide-react';
 import { userService } from '../services/api';
 import toast from 'react-hot-toast';
+import { useAuth } from '../contexts/AuthContext';
 
-const UserRow = ({ user, onView, onEdit, onDelete }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
+const UserRow = ({ user, onView, onEdit, onDelete, isEnglish, t }) => {
   const roleLabels = {
     superadmin: 'Super Admin',
-    admin: 'Administrador',
+    admin: isEnglish ? 'Administrator' : 'Administrador',
     org_admin: 'Admin Org',
-    iso_manager: 'Gestor ISO',
-    auditor: 'Auditor',
-    user: 'Usuario',
-    viewer: 'Visualizador',
+    iso_manager: isEnglish ? 'ISO Manager' : 'Gestor ISO',
+    auditor: isEnglish ? 'Auditor' : 'Auditor',
+    user: isEnglish ? 'User' : 'Usuario',
+    viewer: isEnglish ? 'Viewer' : 'Visualizador',
   };
 
   const roleColors = {
@@ -56,52 +54,38 @@ const UserRow = ({ user, onView, onEdit, onDelete }) => {
       </td>
       <td className="px-4 py-4">
         <span className={user.is_active ? 'badge-success' : 'badge-danger'}>
-          {user.is_active ? 'Activo' : 'Inactivo'}
+          {user.is_active ? t.active : t.inactive}
         </span>
       </td>
       <td className="px-4 py-4 text-sm text-gray-400">
         {user.last_login_at 
-          ? new Date(user.last_login_at).toLocaleDateString('es-MX')
-          : 'Nunca'
+          ? new Date(user.last_login_at).toLocaleDateString(isEnglish ? 'en-US' : 'es-MX')
+          : t.never
         }
       </td>
       <td className="px-4 py-4">
-        <div className="relative">
+        <div className="flex items-center gap-2 whitespace-nowrap">
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 rounded-lg hover:bg-dark-200 text-gray-400 hover:text-gray-200 transition-colors"
+            onClick={() => onView(user)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-gray-200 hover:bg-dark-200 transition-colors"
           >
-            <MoreVertical className="w-4 h-4" />
+            <Eye className="w-3.5 h-3.5" />
+            {t.viewProfile}
           </button>
-          
-          {menuOpen && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 mt-2 w-48 bg-dark-200 border border-gray-700/50 rounded-xl shadow-xl z-20 overflow-hidden">
-                <button
-                  onClick={() => { onView(user); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-dark-300 transition-colors"
-                >
-                  <Eye className="w-4 h-4" />
-                  Ver perfil
-                </button>
-                <button
-                  onClick={() => { onEdit(user); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-dark-300 transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                  Editar
-                </button>
-                <button
-                  onClick={() => { onDelete(user); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Eliminar
-                </button>
-              </div>
-            </>
-          )}
+          <button
+            onClick={() => onEdit(user)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-gray-200 hover:bg-dark-200 transition-colors"
+          >
+            <Edit className="w-3.5 h-3.5" />
+            {t.edit}
+          </button>
+          <button
+            onClick={() => onDelete(user)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {t.delete}
+          </button>
         </div>
       </td>
     </tr>
@@ -109,7 +93,7 @@ const UserRow = ({ user, onView, onEdit, onDelete }) => {
 };
 
 // Create/Edit User Modal
-const UserModal = ({ isOpen, onClose, user, onSave }) => {
+const UserModal = ({ isOpen, onClose, user, onSave, isEnglish, t }) => {
   const [formData, setFormData] = useState({
     email: '',
     first_name: '',
@@ -155,7 +139,7 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
     e.preventDefault();
     
     if (!user && formData.password !== formData.password_confirm) {
-      toast.error('Las contraseñas no coinciden');
+      toast.error(t.passwordMismatch);
       return;
     }
     
@@ -165,15 +149,15 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
       if (user) {
         const { password, password_confirm, ...updateData } = formData;
         await userService.update(user.id, updateData);
-        toast.success('Usuario actualizado correctamente');
+        toast.success(t.userUpdated);
       } else {
         await userService.create(formData);
-        toast.success('Usuario creado correctamente');
+        toast.success(t.userCreated);
       }
       onSave();
       onClose();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Error al guardar el usuario');
+      toast.error(error.response?.data?.detail || t.userSaveError);
     } finally {
       setLoading(false);
     }
@@ -182,134 +166,150 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content max-w-2xl" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-100">
-            {user ? 'Editar Usuario' : 'Nuevo Usuario'}
-          </h2>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-dark-300 text-gray-400">
-            <X className="w-5 h-5" />
-          </button>
+    <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm p-4 md:p-6" onClick={onClose}>
+      <div
+        className="glass-card mx-auto w-full max-w-3xl h-full md:h-auto md:max-h-[90vh] overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="border-b border-gray-700/50 px-5 py-4 md:px-6 md:py-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary-300">{isEnglish ? 'User form' : 'Formulario usuario'}</p>
+              <h2 className="mt-1 text-xl font-semibold text-gray-100">{user ? t.editUser : t.newUser}</h2>
+              <p className="mt-1 text-sm text-gray-500">{isEnglish ? 'Define identity, role and access information.' : 'Define identidad, rol e informacion de acceso.'}</p>
+            </div>
+            <button onClick={onClose} className="rounded-lg p-2 text-gray-400 hover:bg-dark-300 hover:text-gray-200 transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Nombre *</label>
-              <input
-                type="text"
-                value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                className="input-glass"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Apellido *</label>
-              <input
-                type="text"
-                value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                className="input-glass"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">Email *</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="input-glass"
-              required
-              disabled={!!user}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Teléfono</label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="input-glass"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Rol *</label>
-              <select
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="input-glass"
-              >
-                <option value="viewer">Visualizador</option>
-                <option value="user">Usuario</option>
-                <option value="auditor">Auditor</option>
-                <option value="iso_manager">Gestor ISO</option>
-                <option value="org_admin">Admin Organización</option>
-                <option value="admin">Administrador</option>
-                <option value="superadmin">Super Admin</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Cargo</label>
-              <input
-                type="text"
-                value={formData.job_title}
-                onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
-                className="input-glass"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Departamento</label>
-              <input
-                type="text"
-                value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                className="input-glass"
-              />
-            </div>
-          </div>
-
-          {!user && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Contraseña *</label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="input-glass"
-                  required={!user}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Confirmar Contraseña *</label>
-                <input
-                  type="password"
-                  value={formData.password_confirm}
-                  onChange={(e) => setFormData({ ...formData, password_confirm: e.target.value })}
-                  className="input-glass"
-                  required={!user}
-                />
+        <form onSubmit={handleSubmit} className="flex h-[calc(100%-78px)] md:h-auto md:max-h-[calc(90vh-88px)] flex-col">
+          <div className="flex-1 overflow-y-auto px-5 py-5 md:px-6 md:py-6 space-y-6">
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4 md:p-5">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">{isEnglish ? 'Personal data' : 'Datos personales'}</p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.firstName} *</label>
+                  <input
+                    type="text"
+                    value={formData.first_name}
+                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                    className="input-glass"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.lastName} *</label>
+                  <input
+                    type="text"
+                    value={formData.last_name}
+                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                    className="input-glass"
+                    required
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">Email *</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="input-glass"
+                    required
+                    disabled={!!user}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.phone}</label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="input-glass"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.jobTitle}</label>
+                  <input
+                    type="text"
+                    value={formData.job_title}
+                    onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
+                    className="input-glass"
+                  />
+                </div>
               </div>
             </div>
-          )}
 
-          <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="btn-secondary">
-              Cancelar
-            </button>
-            <button type="submit" disabled={loading} className="btn-primary">
-              {loading ? 'Guardando...' : (user ? 'Actualizar' : 'Crear')}
-            </button>
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4 md:p-5">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">{isEnglish ? 'Permissions' : 'Permisos'}</p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.role} *</label>
+                  <select
+                    value={formData.role}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    className="input-glass"
+                  >
+                    <option value="viewer">{isEnglish ? 'Viewer' : 'Visualizador'}</option>
+                    <option value="user">{isEnglish ? 'User' : 'Usuario'}</option>
+                    <option value="auditor">Auditor</option>
+                    <option value="iso_manager">{isEnglish ? 'ISO Manager' : 'Gestor ISO'}</option>
+                    <option value="org_admin">{isEnglish ? 'Org Admin' : 'Admin Organizacion'}</option>
+                    <option value="admin">{isEnglish ? 'Administrator' : 'Administrador'}</option>
+                    <option value="superadmin">Super Admin</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.department}</label>
+                  <input
+                    type="text"
+                    value={formData.department}
+                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                    className="input-glass"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {!user && (
+              <div className="rounded-xl border border-gray-700/50 bg-dark-400/25 p-4 md:p-5">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-500">{isEnglish ? 'Credentials' : 'Credenciales'}</p>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.password} *</label>
+                    <input
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="input-glass"
+                      required={!user}
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-gray-400">{t.confirmPassword} *</label>
+                    <input
+                      type="password"
+                      value={formData.password_confirm}
+                      onChange={(e) => setFormData({ ...formData, password_confirm: e.target.value })}
+                      className="input-glass"
+                      required={!user}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-gray-700/50 bg-dark-400/20 px-5 py-4 md:px-6">
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button type="button" onClick={onClose} className="btn-secondary w-full sm:w-auto">
+                {t.cancel}
+              </button>
+              <button type="submit" disabled={loading} className="btn-primary w-full sm:w-auto">
+                {loading ? t.saving : (user ? t.update : t.create)}
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -318,6 +318,51 @@ const UserModal = ({ isOpen, onClose, user, onSave }) => {
 };
 
 const UsersPage = () => {
+  const { user: authUser } = useAuth();
+  const isEnglish = authUser?.language === 'en';
+  const t = {
+    active: isEnglish ? 'Active' : 'Activo',
+    inactive: isEnglish ? 'Inactive' : 'Inactivo',
+    never: isEnglish ? 'Never' : 'Nunca',
+    viewProfile: isEnglish ? 'View profile' : 'Ver perfil',
+    edit: isEnglish ? 'Edit' : 'Editar',
+    delete: isEnglish ? 'Delete' : 'Eliminar',
+    passwordMismatch: isEnglish ? 'Passwords do not match' : 'Las contrasenas no coinciden',
+    userUpdated: isEnglish ? 'User updated successfully' : 'Usuario actualizado correctamente',
+    userCreated: isEnglish ? 'User created successfully' : 'Usuario creado correctamente',
+    userSaveError: isEnglish ? 'Error saving user' : 'Error al guardar el usuario',
+    editUser: isEnglish ? 'Edit User' : 'Editar Usuario',
+    newUser: isEnglish ? 'New User' : 'Nuevo Usuario',
+    firstName: isEnglish ? 'First Name' : 'Nombre',
+    lastName: isEnglish ? 'Last Name' : 'Apellido',
+    phone: isEnglish ? 'Phone' : 'Telefono',
+    role: isEnglish ? 'Role' : 'Rol',
+    jobTitle: isEnglish ? 'Job Title' : 'Cargo',
+    department: isEnglish ? 'Department' : 'Departamento',
+    password: isEnglish ? 'Password' : 'Contrasena',
+    confirmPassword: isEnglish ? 'Confirm Password' : 'Confirmar Contrasena',
+    cancel: isEnglish ? 'Cancel' : 'Cancelar',
+    saving: isEnglish ? 'Saving...' : 'Guardando...',
+    update: isEnglish ? 'Update' : 'Actualizar',
+    create: isEnglish ? 'Create' : 'Crear',
+    confirmDelete: isEnglish ? 'Are you sure you want to delete' : 'Estas seguro de eliminar a',
+    userDeleted: isEnglish ? 'User deleted' : 'Usuario eliminado',
+    userDeleteError: isEnglish ? 'Error deleting user' : 'Error al eliminar el usuario',
+    profileToast: isEnglish ? 'Viewing profile of' : 'Ver perfil de',
+    pageTitle: isEnglish ? 'Users' : 'Usuarios',
+    pageSubtitle: isEnglish ? 'Manage system users' : 'Gestiona los usuarios del sistema',
+    newUserBtn: isEnglish ? 'New User' : 'Nuevo Usuario',
+    searchPlaceholder: isEnglish ? 'Search users...' : 'Buscar usuarios...',
+    allRoles: isEnglish ? 'All roles' : 'Todos los roles',
+    admin: isEnglish ? 'Administrator' : 'Administrador',
+    viewer: isEnglish ? 'Viewer' : 'Visualizador',
+    org: isEnglish ? 'Organization' : 'Organizacion',
+    status: isEnglish ? 'Status' : 'Estado',
+    lastAccess: isEnglish ? 'Last Access' : 'Ultimo Acceso',
+    loadingUsers: isEnglish ? 'Loading users...' : 'Cargando usuarios...',
+    noUsers: isEnglish ? 'No users found' : 'No se encontraron usuarios',
+    userLabel: isEnglish ? 'User' : 'Usuario',
+  };
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -352,7 +397,7 @@ const UsersPage = () => {
   }, [search, roleFilter]);
 
   const handleView = (user) => {
-    toast.success(`Ver perfil de ${user.first_name}`);
+    toast.success(`${t.profileToast} ${user.first_name}`);
   };
 
   const handleEdit = (user) => {
@@ -361,13 +406,13 @@ const UsersPage = () => {
   };
 
   const handleDelete = async (user) => {
-    if (window.confirm(`¿Estás seguro de eliminar a "${user.first_name} ${user.last_name}"?`)) {
+    if (window.confirm(`${t.confirmDelete} "${user.first_name} ${user.last_name}"?`)) {
       try {
         await userService.delete(user.id);
-        toast.success('Usuario eliminado');
+        toast.success(t.userDeleted);
         fetchUsers();
       } catch (error) {
-        toast.error('Error al eliminar el usuario');
+        toast.error(t.userDeleteError);
       }
     }
   };
@@ -382,12 +427,12 @@ const UsersPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-100">Usuarios</h1>
-          <p className="text-gray-500 mt-1">Gestiona los usuarios del sistema</p>
+          <h1 className="text-2xl font-bold text-gray-100">{t.pageTitle}</h1>
+          <p className="text-gray-500 mt-1">{t.pageSubtitle}</p>
         </div>
         <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
           <Plus className="w-5 h-5" />
-          Nuevo Usuario
+          {t.newUserBtn}
         </button>
       </div>
 
@@ -400,7 +445,7 @@ const UsersPage = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar usuarios..."
+              placeholder={t.searchPlaceholder}
               className="input-glass pl-11"
             />
           </div>
@@ -409,14 +454,14 @@ const UsersPage = () => {
             onChange={(e) => setRoleFilter(e.target.value)}
             className="input-glass w-auto"
           >
-            <option value="">Todos los roles</option>
+            <option value="">{t.allRoles}</option>
             <option value="superadmin">Super Admin</option>
-            <option value="admin">Administrador</option>
+            <option value="admin">{t.admin}</option>
             <option value="org_admin">Admin Org</option>
-            <option value="iso_manager">Gestor ISO</option>
+            <option value="iso_manager">{isEnglish ? 'ISO Manager' : 'Gestor ISO'}</option>
             <option value="auditor">Auditor</option>
-            <option value="user">Usuario</option>
-            <option value="viewer">Visualizador</option>
+            <option value="user">{isEnglish ? 'User' : 'Usuario'}</option>
+            <option value="viewer">{t.viewer}</option>
           </select>
         </div>
       </div>
@@ -426,23 +471,23 @@ const UsersPage = () => {
         {loading ? (
           <div className="p-8 text-center">
             <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-gray-500 mt-4">Cargando usuarios...</p>
+            <p className="text-gray-500 mt-4">{t.loadingUsers}</p>
           </div>
         ) : users.length === 0 ? (
           <div className="p-8 text-center">
             <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">No se encontraron usuarios</p>
+            <p className="text-gray-400">{t.noUsers}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="table-glass">
               <thead>
                 <tr>
-                  <th>Usuario</th>
-                  <th>Organización</th>
-                  <th>Rol</th>
-                  <th>Estado</th>
-                  <th>Último Acceso</th>
+                  <th>{t.userLabel}</th>
+                  <th>{t.org}</th>
+                  <th>{t.role}</th>
+                  <th>{t.status}</th>
+                  <th>{t.lastAccess}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -454,6 +499,8 @@ const UsersPage = () => {
                     onView={handleView}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    isEnglish={isEnglish}
+                    t={t}
                   />
                 ))}
               </tbody>
@@ -468,6 +515,8 @@ const UsersPage = () => {
         onClose={() => setModalOpen(false)}
         user={selectedUser}
         onSave={fetchUsers}
+        isEnglish={isEnglish}
+        t={t}
       />
     </div>
   );
