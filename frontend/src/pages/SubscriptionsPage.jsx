@@ -17,6 +17,7 @@ import {
 import { subscriptionService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
+import { showConfirm } from '../services/dialogs';
 
 // Subscription Card Component
 const SubscriptionCard = ({ subscription, t, isEnglish, onView, onManage }) => {
@@ -555,7 +556,14 @@ const SubscriptionsPage = () => {
 
   const handleCancelSubscription = async () => {
     if (!selectedSubscription) return;
-    if (!window.confirm(t.confirmCancel)) return;
+    const isEnglish = document.documentElement.lang === 'en';
+    const confirmed = await showConfirm({
+      title: isEnglish ? 'Cancel subscription' : 'Cancelar suscripcion',
+      text: t.confirmCancel,
+      confirmButtonText: isEnglish ? 'Cancel subscription' : 'Cancelar suscripcion',
+      cancelButtonText: isEnglish ? 'Keep active' : 'Mantener activa',
+    });
+    if (!confirmed) return;
 
     setActionLoading(true);
     try {

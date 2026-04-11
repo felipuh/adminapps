@@ -13,6 +13,7 @@ import {
 import { userService } from '../services/api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
+import { showConfirm } from '../services/dialogs';
 
 const UserRow = ({ user, onView, onEdit, onDelete, isEnglish, t }) => {
   const roleLabels = {
@@ -406,14 +407,24 @@ const UsersPage = () => {
   };
 
   const handleDelete = async (user) => {
-    if (window.confirm(`${t.confirmDelete} "${user.first_name} ${user.last_name}"?`)) {
-      try {
-        await userService.delete(user.id);
-        toast.success(t.userDeleted);
-        fetchUsers();
-      } catch (error) {
-        toast.error(t.userDeleteError);
-      }
+    const isEnglish = document.documentElement.lang === 'en';
+    const confirmed = await showConfirm({
+      title: isEnglish ? 'Delete user' : 'Eliminar usuario',
+      text: `${t.confirmDelete} "${user.first_name} ${user.last_name}"?`,
+      confirmButtonText: isEnglish ? 'Delete' : 'Eliminar',
+      cancelButtonText: isEnglish ? 'Cancel' : 'Cancelar',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await userService.delete(user.id);
+      toast.success(t.userDeleted);
+      fetchUsers();
+    } catch (error) {
+      toast.error(t.userDeleteError);
     }
   };
 

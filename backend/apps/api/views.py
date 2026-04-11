@@ -7,11 +7,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.utils import timezone
 from django.db.models import Count, Q
+from django.utils.dateparse import parse_date
 
 from apps.organizations.models import Organization
 from apps.users.models import User, UserActivityLog
 from apps.products.models import ISOStandard, OrganizationModule
 from apps.users.permissions import IsAdmin
+from apps.integration.models import LandingAnalyticsEvent
 
 
 class HealthCheckView(APIView):
@@ -234,3 +236,63 @@ class QuickActionsView(APIView):
             },
         ]
         return Response(actions)
+
+
+class LandingAnalyticsSummaryView(APIView):
+    """Resumen centralizado de analítica del landing para backoffice."""
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get(self, request):
+        campaign = str(request.query_params.get('campaign') or '').strip()
+        from_date = parse_date(str(request.query_params.get('from') or '').strip())
+        to_date = parse_date(str(request.query_params.get('to') or '').strip())
+
+        queryset = LandingAnalyticsEvent.objects.all()
+        if campaign:
+            queryset = queryset.filter(campaign=campaign)
+        if from_date:
+            queryset = queryset.filter(event_date__gte=from_date)
+        if to_date:
+            queryset = queryset.filter(event_date__lte=to_date)
+
+        total_events = queryset.count()
+        cta_events = queryset.filter(event_name='cta_click')
+
+        by_variant = []
+        for item in queryset.values('variant').annotate(total=Count('id')).order_by('variant'):
+            variant_key = item['variant'] or 'N/A'
+            total = item['total']
+            cta_total = cta_events.filter(variant=item['variant']).count()
+            cta_rate = round((cta_total / total) * 100, 2) if total else 0
+            by_variant.append({
+                'variant': variant_key,
+                'events': total,
+                'cta_clicks': cta_total,
+                'cta_rate_percent': cta_rate,
+            })
+
+        by_day = list(
+            queryset.values('event_date', 'campaign', 'variant')
+            .annotate(total=Count('id'))
+            .order_by('-event_date', 'campaign', 'variant')
+        )
+
+        winner = None
+        sortable = [item for item in by_variant if item['variant'] in {'A', 'B'}]
+        if sortable:
+            winner = sorted(sortable, key=lambda row: (row['cta_rate_percent'], row['cta_clicks']), reverse=True)[0]['variant']
+
+        return Response({
+            'campaign': campaign,
+            'filters': {
+                'from': from_date.isoformat() if from_date else None,
+                'to': to_date.isoformat() if to_date else None,
+            },
+            'totals': {
+                'events': total_events,
+                'cta_clicks': cta_events.count(),
+            },
+            'winner_variant': winner,
+            'by_variant': by_variant,
+            'by_day': by_day,
+        })

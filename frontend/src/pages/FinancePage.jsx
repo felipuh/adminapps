@@ -3,12 +3,13 @@ import toast from 'react-hot-toast';
 import {
   AlertTriangle, BadgeCheck, BarChart3, Building2, Calendar, CheckCircle2, Coins, Clock,
   Download, ExternalLink, FileWarning, FileX2, Landmark, Mail, Plus, PlayCircle, Receipt,
-  RefreshCw, Send, TrendingDown, Users, Wallet, X, PenSquare, Trash2,
+  RefreshCw, Send, TrendingDown, Users, Wallet, X, PenSquare, Trash2, MousePointer,
 } from 'lucide-react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { billingService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { showConfirm } from '../services/dialogs';
 
 const MetricCard = ({ title, value, helper, icon: Icon, tone = 'primary' }) => {
   const toneClasses = {
@@ -995,6 +996,20 @@ const FinancePage = () => {
     scheduleActivated: isEnglish ? 'Schedule activated.' : 'Programacion activada.',
     scheduleDeactivated: isEnglish ? 'Schedule deactivated.' : 'Programacion desactivada.',
     scheduleToggleError: isEnglish ? 'Could not update status.' : 'No se pudo actualizar el estado.',
+    landingAnalytics: isEnglish ? 'Landing analytics' : 'Analitica del landing',
+    landingAnalyticsSubtitle: isEnglish ? 'A/B performance and CTA behavior by date and campaign.' : 'Desempeño A/B y comportamiento CTA por fecha y campaña.',
+    campaignFilter: isEnglish ? 'Campaign' : 'Campaña',
+    fromDate: isEnglish ? 'From' : 'Desde',
+    toDate: isEnglish ? 'To' : 'Hasta',
+    applyFilters: isEnglish ? 'Apply filters' : 'Aplicar filtros',
+    winnerVariant: isEnglish ? 'Winning variant' : 'Variante ganadora',
+    noWinnerYet: isEnglish ? 'Not enough data' : 'Sin datos suficientes',
+    totalEvents: isEnglish ? 'Total events' : 'Eventos totales',
+    ctaClicks: isEnglish ? 'CTA clicks' : 'Clicks CTA',
+    variant: isEnglish ? 'Variant' : 'Variante',
+    rate: isEnglish ? 'Rate' : 'Tasa',
+    dailyBreakdown: isEnglish ? 'Daily breakdown' : 'Desglose diario',
+    noLandingData: isEnglish ? 'No landing analytics data for selected filters.' : 'No hay datos de analitica para los filtros seleccionados.',
   };
   const [loading, setLoading] = useState(true);
   const [runningBatch, setRunningBatch] = useState(false);
@@ -1024,6 +1039,18 @@ const FinancePage = () => {
   const [productDashboard, setProductDashboard] = useState([]);
   const [pendingPayments, setPendingPayments] = useState([]);
   const [showRegisterPayment, setShowRegisterPayment] = useState(false);
+  const [landingAnalytics, setLandingAnalytics] = useState(null);
+  const [landingFilters, setLandingFilters] = useState(() => {
+    const now = new Date();
+    const from = new Date(now);
+    from.setDate(now.getDate() - 30);
+    const fmt = (date) => date.toISOString().slice(0, 10);
+    return {
+      campaign: '',
+      from: fmt(from),
+      to: fmt(now),
+    };
+  });
   const [paymentChartMetric, setPaymentChartMetric] = useState(() => {
     try {
       const saved = typeof window !== 'undefined' ? window.localStorage.getItem(PAYMENT_CHART_METRIC_KEY) : null;
@@ -1036,7 +1063,7 @@ const FinancePage = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [summaryData, productData, organizationData, timelineData, receivableData, invoiceData, fpData, prodData, schedData, reportSchedulesData, alertsData, churnData_, reconciliationData, dashboardData] = await Promise.all([
+      const [summaryData, productData, organizationData, timelineData, receivableData, invoiceData, fpData, prodData, schedData, reportSchedulesData, alertsData, churnData_, reconciliationData, dashboardData, landingAnalyticsData] = await Promise.all([
         billingService.getSummary(),
         billingService.getRevenueByProduct(),
         billingService.getRevenueByOrganization(),
@@ -1051,7 +1078,7 @@ const FinancePage = () => {
         billingService.getChurnAnalytics().catch(() => null),
         billingService.getReconciliationSummary().catch(() => null),
         billingService.getProductDashboard().catch(() => []),
-        billingService.getInvoices({ ordering: '-created_at', status: 'pending,accepted', page_size: 100 }).catch(() => ({ results: [] })),
+        billingService.getLandingAnalyticsSummary(landingFilters).catch(() => null),
       ]);
 
       setSummary(summaryData);
@@ -1068,6 +1095,7 @@ const FinancePage = () => {
       setChurnData(churnData_);
       setReconciliation(reconciliationData);
       setProductDashboard(Array.isArray(dashboardData) ? dashboardData : []);
+      setLandingAnalytics(landingAnalyticsData);
 
       // grab pending payments for reconciliation panel
       const allInvoices = invoiceData.results || invoiceData || [];
@@ -1086,6 +1114,15 @@ const FinancePage = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  const applyLandingFilters = async () => {
+    try {
+      const payload = await billingService.getLandingAnalyticsSummary(landingFilters);
+      setLandingAnalytics(payload);
+    } catch {
+      toast.error(t.panelLoadError);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -1207,7 +1244,12 @@ const FinancePage = () => {
   };
 
   const deleteReportSchedule = async (schedule) => {
-    const confirmed = window.confirm(`${t.deleteScheduleConfirm} "${schedule.name}"?`);
+    const confirmed = await showConfirm({
+      title: isEnglish ? 'Delete schedule' : 'Eliminar programacion',
+      text: `${t.deleteScheduleConfirm} "${schedule.name}"?`,
+      confirmButtonText: isEnglish ? 'Delete' : 'Eliminar',
+      cancelButtonText: isEnglish ? 'Cancel' : 'Cancelar',
+    });
     if (!confirmed) return;
 
     try {
@@ -1343,6 +1385,102 @@ const FinancePage = () => {
             {runningBatch ? t.runningBatch : t.runBatch}
           </button>
         </div>
+      </div>
+
+      <div className="glass-card p-6 space-y-5">
+        <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-100">{t.landingAnalytics}</h2>
+            <p className="text-sm text-gray-400">{t.landingAnalyticsSubtitle}</p>
+          </div>
+          <div className="rounded-lg bg-primary-500/10 px-3 py-2 text-sm text-primary-200">
+            {t.winnerVariant}: <strong>{landingAnalytics?.winner_variant || t.noWinnerYet}</strong>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+          <input
+            className="input-glass"
+            placeholder={t.campaignFilter}
+            value={landingFilters.campaign}
+            onChange={(e) => setLandingFilters((prev) => ({ ...prev, campaign: e.target.value }))}
+          />
+          <input
+            type="date"
+            className="input-glass"
+            value={landingFilters.from}
+            onChange={(e) => setLandingFilters((prev) => ({ ...prev, from: e.target.value }))}
+          />
+          <input
+            type="date"
+            className="input-glass"
+            value={landingFilters.to}
+            onChange={(e) => setLandingFilters((prev) => ({ ...prev, to: e.target.value }))}
+          />
+          <button type="button" className="btn-primary" onClick={applyLandingFilters}>{t.applyFilters}</button>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <MetricCard title={t.totalEvents} value={landingAnalytics?.totals?.events || 0} icon={BarChart3} tone="primary" />
+          <MetricCard title={t.ctaClicks} value={landingAnalytics?.totals?.cta_clicks || 0} icon={MousePointer} tone="success" />
+          <MetricCard title={t.fromDate} value={landingAnalytics?.filters?.from || '-'} icon={Calendar} tone="warning" />
+          <MetricCard title={t.toDate} value={landingAnalytics?.filters?.to || '-'} icon={Calendar} tone="danger" />
+        </div>
+
+        {Array.isArray(landingAnalytics?.by_variant) && landingAnalytics.by_variant.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="table-glass">
+              <thead>
+                <tr>
+                  <th>{t.variant}</th>
+                  <th>{t.totalEvents}</th>
+                  <th>{t.ctaClicks}</th>
+                  <th>{t.rate}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {landingAnalytics.by_variant.map((row) => (
+                  <tr key={row.variant || 'na'}>
+                    <td>{row.variant || 'N/A'}</td>
+                    <td>{row.events}</td>
+                    <td>{row.cta_clicks}</td>
+                    <td>{row.cta_rate_percent}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">{t.noLandingData}</p>
+        )}
+
+        {Array.isArray(landingAnalytics?.by_day) && landingAnalytics.by_day.length > 0 && (
+          <div>
+            <p className="mb-2 text-sm font-medium text-gray-300">{t.dailyBreakdown}</p>
+            <div className="max-h-56 overflow-y-auto rounded-xl border border-gray-700/50">
+              <table className="table-glass">
+                <thead>
+                  <tr>
+                    <th>{t.fromDate}</th>
+                    <th>{t.campaignFilter}</th>
+                    <th>{t.variant}</th>
+                    <th>{t.totalEvents}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {landingAnalytics.by_day.map((item, idx) => (
+                    <tr key={`${item.event_date}-${item.variant}-${idx}`}>
+                      <td>{item.event_date}</td>
+                      <td>{item.campaign || '-'}</td>
+                      <td>{item.variant || 'N/A'}</td>
+                      <td>{item.total}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">

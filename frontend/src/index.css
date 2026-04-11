@@ -318,6 +318,38 @@ html.theme-light [class*='fixed'][class*='w-48'][class*='border-gray-600/50'] bu
   color: #1e293b !important;
 }
 
+/* SweetAlert2 visual baseline */
+.smart3ai-swal-popup {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 16px;
+  box-shadow: 0 20px 48px rgba(2, 6, 23, 0.5);
+}
+
+.smart3ai-swal-confirm,
+.smart3ai-swal-cancel {
+  border: 0;
+  border-radius: 10px;
+  color: #f8fafc;
+  cursor: pointer;
+  font-weight: 600;
+  margin: 0 6px;
+  min-width: 122px;
+  padding: 10px 16px;
+}
+
+.smart3ai-swal-confirm {
+  background: linear-gradient(135deg, #0055a9, #003f7d);
+}
+
+.smart3ai-swal-cancel {
+  background: #334155;
+}
+
+html.theme-light .smart3ai-swal-popup {
+  background: #ffffff;
+  color: #0f172a;
+}
+
 html.theme-light [class*='fixed'][class*='w-48'][class*='border-gray-600/50'] button:hover {
   background: rgba(226, 232, 240, 0.6) !important;
 }

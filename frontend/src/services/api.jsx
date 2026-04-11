@@ -513,4 +513,9 @@ export const billingService = {
     const response = await api.post(`/billing/reports/schedules/${scheduleId}/run_now/`, {});
     return response.data;
   },
+
+  getLandingAnalyticsSummary: async (params = {}) => {
+    const response = await api.get('/analytics/landing/', { params });
+    return response.data;
+  },
 };

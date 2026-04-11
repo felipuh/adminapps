@@ -17,6 +17,7 @@ import {
 import { organizationService } from '../services/api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
+import { showConfirm } from '../services/dialogs';
 
 // Organization Row Component
 const OrganizationRow = ({ org, onView, onEdit, onDelete, t }) => {
@@ -411,14 +412,24 @@ const OrganizationsPage = () => {
   };
 
   const handleDelete = async (org) => {
-    if (window.confirm(`${t.confirmDelete} "${org.name}"?`)) {
-      try {
-        await organizationService.delete(org.id);
-        toast.success(t.orgDeleted);
-        fetchOrganizations();
-      } catch (error) {
-        toast.error(t.orgDeleteError);
-      }
+    const isEnglish = document.documentElement.lang === 'en';
+    const confirmed = await showConfirm({
+      title: isEnglish ? 'Delete organization' : 'Eliminar organizacion',
+      text: `${t.confirmDelete} "${org.name}"?`,
+      confirmButtonText: isEnglish ? 'Delete' : 'Eliminar',
+      cancelButtonText: isEnglish ? 'Cancel' : 'Cancelar',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await organizationService.delete(org.id);
+      toast.success(t.orgDeleted);
+      fetchOrganizations();
+    } catch (error) {
+      toast.error(t.orgDeleteError);
     }
   };
 
