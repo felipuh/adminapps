@@ -141,6 +141,18 @@ const LoginPage = () => {
               )}
             </button>
           </form>
+
+          <div className="mt-6 border-t border-gray-700/40 pt-4 text-center text-sm">
+            <p className="text-gray-500 mb-2">Conoce la propuesta comercial de IsoSmart</p>
+            <a
+              href="http://landing.isosmart.local/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary-300 hover:text-primary-200 transition-colors font-medium"
+            >
+              Ver landing corporativa y demo conversacional
+            </a>
+          </div>
         </div>
 
         {/* Footer */}

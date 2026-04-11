@@ -7,12 +7,18 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, get_user_model
+from django.conf import settings
+from django.utils import timezone
+from django.utils.dateparse import parse_date, parse_datetime
+from django.db.models import Count
 from functools import wraps
+import hashlib
+import hmac
 import json
 
 from apps.organizations.models import Organization
 from apps.users.models import UserOrganization
-from .models import IntegrationAPIKey
+from .models import IntegrationAPIKey, LandingAnalyticsEvent
 
 User = get_user_model()
 
@@ -41,14 +47,27 @@ def require_api_key(view_func):
                 'code': 'missing_api_key'
             }, status=401)
         
-        # Verificar si la API key es válida
+        # Verificar primero contra la base de datos
+        service_name = None
         try:
             key_obj = IntegrationAPIKey.objects.get(key=api_key, is_active=True)
+            service_name = key_obj.name
         except IntegrationAPIKey.DoesNotExist:
-            return JsonResponse({
-                'error': 'API Key inválida',
-                'code': 'invalid_api_key'
-            }, status=401)
+            # Fallback opcional a hashes en settings para claves de entorno.
+            valid_keys = getattr(settings, 'INTEGRATION_API_KEYS', {})
+            provided_hash = hashlib.sha256(api_key.encode()).hexdigest()
+            for name, key_hash in valid_keys.items():
+                if key_hash and hmac.compare_digest(provided_hash, key_hash):
+                    service_name = name
+                    break
+
+            if not service_name:
+                return JsonResponse({
+                    'error': 'API Key inválida',
+                    'code': 'invalid_api_key'
+                }, status=401)
+
+        request.integration_service = service_name
         
         return view_func(request, *args, **kwargs)
     
@@ -359,3 +378,137 @@ def get_user_by_id(request):
     }
     
     return JsonResponse(response_data)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@require_api_key
+def ingest_landing_analytics(request):
+    """Ingesta de eventos de analítica del landing de Smart3AI."""
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'error': 'JSON inválido',
+            'code': 'invalid_json'
+        }, status=400)
+
+    events = data.get('events')
+    campaign = str(data.get('campaign') or '').strip()[:120]
+
+    if not isinstance(events, list):
+        single_event = data.get('event')
+        if isinstance(single_event, dict):
+            events = [single_event]
+        else:
+            return JsonResponse({
+                'error': 'Se requiere "events" (array) o "event" (objeto)',
+                'code': 'missing_events'
+            }, status=400)
+
+    created = 0
+    rejected = 0
+
+    for raw in events:
+        if not isinstance(raw, dict):
+            rejected += 1
+            continue
+
+        event_name = str(raw.get('eventName') or raw.get('event_name') or '').strip()
+        if not event_name:
+            rejected += 1
+            continue
+
+        raw_ts = raw.get('ts') or raw.get('timestamp')
+        occurred_at = parse_datetime(str(raw_ts)) if raw_ts else None
+        if occurred_at is None:
+            occurred_at = timezone.now()
+        elif timezone.is_naive(occurred_at):
+            occurred_at = timezone.make_aware(occurred_at, timezone.get_current_timezone())
+
+        LandingAnalyticsEvent.objects.create(
+            event_name=event_name[:80],
+            event_date=timezone.localtime(occurred_at).date(),
+            occurred_at=occurred_at,
+            campaign=campaign,
+            variant=str(raw.get('experiment') or raw.get('variant') or '').strip().upper()[:8],
+            persona=str(raw.get('persona') or '').strip()[:32],
+            intent=str(raw.get('intent') or '').strip()[:24],
+            location=str(raw.get('location') or '').strip()[:80],
+            session_id=str(raw.get('sessionId') or raw.get('session_id') or '').strip()[:120],
+            page_path=str(raw.get('pagePath') or raw.get('page_path') or '').strip()[:255],
+            page_url=str(raw.get('pageUrl') or raw.get('page_url') or '').strip(),
+            href=str(raw.get('href') or '').strip(),
+            referrer=str(raw.get('referrer') or '').strip(),
+            source_service=str(getattr(request, 'integration_service', '') or '')[:64],
+            payload=raw,
+        )
+        created += 1
+
+    return JsonResponse({
+        'ok': True,
+        'created': created,
+        'rejected': rejected,
+        'campaign': campaign or 'direct',
+        'received_at': timezone.now().isoformat(),
+    }, status=201)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def landing_analytics_summary(request):
+    """Resumen agregado por fecha, campaña y variante."""
+    campaign = str(request.GET.get('campaign') or '').strip()
+    from_date = parse_date(str(request.GET.get('from') or '').strip())
+    to_date = parse_date(str(request.GET.get('to') or '').strip())
+
+    queryset = LandingAnalyticsEvent.objects.all()
+    if campaign:
+        queryset = queryset.filter(campaign=campaign)
+    if from_date:
+        queryset = queryset.filter(event_date__gte=from_date)
+    if to_date:
+        queryset = queryset.filter(event_date__lte=to_date)
+
+    total_events = queryset.count()
+    cta_events = queryset.filter(event_name='cta_click')
+
+    by_variant = []
+    for item in queryset.values('variant').annotate(total=Count('id')).order_by('variant'):
+        variant_key = item['variant'] or 'N/A'
+        total = item['total']
+        cta_total = cta_events.filter(variant=item['variant']).count()
+        cta_rate = round((cta_total / total) * 100, 2) if total else 0
+        by_variant.append({
+            'variant': variant_key,
+            'events': total,
+            'cta_clicks': cta_total,
+            'cta_rate_percent': cta_rate,
+        })
+
+    by_day = list(
+        queryset.values('event_date', 'campaign', 'variant')
+        .annotate(total=Count('id'))
+        .order_by('-event_date', 'campaign', 'variant')
+    )
+
+    winner = None
+    sortable = [item for item in by_variant if item['variant'] in {'A', 'B'}]
+    if sortable:
+        winner = sorted(sortable, key=lambda row: (row['cta_rate_percent'], row['cta_clicks']), reverse=True)[0]['variant']
+
+    return JsonResponse({
+        'campaign': campaign,
+        'filters': {
+            'from': from_date.isoformat() if from_date else None,
+            'to': to_date.isoformat() if to_date else None,
+        },
+        'totals': {
+            'events': total_events,
+            'cta_clicks': cta_events.count(),
+        },
+        'winner_variant': winner,
+        'by_variant': by_variant,
+        'by_day': by_day,
+    })

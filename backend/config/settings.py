@@ -202,7 +202,7 @@ BILLING_OWNER_ORG_NAME = os.environ.get('BILLING_OWNER_ORG_NAME', 'Smart3AI').st
 CORS_ALLOWED_ORIGINS = [
     *(_env_list(
         'CORS_ALLOWED_ORIGINS',
-        default='http://localhost:3000,http://localhost:3001,http://localhost:3002,http://127.0.0.1:3000,http://127.0.0.1:3001,http://192.168.100.100:3000,http://192.168.100.100:3001'
+        default='http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:4173,http://127.0.0.1:3000,http://127.0.0.1:3001,http://127.0.0.1:4173,http://192.168.100.100:3000,http://192.168.100.100:3001'
     )),
 ]
 
@@ -285,6 +285,18 @@ CSRF_COOKIE_SECURE = _env_bool('CSRF_COOKIE_SECURE', default=not DEBUG)
 # ISO Smart Integration
 ISOSMART_API_URL = os.environ.get('ISOSMART_API_URL', 'http://localhost:8000/api')
 FRONTEND_BASE_URL = os.environ.get('FRONTEND_BASE_URL', 'http://localhost:3000')
+
+# Integration API key hashes (fallback when key not stored in DB)
+INTEGRATION_API_KEYS = {
+    'isosmart': os.environ.get(
+        'ISOSMART_API_KEY_HASH',
+        '20985646232d3504aeddb985345b81ec968ed8d86a6993ab7efcfdd35cd537e7',
+    ),
+    'landing_analytics': os.environ.get(
+        'LANDING_ANALYTICS_API_KEY_HASH',
+        '0dc7befde90cc98351939f394cc9cccef2376a74c634d45a6ceb1a576f4dac3f',
+    ),
+}
 
 # Billing Scheduler
 BILLING_SCHEDULER_ENABLED = os.environ.get('BILLING_SCHEDULER_ENABLED', 'true').lower() == 'true'

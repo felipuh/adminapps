@@ -21,4 +21,8 @@ urlpatterns = [
     
     # Usuarios
     path('user/', views.get_user_by_id, name='get-user'),
+
+    # Analítica de landing Smart3AI
+    path('landing-analytics/events/', views.ingest_landing_analytics, name='landing-analytics-events'),
+    path('landing-analytics/summary/', views.landing_analytics_summary, name='landing-analytics-summary'),
 ]
