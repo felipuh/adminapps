@@ -20,8 +20,8 @@ fi
 python manage.py shell <<'PY'
 import os
 from django.contrib.auth import get_user_model
-from organizations.models import Organization
-from users.models import OrganizationMembership
+from apps.organizations.models import Organization
+from apps.users.models import UserOrganization
 
 email = os.getenv('SUPERUSER_EMAIL', 'felipe@smart3ai.com')
 password = os.getenv('SUPERUSER_PASSWORD')
@@ -43,8 +43,7 @@ user, _ = User.objects.get_or_create(
         'is_active': True,
         'is_staff': True,
         'is_superuser': True,
-        'is_platform_admin': True,
-        'email_verified': True,
+        'role': 'superadmin',
     },
 )
 
@@ -53,8 +52,7 @@ user.last_name = last_name
 user.is_active = True
 user.is_staff = True
 user.is_superuser = True
-user.is_platform_admin = True
-user.email_verified = True
+user.role = 'superadmin'
 user.set_password(password)
 user.save()
 
@@ -62,26 +60,27 @@ org, _ = Organization.objects.get_or_create(
     name=org_name,
     defaults={
         'email': org_email,
-        'plan': 'enterprise',
         'status': 'active',
+        'industry': 'services',
+        'size': 'small',
+        'employees_count': 10,
         'max_users': 50,
-        'created_by': user,
     },
 )
 
-if org.email != org_email or org.status != 'active' or org.plan != 'enterprise':
+if org.email != org_email or org.status != 'active':
     org.email = org_email
     org.status = 'active'
-    org.plan = 'enterprise'
-    if not org.created_by:
-        org.created_by = user
-    org.save()
+    org.save(update_fields=['email', 'status', 'updated_at'])
 
-OrganizationMembership.objects.update_or_create(
+user.organization = org
+user.save(update_fields=['organization', 'updated_at'])
+
+UserOrganization.objects.update_or_create(
     user=user,
     organization=org,
     defaults={
-        'role': 'org_admin',
+        'role': 'superadmin',
         'is_primary': True,
         'is_active': True,
     },

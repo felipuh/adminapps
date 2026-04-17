@@ -5,8 +5,10 @@ Sistema de gestión de organizaciones y usuarios
 from pathlib import Path
 from datetime import timedelta
 import os
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 def _env_bool(name, default=False):
@@ -74,20 +76,31 @@ TEMPLATES = [
 WSGI_APPLICATION = 'adminapps.wsgi.application'
 
 # BASE DE DATOS
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'adminapps_db'),
-        'USER': os.environ.get('DB_USER', 'adminapps_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+USE_SQLITE = _env_bool('USE_SQLITE', default=False)
+
+if USE_SQLITE:
+    sqlite_name = os.environ.get('SQLITE_NAME', 'adminapps.sqlite3')
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': str(BASE_DIR / sqlite_name),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME', 'adminapps_db'),
+            'USER': os.environ.get('DB_USER', 'adminapps_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '3306'),
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
+    }
 
 # CONTRASEÑAS
 AUTH_PASSWORD_VALIDATORS = [
