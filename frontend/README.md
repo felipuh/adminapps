@@ -2,6 +2,12 @@
 
 Sistema de Gestión de Organizaciones y Usuarios para ISO Smart - Comtech Backoffice
 
+## 📐 Línea Base UI/UX + Prompt
+
+Guía de implementación segura y prompt maestro para nuevas iniciativas frontend:
+
+- [../docs/internal/FRONTEND_LINEA_BASE_Y_PROMPT.md](../docs/internal/FRONTEND_LINEA_BASE_Y_PROMPT.md)
+
 ## 🛠️ Tecnologías
 
 - **React 18** - Framework UI

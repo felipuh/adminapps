@@ -9,6 +9,13 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen bg-dark-500">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-primary-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+      >
+        Skip to content
+      </a>
+
       {/* Background gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-dark-500 via-dark-400 to-dark-500 pointer-events-none" />
       
@@ -38,7 +45,7 @@ const MainLayout = () => {
           />
 
           {/* Page content */}
-          <main className="p-4 lg:p-6 mt-16">
+          <main id="main-content" className="p-4 lg:p-6 mt-16" tabIndex={-1}>
             <div className="max-w-7xl mx-auto">
               <Outlet />
             </div>
@@ -51,6 +58,7 @@ const MainLayout = () => {
         <div 
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setMobileSidebarOpen(false)}
+          aria-hidden="true"
         />
       )}
     </div>

@@ -49,6 +49,18 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
   }, []);
 
   useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setDropdownOpen(false);
+        setNotificationsOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, []);
+
+  useEffect(() => {
     const loadUnreadCount = async () => {
       try {
         const data = await notificationService.getUnreadCount();
@@ -121,8 +133,10 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
         <div className="flex items-center gap-4">
           {/* Mobile menu button */}
           <button
+            type="button"
             onClick={onMenuClick}
             className="lg:hidden p-2 rounded-lg hover:bg-dark-300 text-gray-400 hover:text-gray-200 transition-colors"
+            aria-label={isEnglish ? 'Open navigation menu' : 'Abrir menu de navegacion'}
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -137,6 +151,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
             <input
               type="text"
               placeholder={t.search}
+              aria-label={isEnglish ? 'Search in control center' : 'Buscar en el centro de control'}
               className="
                 w-full pl-10 pr-4 py-2
                 bg-dark-300/50 border border-gray-700/50 rounded-lg
@@ -155,12 +170,17 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
           {/* Notifications */}
           <div className="relative" ref={notificationsRef}>
             <button
+              type="button"
               onClick={handleToggleNotifications}
               className="
                 relative p-2 rounded-lg
                 text-gray-400 hover:text-gray-200 hover:bg-dark-300
                 transition-colors
               "
+              aria-label={t.notifications}
+              aria-expanded={notificationsOpen}
+              aria-haspopup="menu"
+              aria-controls="header-notifications-panel"
             >
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
@@ -180,13 +200,14 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
                 bg-dark-200 border border-gray-700/50 rounded-xl
                 shadow-xl shadow-black/30 overflow-hidden
                 animate-fadeIn
-              ">
+              " id="header-notifications-panel" role="menu">
                 <div className="p-3 border-b border-gray-700/50 flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-gray-100">{t.notifications}</p>
                     <p className="text-xs text-gray-500">{unreadCount} {t.unreadSuffix}</p>
                   </div>
                   <button
+                    type="button"
                     onClick={handleMarkAllRead}
                     className="text-xs text-primary-300 hover:text-primary-200 transition-colors"
                   >
@@ -205,6 +226,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
 
                   {!loadingNotifications && notifications.map((notification) => (
                     <button
+                      type="button"
                       key={notification.id}
                       onClick={() => handleMarkRead(notification.id)}
                       className={`
@@ -224,6 +246,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
 
                 <div className="p-3 border-t border-gray-700/50">
                   <button
+                    type="button"
                     onClick={() => {
                       setNotificationsOpen(false);
                       navigate('/notifications');
@@ -240,11 +263,16 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
           {/* User dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
+              type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="
                 flex items-center gap-2 px-3 py-2 rounded-lg
                 hover:bg-dark-300 transition-colors
               "
+              aria-label={isEnglish ? 'Open user menu' : 'Abrir menu de usuario'}
+              aria-expanded={dropdownOpen}
+              aria-haspopup="menu"
+              aria-controls="header-user-menu"
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-sm font-semibold">
                 {user?.first_name?.[0]}{user?.last_name?.[0]}
@@ -268,7 +296,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
                 bg-dark-200 border border-gray-700/50 rounded-xl
                 shadow-xl shadow-black/30 overflow-hidden
                 animate-fadeIn
-              ">
+              " id="header-user-menu" role="menu">
                 <div className="p-3 border-b border-gray-700/50">
                   <p className="text-sm font-medium text-gray-200">
                     {user?.full_name || `${user?.first_name} ${user?.last_name}`}
@@ -278,6 +306,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
 
                 <div className="p-2">
                   <button
+                    type="button"
                     onClick={() => {
                       setDropdownOpen(false);
                       navigate('/settings?tab=profile');
@@ -293,6 +322,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
                   </button>
 
                   <button
+                    type="button"
                     onClick={() => {
                       setDropdownOpen(false);
                       navigate('/settings?tab=appearance');
@@ -310,6 +340,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
 
                 <div className="p-2 border-t border-gray-700/50">
                   <button
+                    type="button"
                     onClick={handleLogout}
                     className="
                       w-full flex items-center gap-3 px-3 py-2 rounded-lg

@@ -38,6 +38,7 @@ const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
       <NavLink
         to={item.href}
         onClick={onMobileClose}
+        aria-current={isActive ? 'page' : undefined}
         className={`
           flex items-center gap-3 px-4 py-3 rounded-lg
           transition-all duration-200 group relative
@@ -92,8 +93,10 @@ const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
         
         {/* Mobile close button */}
         <button
+          type="button"
           onClick={onMobileClose}
           className="lg:hidden p-2 rounded-lg hover:bg-dark-200 text-gray-400"
+          aria-label={isEnglish ? 'Close navigation menu' : 'Cerrar menu de navegacion'}
         >
           <X className="w-5 h-5" />
         </button>
@@ -133,11 +136,12 @@ const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
         bg-dark-300/80 backdrop-blur-xl border-r border-gray-700/50
         transition-all duration-300 z-50
         ${isOpen ? 'w-64' : 'w-20'}
-      `}>
+      `} aria-label={isEnglish ? 'Primary navigation' : 'Navegacion principal'}>
         {sidebarContent}
 
         {/* Toggle button */}
         <button
+          type="button"
           onClick={onToggle}
           className="
             absolute -right-3 top-20 w-6 h-6
@@ -146,6 +150,7 @@ const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
             text-gray-400 hover:text-gray-200
             transition-colors shadow-lg
           "
+          aria-label={isOpen ? (isEnglish ? 'Collapse sidebar' : 'Colapsar barra lateral') : (isEnglish ? 'Expand sidebar' : 'Expandir barra lateral')}
         >
           {isOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </button>
@@ -157,7 +162,7 @@ const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
         bg-dark-300/95 backdrop-blur-xl border-r border-gray-700/50
         transition-transform duration-300 z-50
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+      `} aria-hidden={!mobileOpen} aria-label={isEnglish ? 'Mobile navigation' : 'Navegacion movil'}>
         {sidebarContent}
       </aside>
     </>
