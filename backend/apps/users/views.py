@@ -16,8 +16,8 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.db.models import Q
 
 from .models import User, UserOrganization, UserSession, UserActivityLog
@@ -38,6 +38,15 @@ from .serializers import (
     RegisterSerializer,
 )
 from .permissions import IsSuperAdmin, IsAdmin, IsOrgAdmin, IsOwnerOrAdmin
+from .services import (
+    InvalidResetLinkError,
+    LogoutError,
+    RequestContext,
+    blacklist_refresh_token,
+    is_valid_password_reset_token,
+    log_logout_activity,
+    resolve_password_reset_user,
+)
 
 
 PASSWORD_REUSE_REASON_CODE = 'PASSWORD_REUSE_RECENT'
@@ -169,23 +178,17 @@ class LogoutView(APIView):
     
     def post(self, request):
         try:
-            refresh_token = request.data.get('refresh')
-            if refresh_token:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
-            
-            # Registrar logout
-            UserActivityLog.objects.create(
+            blacklist_refresh_token(request.data.get('refresh'))
+            log_logout_activity(
                 user=request.user,
-                organization=request.user.organization,
-                action='logout',
-                ip_address=request.META.get('REMOTE_ADDR'),
-                user_agent=request.META.get('HTTP_USER_AGENT', '')
+                context=RequestContext(
+                    ip_address=request.META.get('REMOTE_ADDR'),
+                    user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                ),
             )
-            
             return Response({'detail': 'Sesión cerrada exitosamente'})
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except LogoutError as exc:
+            return Response({'error': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -572,13 +575,12 @@ class PasswordResetConfirmView(APIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            user_id = force_str(urlsafe_base64_decode(serializer.validated_data['uid']))
-            user = User.objects.get(pk=user_id)
-        except Exception:
-            return Response({'detail': 'Enlace de restablecimiento invalido.'}, status=status.HTTP_400_BAD_REQUEST)
+            user = resolve_password_reset_user(serializer.validated_data['uid'])
+        except InvalidResetLinkError as exc:
+            return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
         token = serializer.validated_data['token']
-        if not default_token_generator.check_token(user, token):
+        if not is_valid_password_reset_token(user=user, token=token):
             return Response({'detail': 'El token es invalido o ya expiro.'}, status=status.HTTP_400_BAD_REQUEST)
 
         new_password = serializer.validated_data['new_password']
