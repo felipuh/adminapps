@@ -11,6 +11,14 @@ const api = axios.create({
   },
 });
 
+// Create axios instance for 2FA verification (without automatic token injection)
+const api2FA = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 // Request interceptor - add auth token
 api.interceptors.request.use(
   (config) => {
@@ -68,8 +76,21 @@ export default api;
 // ========================================
 
 export const authService = {
-  login: async (email, password) => {
-    const response = await api.post('/auth/login/', { email, password });
+  login: async (credentials) => {
+    const response = await api.post('/auth/login/', credentials);
+    return response.data;
+  },
+
+  verify2fa: async (data, tempToken) => {
+    // Use temporary token from login step, not the one in localStorage
+    // This is used during the login flow before we've fully authenticated
+    const config = {
+      headers: {
+        Authorization: `Bearer ${tempToken}`,
+      },
+    };
+    
+    const response = await api2FA.post('/auth/2fa/verify/', data, config);
     return response.data;
   },
 
@@ -221,6 +242,32 @@ export const userService = {
     const response = await api.get(`/auth/users/${id}/activity/`, { params });
     return response.data;
   },
+
+  // 2FA methods
+  initiate2faSetup: async () => {
+    const response = await api.post('/auth/2fa/setup/initiate/');
+    return response.data;
+  },
+
+  verify2faSetup: async (data) => {
+    const response = await api.post('/auth/2fa/setup/verify/', data);
+    return response.data;
+  },
+
+  verify2faToken: async (data) => {
+    const response = await api.post('/auth/2fa/verify/', data);
+    return response.data;
+  },
+
+  disable2fa: async (data) => {
+    const response = await api.post('/auth/2fa/disable/', data);
+    return response.data;
+  },
+
+  get2faStatus: async () => {
+    const response = await api.get('/auth/2fa/status/');
+    return response.data;
+  },
 };
 
 export const notificationService = {
@@ -327,6 +374,13 @@ export const dashboardService = {
 
   getOrganizationGrowth: async (period = '30d') => {
     const response = await api.get('/dashboard/growth/', { params: { period } });
+    return response.data;
+  },
+};
+
+export const featureFlagService = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/feature-flags/', { params });
     return response.data;
   },
 };

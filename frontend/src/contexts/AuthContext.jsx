@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { authService } from '../services/api';
+import { authService, featureFlagService } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -14,6 +14,8 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [securityAlert, setSecurityAlert] = useState(null);
+  const [featureFlags, setFeatureFlags] = useState({});
+  const [featureFlagsLoading, setFeatureFlagsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const mustChangePassword = Boolean(user?.must_change_password);
@@ -32,6 +34,29 @@ export const AuthProvider = ({ children }) => {
     document.documentElement.lang = language || 'es';
   }, []);
 
+  const loadFeatureFlags = useCallback(async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      setFeatureFlags({});
+      setFeatureFlagsLoading(false);
+      return {};
+    }
+
+    try {
+      setFeatureFlagsLoading(true);
+      const data = await featureFlagService.getAll();
+      const nextFlags = data && typeof data === 'object' ? data : {};
+      setFeatureFlags(nextFlags);
+      return nextFlags;
+    } catch (error) {
+      console.warn('Feature flags unavailable, using defaults:', error);
+      setFeatureFlags({});
+      return {};
+    } finally {
+      setFeatureFlagsLoading(false);
+    }
+  }, []);
+
   // Check if user is logged in on mount
   const checkAuth = useCallback(async () => {
     const token = localStorage.getItem('access_token');
@@ -40,17 +65,23 @@ export const AuthProvider = ({ children }) => {
         const userData = await authService.getCurrentUser();
         setUser(userData);
         setIsAuthenticated(true);
+        await loadFeatureFlags();
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         setUser(null);
         setSecurityAlert(null);
+        setFeatureFlags({});
+        setFeatureFlagsLoading(false);
         setIsAuthenticated(false);
       }
+    } else {
+      setFeatureFlags({});
+      setFeatureFlagsLoading(false);
     }
     setLoading(false);
-  }, []);
+  }, [loadFeatureFlags]);
 
   useEffect(() => {
     checkAuth();
@@ -89,6 +120,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.user);
       setSecurityAlert(response.security_alert || null);
       setIsAuthenticated(true);
+      await loadFeatureFlags();
       
       return {
         success: true,
@@ -115,6 +147,8 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('refresh_token');
       setUser(null);
       setSecurityAlert(null);
+      setFeatureFlags({});
+      setFeatureFlagsLoading(false);
       setIsAuthenticated(false);
       applyTheme(localStorage.getItem('ui_theme') || 'dark');
       applyLanguage(localStorage.getItem('ui_language') || 'es');
@@ -167,12 +201,16 @@ export const AuthProvider = ({ children }) => {
     return hasRole(['superadmin', 'admin']);
   };
 
+  const isFeatureEnabled = (flagName) => Boolean(featureFlags?.[flagName]);
+
   const value = {
     user,
     loading,
     isAuthenticated,
     mustChangePassword,
     securityAlert,
+    featureFlags,
+    featureFlagsLoading,
     login,
     logout,
     updateProfile,
@@ -180,6 +218,8 @@ export const AuthProvider = ({ children }) => {
     hasRole,
     isAdmin,
     checkAuth,
+    refreshFeatureFlags: loadFeatureFlags,
+    isFeatureEnabled,
   };
 
   return (

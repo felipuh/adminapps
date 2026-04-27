@@ -57,7 +57,25 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 'reason_code': TEMP_PASSWORD_EXPIRED_REASON_CODE,
             })
         
-        # Registrar login
+        # Verificar si el usuario tiene 2FA habilitado
+        try:
+            two_fa = self.user.two_factor_auth
+            if two_fa.is_enabled:
+                # Retornar respuesta especial pidiendo 2FA
+                # El access token se puede usar para verificar 2FA pero no para acceder a otros recursos
+                data['requires_2fa'] = True
+                data['user'] = {
+                    'id': str(self.user.id),
+                    'email': self.user.email,
+                    'full_name': self.user.full_name,
+                }
+                # Mantener el access token para que pueda verificar 2FA
+                return data
+        except:
+            # 2FA no configurado, continuar normalmente
+            pass
+        
+        # Registrar login (solo si no requiere 2FA)
         self.user.record_login()
         
         # Agregar datos adicionales a la respuesta

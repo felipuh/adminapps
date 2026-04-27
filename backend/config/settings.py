@@ -25,6 +25,10 @@ def _env_list(name, default=''):
     value = os.environ.get(name, default)
     return [item.strip() for item in value.split(',') if item.strip()]
 
+
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development').strip().lower()
+IS_PRODUCTION = ENVIRONMENT in ('production', 'prod')
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'change-this-dev-secret-key-before-deploy')
 
@@ -35,6 +39,14 @@ ALLOWED_HOSTS = _env_list(
     'ALLOWED_HOSTS',
     default='localhost,127.0.0.1,192.168.100.100,adminapps.isosmart.local'
 )
+
+if IS_PRODUCTION:
+    if SECRET_KEY in ('', 'change-this-dev-secret-key-before-deploy'):
+        raise RuntimeError('DJANGO_SECRET_KEY must be set to a secure value in production')
+    if DEBUG:
+        raise RuntimeError('DEBUG must be disabled in production')
+    if not ALLOWED_HOSTS:
+        raise RuntimeError('ALLOWED_HOSTS must be configured in production')
 
 # Application definition
 INSTALLED_APPS = [
@@ -67,6 +79,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'config.middleware.RequestIDMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -233,6 +246,7 @@ CORS_ALLOW_HEADERS = [
     'origin',
     'user-agent',
     'x-csrftoken',
+    'x-request-id',
     'x-requested-with',
     'x-organization-id',
 ]
@@ -241,13 +255,18 @@ CORS_ALLOW_HEADERS = [
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'request_id': {
+            '()': 'config.request_context.RequestIDLogFilter',
+        },
+    },
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'format': '{levelname} {asctime} {module} request_id={request_id} {process:d} {thread:d} {message}',
             'style': '{',
         },
         'simple': {
-            'format': '{levelname} {asctime} {message}',
+            'format': '{levelname} {asctime} request_id={request_id} {message}',
             'style': '{',
         },
     },
@@ -257,10 +276,12 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / 'logs' / 'adminapps.log',
             'formatter': 'verbose',
+            'filters': ['request_id'],
         },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
+            'filters': ['request_id'],
         },
     },
     'root': {

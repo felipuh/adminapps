@@ -11,6 +11,8 @@ PyMySQL==1.1.0
 # Authentication
 djangorestframework-simplejwt==5.3.1
 PyJWT==2.8.0
+pyotp==2.8.0
+qrcode==7.4.2
 
 # Server
 gunicorn==21.2.0

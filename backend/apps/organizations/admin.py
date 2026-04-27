@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Organization, OrganizationSettings, OrganizationInvitation
+from .models import Organization, OrganizationSettings, OrganizationInvitation, OrganizationFeatureFlag
 
 
 @admin.register(Organization)
@@ -25,3 +25,10 @@ class OrganizationInvitationAdmin(admin.ModelAdmin):
     list_display = ['email', 'organization', 'role', 'status', 'created_at', 'expires_at']
     list_filter = ['status', 'role']
     search_fields = ['email', 'organization__name']
+
+
+@admin.register(OrganizationFeatureFlag)
+class OrganizationFeatureFlagAdmin(admin.ModelAdmin):
+    list_display = ['key', 'enabled', 'organization', 'updated_at']
+    list_filter = ['enabled', 'organization']
+    search_fields = ['key', 'description', 'organization__name', 'organization__code']

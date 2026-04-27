@@ -858,8 +858,9 @@ const PendingPaymentsList = ({ payments, onAction }) => {
 
 
 const FinancePage = () => {
-  const { user } = useAuth();
+  const { user, isFeatureEnabled, featureFlagsLoading } = useAuth();
   const isEnglish = user?.language === 'en';
+  const showRevenueDashboard = isFeatureEnabled('billing_revenue_dashboard');
   const t = {
     panelLoadError: isEnglish ? 'Could not load the finance panel.' : 'No fue posible cargar el panel financiero.',
     batchRequired: isEnglish ? 'Fiscal profile and product are required to run batch.' : 'Se requiere perfil fiscal y producto para ejecutar el batch.',
@@ -1010,6 +1011,11 @@ const FinancePage = () => {
     rate: isEnglish ? 'Rate' : 'Tasa',
     dailyBreakdown: isEnglish ? 'Daily breakdown' : 'Desglose diario',
     noLandingData: isEnglish ? 'No landing analytics data for selected filters.' : 'No hay datos de analitica para los filtros seleccionados.',
+    revenueLockedTitle: isEnglish ? 'Revenue dashboard not enabled' : 'Dashboard de revenue no habilitado',
+    revenueLockedDescription: isEnglish
+      ? 'This section is behind the billing_revenue_dashboard feature flag. Enable it for your organization to access revenue analytics.'
+      : 'Esta seccion esta protegida por el feature flag billing_revenue_dashboard. Habilitalo para tu organizacion y veras las analiticas de revenue.',
+    revenueLockedLoading: isEnglish ? 'Checking feature flags...' : 'Validando feature flags...',
   };
   const [loading, setLoading] = useState(true);
   const [runningBatch, setRunningBatch] = useState(false);
@@ -1065,9 +1071,9 @@ const FinancePage = () => {
       setLoading(true);
       const [summaryData, productData, organizationData, timelineData, receivableData, invoiceData, fpData, prodData, schedData, reportSchedulesData, alertsData, churnData_, reconciliationData, dashboardData, landingAnalyticsData] = await Promise.all([
         billingService.getSummary(),
-        billingService.getRevenueByProduct(),
-        billingService.getRevenueByOrganization(),
-        billingService.getRevenueTimeline(),
+        showRevenueDashboard ? billingService.getRevenueByProduct() : Promise.resolve([]),
+        showRevenueDashboard ? billingService.getRevenueByOrganization() : Promise.resolve([]),
+        showRevenueDashboard ? billingService.getRevenueTimeline() : Promise.resolve([]),
         billingService.getAccountsReceivable(),
         billingService.getInvoices({ ordering: '-created_at' }),
         billingService.getFiscalProfiles(),
@@ -1113,7 +1119,7 @@ const FinancePage = () => {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [showRevenueDashboard]);
 
   const applyLandingFilters = async () => {
     try {
@@ -1563,6 +1569,8 @@ const FinancePage = () => {
         />
       </div>
 
+      {showRevenueDashboard ? (
+      <>
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <div className="glass-card p-6">
           <div className="mb-6 flex items-center justify-between">
@@ -1702,6 +1710,20 @@ const FinancePage = () => {
           </div>
         </div>
       </div>
+      </>
+      ) : (
+      <div className="glass-card p-6 border border-amber-500/30 bg-amber-500/10">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-amber-300 mt-0.5" />
+          <div>
+            <h2 className="text-lg font-semibold text-amber-100">{t.revenueLockedTitle}</h2>
+            <p className="mt-1 text-sm text-amber-200/85">
+              {featureFlagsLoading ? t.revenueLockedLoading : t.revenueLockedDescription}
+            </p>
+          </div>
+        </div>
+      </div>
+      )}
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <div className="glass-card p-6">

@@ -41,6 +41,14 @@ jobs:
         run: |
           python manage.py check
 
+      - name: Run backend tests (SQLite test settings)
+        working-directory: backend
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings_test
+          SECRET_KEY: ci-secret-key
+        run: |
+          python manage.py test apps.users.tests apps.billing.tests apps.api.tests -v 2
+
   frontend-build:
     name: Frontend Build
     runs-on: ubuntu-latest

@@ -3,6 +3,7 @@ import csv
 import io
 from datetime import date
 
+from django.conf import settings
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponse

@@ -5,6 +5,62 @@ Gestión de organizaciones/clientes que usan ISO Smart
 import uuid
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
+
+
+class OrganizationFeatureFlagQuerySet(models.QuerySet):
+    def resolve_for_organization(self, organization=None):
+        """Resolve global flags plus optional organization overrides."""
+        resolved = {
+            item['key']: item['enabled']
+            for item in self.filter(organization__isnull=True).values('key', 'enabled')
+        }
+        if organization is not None:
+            org_items = self.filter(organization=organization).values('key', 'enabled')
+            resolved.update({item['key']: item['enabled'] for item in org_items})
+        return resolved
+
+
+class OrganizationFeatureFlag(models.Model):
+    """Feature flags with optional per-organization override."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    key = models.CharField(max_length=80, verbose_name='Clave')
+    description = models.CharField(max_length=255, blank=True, verbose_name='Descripción')
+    enabled = models.BooleanField(default=False, verbose_name='Habilitada')
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='feature_flags',
+        verbose_name='Organización',
+        help_text='Si está vacío, aplica como valor global por defecto.',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = OrganizationFeatureFlagQuerySet.as_manager()
+
+    class Meta:
+        db_table = 'organization_feature_flags'
+        verbose_name = 'Feature Flag'
+        verbose_name_plural = 'Feature Flags'
+        ordering = ['key']
+        constraints = [
+            models.UniqueConstraint(fields=['key', 'organization'], name='uniq_feature_flag_scope')
+        ]
+
+    def __str__(self):
+        scope = self.organization.code if self.organization_id else 'GLOBAL'
+        return f"{scope}:{self.key}={self.enabled}"
+
+    def save(self, *args, **kwargs):
+        normalized_key = slugify(str(self.key or '').strip()).replace('-', '_')
+        if not normalized_key:
+            raise ValueError('Feature flag key cannot be empty')
+        self.key = normalized_key
+        super().save(*args, **kwargs)
 
 
 class Organization(models.Model):

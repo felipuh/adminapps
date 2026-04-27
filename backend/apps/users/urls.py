@@ -16,6 +16,13 @@ from .views import (
     PasswordResetRequestView,
     PasswordResetConfirmView,
 )
+from .views_2fa import (
+    initiate_2fa_setup,
+    verify_2fa_setup,
+    verify_2fa_token,
+    disable_2fa,
+    get_2fa_status,
+)
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
@@ -33,6 +40,13 @@ urlpatterns = [
     # Password reset
     path('password-reset/', PasswordResetRequestView.as_view(), name='password_reset'),
     path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    
+    # 2FA endpoints
+    path('2fa/setup/initiate/', initiate_2fa_setup, name='2fa_setup_initiate'),
+    path('2fa/setup/verify/', verify_2fa_setup, name='2fa_setup_verify'),
+    path('2fa/verify/', verify_2fa_token, name='2fa_verify'),
+    path('2fa/disable/', disable_2fa, name='2fa_disable'),
+    path('2fa/status/', get_2fa_status, name='2fa_status'),
     
     # Router URLs
     path('', include(router.urls)),

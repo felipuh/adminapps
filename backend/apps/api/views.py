@@ -5,11 +5,12 @@ Dashboard y endpoints generales para Comtech (backoffice)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from django.utils import timezone
 from django.db.models import Count, Q
 from django.utils.dateparse import parse_date
 
-from apps.organizations.models import Organization
+from apps.organizations.models import Organization, OrganizationFeatureFlag
 from apps.users.models import User, UserActivityLog
 from apps.products.models import ISOStandard, OrganizationModule
 from apps.users.permissions import IsAdmin
@@ -295,4 +296,37 @@ class LandingAnalyticsSummaryView(APIView):
             'winner_variant': winner,
             'by_variant': by_variant,
             'by_day': by_day,
+        })
+
+
+class FeatureFlagsView(APIView):
+    """Resolve feature flags for the current user organization context."""
+
+    permission_classes = [IsAuthenticated]
+
+    def _resolve_organization(self, request):
+        requested_org_id = str(request.query_params.get('organization_id') or '').strip()
+        user = request.user
+
+        if requested_org_id:
+            if not user.is_admin:
+                raise PermissionDenied('Only admins can query feature flags for another organization')
+            try:
+                return Organization.objects.get(id=requested_org_id)
+            except Organization.DoesNotExist as exc:
+                raise ValidationError({'organization_id': 'Organization not found'}) from exc
+
+        return user.organization
+
+    def get(self, request):
+        organization = self._resolve_organization(request)
+        if organization is None and not request.user.is_admin:
+            raise ValidationError({'organization_id': 'User has no organization assigned'})
+
+        flags = OrganizationFeatureFlag.objects.resolve_for_organization(organization)
+
+        return Response({
+            'organization_id': str(organization.id) if organization else None,
+            'flags': flags,
+            'total_flags': len(flags),
         })
