@@ -19,6 +19,7 @@ import SubscriptionsPage from './pages/SubscriptionsPage';
 import SettingsPage from './pages/SettingsPage';
 import FinancePage from './pages/FinancePage';
 import NotificationsPage from './pages/NotificationsPage';
+import ImmersiveEffects from './components/ui/ImmersiveEffects';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -126,6 +127,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <ImmersiveEffects />
         <AppRoutes />
         <Toaster
           position="top-right"
