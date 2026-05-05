@@ -2,9 +2,50 @@ import uuid
 from datetime import datetime, time as dt_time, timedelta
 from calendar import monthrange
 from decimal import Decimal
+import logging
+import hashlib
+import base64
 
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
+from cryptography.fernet import Fernet
+
+logger = logging.getLogger(__name__)
+
+
+def _get_encryption_key():
+    """Derive encryption key from Django SECRET_KEY"""
+    secret = settings.SECRET_KEY.encode()
+    # Derive a 32-byte key from SECRET_KEY
+    key_material = hashlib.sha256(secret).digest()
+    # Fernet requires base64-encoded 32-byte key
+    return base64.urlsafe_b64encode(key_material)
+
+
+def _encrypt_value(value):
+    """Encrypt a string value"""
+    if not value:
+        return None
+    try:
+        f = Fernet(_get_encryption_key())
+        return f.encrypt(value.encode()).decode()
+    except Exception as exc:
+        logger.error(f"Encryption failed: {exc}")
+        raise ValueError("Failed to encrypt sensitive data")
+
+
+def _decrypt_value(encrypted_value):
+    """Decrypt an encrypted string value"""
+    if not encrypted_value:
+        return None
+    try:
+        f = Fernet(_get_encryption_key())
+        return f.decrypt(encrypted_value.encode()).decode()
+    except Exception as exc:
+        logger.error(f"Decryption failed: {exc}")
+        # Si falla la desencriptación, retornar None
+        return None
 
 
 class FiscalProfile(models.Model):
@@ -28,12 +69,33 @@ class FiscalProfile(models.Model):
     address = models.TextField(blank=True)
     hacienda_environment = models.CharField(max_length=20, choices=ENVIRONMENT_CHOICES, default='sandbox')
     hacienda_username = models.CharField(max_length=255, blank=True)
-    hacienda_password = models.CharField(max_length=255, blank=True)
+    
+    # SECURITY FIX C5: Credenciales de Hacienda CIFRADAS
+    _hacienda_password_encrypted = models.TextField(
+        db_column='hacienda_password_encrypted',
+        blank=True,
+        help_text='Contraseña Hacienda encriptada (DO NOT ACCESS DIRECTLY - use .hacienda_password property)'
+    )
+    
     # OAuth2 credentials for the Hacienda ATV API
     client_id = models.CharField(max_length=255, blank=True)
-    client_secret = models.CharField(max_length=255, blank=True)
+    
+    # SECURITY FIX C5: OAuth2 client secret CIFRADO
+    _client_secret_encrypted = models.TextField(
+        db_column='client_secret_encrypted',
+        blank=True,
+        help_text='OAuth2 client secret encriptado (DO NOT ACCESS DIRECTLY - use .client_secret property)'
+    )
+    
     certificate_file = models.CharField(max_length=255, blank=True)
-    certificate_pin = models.CharField(max_length=100, blank=True)
+    
+    # SECURITY FIX C5: Certificado PIN CIFRADO
+    _certificate_pin_encrypted = models.TextField(
+        db_column='certificate_pin_encrypted',
+        blank=True,
+        help_text='Certificado PIN encriptado (DO NOT ACCESS DIRECTLY - use .certificate_pin property)'
+    )
+    
     branch_code = models.CharField(max_length=3, default='001')
     terminal_code = models.CharField(max_length=5, default='00001')
     invoice_sequence = models.PositiveIntegerField(default=1)
@@ -49,6 +111,52 @@ class FiscalProfile(models.Model):
 
     def __str__(self):
         return self.commercial_name or self.legal_name
+
+    # SECURITY FIX C5: Properties para acceso cifrado/descifrado transparente
+    @property
+    def hacienda_password(self):
+        """Obtener contraseña Hacienda descifrada"""
+        if not self._hacienda_password_encrypted:
+            return None
+        return _decrypt_value(self._hacienda_password_encrypted)
+    
+    @hacienda_password.setter
+    def hacienda_password(self, value):
+        """Cifrar y almacenar contraseña Hacienda"""
+        if value:
+            self._hacienda_password_encrypted = _encrypt_value(value)
+        else:
+            self._hacienda_password_encrypted = None
+    
+    @property
+    def client_secret(self):
+        """Obtener OAuth2 client secret descifrado"""
+        if not self._client_secret_encrypted:
+            return None
+        return _decrypt_value(self._client_secret_encrypted)
+    
+    @client_secret.setter
+    def client_secret(self, value):
+        """Cifrar y almacenar OAuth2 client secret"""
+        if value:
+            self._client_secret_encrypted = _encrypt_value(value)
+        else:
+            self._client_secret_encrypted = None
+    
+    @property
+    def certificate_pin(self):
+        """Obtener certificado PIN descifrado"""
+        if not self._certificate_pin_encrypted:
+            return None
+        return _decrypt_value(self._certificate_pin_encrypted)
+    
+    @certificate_pin.setter
+    def certificate_pin(self, value):
+        """Cifrar y almacenar certificado PIN"""
+        if value:
+            self._certificate_pin_encrypted = _encrypt_value(value)
+        else:
+            self._certificate_pin_encrypted = None
 
     def next_invoice_number(self):
         current = self.invoice_sequence

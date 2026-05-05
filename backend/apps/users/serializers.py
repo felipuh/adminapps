@@ -1,6 +1,7 @@
 """
 Serializers for Users - Admin Apps
 """
+from datetime import timedelta
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.conf import settings
@@ -58,22 +59,36 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             })
         
         # Verificar si el usuario tiene 2FA habilitado
+        two_fa_required = False
         try:
             two_fa = self.user.two_factor_auth
             if two_fa.is_enabled:
-                # Retornar respuesta especial pidiendo 2FA
-                # El access token se puede usar para verificar 2FA pero no para acceder a otros recursos
-                data['requires_2fa'] = True
-                data['user'] = {
+                two_fa_required = True
+        except Exception:
+            # 2FA no configurado, continuar normalmente
+            pass
+        
+        if two_fa_required:
+            # SECURITY FIX C6: No retornar access token cuando se requiere 2FA
+            # Generar un token temporal con scope limitado solo para verificación 2FA
+            from rest_framework_simplejwt.tokens import Token
+            temp_token = Token()
+            temp_token.set_exp(lifetime=timedelta(minutes=5))
+            temp_token['email'] = self.user.email
+            temp_token['user_id'] = str(self.user.id)
+            temp_token['purpose'] = '2fa_verification'
+            temp_token['scope'] = 'totp_verification_only'
+            
+            return {
+                'requires_2fa': True,
+                'temporary_token': str(temp_token),  # Token temporal solo para verificar 2FA
+                'user': {
                     'id': str(self.user.id),
                     'email': self.user.email,
                     'full_name': self.user.full_name,
-                }
-                # Mantener el access token para que pueda verificar 2FA
-                return data
-        except:
-            # 2FA no configurado, continuar normalmente
-            pass
+                },
+                # NO incluir access_token ni refresh_token
+            }
         
         # Registrar login (solo si no requiere 2FA)
         self.user.record_login()
