@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = async (email, password) => {
     try {
-      const response = await authService.login(email, password);
+      const response = await authService.login({ email, password });
       
       // Store tokens
       localStorage.setItem('access_token', response.access);
@@ -130,6 +130,7 @@ export const AuthProvider = ({ children }) => {
       };
     } catch (error) {
       const message = error.response?.data?.detail || 
+                      error.response?.data?.error ||
                       error.response?.data?.message ||
                       'Error al iniciar sesión';
       return { success: false, error: message };

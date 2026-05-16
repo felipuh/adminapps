@@ -30,9 +30,15 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+
+      const normalizedEmail = email.trim();
+      const normalizedPassword = password;
+
       const response = await authService.login({
-        email,
-        password,
+        email: normalizedEmail,
+        password: normalizedPassword,
       });
 
       // Check if 2FA is required
@@ -46,7 +52,7 @@ const LoginPage = () => {
       }
 
       // Normal login - use auth context
-      const result = await login(email, password);
+      const result = await login(normalizedEmail, normalizedPassword);
       
       if (result.success) {
         navigate(result.mustChangePassword ? '/settings' : '/', { replace: true });
@@ -56,7 +62,7 @@ const LoginPage = () => {
         toast.error(result.error);
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.detail || 'Error al iniciar sesión';
+      const errorMsg = err.response?.data?.detail || err.response?.data?.error || 'Error al iniciar sesión';
       setError(errorMsg);
       toast.error(errorMsg);
     }

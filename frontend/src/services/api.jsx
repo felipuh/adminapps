@@ -38,9 +38,11 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const requestUrl = originalRequest?.url || '';
+    const isAuthEndpoint = requestUrl.includes('/auth/login/') || requestUrl.includes('/auth/refresh/');
 
     // If 401 and not already retrying
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest?._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
 
       try {
@@ -76,8 +78,27 @@ export default api;
 // ========================================
 
 export const authService = {
-  login: async (credentials) => {
-    const response = await api.post('/auth/login/', credentials);
+  login: async (credentialsOrEmail, maybePassword) => {
+    // Backward-compatible signature: login({ email, password }) or login(email, password)
+    const credentials = typeof credentialsOrEmail === 'string'
+      ? { email: credentialsOrEmail, password: maybePassword }
+      : (credentialsOrEmail || {});
+
+    const email = (credentials.email || '').trim();
+    const password = credentials.password || '';
+
+    if (!email || !password) {
+      const validationError = new Error('Email y contraseña son obligatorios');
+      validationError.response = {
+        data: {
+          error: 'Email y contraseña son obligatorios',
+          code: 'missing_credentials',
+        },
+      };
+      throw validationError;
+    }
+
+    const response = await api.post('/auth/login/', { email, password });
     return response.data;
   },
 

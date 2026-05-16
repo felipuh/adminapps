@@ -60,7 +60,7 @@ export const useLoginWith2FA = () => {
         },
       };
     } catch (err) {
-      const errorMsg = err.response?.data?.detail || 'Login failed';
+      const errorMsg = err.response?.data?.detail || err.response?.data?.error || 'Login failed';
       setError(errorMsg);
       setLoading(false);
       
