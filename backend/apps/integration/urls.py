@@ -3,6 +3,7 @@ URLs de Integración para Admin Apps
 """
 from django.urls import path
 from . import views
+from . import sso_views
 
 app_name = 'integration'
 
@@ -18,6 +19,11 @@ urlpatterns = [
     
     # Validación de credenciales
     path('validate-credentials/', views.validate_credentials, name='validate-credentials'),
+
+    # Smart3AI centralized SSO
+    path('sso/login/', sso_views.sso_login, name='sso-login'),
+    path('sso/login/verify-2fa/', sso_views.sso_login_verify_2fa, name='sso-login-verify-2fa'),
+    path('sso/introspect/', sso_views.sso_introspect, name='sso-introspect'),
     
     # Usuarios
     path('user/', views.get_user_by_id, name='get-user'),

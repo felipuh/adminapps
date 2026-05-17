@@ -31,6 +31,9 @@ IS_PRODUCTION = ENVIRONMENT in ('production', 'prod')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'change-this-dev-secret-key-before-deploy')
+SMART3AI_SSO_JWT_SECRET = os.environ.get('SMART3AI_SSO_JWT_SECRET', SECRET_KEY)
+SMART3AI_SSO_ISSUER = os.environ.get('SMART3AI_SSO_ISSUER', 'https://sso.smart3ai.local')
+SMART3AI_SSO_ALLOW_2FA_BYPASS = _env_bool('SMART3AI_SSO_ALLOW_2FA_BYPASS', default=False)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _env_bool('DEBUG', default=True)
@@ -39,6 +42,15 @@ ALLOWED_HOSTS = _env_list(
     'ALLOWED_HOSTS',
     default='localhost,127.0.0.1,192.168.100.100,adminapps.isosmart.local'
 )
+
+# Ensure Smart3AI reverse-proxy hosts are accepted even when env ALLOWED_HOSTS is stale.
+for required_host in (
+    'sso.smart3ai.local',
+    'adminapps.smart3ai.local',
+    'smart3ai.local',
+):
+    if required_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(required_host)
 
 if IS_PRODUCTION:
     if SECRET_KEY in ('', 'change-this-dev-secret-key-before-deploy'):
@@ -195,6 +207,7 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
     'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SMART3AI_SSO_JWT_SECRET,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
