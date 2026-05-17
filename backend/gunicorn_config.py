@@ -44,8 +44,6 @@ chdir = "/home/aplicacion/projects/adminapps/backend"
 # Variables de entorno
 raw_env = [
     "DJANGO_SETTINGS_MODULE=config.settings",
-    f"USE_SQLITE={os.environ.get('USE_SQLITE', '')}",
-    f"SQLITE_NAME={os.environ.get('SQLITE_NAME', '')}",
     f"DB_NAME={os.environ.get('DB_NAME', '')}",
     f"DB_USER={os.environ.get('DB_USER', '')}",
     f"DB_PASSWORD={os.environ.get('DB_PASSWORD', '')}",

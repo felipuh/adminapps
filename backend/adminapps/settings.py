@@ -76,30 +76,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'adminapps.wsgi.application'
 
 # BASE DE DATOS
-USE_SQLITE = _env_bool('USE_SQLITE', default=False)
-
-if USE_SQLITE:
-    sqlite_name = os.environ.get('SQLITE_NAME', 'adminapps.sqlite3')
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': str(BASE_DIR / sqlite_name),
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'adminapps_db'),
+        'USER': os.environ.get('DB_USER', 'adminapps_user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', '192.168.100.105'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get('DB_NAME', 'adminapps_db'),
-            'USER': os.environ.get('DB_USER', 'adminapps_user'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', '3306'),
-            'OPTIONS': {
-                'charset': 'utf8mb4',
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
-        }
     }
 
 # CONTRASEÑAS
