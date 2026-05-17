@@ -121,6 +121,7 @@ DATABASES = {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
+}
 
 if 'test' in sys.argv or os.environ.get('USE_SQLITE_FOR_TESTS', '').lower() == 'true':
     DATABASES['default'] = {
