@@ -3,7 +3,7 @@ module.exports = {
     name: 'adminapps-frontend',
     script: 'npm',
     args: 'run dev',
-    cwd: '/home/aplicacion/projects/adminapps/frontend',
+    cwd: '/home/felipe/proyectos/adminapps/frontend',
     env: {
       NODE_ENV: 'development',
       PORT: 3000
@@ -14,9 +14,9 @@ module.exports = {
     },
     watch: false,
     max_memory_restart: '500M',
-    error_file: '/home/aplicacion/projects/adminapps/frontend/logs/error.log',
-    out_file: '/home/aplicacion/projects/adminapps/frontend/logs/out.log',
-    log_file: '/home/aplicacion/projects/adminapps/frontend/logs/combined.log',
+    error_file: '/home/felipe/proyectos/adminapps/frontend/logs/error.log',
+    out_file: '/home/felipe/proyectos/adminapps/frontend/logs/out.log',
+    log_file: '/home/felipe/proyectos/adminapps/frontend/logs/combined.log',
     time: true
   }]
 };

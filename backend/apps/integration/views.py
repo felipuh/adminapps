@@ -197,9 +197,23 @@ def get_organization_modules(request, org_id):
             'code': 'organization_not_found'
         }, status=404)
     
-    modules = []
+    owner_org_name = getattr(settings, 'BILLING_OWNER_ORG_NAME', 'Smart3AI')
+    owner_org_code = getattr(settings, 'BILLING_OWNER_ORG_CODE', '')
+    owner_org_id = getattr(settings, 'BILLING_OWNER_ORG_ID', '')
+    metadata = org.metadata or {}
+    is_owner_exempt = (
+        bool(metadata.get('billing_exempt') or metadata.get('owner_organization'))
+        or (owner_org_name and org.name.lower() == owner_org_name.lower())
+        or (owner_org_code and org.code.lower() == owner_org_code.lower())
+        or (owner_org_id and str(org.id) == str(owner_org_id))
+    )
+
+    if is_owner_exempt:
+        modules = list(MODULE_CODE_MAP.values())
+    else:
+        modules = []
     subscription = org.subscription
-    if subscription and subscription.is_active:
+    if not is_owner_exempt and subscription and subscription.is_active:
         plan_modules = subscription.plan.modules_included
         if isinstance(plan_modules, list):
             for module in plan_modules:
