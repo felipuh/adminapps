@@ -44,7 +44,7 @@ class Plan(models.Model):
     modules_included = models.JSONField(
         default=list,
         verbose_name="Módulos Incluidos",
-        help_text="Lista de módulos: sca, sie, asb, spm, documents, risks, objectives"
+        help_text="Lista de módulos: sca, sie, asb, spm, documents, risks, objectives, medsupplier"
     )
     
     # Características

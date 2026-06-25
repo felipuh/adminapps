@@ -30,6 +30,7 @@ MODULE_CODE_MAP = {
     'documents': {'code': 'DOC', 'name': 'Documentos'},
     'risks': {'code': 'RISK', 'name': 'Riesgos'},
     'objectives': {'code': 'OBJ', 'name': 'Objetivos'},
+    'medsupplier': {'code': 'MEDSUPPLIER', 'name': 'ISO Smart MedSupplier'},
 }
 
 
