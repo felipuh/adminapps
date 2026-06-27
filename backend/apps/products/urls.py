@@ -3,9 +3,17 @@ URLs for Products - Admin Apps
 """
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ISOStandardViewSet, OrganizationModuleViewSet, ModuleActivityLogViewSet
+from .views import (
+    ISOStandardViewSet,
+    ModuleActivityLogViewSet,
+    OrganizationModuleViewSet,
+    OrganizationProductEntitlementViewSet,
+    ProductSystemViewSet,
+)
 
 router = DefaultRouter()
+router.register(r'systems', ProductSystemViewSet, basename='product-system')
+router.register(r'entitlements', OrganizationProductEntitlementViewSet, basename='product-entitlement')
 router.register(r'iso-standards', ISOStandardViewSet, basename='iso-standard')
 router.register(r'modules', OrganizationModuleViewSet, basename='organization-module')
 router.register(r'module-logs', ModuleActivityLogViewSet, basename='module-log')

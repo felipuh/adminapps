@@ -3,10 +3,11 @@
 Setup, verification, and management of two-factor authentication
 """
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, authentication_classes, permission_classes, action
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError, PermissionDenied
+from django.core import signing
 from django.utils import timezone
 import pyotp
 import qrcode
@@ -15,6 +16,33 @@ import base64
 
 from apps.users.models import User
 from apps.users.models_2fa import TwoFactorAuth, TwoFactorAuthLog
+
+
+def _resolve_2fa_verification_user(request):
+    auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+    if auth_header.lower().startswith('bearer '):
+        token = auth_header.split(' ', 1)[1].strip()
+        try:
+            payload = signing.loads(token, salt='adminapps.2fa.login', max_age=300)
+        except signing.BadSignature:
+            payload = None
+        except signing.SignatureExpired:
+            raise PermissionDenied('2FA verification token expired')
+
+        if payload:
+            if (
+                payload.get('purpose') != '2fa_verification'
+                or payload.get('scope') != 'totp_verification_only'
+            ):
+                raise PermissionDenied('Invalid 2FA verification token scope')
+            try:
+                return User.objects.get(id=payload.get('user_id'), is_active=True)
+            except User.DoesNotExist:
+                raise PermissionDenied('Invalid 2FA verification user')
+
+    if request.user and request.user.is_authenticated:
+        return request.user
+    raise PermissionDenied('2FA verification token required')
 
 
 @api_view(['POST'])
@@ -134,7 +162,8 @@ def verify_2fa_setup(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@authentication_classes([])
+@permission_classes([AllowAny])
 def verify_2fa_token(request):
     """
     POST /api/auth/2fa/verify/
@@ -153,7 +182,7 @@ def verify_2fa_token(request):
         MAX_TWO_FA_ATTEMPTS
     )
     
-    user = request.user
+    user = _resolve_2fa_verification_user(request)
     token = request.data.get('token')
     
     # Check rate limit before processing

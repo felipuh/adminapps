@@ -10,7 +10,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from django.db.models import Count, Q
 
-from .models import ISOStandard, OrganizationModule, ModuleActivityLog
+from .models import (
+    ISOStandard,
+    ModuleActivityLog,
+    OrganizationModule,
+    OrganizationProductEntitlement,
+    ProductSystem,
+)
 from .serializers import (
     ISOStandardSerializer,
     ISOStandardListSerializer,
@@ -19,9 +25,117 @@ from .serializers import (
     OrganizationModuleToggleSerializer,
     ModuleActivityLogSerializer,
     OrganizationModulesOverviewSerializer,
+    OrganizationProductEntitlementCreateSerializer,
+    OrganizationProductEntitlementSerializer,
+    OrganizationProductEntitlementToggleSerializer,
+    ProductSystemListSerializer,
+    ProductSystemSerializer,
 )
 from apps.users.permissions import IsSuperAdmin, IsAdmin
 from apps.organizations.models import Organization
+
+
+class ProductSystemViewSet(viewsets.ModelViewSet):
+    """Catalogo producto-neutral de sistemas administrables."""
+
+    queryset = ProductSystem.objects.all()
+    permission_classes = [IsAuthenticated, IsAdmin]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'product_type', 'billing_enabled']
+    search_fields = ['code', 'name', 'slug', 'description']
+    ordering_fields = ['name', 'code', 'created_at', 'updated_at']
+    ordering = ['name']
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProductSystemListSerializer
+        return ProductSystemSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsSuperAdmin()]
+        return [IsAuthenticated(), IsAdmin()]
+
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        products = ProductSystem.objects.filter(status__in=['active', 'beta'])
+        serializer = ProductSystemListSerializer(products, many=True)
+        return Response(serializer.data)
+
+
+class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
+    """Habilitacion producto-neutral por organizacion."""
+
+    queryset = OrganizationProductEntitlement.objects.all()
+    permission_classes = [IsAuthenticated, IsAdmin]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['organization', 'product', 'status', 'enabled']
+    search_fields = ['organization__name', 'organization__code', 'product__code', 'product__name']
+    ordering_fields = ['created_at', 'starts_at', 'ends_at', 'updated_at']
+    ordering = ['-created_at']
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return OrganizationProductEntitlementCreateSerializer
+        return OrganizationProductEntitlementSerializer
+
+    def get_queryset(self):
+        return OrganizationProductEntitlement.objects.select_related(
+            'organization', 'product', 'plan', 'subscription', 'activated_by'
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(activated_by=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def toggle(self, request, pk=None):
+        entitlement = self.get_object()
+        serializer = OrganizationProductEntitlementToggleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        action_type = serializer.validated_data['action']
+        reason = serializer.validated_data.get('reason', '')
+
+        if action_type == 'enable':
+            entitlement.enable(user=request.user)
+            message = f"Producto {entitlement.product.code} activado para {entitlement.organization.name}"
+        elif action_type == 'disable':
+            entitlement.disable(reason=reason)
+            message = f"Producto {entitlement.product.code} suspendido para {entitlement.organization.name}"
+        else:
+            trial_days = serializer.validated_data.get('trial_days', 14)
+            entitlement.enabled = True
+            entitlement.status = 'trial'
+            entitlement.ends_at = timezone.now() + timezone.timedelta(days=trial_days)
+            entitlement.suspended_at = None
+            entitlement.suspension_reason = ''
+            entitlement.activated_by = request.user
+            entitlement.save()
+            message = f"Producto {entitlement.product.code} en prueba por {trial_days} dias"
+
+        return Response({
+            'status': 'success',
+            'message': message,
+            'entitlement': OrganizationProductEntitlementSerializer(entitlement).data,
+        })
+
+    @action(detail=False, methods=['get'])
+    def by_organization(self, request):
+        org_id = request.query_params.get('organization_id')
+        if not org_id:
+            return Response({'error': 'organization_id es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            organization = Organization.objects.get(pk=org_id)
+        except Organization.DoesNotExist:
+            return Response({'error': 'Organizacion no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        entitlements = self.get_queryset().filter(organization=organization)
+        return Response({
+            'organization_id': str(organization.id),
+            'organization_name': organization.name,
+            'products': OrganizationProductEntitlementSerializer(entitlements, many=True).data,
+        })
 
 
 class ISOStandardViewSet(viewsets.ModelViewSet):

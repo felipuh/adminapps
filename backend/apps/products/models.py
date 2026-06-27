@@ -7,6 +7,151 @@ from django.db import models
 from django.utils import timezone
 
 
+class ProductSystem(models.Model):
+    """Producto o sistema administrable por AdminApps."""
+
+    PRODUCT_TYPE_CHOICES = [
+        ('saas', 'SaaS'),
+        ('module', 'Module'),
+        ('service', 'Service'),
+        ('bundle', 'Bundle'),
+    ]
+    STATUS_CHOICES = [
+        ('development', 'En Desarrollo'),
+        ('beta', 'Beta'),
+        ('active', 'Activo'),
+        ('deprecated', 'Descontinuado'),
+        ('retired', 'Retirado'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    code = models.CharField(max_length=50, unique=True, verbose_name='Codigo')
+    name = models.CharField(max_length=120, verbose_name='Nombre')
+    slug = models.SlugField(max_length=80, unique=True, verbose_name='Slug')
+    description = models.TextField(blank=True, verbose_name='Descripcion')
+    product_type = models.CharField(max_length=20, choices=PRODUCT_TYPE_CHOICES, default='saas')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='development')
+    billing_enabled = models.BooleanField(default=True)
+    default_plan = models.ForeignKey(
+        'subscriptions.Plan',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='default_products',
+    )
+    launch_url = models.URLField(blank=True)
+    api_base_url = models.URLField(blank=True)
+    icon = models.CharField(max_length=50, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'product_systems'
+        verbose_name = 'Producto/Sistema'
+        verbose_name_plural = 'Productos/Sistemas'
+        ordering = ['name']
+
+    def __str__(self):
+        return f'{self.code} - {self.name}'
+
+    @property
+    def is_available(self):
+        return self.status in {'active', 'beta'}
+
+
+class OrganizationProductEntitlement(models.Model):
+    """Habilitacion producto-neutral de una organizacion."""
+
+    STATUS_CHOICES = [
+        ('trial', 'Prueba'),
+        ('active', 'Activo'),
+        ('suspended', 'Suspendido'),
+        ('expired', 'Expirado'),
+        ('cancelled', 'Cancelado'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.CASCADE,
+        related_name='product_entitlements',
+    )
+    product = models.ForeignKey(
+        ProductSystem,
+        on_delete=models.PROTECT,
+        related_name='organization_entitlements',
+    )
+    enabled = models.BooleanField(default=True)
+    plan = models.ForeignKey(
+        'subscriptions.Plan',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='product_entitlements',
+    )
+    subscription = models.ForeignKey(
+        'subscriptions.Subscription',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='product_entitlements',
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='trial')
+    starts_at = models.DateTimeField(default=timezone.now)
+    ends_at = models.DateTimeField(null=True, blank=True)
+    suspended_at = models.DateTimeField(null=True, blank=True)
+    suspension_reason = models.TextField(blank=True)
+    modules_enabled = models.JSONField(default=list, blank=True)
+    scopes = models.JSONField(default=list, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    activated_by = models.ForeignKey(
+        'users.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='product_entitlements_activated',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'organization_product_entitlements'
+        verbose_name = 'Entitlement de Producto'
+        verbose_name_plural = 'Entitlements de Producto'
+        unique_together = ['organization', 'product']
+        ordering = ['organization__name', 'product__name']
+
+    def __str__(self):
+        return f'{self.organization.name} - {self.product.code}'
+
+    @property
+    def is_active(self):
+        if not self.enabled:
+            return False
+        if self.status not in {'active', 'trial'}:
+            return False
+        if self.ends_at and timezone.now() > self.ends_at:
+            return False
+        return True
+
+    def enable(self, user=None):
+        self.enabled = True
+        self.status = 'active'
+        self.suspended_at = None
+        self.suspension_reason = ''
+        if user:
+            self.activated_by = user
+        self.save()
+
+    def disable(self, reason=''):
+        self.enabled = False
+        self.status = 'suspended'
+        self.suspended_at = timezone.now()
+        self.suspension_reason = reason
+        self.save()
+
+
 class ISOStandard(models.Model):
     """
     Estándares ISO disponibles en la plataforma

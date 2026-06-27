@@ -3,7 +3,91 @@ Serializers for Products - Admin Apps
 Control de módulos ISO
 """
 from rest_framework import serializers
-from .models import ISOStandard, OrganizationModule, ModuleActivityLog
+from .models import (
+    ISOStandard,
+    ModuleActivityLog,
+    OrganizationModule,
+    OrganizationProductEntitlement,
+    ProductSystem,
+)
+
+
+class ProductSystemSerializer(serializers.ModelSerializer):
+    is_available = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ProductSystem
+        fields = [
+            'id', 'code', 'name', 'slug', 'description', 'product_type', 'status',
+            'billing_enabled', 'default_plan', 'launch_url', 'api_base_url',
+            'icon', 'metadata', 'is_available', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class ProductSystemListSerializer(serializers.ModelSerializer):
+    is_available = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ProductSystem
+        fields = [
+            'id', 'code', 'name', 'slug', 'product_type', 'status',
+            'billing_enabled', 'icon', 'is_available',
+        ]
+
+
+class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
+    organization_name = serializers.CharField(source='organization.name', read_only=True)
+    organization_code = serializers.CharField(source='organization.code', read_only=True)
+    product_code = serializers.CharField(source='product.code', read_only=True)
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    subscription_status = serializers.CharField(source='subscription.status', read_only=True, default=None)
+    billing_status = serializers.SerializerMethodField()
+    is_active = serializers.ReadOnlyField()
+    activated_by_name = serializers.CharField(source='activated_by.full_name', read_only=True, default=None)
+
+    class Meta:
+        model = OrganizationProductEntitlement
+        fields = [
+            'id', 'organization', 'organization_name', 'organization_code',
+            'product', 'product_code', 'product_name', 'enabled', 'plan',
+            'subscription', 'subscription_status', 'billing_status', 'status',
+            'starts_at', 'ends_at', 'suspended_at', 'suspension_reason',
+            'modules_enabled', 'scopes', 'metadata', 'activated_by',
+            'activated_by_name', 'is_active', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'activated_by', 'created_at', 'updated_at']
+
+    def get_billing_status(self, obj):
+        subscription = obj.subscription or getattr(obj.organization, 'subscription', None)
+        if not subscription:
+            return 'not_configured'
+        return subscription.status
+
+
+class OrganizationProductEntitlementCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrganizationProductEntitlement
+        fields = [
+            'organization', 'product', 'enabled', 'plan', 'subscription',
+            'status', 'starts_at', 'ends_at', 'modules_enabled', 'scopes', 'metadata',
+        ]
+
+    def validate(self, attrs):
+        if OrganizationProductEntitlement.objects.filter(
+            organization=attrs.get('organization'),
+            product=attrs.get('product'),
+        ).exists():
+            raise serializers.ValidationError(
+                'La organizacion ya tiene configurado este producto.'
+            )
+        return attrs
+
+
+class OrganizationProductEntitlementToggleSerializer(serializers.Serializer):
+    action = serializers.ChoiceField(choices=['enable', 'disable', 'trial'])
+    reason = serializers.CharField(required=False, allow_blank=True)
+    trial_days = serializers.IntegerField(required=False, default=14, min_value=1, max_value=365)
 
 
 class ISOStandardSerializer(serializers.ModelSerializer):

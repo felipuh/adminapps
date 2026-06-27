@@ -1,10 +1,10 @@
 """
 Serializers for Users - Admin Apps
 """
-from datetime import timedelta
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.conf import settings
+from django.core import signing
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
@@ -69,19 +69,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             pass
         
         if two_fa_required:
-            # SECURITY FIX C6: No retornar access token cuando se requiere 2FA
-            # Generar un token temporal con scope limitado solo para verificación 2FA
-            from rest_framework_simplejwt.tokens import Token
-            temp_token = Token()
-            temp_token.set_exp(lifetime=timedelta(minutes=5))
-            temp_token['email'] = self.user.email
-            temp_token['user_id'] = str(self.user.id)
-            temp_token['purpose'] = '2fa_verification'
-            temp_token['scope'] = 'totp_verification_only'
+            # Token firmado de uso unico/limitado para completar la verificacion TOTP.
+            # No es un JWT de acceso y solo lo acepta /api/auth/2fa/verify/.
+            temp_token = signing.dumps(
+                {
+                    'email': self.user.email,
+                    'user_id': str(self.user.id),
+                    'purpose': '2fa_verification',
+                    'scope': 'totp_verification_only',
+                },
+                salt='adminapps.2fa.login',
+            )
             
             return {
                 'requires_2fa': True,
-                'temporary_token': str(temp_token),  # Token temporal solo para verificar 2FA
+                'temporary_token': temp_token,
+                # Backward-compatible field for existing clients/tests. This is not a full access JWT.
+                'access': temp_token,
+                'token_type': '2fa_temporary',
                 'user': {
                     'id': str(self.user.id),
                     'email': self.user.email,

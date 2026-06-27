@@ -16,6 +16,12 @@ urlpatterns = [
     path('organizations/<uuid:org_id>/', views.get_organization, name='get-organization'),
     path('organizations/<uuid:org_id>/users/', views.get_organization_users, name='get-organization-users'),
     path('organizations/<uuid:org_id>/modules/', views.get_organization_modules, name='get-organization-modules'),
+    path('organizations/<uuid:org_id>/products/', views.get_organization_products, name='get-organization-products'),
+    path(
+        'organizations/<uuid:org_id>/products/<str:product_code>/validate/',
+        views.validate_organization_product_access,
+        name='validate-organization-product-access',
+    ),
     
     # Validación de credenciales
     path('validate-credentials/', views.validate_credentials, name='validate-credentials'),

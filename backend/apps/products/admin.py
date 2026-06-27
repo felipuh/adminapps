@@ -1,5 +1,28 @@
 from django.contrib import admin
-from .models import ISOStandard, OrganizationModule, ModuleActivityLog
+from .models import (
+    ISOStandard,
+    ModuleActivityLog,
+    OrganizationModule,
+    OrganizationProductEntitlement,
+    ProductSystem,
+)
+
+
+@admin.register(ProductSystem)
+class ProductSystemAdmin(admin.ModelAdmin):
+    list_display = ['code', 'name', 'slug', 'product_type', 'status', 'billing_enabled']
+    list_filter = ['product_type', 'status', 'billing_enabled']
+    search_fields = ['code', 'name', 'slug']
+    readonly_fields = ['id', 'created_at', 'updated_at']
+
+
+@admin.register(OrganizationProductEntitlement)
+class OrganizationProductEntitlementAdmin(admin.ModelAdmin):
+    list_display = ['organization', 'product', 'status', 'enabled', 'starts_at', 'ends_at']
+    list_filter = ['status', 'enabled', 'product']
+    search_fields = ['organization__name', 'organization__code', 'product__code', 'product__name']
+    raw_id_fields = ['organization', 'product', 'plan', 'subscription', 'activated_by']
+    readonly_fields = ['id', 'created_at', 'updated_at']
 
 
 @admin.register(ISOStandard)

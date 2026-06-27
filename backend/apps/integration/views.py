@@ -17,6 +17,7 @@ import hmac
 import json
 
 from apps.organizations.models import Organization
+from apps.products.models import OrganizationProductEntitlement
 from apps.users.models import UserOrganization
 from .models import IntegrationAPIKey, LandingAnalyticsEvent
 
@@ -32,6 +33,48 @@ MODULE_CODE_MAP = {
     'objectives': {'code': 'OBJ', 'name': 'Objetivos'},
     'medsupplier': {'code': 'MEDSUPPLIER', 'name': 'ISO Smart MedSupplier'},
 }
+
+
+def _subscription_payload(subscription):
+    if not subscription:
+        return {
+            'status': 'not_configured',
+            'is_active': False,
+            'billing_status': 'not_configured',
+        }
+    return {
+        'id': str(subscription.id),
+        'status': subscription.status,
+        'is_active': subscription.is_active,
+        'billing_status': subscription.status,
+        'current_period_end': subscription.current_period_end.isoformat() if subscription.current_period_end else None,
+        'next_billing_date': subscription.next_billing_date.isoformat() if subscription.next_billing_date else None,
+    }
+
+
+def _entitlement_payload(entitlement):
+    subscription = entitlement.subscription or entitlement.organization.subscription
+    return {
+        'id': str(entitlement.id),
+        'code': entitlement.product.code,
+        'name': entitlement.product.name,
+        'slug': entitlement.product.slug,
+        'enabled': entitlement.enabled,
+        'status': entitlement.status,
+        'is_active': entitlement.is_active,
+        'modules_enabled': entitlement.modules_enabled,
+        'scopes': entitlement.scopes,
+        'billing_status': _subscription_payload(subscription)['billing_status'],
+        'subscription': _subscription_payload(subscription),
+    }
+
+
+def _active_product_entitlements(org):
+    return (
+        OrganizationProductEntitlement.objects
+        .filter(organization=org, enabled=True, product__status__in=['active', 'beta'])
+        .select_related('organization', 'product', 'subscription')
+    )
 
 
 def require_api_key(view_func):
@@ -209,10 +252,20 @@ def get_organization_modules(request, org_id):
         or (owner_org_id and str(org.id) == str(owner_org_id))
     )
 
-    if is_owner_exempt:
-        modules = list(MODULE_CODE_MAP.values())
-    else:
-        modules = []
+    modules = list(MODULE_CODE_MAP.values()) if is_owner_exempt else []
+
+    product_entitlements = list(_active_product_entitlements(org))
+    for entitlement in product_entitlements:
+        if entitlement.is_active:
+            modules.append({
+                'code': entitlement.product.code,
+                'name': entitlement.product.name,
+                'enabled': entitlement.enabled,
+                'status': entitlement.status,
+                'source': 'product_entitlement',
+                'billing_status': _subscription_payload(entitlement.subscription or org.subscription)['billing_status'],
+            })
+
     subscription = org.subscription
     if not is_owner_exempt and subscription and subscription.is_active:
         plan_modules = subscription.plan.modules_included
@@ -232,12 +285,71 @@ def get_organization_modules(request, org_id):
     unique_modules = list({m['code']: m for m in modules if isinstance(m, dict)}.values())
     
     data = {
-        'organization_id': org.id,
+        'organization_id': str(org.id),
         'organization_name': org.name,
         'modules': unique_modules
     }
     
     return JsonResponse(data)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def get_organization_products(request, org_id):
+    """Lista productos/sistemas habilitados para una organizacion."""
+    try:
+        org = Organization.objects.get(id=org_id, status='active')
+    except Organization.DoesNotExist:
+        return JsonResponse({
+            'error': 'Organización no encontrada',
+            'code': 'organization_not_found'
+        }, status=404)
+
+    entitlements = [_entitlement_payload(item) for item in _active_product_entitlements(org)]
+    return JsonResponse({
+        'organization_id': str(org.id),
+        'organization_name': org.name,
+        'products': entitlements,
+    })
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def validate_organization_product_access(request, org_id, product_code):
+    """Valida acceso producto-neutral de una organizacion."""
+    try:
+        org = Organization.objects.get(id=org_id, status='active')
+    except Organization.DoesNotExist:
+        return JsonResponse({
+            'allowed': False,
+            'error': 'Organización no encontrada',
+            'code': 'organization_not_found'
+        }, status=404)
+
+    entitlement = (
+        OrganizationProductEntitlement.objects
+        .filter(organization=org, product__code=product_code.upper())
+        .select_related('organization', 'product', 'subscription')
+        .first()
+    )
+    if not entitlement:
+        return JsonResponse({
+            'allowed': False,
+            'organization_id': str(org.id),
+            'product_code': product_code.upper(),
+            'reason': 'product_not_enabled',
+        }, status=403)
+
+    payload = _entitlement_payload(entitlement)
+    return JsonResponse({
+        'allowed': entitlement.is_active,
+        'organization_id': str(org.id),
+        'organization_status': org.status,
+        'product': payload,
+        'reason': 'ok' if entitlement.is_active else 'product_inactive',
+    }, status=200 if entitlement.is_active else 403)
 
 
 @csrf_exempt
