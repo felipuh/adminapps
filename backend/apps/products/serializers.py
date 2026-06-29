@@ -44,6 +44,8 @@ class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
     subscription_status = serializers.CharField(source='subscription.status', read_only=True, default=None)
     billing_status = serializers.SerializerMethodField()
     is_active = serializers.ReadOnlyField()
+    access_allowed = serializers.ReadOnlyField()
+    access_denial_reason = serializers.ReadOnlyField()
     activated_by_name = serializers.CharField(source='activated_by.full_name', read_only=True, default=None)
 
     class Meta:
@@ -54,7 +56,8 @@ class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
             'subscription', 'subscription_status', 'billing_status', 'status',
             'starts_at', 'ends_at', 'suspended_at', 'suspension_reason',
             'modules_enabled', 'scopes', 'metadata', 'activated_by',
-            'activated_by_name', 'is_active', 'created_at', 'updated_at',
+            'activated_by_name', 'is_active', 'access_allowed',
+            'access_denial_reason', 'created_at', 'updated_at',
         ]
         read_only_fields = ['id', 'activated_by', 'created_at', 'updated_at']
 

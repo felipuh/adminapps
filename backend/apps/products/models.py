@@ -1,6 +1,8 @@
 """
-ISO Modules - Admin Apps
-Control maestro de módulos ISO disponibles y asignación a clientes
+Product access models for AdminApps.
+
+AdminApps is the product-neutral control center for product systems,
+organization entitlements, billing state and legacy ISO module assignments.
 """
 import uuid
 from django.db import models
@@ -134,6 +136,47 @@ class OrganizationProductEntitlement(models.Model):
         if self.ends_at and timezone.now() > self.ends_at:
             return False
         return True
+
+    @property
+    def effective_subscription(self):
+        return self.subscription or getattr(self.organization, 'subscription', None)
+
+    @property
+    def billing_allows_access(self):
+        if not self.product.billing_enabled:
+            return True
+        subscription = self.effective_subscription
+        if not subscription:
+            return False
+        return subscription.is_active
+
+    @property
+    def access_allowed(self):
+        return (
+            getattr(self.organization, 'is_active', False)
+            and self.is_active
+            and self.product.is_available
+            and self.billing_allows_access
+        )
+
+    @property
+    def access_denial_reason(self):
+        if not getattr(self.organization, 'is_active', False):
+            return 'organization_inactive'
+        if not self.enabled:
+            return 'entitlement_disabled'
+        if self.status not in {'active', 'trial'}:
+            return 'entitlement_inactive'
+        if self.ends_at and timezone.now() > self.ends_at:
+            return 'entitlement_expired'
+        if not self.product.is_available:
+            return 'product_unavailable'
+        if not self.billing_allows_access:
+            subscription = self.effective_subscription
+            if not subscription:
+                return 'billing_not_configured'
+            return 'billing_blocked'
+        return 'ok'
 
     def enable(self, user=None):
         self.enabled = True

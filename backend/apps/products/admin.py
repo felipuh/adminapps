@@ -18,7 +18,10 @@ class ProductSystemAdmin(admin.ModelAdmin):
 
 @admin.register(OrganizationProductEntitlement)
 class OrganizationProductEntitlementAdmin(admin.ModelAdmin):
-    list_display = ['organization', 'product', 'status', 'enabled', 'starts_at', 'ends_at']
+    list_display = [
+        'organization', 'product', 'status', 'enabled', 'access_allowed',
+        'starts_at', 'ends_at',
+    ]
     list_filter = ['status', 'enabled', 'product']
     search_fields = ['organization__name', 'organization__code', 'product__code', 'product__name']
     raw_id_fields = ['organization', 'product', 'plan', 'subscription', 'activated_by']

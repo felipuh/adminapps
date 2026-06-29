@@ -62,6 +62,8 @@ def _entitlement_payload(entitlement):
         'enabled': entitlement.enabled,
         'status': entitlement.status,
         'is_active': entitlement.is_active,
+        'access_allowed': entitlement.access_allowed,
+        'access_denial_reason': entitlement.access_denial_reason,
         'modules_enabled': entitlement.modules_enabled,
         'scopes': entitlement.scopes,
         'billing_status': _subscription_payload(subscription)['billing_status'],
@@ -256,7 +258,7 @@ def get_organization_modules(request, org_id):
 
     product_entitlements = list(_active_product_entitlements(org))
     for entitlement in product_entitlements:
-        if entitlement.is_active:
+        if entitlement.access_allowed:
             modules.append({
                 'code': entitlement.product.code,
                 'name': entitlement.product.name,
@@ -344,12 +346,12 @@ def validate_organization_product_access(request, org_id, product_code):
 
     payload = _entitlement_payload(entitlement)
     return JsonResponse({
-        'allowed': entitlement.is_active,
+        'allowed': entitlement.access_allowed,
         'organization_id': str(org.id),
         'organization_status': org.status,
         'product': payload,
-        'reason': 'ok' if entitlement.is_active else 'product_inactive',
-    }, status=200 if entitlement.is_active else 403)
+        'reason': entitlement.access_denial_reason,
+    }, status=200 if entitlement.access_allowed else 403)
 
 
 @csrf_exempt
