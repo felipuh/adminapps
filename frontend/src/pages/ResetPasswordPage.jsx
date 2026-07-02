@@ -39,26 +39,26 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-500 flex items-center justify-center p-4">
+    <div className="auth-shell flex items-center justify-center p-4">
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/30 mb-4">
-            <Shield className="w-10 h-10 text-white" />
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-sm mb-4">
+            <Shield className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-100">Nueva Contraseña</h1>
-          <p className="text-gray-500 mt-2">Configura una contraseña segura para tu cuenta</p>
+          <h1 className="text-3xl font-semibold text-slate-950">Nueva contraseña</h1>
+          <p className="text-slate-500 mt-2">Configura una contraseña segura para tu cuenta</p>
         </div>
 
-        <div className="glass-card p-8">
+        <div className="auth-card rounded-2xl p-8">
           {!hasTokenData ? (
             <div className="space-y-4">
-              <p className="text-sm text-red-300">El enlace de recuperación es inválido o está incompleto.</p>
+              <p className="text-sm text-red-700">El enlace de recuperación es inválido o está incompleto.</p>
               <Link to="/forgot-password" className="btn-secondary inline-flex">Solicitar un nuevo enlace</Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Nueva contraseña</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Nueva contraseña</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <input
@@ -73,7 +73,7 @@ const ResetPasswordPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Confirmar nueva contraseña</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Confirmar nueva contraseña</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <input

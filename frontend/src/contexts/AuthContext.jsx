@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     root.classList.remove('theme-light', 'theme-dark');
 
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : (theme || 'dark');
+    const resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : (theme || 'light');
 
     root.classList.add(resolved === 'light' ? 'theme-light' : 'theme-dark');
   }, []);
@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
   }, [checkAuth]);
 
   useEffect(() => {
-    const persistedTheme = localStorage.getItem('ui_theme') || 'dark';
+    const persistedTheme = localStorage.getItem('ui_theme') || 'light';
     const persistedLanguage = localStorage.getItem('ui_language') || 'es';
     applyTheme(persistedTheme);
     applyLanguage(persistedLanguage);
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    const nextTheme = user.theme || 'dark';
+    const nextTheme = user.theme || 'light';
     const nextLanguage = user.language || 'es';
     applyTheme(nextTheme);
     applyLanguage(nextLanguage);
@@ -152,7 +152,7 @@ export const AuthProvider = ({ children }) => {
       setFeatureFlags({});
       setFeatureFlagsLoading(false);
       setIsAuthenticated(false);
-      applyTheme(localStorage.getItem('ui_theme') || 'dark');
+      applyTheme(localStorage.getItem('ui_theme') || 'light');
       applyLanguage(localStorage.getItem('ui_language') || 'es');
     }
   };

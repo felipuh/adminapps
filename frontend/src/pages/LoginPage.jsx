@@ -118,31 +118,22 @@ const LoginPage = () => {
   // 2FA form
   if (requires2FA) {
     return (
-      <div className="min-h-screen bg-dark-500 flex items-center justify-center p-4">
-        {/* Background effects */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl" />
-        </div>
-
-        {/* 2FA card */}
+      <div className="auth-shell flex items-center justify-center p-4">
         <div className="relative w-full max-w-md">
-          {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-xl shadow-amber-500/30 mb-4">
-              <KeyRound className="w-10 h-10 text-white" />
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-600 text-white shadow-sm mb-4">
+              <KeyRound className="w-8 h-8" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-100">Verificación 2FA</h1>
-            <p className="text-gray-500 mt-2">Autenticación de dos factores</p>
+            <h1 className="text-3xl font-semibold text-slate-950">Verificación 2FA</h1>
+            <p className="text-slate-500 mt-2">Autenticación de dos factores</p>
           </div>
 
-          {/* Form card */}
-          <div className="glass-card p-8">
+          <div className="auth-card rounded-2xl p-8">
             <div className="text-center mb-6">
-              <p className="text-gray-400">
-                Hemos enviado un código a <span className="font-semibold text-gray-300">{user2FA?.email}</span>
+              <p className="text-slate-600">
+                Hemos enviado un código a <span className="font-semibold text-slate-900">{user2FA?.email}</span>
               </p>
-              <p className="text-gray-500 text-sm mt-2">Ingresa tu código de 6 dígitos</p>
+              <p className="text-slate-500 text-sm mt-2">Ingresa tu código de 6 dígitos</p>
             </div>
 
             {/* Error message */}
@@ -207,8 +198,7 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {/* Footer */}
-          <p className="text-center text-gray-600 text-sm mt-6">
+        <p className="text-center text-slate-500 text-sm mt-6">
             © 2026 Smart3AI. Todos los derechos reservados.
           </p>
         </div>
@@ -218,29 +208,20 @@ const LoginPage = () => {
 
   // Login form
   return (
-    <div className="min-h-screen bg-dark-500 flex items-center justify-center p-4">
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl" />
-      </div>
-
-      {/* Login card */}
+    <div className="auth-shell flex items-center justify-center p-4">
       <div className="relative w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-xl shadow-primary-500/30 mb-4">
-            <Shield className="w-10 h-10 text-white" />
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-sm mb-4">
+            <Shield className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-100">Admin Apps</h1>
-          <p className="text-gray-500 mt-2">Smart3AI Control Center</p>
+          <h1 className="text-3xl font-semibold text-slate-950">AdminApps</h1>
+          <p className="text-slate-500 mt-2">Smart3AI SaaS Control Plane</p>
         </div>
 
-        {/* Form card */}
-        <div className="glass-card p-8">
+        <div className="auth-card rounded-2xl p-8">
           <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-100">Iniciar Sesión</h2>
-            <p className="text-gray-500 text-sm mt-1">Ingresa tus credenciales para continuar</p>
+            <h2 className="text-xl font-semibold text-slate-950">Iniciar sesión</h2>
+            <p className="text-slate-500 text-sm mt-1">Ingresa tus credenciales para continuar</p>
           </div>
 
           {/* Error message */}
@@ -329,13 +310,13 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <div className="mt-6 border-t border-gray-700/40 pt-4 text-center text-sm">
-            <p className="text-gray-500 mb-2">Conoce la propuesta comercial de IsoSmart</p>
+          <div className="mt-6 border-t border-slate-200 pt-4 text-center text-sm">
+            <p className="text-slate-500 mb-2">Conoce la propuesta comercial de IsoSmart</p>
             <a
               href="http://landing.isosmart.local/"
               target="_blank"
               rel="noreferrer"
-              className="text-primary-300 hover:text-primary-200 transition-colors font-medium"
+              className="font-semibold text-primary-700 hover:text-primary-900"
             >
               Ver landing corporativa y demo conversacional
             </a>
@@ -343,7 +324,7 @@ const LoginPage = () => {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-gray-600 text-sm mt-6">
+        <p className="text-center text-slate-500 text-sm mt-6">
           © 2026 Smart3AI. Todos los derechos reservados.
         </p>
       </div>

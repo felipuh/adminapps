@@ -41,10 +41,10 @@ const Tab = ({ active, onClick, children }) => (
   <button
     onClick={onClick}
     className={`
-      px-4 py-2 text-sm font-medium rounded-lg transition-colors
+      rounded-lg px-4 py-2 text-sm font-semibold transition-colors
       ${active 
-        ? 'bg-primary-500/20 text-primary-400' 
-        : 'text-gray-400 hover:text-gray-200 hover:bg-dark-200/50'
+        ? 'bg-blue-50 text-primary-700 shadow-sm ring-1 ring-blue-100' 
+        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
       }
     `}
   >
@@ -55,21 +55,21 @@ const Tab = ({ active, onClick, children }) => (
 // Info Row Component
 const InfoRow = ({ icon: Icon, label, value }) => (
   <div className="flex items-start gap-3 py-3">
-    <Icon className="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" />
+    <Icon className="w-5 h-5 text-slate-400 mt-0.5 flex-shrink-0" />
     <div>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-gray-200">{value || '-'}</p>
+      <p className="text-xs font-medium text-slate-500">{label}</p>
+      <p className="text-sm font-medium text-slate-900">{value || '-'}</p>
     </div>
   </div>
 );
 
 // Module Toggle Component
 const ModuleToggle = ({ name, enabled, onChange }) => (
-  <div className="flex items-center justify-between py-3 border-b border-gray-700/30 last:border-0">
-    <span className="text-gray-200">{name}</span>
+  <div className="flex items-center justify-between py-3 border-b border-slate-200 last:border-0">
+    <span className="text-sm font-medium text-slate-700">{name}</span>
     <button
       onClick={() => onChange(!enabled)}
-      className={`transition-colors ${enabled ? 'text-emerald-400' : 'text-gray-500'}`}
+      className={`transition-colors ${enabled ? 'text-emerald-600' : 'text-slate-400'}`}
     >
       {enabled ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
     </button>
@@ -129,16 +129,16 @@ const ProductAccessCard = ({
     || (configured ? 'Sin plan efectivo' : '-');
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-gray-700/60 bg-dark-300/70 p-5 shadow-lg shadow-slate-950/20">
+    <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-primary-400/25 bg-primary-500/10">
-              <PackageCheck className="h-5 w-5 text-primary-300" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-700">
+              <PackageCheck className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-100">{product.name}</h3>
-              <p className="text-xs uppercase tracking-widest text-gray-500">{product.code}</p>
+              <h3 className="text-lg font-semibold text-slate-950">{product.name}</h3>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{product.code}</p>
             </div>
             <AccessBadge status={statusValue}>
               {statusValue === 'not_configured' ? 'Sin configurar' : statusValue}
@@ -149,7 +149,7 @@ const ProductAccessCard = ({
               <span className="badge-danger">Acceso bloqueado</span>
             )}
           </div>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-gray-400">
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
             {product.description || 'Producto SaaS administrado desde AdminApps como control plane central.'}
           </p>
         </div>
@@ -166,21 +166,21 @@ const ProductAccessCard = ({
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-lg border border-gray-700/45 bg-dark-400/35 p-3">
-          <p className="text-xs text-gray-500">Plan</p>
-          <p className="mt-1 text-sm font-medium text-gray-200">{planLabel}</p>
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <p className="text-xs font-medium text-slate-500">Plan</p>
+          <p className="mt-1 text-sm font-semibold text-slate-900">{planLabel}</p>
         </div>
-        <div className="rounded-lg border border-gray-700/45 bg-dark-400/35 p-3">
-          <p className="text-xs text-gray-500">Billing</p>
-          <p className="mt-1 text-sm font-medium text-gray-200">{product.billing_enabled ? billingStatus : 'No requerido'}</p>
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <p className="text-xs font-medium text-slate-500">Billing</p>
+          <p className="mt-1 text-sm font-semibold text-slate-900">{product.billing_enabled ? billingStatus : 'No requerido'}</p>
         </div>
-        <div className="rounded-lg border border-gray-700/45 bg-dark-400/35 p-3">
-          <p className="text-xs text-gray-500">Vigencia</p>
-          <p className="mt-1 text-sm font-medium text-gray-200">{formatDate(entitlement?.ends_at)}</p>
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <p className="text-xs font-medium text-slate-500">Trial hasta / vigencia</p>
+          <p className="mt-1 text-sm font-semibold text-slate-900">{formatDate(entitlement?.ends_at)}</p>
         </div>
-        <div className="rounded-lg border border-gray-700/45 bg-dark-400/35 p-3">
-          <p className="text-xs text-gray-500">Actualizado</p>
-          <p className="mt-1 text-sm font-medium text-gray-200">{formatDate(entitlement?.updated_at)}</p>
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <p className="text-xs font-medium text-slate-500">Actualizado</p>
+          <p className="mt-1 text-sm font-semibold text-slate-900">{formatDate(entitlement?.updated_at)}</p>
         </div>
       </div>
 
@@ -193,19 +193,19 @@ const ProductAccessCard = ({
       )}
 
       {(denialReason && denialReason !== 'ok') && (
-        <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-400/25 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
+        <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
           <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
           <span>Razón de bloqueo: {denialReason}</span>
         </div>
       )}
 
       {validation && (
-        <div className="mt-4 rounded-lg border border-gray-700/45 bg-slate-950/30 px-3 py-2 text-xs text-gray-300">
+        <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
           Última validación: {validation.allowed ? 'permitida' : 'bloqueada'} · {validation.reason || 'sin razón'}
         </div>
       )}
 
-      <div className="mt-5 flex flex-col gap-3 border-t border-gray-700/50 pt-4 xl:flex-row xl:items-center xl:justify-between">
+      <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <select
             value={selectedPlan || ''}
@@ -220,7 +220,7 @@ const ProductAccessCard = ({
               </option>
             ))}
           </select>
-          <span className="text-xs text-gray-500">El plan específico puede complementar la suscripción del cliente.</span>
+          <span className="text-xs text-slate-500">El plan específico puede complementar la suscripción del cliente.</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -873,32 +873,32 @@ const OrganizationDetailPage = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="enterprise-page">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/organizations')}
-            className="p-2 rounded-lg hover:bg-dark-300 text-gray-400 hover:text-gray-200 transition-colors"
+            className="rounded-lg border border-slate-200 bg-white p-2 text-slate-500 shadow-sm hover:bg-slate-50 hover:text-slate-900"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500/20 to-primary-600/20 flex items-center justify-center">
-              <Building2 className="w-7 h-7 text-primary-400" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-700">
+              <Building2 className="w-7 h-7" />
             </div>
             <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-gray-100">{organization.name}</h1>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl font-semibold text-slate-950">{organization.name}</h1>
                 <span className={statusColors[organization.status]}>{organization.status}</span>
                 {organization.billing_exempt && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300">
+                  <span className="badge-success">
                     <BadgeCheck className="h-3.5 w-3.5" />
                     Exenta de cobro
                   </span>
                 )}
               </div>
-              <p className="text-gray-500">{organization.code}</p>
+              <p className="mt-1 text-sm text-slate-500">{organization.code}</p>
             </div>
           </div>
         </div>
@@ -915,7 +915,7 @@ const OrganizationDetailPage = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
+      <div className="flex gap-2 overflow-x-auto rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
         <Tab active={activeTab === 'overview'} onClick={() => setActiveTab('overview')}>
           Resumen
         </Tab>
@@ -927,6 +927,9 @@ const OrganizationDetailPage = () => {
         </Tab>
         <Tab active={activeTab === 'subscription'} onClick={() => setActiveTab('subscription')}>
           Suscripción
+        </Tab>
+        <Tab active={activeTab === 'billing'} onClick={() => setActiveTab('billing')}>
+          Billing
         </Tab>
         <Tab active={activeTab === 'settings'} onClick={() => setActiveTab('settings')}>
           Configuración
@@ -1009,12 +1012,12 @@ const OrganizationDetailPage = () => {
 
       {activeTab === 'products' && (
         <div className="space-y-5">
-          <div className="rounded-xl border border-gray-700/60 bg-dark-300/70 p-5">
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-primary-300">Control plane comercial</p>
-                <h2 className="mt-1 text-xl font-semibold text-gray-100">Productos SaaS y accesos contratados</h2>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-gray-400">
+                <p className="enterprise-kicker">Control plane comercial</p>
+                <h2 className="mt-1 text-xl font-semibold text-slate-950">Productos SaaS y accesos contratados</h2>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
                   Esta sección administra productos reales vendibles. Los módulos ISO legacy y feature flags viven en configuración y no otorgan acceso comercial por sí solos.
                 </p>
               </div>
@@ -1030,21 +1033,21 @@ const OrganizationDetailPage = () => {
             </div>
 
             <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-lg border border-gray-700/45 bg-dark-400/35 p-4">
-                <p className="text-xs text-gray-500">Productos disponibles</p>
-                <p className="mt-1 text-2xl font-bold text-gray-100">{products.length}</p>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-medium text-slate-500">Productos disponibles</p>
+                <p className="mt-1 text-2xl font-semibold text-slate-950">{products.length}</p>
               </div>
-              <div className="rounded-lg border border-gray-700/45 bg-dark-400/35 p-4">
-                <p className="text-xs text-gray-500">Configurados</p>
-                <p className="mt-1 text-2xl font-bold text-gray-100">{entitlements.length}</p>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-medium text-slate-500">Configurados</p>
+                <p className="mt-1 text-2xl font-semibold text-slate-950">{entitlements.length}</p>
               </div>
-              <div className="rounded-lg border border-gray-700/45 bg-dark-400/35 p-4">
-                <p className="text-xs text-gray-500">Acceso permitido</p>
-                <p className="mt-1 text-2xl font-bold text-emerald-300">{entitlements.filter((item) => item.access_allowed).length}</p>
+              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                <p className="text-xs font-medium text-emerald-700">Acceso permitido</p>
+                <p className="mt-1 text-2xl font-semibold text-emerald-950">{entitlements.filter((item) => item.access_allowed).length}</p>
               </div>
-              <div className="rounded-lg border border-gray-700/45 bg-dark-400/35 p-4">
-                <p className="text-xs text-gray-500">Bloqueados</p>
-                <p className="mt-1 text-2xl font-bold text-red-300">{entitlements.filter((item) => !item.access_allowed).length}</p>
+              <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+                <p className="text-xs font-medium text-red-700">Bloqueados</p>
+                <p className="mt-1 text-2xl font-semibold text-red-950">{entitlements.filter((item) => !item.access_allowed).length}</p>
               </div>
             </div>
           </div>
@@ -1530,6 +1533,118 @@ const OrganizationDetailPage = () => {
               Smart3AI está marcada como organización dueña y no participa en ciclos de cobro ni en facturación manual.
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === 'billing' && (
+        <div className="space-y-5">
+          <div className="glass-card p-6">
+            <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <p className="enterprise-kicker">Estado financiero</p>
+                <h2 className="mt-1 text-lg font-semibold text-slate-950">Billing y cobros</h2>
+                <p className="mt-2 max-w-3xl text-sm text-slate-600">
+                  Vista operativa del estado financiero asociado al acceso comercial. Los productos con billing dependen de una suscripción efectiva.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={refreshSubscriptionDetail}
+                disabled={subscriptionLoading || !organization.subscription}
+                className="btn-secondary disabled:opacity-60"
+              >
+                <RefreshCw className={`h-4 w-4 ${subscriptionLoading ? 'animate-spin' : ''}`} />
+                Refrescar billing
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-medium text-slate-500">Billing enabled</p>
+                <p className="mt-2 text-lg font-semibold text-slate-950">
+                  {products.some((product) => product.billing_enabled) ? 'Requerido por producto' : 'No requerido'}
+                </p>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-medium text-slate-500">Suscripción</p>
+                <p className="mt-2">
+                  <AccessBadge status={subscriptionDetail?.status || 'not_configured'}>
+                    {subscriptionDetail?.status || 'Sin suscripción'}
+                  </AccessBadge>
+                </p>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-medium text-slate-500">Monto</p>
+                <p className="mt-2 text-lg font-semibold text-slate-950">
+                  {subscriptionDetail ? `${subscriptionDetail.amount || 0} ${subscriptionDetail.plan?.currency || ''}` : '-'}
+                </p>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-medium text-slate-500">Facturas</p>
+                <p className="mt-2 text-lg font-semibold text-slate-950">{subscriptionInvoices.length}</p>
+              </div>
+            </div>
+
+            {organization.billing_exempt && (
+              <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+                Esta organización está exenta de cobro. El billing no debe bloquear accesos comerciales para el owner account.
+              </div>
+            )}
+
+            {!subscriptionDetail && !organization.billing_exempt && (
+              <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                No hay suscripción vinculada. Los productos que requieren billing no podrán operar como activos hasta asociar un contrato financiero.
+              </div>
+            )}
+          </div>
+
+          <div className="glass-card p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-950">Cobros y facturas</h3>
+                <p className="mt-1 text-sm text-slate-500">Historial disponible desde el servicio de suscripciones.</p>
+              </div>
+              <CreditCard className="h-5 w-5 text-primary-600" />
+            </div>
+            {subscriptionLoading ? (
+              <div className="space-y-3">
+                {[0, 1, 2].map((item) => (
+                  <div key={item} className="h-14 rounded-lg skeleton" />
+                ))}
+              </div>
+            ) : subscriptionInvoices.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                <CreditCard className="mx-auto h-10 w-10 text-slate-400" />
+                <h3 className="mt-3 text-base font-semibold text-slate-950">Sin facturas disponibles</h3>
+                <p className="mt-1 text-sm text-slate-500">Cuando existan cobros o facturas vinculadas a la suscripción aparecerán aquí.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="table-glass">
+                  <thead>
+                    <tr>
+                      <th>Factura</th>
+                      <th>Estado</th>
+                      <th>Total</th>
+                      <th>Emitida</th>
+                      <th>Vence</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subscriptionInvoices.map((invoice) => (
+                      <tr key={invoice.id}>
+                        <td className="font-medium text-slate-950">{invoice.number || `INV-${String(invoice.id).slice(0, 8)}`}</td>
+                        <td><AccessBadge status={invoice.status}>{invoice.status}</AccessBadge></td>
+                        <td>{invoice.total} {invoice.currency}</td>
+                        <td className="text-sm text-slate-500">{formatDate(invoice.issued_at)}</td>
+                        <td className="text-sm text-slate-500">{formatDate(invoice.due_date)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

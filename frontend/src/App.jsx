@@ -28,10 +28,10 @@ const ProtectedRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-500 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-400">{isEnglish ? 'Loading...' : 'Cargando...'}</p>
+          <p className="text-slate-500">{isEnglish ? 'Loading...' : 'Cargando...'}</p>
         </div>
       </div>
     );
@@ -54,7 +54,7 @@ const PublicRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-500 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -133,21 +133,22 @@ function App() {
           toastOptions={{
             duration: 4000,
             style: {
-              background: '#1e293b',
-              color: '#f1f5f9',
-              border: '1px solid rgba(71, 85, 105, 0.5)',
+              background: '#ffffff',
+              color: '#0f172a',
+              border: '1px solid #d9e2ec',
               borderRadius: '12px',
+              boxShadow: '0 18px 48px rgba(15, 23, 42, 0.12)',
             },
             success: {
               iconTheme: {
-                primary: '#10b981',
-                secondary: '#f1f5f9',
+                primary: '#047857',
+                secondary: '#ecfdf5',
               },
             },
             error: {
               iconTheme: {
-                primary: '#ef4444',
-                secondary: '#f1f5f9',
+                primary: '#dc2626',
+                secondary: '#fef2f2',
               },
             },
           }}

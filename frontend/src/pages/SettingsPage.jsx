@@ -618,11 +618,11 @@ const NotificationSettings = ({ user, onSave, copy }) => {
 };
 
 const AppearanceSettings = ({ user, onSave, copy }) => {
-  const [theme, setTheme] = useState(user?.theme || 'dark');
+  const [theme, setTheme] = useState(user?.theme || 'light');
   const [language, setLanguage] = useState(user?.language || 'es');
 
   useEffect(() => {
-    setTheme(user?.theme || 'dark');
+    setTheme(user?.theme || 'light');
     setLanguage(user?.language || 'es');
   }, [user]);
 
@@ -643,7 +643,7 @@ const AppearanceSettings = ({ user, onSave, copy }) => {
     setTheme(nextTheme);
     const result = await onSave({ theme: nextTheme });
     if (!result.success) {
-      setTheme(user?.theme || 'dark');
+      setTheme(user?.theme || 'light');
       root.className = beforeClasses;
       toast.error(result.error || copy.alerts.themeError);
       return;

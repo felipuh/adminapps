@@ -1,10 +1,10 @@
 import Swal from 'sweetalert2';
 
 const baseOptions = {
-  background: '#0f172a',
-  color: '#e2e8f0',
-  confirmButtonColor: '#004990',
-  cancelButtonColor: '#475569',
+  background: '#ffffff',
+  color: '#0f172a',
+  confirmButtonColor: '#155eef',
+  cancelButtonColor: '#64748b',
   buttonsStyling: false,
   customClass: {
     popup: 'smart3ai-swal-popup',

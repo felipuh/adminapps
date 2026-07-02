@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Building2, 
   BadgeCheck,
-  AlertTriangle,
   Plus, 
-  Search, 
   Eye,
   Edit,
   Trash2,
@@ -16,36 +14,61 @@ import { organizationService } from '../services/api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { showConfirm } from '../services/dialogs';
+import { DataTable, EmptyState, ErrorState, LoadingState, PageHeader, SearchInput, StatusBadge } from '../components/ui/EnterpriseUI';
+
+const getProductSignals = (org, t) => {
+  const rawProducts = org.products || org.active_products || org.entitlements || org.product_codes || [];
+  const list = Array.isArray(rawProducts) ? rawProducts : [];
+  const codes = list.map((item) => String(item.code || item.product_code || item.name || item).toLowerCase());
+  const hasIso = Boolean(org.has_iso_smart || codes.some((code) => code.includes('iso')));
+  const hasMed = Boolean(org.has_medsupplier || codes.some((code) => code.includes('med')));
+
+  if (hasIso && hasMed) return [{ label: t.bothProducts, className: 'badge-success' }];
+  if (hasIso) return [{ label: 'ISO Smart', className: 'badge-info' }];
+  if (hasMed) return [{ label: 'MedSupplier', className: 'badge-info' }];
+  if (list.length > 0) {
+    return list.slice(0, 2).map((item) => ({
+      label: item.name || item.product_name || item.code || item.product_code || String(item),
+      className: 'badge-info',
+    }));
+  }
+  return [{ label: t.noProduct, className: 'badge-neutral' }];
+};
+
+const formatDate = (value) => {
+  if (!value) return '-';
+  return new Date(value).toLocaleDateString('es-MX', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+};
 
 // Organization Row Component
 const OrganizationRow = ({ org, onView, onEdit, onDelete, t }) => {
-  const statusColors = {
-    active: 'badge-success',
-    trial: 'badge-info',
-    suspended: 'badge-danger',
-    inactive: 'badge-neutral',
-  };
-
   const statusLabels = {
     active: t.active,
     trial: 'Trial',
     suspended: t.suspended,
     inactive: t.inactive,
   };
+  const productSignals = getProductSignals(org, t);
+  const planLabel = org.subscription_plan_name || org.plan_name || org.subscription?.plan_name || org.subscription?.plan?.name || org.plan || '-';
+  const updatedAt = org.updated_at || org.modified_at || org.created_at;
 
   return (
-    <tr className="border-b border-gray-700/30 hover:bg-dark-300/30 transition-colors">
+    <tr>
       <td className="px-4 py-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500/20 to-primary-600/20 flex items-center justify-center flex-shrink-0">
-            <Building2 className="w-5 h-5 text-primary-400" />
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-700">
+            <Building2 className="w-5 h-5" />
           </div>
-          <div>
-            <p className="font-medium text-gray-200">{org.name}</p>
+          <div className="min-w-0">
+            <p className="font-semibold text-slate-950">{org.name}</p>
             <div className="mt-1 flex flex-wrap items-center gap-2">
-              <p className="text-xs text-gray-500">{org.code}</p>
+              <p className="text-xs text-slate-500">{org.code || org.email}</p>
               {org.billing_exempt && (
-                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+                <span className="badge-success">
                   <BadgeCheck className="h-3 w-3" />
                   {t.billingExempt}
                 </span>
@@ -54,38 +77,43 @@ const OrganizationRow = ({ org, onView, onEdit, onDelete, t }) => {
           </div>
         </div>
       </td>
-      <td className="px-4 py-4 text-sm text-gray-400">{org.email}</td>
-      <td className="px-4 py-4 text-sm text-gray-400 capitalize">{org.industry}</td>
       <td className="px-4 py-4">
-        <div className="flex items-center gap-2 text-sm text-gray-400">
+        <StatusBadge status={org.status}>{statusLabels[org.status] || org.status}</StatusBadge>
+      </td>
+      <td className="px-4 py-4">
+        <div className="flex flex-wrap gap-1.5">
+          {productSignals.map((product) => (
+            <span key={product.label} className={product.className}>{product.label}</span>
+          ))}
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        <div className="flex items-center gap-2 text-sm text-slate-600">
           <Users className="w-4 h-4" />
           <span>{org.users_count || 0} / {org.max_users}</span>
         </div>
       </td>
-      <td className="px-4 py-4">
-        <span className={statusColors[org.status]}>
-          {statusLabels[org.status]}
-        </span>
-      </td>
+      <td className="px-4 py-4 text-sm text-slate-600">{planLabel}</td>
+      <td className="px-4 py-4 text-sm text-slate-500">{formatDate(updatedAt)}</td>
       <td className="px-4 py-4">
         <div className="flex items-center gap-2 whitespace-nowrap">
           <button
             onClick={() => onView(org)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-gray-200 hover:bg-dark-200 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-primary-700 hover:bg-blue-50"
           >
             <Eye className="w-3.5 h-3.5" />
             {t.viewDetails}
           </button>
           <button
             onClick={() => onEdit(org)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-gray-200 hover:bg-dark-200 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100"
           >
             <Edit className="w-3.5 h-3.5" />
             {t.edit}
           </button>
           <button
             onClick={() => onDelete(org)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50"
           >
             <Trash2 className="w-3.5 h-3.5" />
             {t.delete}
@@ -368,6 +396,11 @@ const OrganizationsPage = () => {
     users: isEnglish ? 'Users' : 'Usuarios',
     status: isEnglish ? 'Status' : 'Estado',
     billingExempt: isEnglish ? 'Billing exempt' : 'Exenta de cobro',
+    activeProducts: isEnglish ? 'Active products' : 'Productos activos',
+    subscriptionPlan: isEnglish ? 'Subscription / plan' : 'Suscripcion / plan',
+    updatedAt: isEnglish ? 'Updated' : 'Actualizacion',
+    bothProducts: isEnglish ? 'Both products' : 'Ambos productos',
+    noProduct: isEnglish ? 'No product' : 'Sin producto',
   };
   const navigate = useNavigate();
   const [organizations, setOrganizations] = useState([]);
@@ -437,30 +470,27 @@ const OrganizationsPage = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-100">{t.pageTitle}</h1>
-          <p className="text-gray-500 mt-1">{t.pageSubtitle}</p>
-        </div>
-        <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-          <Plus className="w-5 h-5" />
-          {t.newOrganization}
-        </button>
-      </div>
+    <div className="enterprise-page">
+      <PageHeader
+        eyebrow={isEnglish ? 'Customer administration' : 'Administración de clientes'}
+        title={t.pageTitle}
+        description={t.pageSubtitle}
+        actions={(
+          <button onClick={handleCreate} className="btn-primary">
+            <Plus className="w-5 h-5" />
+            {t.newOrganization}
+          </button>
+        )}
+      />
 
       {/* Filters */}
-      <div className="glass-card p-4">
+      <div className="enterprise-card p-4">
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-            <input
-              type="text"
+          <div className="flex-1">
+            <SearchInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t.searchPlaceholder}
-              className="input-glass pl-11"
             />
           </div>
           <div className="flex gap-3">
@@ -480,40 +510,34 @@ const OrganizationsPage = () => {
       </div>
 
       {/* Table */}
-      <div className="glass-card overflow-hidden">
+      <div className="enterprise-card overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center">
-            <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-gray-500 mt-4">{t.loadingOrganizations}</p>
-          </div>
+          <LoadingState label={t.loadingOrganizations} />
         ) : loadError ? (
-          <div className="p-8 text-center">
-            <AlertTriangle className="w-12 h-12 text-amber-300 mx-auto mb-4" />
-            <p className="text-gray-200 font-medium">{t.organizationsLoadError}</p>
-            <p className="text-sm text-gray-500 mt-2">{t.organizationsLoadErrorHelp}</p>
-            <button
-              type="button"
-              onClick={fetchOrganizations}
-              className="mt-5 inline-flex items-center justify-center rounded-lg border border-gray-700 px-4 py-2 text-sm font-medium text-gray-200 hover:bg-dark-300 transition-colors"
-            >
-              {t.retry}
-            </button>
-          </div>
+          <ErrorState
+            title={t.organizationsLoadError}
+            description={t.organizationsLoadErrorHelp}
+            action={<button type="button" onClick={fetchOrganizations} className="btn-secondary">{t.retry}</button>}
+          />
         ) : organizations.length === 0 ? (
-          <div className="p-8 text-center">
-            <Building2 className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">{t.noOrganizations}</p>
+          <div className="p-6">
+            <EmptyState
+              icon={Building2}
+              title={t.noOrganizations}
+              description={isEnglish ? 'Create the first customer organization to assign products and subscriptions.' : 'Crea la primera organización cliente para asignar productos y suscripciones.'}
+              action={<button onClick={handleCreate} className="btn-primary">{t.newOrganization}</button>}
+            />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="table-glass">
+          <DataTable>
               <thead>
                 <tr>
                   <th>{t.organization}</th>
-                  <th>Email</th>
-                  <th>{t.industry}</th>
-                  <th>{t.users}</th>
                   <th>{t.status}</th>
+                  <th>{t.activeProducts}</th>
+                  <th>{t.users}</th>
+                  <th>{t.subscriptionPlan}</th>
+                  <th>{t.updatedAt}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -529,8 +553,7 @@ const OrganizationsPage = () => {
                   />
                 ))}
               </tbody>
-            </table>
-          </div>
+          </DataTable>
         )}
       </div>
 
