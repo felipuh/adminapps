@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { 
   Users, 
+  AlertTriangle,
   Plus, 
   Search, 
   Eye,
   Edit,
   Trash2,
-  Mail,
-  Shield,
   X
 } from 'lucide-react';
 import { userService } from '../services/api';
@@ -148,7 +147,9 @@ const UserModal = ({ isOpen, onClose, user, onSave, isEnglish, t }) => {
     
     try {
       if (user) {
-        const { password, password_confirm, ...updateData } = formData;
+        const updateData = { ...formData };
+        delete updateData.password;
+        delete updateData.password_confirm;
         await userService.update(user.id, updateData);
         toast.success(t.userUpdated);
       } else {
@@ -361,17 +362,23 @@ const UsersPage = () => {
     status: isEnglish ? 'Status' : 'Estado',
     lastAccess: isEnglish ? 'Last Access' : 'Ultimo Acceso',
     loadingUsers: isEnglish ? 'Loading users...' : 'Cargando usuarios...',
+    usersLoadError: isEnglish ? 'Could not load users' : 'No se pudieron cargar los usuarios',
+    usersLoadErrorHelp: isEnglish ? 'Check the API connection and try again.' : 'Revisa la conexion con la API e intenta de nuevo.',
+    retry: isEnglish ? 'Retry' : 'Reintentar',
     noUsers: isEnglish ? 'No users found' : 'No se encontraron usuarios',
     userLabel: isEnglish ? 'User' : 'Usuario',
   };
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const params = {};
       if (search) params.search = search;
@@ -380,22 +387,16 @@ const UsersPage = () => {
       const data = await userService.getAll(params);
       setUsers(data.results || data);
     } catch (error) {
-      // Mock data
-      setUsers([
-        { id: '1', email: 'admin@comtech.com', first_name: 'Admin', last_name: 'Comtech', role: 'superadmin', is_active: true, organization_name: null, last_login_at: '2026-02-04T10:00:00Z' },
-        { id: '2', email: 'juan@techcorp.com', first_name: 'Juan', last_name: 'Pérez', role: 'org_admin', is_active: true, organization_name: 'Tech Corp', last_login_at: '2026-02-03T15:30:00Z' },
-        { id: '3', email: 'maria@acme.com', first_name: 'María', last_name: 'García', role: 'iso_manager', is_active: true, organization_name: 'Acme Inc', last_login_at: '2026-02-02T09:00:00Z' },
-        { id: '4', email: 'carlos@startup.io', first_name: 'Carlos', last_name: 'López', role: 'user', is_active: true, organization_name: 'StartupXYZ', last_login_at: null },
-        { id: '5', email: 'ana@global.com', first_name: 'Ana', last_name: 'Martínez', role: 'auditor', is_active: false, organization_name: 'Global Services', last_login_at: '2026-01-15T12:00:00Z' },
-      ]);
+      setUsers([]);
+      setLoadError(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, roleFilter]);
 
   useEffect(() => {
     fetchUsers();
-  }, [search, roleFilter]);
+  }, [fetchUsers]);
 
   const handleView = (user) => {
     toast.success(`${t.profileToast} ${user.first_name}`);
@@ -423,7 +424,7 @@ const UsersPage = () => {
       await userService.delete(user.id);
       toast.success(t.userDeleted);
       fetchUsers();
-    } catch (error) {
+    } catch {
       toast.error(t.userDeleteError);
     }
   };
@@ -483,6 +484,19 @@ const UsersPage = () => {
           <div className="p-8 text-center">
             <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-gray-500 mt-4">{t.loadingUsers}</p>
+          </div>
+        ) : loadError ? (
+          <div className="p-8 text-center">
+            <AlertTriangle className="w-12 h-12 text-amber-300 mx-auto mb-4" />
+            <p className="text-gray-200 font-medium">{t.usersLoadError}</p>
+            <p className="text-sm text-gray-500 mt-2">{t.usersLoadErrorHelp}</p>
+            <button
+              type="button"
+              onClick={fetchUsers}
+              className="mt-5 inline-flex items-center justify-center rounded-lg border border-gray-700 px-4 py-2 text-sm font-medium text-gray-200 hover:bg-dark-300 transition-colors"
+            >
+              {t.retry}
+            </button>
           </div>
         ) : users.length === 0 ? (
           <div className="p-8 text-center">

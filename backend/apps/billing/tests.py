@@ -1,5 +1,7 @@
 from decimal import Decimal
+from io import StringIO
 
+from django.core.management import call_command
 from django.test import override_settings
 from django.utils import timezone
 from django.core import mail
@@ -16,6 +18,7 @@ from apps.billing.models import (
     RevenueSnapshot,
 )
 from apps.organizations.models import Organization
+from apps.products.models import OrganizationProductEntitlement, ProductSystem
 from apps.subscriptions.models import Plan, Subscription
 from apps.users.models import User, UserActivityLog
 
@@ -80,6 +83,212 @@ class BillingModelAndApiTests(APITestCase):
             status='paid',
             issued_at=timezone.now(),
         )
+
+    def test_issue_invoice_for_mapped_saas_product_requires_entitlement(self):
+        from apps.billing.services import issue_invoice_for_organization
+
+        system_product = ProductSystem.objects.create(
+            code='ISO_SMART_BILLING_TEST',
+            name='ISO Smart Billing Test',
+            slug='iso-smart-billing-test',
+            status='active',
+            billing_enabled=True,
+        )
+        self.product.system_product = system_product
+        self.product.save(update_fields=['system_product'])
+
+        with self.assertRaises(ValueError) as context:
+            issue_invoice_for_organization(
+                fiscal_profile=self.fiscal_profile,
+                organization=self.organization,
+                product=self.product,
+                product_price=self.product_price,
+                issued_by=self.admin_user,
+                subscription=self.subscription,
+            )
+
+        self.assertIn('no tiene entitlement', str(context.exception))
+
+    def test_issue_invoice_for_mapped_saas_product_with_entitlement_succeeds(self):
+        from apps.billing.services import issue_invoice_for_organization
+
+        system_product = ProductSystem.objects.create(
+            code='MEDSUPPLIER_BILLING_TEST',
+            name='MedSupplier Billing Test',
+            slug='medsupplier-billing-test',
+            status='active',
+            billing_enabled=True,
+        )
+        self.product.system_product = system_product
+        self.product.save(update_fields=['system_product'])
+        self.organization.subscription = self.subscription
+        self.organization.status = 'active'
+        self.organization.save(update_fields=['subscription', 'status'])
+        OrganizationProductEntitlement.objects.create(
+            organization=self.organization,
+            product=system_product,
+            subscription=self.subscription,
+            status='active',
+            enabled=True,
+        )
+
+        invoice, _, _, _ = issue_invoice_for_organization(
+            fiscal_profile=self.fiscal_profile,
+            organization=self.organization,
+            product=self.product,
+            product_price=self.product_price,
+            issued_by=self.admin_user,
+            subscription=self.subscription,
+        )
+
+        self.assertEqual(invoice.metadata['product_system_code'], 'MEDSUPPLIER_BILLING_TEST')
+        self.assertTrue(invoice.metadata['product_entitlement_id'])
+
+    def test_product_catalog_api_updates_system_product_mapping(self):
+        system_product = ProductSystem.objects.create(
+            code='ISO_SMART_CATALOG_API',
+            name='ISO Smart Catalog API',
+            slug='iso-smart-catalog-api',
+            status='active',
+            billing_enabled=True,
+        )
+
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.patch(
+            f'/api/billing/products/{self.product.id}/',
+            {'system_product': str(system_product.id)},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(str(response.data['system_product']), str(system_product.id))
+        self.assertEqual(response.data['system_product_code'], 'ISO_SMART_CATALOG_API')
+        self.assertTrue(
+            UserActivityLog.objects.filter(
+                module='billing',
+                entity_type='ProductCatalog',
+                entity_id=str(self.product.id),
+                new_values__event='billing_product_mapping_updated',
+                new_values__system_product=str(system_product.id),
+            ).exists()
+        )
+
+    def test_product_catalog_mapping_audit_reports_candidates(self):
+        ProductSystem.objects.update_or_create(
+            code='ISO_SMART',
+            defaults={
+                'name': 'ISO Smart',
+                'slug': 'iso-smart',
+                'status': 'active',
+                'billing_enabled': True,
+            },
+        )
+        ProductCatalog.objects.create(
+            code='MEDSUPPLIER_MISC',
+            name='Servicio MedSupplier Extra',
+            billing_model='subscription',
+        )
+
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.get('/api/billing/products/mapping_audit/')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['summary']['total'], 2)
+        self.assertEqual(response.data['summary']['candidate_found'], 1)
+        candidate = next(item for item in response.data['items'] if item['code'] == 'ISOSMART')
+        self.assertEqual(candidate['mapping_status'], 'candidate_found')
+        self.assertEqual(candidate['candidate_system_product_code'], 'ISO_SMART')
+
+    def test_product_catalog_auto_map_defaults_to_dry_run(self):
+        ProductSystem.objects.update_or_create(
+            code='ISO_SMART',
+            defaults={
+                'name': 'ISO Smart',
+                'slug': 'iso-smart-auto',
+                'status': 'active',
+                'billing_enabled': True,
+            },
+        )
+
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.post('/api/billing/products/auto_map/', {}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['dry_run'])
+        self.assertEqual(response.data['candidate_count'], 1)
+        self.assertEqual(response.data['updated_count'], 0)
+        self.product.refresh_from_db()
+        self.assertIsNone(self.product.system_product)
+
+    def test_product_catalog_auto_map_applies_when_explicitly_requested(self):
+        system_product, _ = ProductSystem.objects.update_or_create(
+            code='ISO_SMART',
+            defaults={
+                'name': 'ISO Smart',
+                'slug': 'iso-smart-apply',
+                'status': 'active',
+                'billing_enabled': True,
+            },
+        )
+
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.post(
+            '/api/billing/products/auto_map/',
+            {'dry_run': False},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data['dry_run'])
+        self.assertEqual(response.data['updated_count'], 1)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.system_product, system_product)
+        self.assertTrue(
+            UserActivityLog.objects.filter(
+                module='billing',
+                entity_type='ProductCatalog',
+                entity_id=str(self.product.id),
+                new_values__event='billing_product_auto_mapped',
+                new_values__system_product=str(system_product.id),
+            ).exists()
+        )
+
+    def test_product_catalog_mapping_command_defaults_to_read_only(self):
+        ProductSystem.objects.update_or_create(
+            code='ISO_SMART',
+            defaults={
+                'name': 'ISO Smart',
+                'slug': 'iso-smart-command-dry-run',
+                'status': 'active',
+                'billing_enabled': True,
+            },
+        )
+        out = StringIO()
+
+        call_command('audit_product_catalog_mapping', stdout=out)
+
+        payload = out.getvalue()
+        self.assertIn('"candidate_found": 1', payload)
+        self.product.refresh_from_db()
+        self.assertIsNone(self.product.system_product)
+
+    def test_product_catalog_mapping_command_applies_when_requested(self):
+        system_product, _ = ProductSystem.objects.update_or_create(
+            code='ISO_SMART',
+            defaults={
+                'name': 'ISO Smart',
+                'slug': 'iso-smart-command-apply',
+                'status': 'active',
+                'billing_enabled': True,
+            },
+        )
+        out = StringIO()
+
+        call_command('audit_product_catalog_mapping', '--apply', stdout=out)
+
+        self.assertIn('"updated_count": 1', out.getvalue())
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.system_product, system_product)
 
     def test_invoice_line_calculates_totals(self):
         line = InvoiceLine.objects.create(

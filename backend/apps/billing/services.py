@@ -12,10 +12,12 @@ from django.db.models import Sum
 from django.utils import timezone
 
 from apps.organizations.models import Organization
+from apps.products.models import OrganizationProductEntitlement, ProductSystem
 from .models import (
     ElectronicInvoice,
     InvoiceLine,
     PaymentRecord,
+    ProductCatalog,
     RecurringReportSchedule,
     RevenueSnapshot,
     SchedulerJobLog,
@@ -34,6 +36,106 @@ _DOCUMENT_TYPE_ROOT = {
 
 def _normalize_text(value):
     return str(value or '').strip().lower()
+
+
+def normalize_product_mapping_key(value):
+    return ''.join(char for char in str(value or '').lower() if char.isalnum())
+
+
+def get_product_system_mapping_candidates():
+    candidates = {}
+    for system_product in ProductSystem.objects.filter(product_type='saas').only('id', 'code', 'name', 'slug'):
+        keys = {
+            normalize_product_mapping_key(system_product.code),
+            normalize_product_mapping_key(system_product.name),
+            normalize_product_mapping_key(system_product.slug),
+        }
+        if system_product.code == 'ISO_SMART':
+            keys.update({'isosmart', 'smartiso'})
+        if system_product.code == 'MEDSUPPLIER':
+            keys.update({'medsupplier', 'isosmartmedsupplier'})
+        for key in keys:
+            if key:
+                candidates.setdefault(key, system_product)
+    return candidates
+
+
+def product_catalog_mapping_payload(product, candidates=None):
+    candidates = candidates or get_product_system_mapping_candidates()
+    candidate = None
+    if not product.system_product_id:
+        for key in (
+            normalize_product_mapping_key(product.code),
+            normalize_product_mapping_key(product.name),
+        ):
+            candidate = candidates.get(key)
+            if candidate:
+                break
+
+    status_label = 'mapped'
+    if not product.system_product_id:
+        status_label = 'candidate_found' if candidate else 'unmapped'
+
+    return {
+        'id': str(product.id),
+        'code': product.code,
+        'name': product.name,
+        'is_active': product.is_active,
+        'billing_model': product.billing_model,
+        'mapping_status': status_label,
+        'system_product': str(product.system_product_id) if product.system_product_id else None,
+        'system_product_code': product.system_product.code if product.system_product_id else None,
+        'candidate_system_product': str(candidate.id) if candidate else None,
+        'candidate_system_product_code': candidate.code if candidate else None,
+        'candidate_system_product_name': candidate.name if candidate else None,
+    }
+
+
+def build_product_catalog_mapping_audit():
+    products = ProductCatalog.objects.select_related('system_product').order_by('name')
+    candidates = get_product_system_mapping_candidates()
+    items = [product_catalog_mapping_payload(product, candidates) for product in products]
+    return {
+        'summary': {
+            'total': len(items),
+            'mapped': sum(1 for item in items if item['mapping_status'] == 'mapped'),
+            'candidate_found': sum(1 for item in items if item['mapping_status'] == 'candidate_found'),
+            'unmapped': sum(1 for item in items if item['mapping_status'] == 'unmapped'),
+        },
+        'items': items,
+    }
+
+
+def auto_map_product_catalog_candidates(*, dry_run=True):
+    candidates = get_product_system_mapping_candidates()
+    products = (
+        ProductCatalog.objects
+        .select_related('system_product')
+        .filter(system_product__isnull=True)
+        .order_by('name')
+    )
+    items = []
+    updated_count = 0
+
+    for product in products:
+        item = product_catalog_mapping_payload(product, candidates)
+        if item['mapping_status'] != 'candidate_found':
+            continue
+        if not dry_run:
+            product.system_product_id = item['candidate_system_product']
+            product.save(update_fields=['system_product', 'updated_at'])
+            updated_count += 1
+            item['mapping_status'] = 'mapped'
+            item['system_product'] = item['candidate_system_product']
+            item['system_product_code'] = item['candidate_system_product_code']
+        items.append(item)
+
+    return {
+        'dry_run': dry_run,
+        'updated_count': updated_count,
+        'candidate_count': len(items),
+        'items': items,
+    }
 
 
 def _is_owner_billing_exempt(organization):
@@ -223,6 +325,28 @@ def _require_costa_rica_compliance(fiscal_profile, organization, product_price):
         raise ValueError('El precio del producto debe tener un codigo CAByS valido de 13 digitos.')
 
 
+def _require_billable_product_entitlement(organization, product):
+    system_product = getattr(product, 'system_product', None)
+    if system_product is None:
+        return None
+
+    entitlement = (
+        OrganizationProductEntitlement.objects
+        .filter(organization=organization, product=system_product)
+        .select_related('organization', 'product', 'subscription')
+        .first()
+    )
+    if entitlement is None:
+        raise ValueError(
+            f'La organizacion no tiene entitlement para el producto SaaS {system_product.code}.'
+        )
+    if not entitlement.access_allowed:
+        raise ValueError(
+            f'El entitlement para {system_product.code} no permite facturacion: {entitlement.access_denial_reason}.'
+        )
+    return entitlement
+
+
 def _normalize_tax_id_for_key(tax_id):
     digits = ''.join(char for char in (tax_id or '') if char.isdigit())
     return digits.zfill(12)[-12:]
@@ -400,6 +524,7 @@ def issue_invoice_for_organization(
 
     subscription = _resolve_subscription(organization, subscription)
     product_price = _resolve_product_price(product, product_price, subscription)
+    entitlement = _require_billable_product_entitlement(organization, product)
     _require_costa_rica_compliance(fiscal_profile, organization, product_price)
     locked_profile = type(fiscal_profile).objects.select_for_update().get(pk=fiscal_profile.pk)
     invoice_number = locked_profile.consume_invoice_sequence()
@@ -425,6 +550,8 @@ def issue_invoice_for_organization(
         metadata={
             'issued_by_user_id': str(issued_by.id) if issued_by else None,
             'source': 'billing.issue_invoice_for_organization',
+            'product_system_code': entitlement.product.code if entitlement else None,
+            'product_entitlement_id': str(entitlement.id) if entitlement else None,
         },
     )
 

@@ -142,8 +142,15 @@ class OrganizationProductEntitlement(models.Model):
         return self.subscription or getattr(self.organization, 'subscription', None)
 
     @property
+    def effective_plan(self):
+        subscription = self.effective_subscription
+        return self.plan or (subscription.plan if subscription else None) or self.product.default_plan
+
+    @property
     def billing_allows_access(self):
         if not self.product.billing_enabled:
+            return True
+        if self.status == 'trial':
             return True
         subscription = self.effective_subscription
         if not subscription:
@@ -193,6 +200,65 @@ class OrganizationProductEntitlement(models.Model):
         self.suspended_at = timezone.now()
         self.suspension_reason = reason
         self.save()
+
+
+class ProductEntitlementAuditLog(models.Model):
+    """Audit trail for commercially sensitive product access changes."""
+
+    ACTION_CHOICES = [
+        ('created', 'Creado'),
+        ('enabled', 'Activado'),
+        ('disabled', 'Deshabilitado'),
+        ('trial_started', 'Trial iniciado'),
+        ('updated', 'Actualizado'),
+        ('plan_changed', 'Plan cambiado'),
+        ('validated', 'Validado'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    entitlement = models.ForeignKey(
+        OrganizationProductEntitlement,
+        on_delete=models.CASCADE,
+        related_name='audit_logs',
+        null=True,
+        blank=True,
+    )
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.CASCADE,
+        related_name='product_entitlement_audit_logs',
+    )
+    product = models.ForeignKey(
+        ProductSystem,
+        on_delete=models.PROTECT,
+        related_name='entitlement_audit_logs',
+    )
+    action = models.CharField(max_length=30, choices=ACTION_CHOICES)
+    previous_state = models.JSONField(default=dict, blank=True)
+    new_state = models.JSONField(default=dict, blank=True)
+    actor = models.ForeignKey(
+        'users.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='product_entitlement_audit_events',
+    )
+    metadata = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'product_entitlement_audit_logs'
+        verbose_name = 'Auditoria de Entitlement'
+        verbose_name_plural = 'Auditorias de Entitlements'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['organization', '-created_at']),
+            models.Index(fields=['product', '-created_at']),
+            models.Index(fields=['action', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f'{self.organization.code} - {self.product.code} - {self.action}'
 
 
 class ISOStandard(models.Model):

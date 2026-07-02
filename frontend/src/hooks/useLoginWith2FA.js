@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import toast from 'react-hot-toast';
 import { authService } from '../services/api';
 
 /**
@@ -18,7 +17,6 @@ export const useLoginWith2FA = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [requires2FA, setRequires2FA] = useState(false);
-  const [tempToken, setTempToken] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
 
@@ -90,7 +88,6 @@ export const useLoginWith2FA = () => {
 
       // 2FA verified successfully
       setRequires2FA(false);
-      setTempToken(null);
       setAccessToken(null);
       setUserEmail(null);
 
@@ -115,7 +112,6 @@ export const useLoginWith2FA = () => {
 
   const cancel2FA = useCallback(() => {
     setRequires2FA(false);
-    setTempToken(null);
     setAccessToken(null);
     setUserEmail(null);
     setError(null);

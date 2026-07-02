@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.organizations.models import Organization, OrganizationFeatureFlag
+from apps.products.models import ProductSystem
 from apps.users.models import User
 
 
@@ -203,3 +204,54 @@ class RequestIDMiddlewareApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response['X-Request-ID'], 'req-adminapps-001')
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class ProductReadinessApiTests(APITestCase):
+    def setUp(self):
+        self.org = Organization.objects.create(code='READINESS', name='Readiness Org', email='readiness@example.com')
+        self.admin = User.objects.create(
+            email='readiness-admin@example.com',
+            first_name='Ready',
+            last_name='Admin',
+            organization=self.org,
+            role='admin',
+            is_active=True,
+        )
+        self.admin.set_password('AdminPass123!')
+        self.admin.save(update_fields=['password'])
+        self.user = User.objects.create(
+            email='readiness-user@example.com',
+            first_name='Ready',
+            last_name='User',
+            organization=self.org,
+            role='user',
+            is_active=True,
+        )
+        self.user.set_password('UserPass123!')
+        self.user.save(update_fields=['password'])
+        ProductSystem.objects.update_or_create(
+            code='ISO_SMART',
+            defaults={'name': 'ISO Smart', 'slug': 'iso-smart-api-readiness', 'status': 'active'},
+        )
+        ProductSystem.objects.update_or_create(
+            code='MEDSUPPLIER',
+            defaults={'name': 'ISO Smart MedSupplier', 'slug': 'medsupplier-api-readiness', 'status': 'active'},
+        )
+
+    def test_admin_can_get_product_readiness(self):
+        self.client.force_authenticate(user=self.admin)
+
+        response = self.client.get('/api/product-readiness/')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['status'], 'ready')
+        self.assertIn('commercial_scenarios', response.data)
+        self.assertTrue(response.data['checks']['required_products_exist'])
+
+    def test_non_admin_cannot_get_product_readiness(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get('/api/product-readiness/')
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

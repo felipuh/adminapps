@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Building2, 
   Users, 
@@ -7,20 +7,20 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  ArrowUpRight,
-  ArrowDownRight
+  PackageCheck,
+  PackageX,
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { dashboardService, organizationService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 // Stats Card Component
-const StatCard = ({ title, value, change, changeType, icon: Icon, color, changeLabel }) => {
+const StatCard = ({ title, value, subtitle, icon: Icon, color }) => {
   const colorClasses = {
     blue: 'from-primary-500 to-primary-600 shadow-primary-500/25',
     green: 'from-emerald-500 to-emerald-600 shadow-emerald-500/25',
     purple: 'from-primary-600 to-primary-700 shadow-primary-500/25',
     orange: 'from-orange-500 to-orange-600 shadow-orange-500/25',
+    red: 'from-red-500 to-red-600 shadow-red-500/25',
   };
 
   return (
@@ -29,18 +29,7 @@ const StatCard = ({ title, value, change, changeType, icon: Icon, color, changeL
         <div>
           <p className="text-gray-400 text-sm font-medium">{title}</p>
           <p className="text-3xl font-bold text-gray-100 mt-2">{value}</p>
-          {change && (
-            <div className={`flex items-center gap-1 mt-2 text-sm ${
-              changeType === 'increase' ? 'text-emerald-400' : 'text-red-400'
-            }`}>
-              {changeType === 'increase' ? (
-                <ArrowUpRight className="w-4 h-4" />
-              ) : (
-                <ArrowDownRight className="w-4 h-4" />
-              )}
-              <span>{change}% {changeLabel}</span>
-            </div>
-          )}
+          {subtitle && <p className="mt-2 text-sm text-gray-500">{subtitle}</p>}
         </div>
         <div className={`p-3 rounded-xl bg-gradient-to-br ${colorClasses[color]} shadow-lg`}>
           <Icon className="w-6 h-6 text-white" />
@@ -68,8 +57,8 @@ const ActivityItem = ({ activity }) => {
         <Icon className={`w-5 h-5 ${config.color}`} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-200">{activity.message}</p>
-        <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+        <p className="text-sm text-gray-200">{activity.message || activity.description || activity.action}</p>
+        <p className="text-xs text-gray-500 mt-1">{activity.time || (activity.created_at ? new Date(activity.created_at).toLocaleString('es-MX') : '')}</p>
       </div>
     </div>
   );
@@ -107,34 +96,38 @@ const DashboardPage = () => {
     users: isEnglish ? 'users' : 'usuarios',
     title: isEnglish ? 'Dashboard' : 'Dashboard',
     subtitle: isEnglish ? 'System overview' : 'Resumen general del sistema',
-    changeVsMonth: isEnglish ? 'vs previous month' : 'vs mes anterior',
     totalOrganizations: isEnglish ? 'Organizations' : 'Organizaciones',
     activeOrganizations: isEnglish ? 'Active Organizations' : 'Organizaciones Activas',
     totalUsers: isEnglish ? 'Total Users' : 'Usuarios Totales',
     monthlyRevenue: isEnglish ? 'Monthly Revenue' : 'Ingresos Mensuales',
-    growth: isEnglish ? 'Growth' : 'Crecimiento',
-    growthSubtitle: isEnglish ? 'Organizations and users by month' : 'Organizaciones y usuarios por mes',
-    period6m: isEnglish ? 'Last 6 months' : 'Ultimos 6 meses',
-    period1y: isEnglish ? 'Last year' : 'Ultimo ano',
-    periodAll: isEnglish ? 'All time' : 'Todo el tiempo',
-    organizationsLegend: isEnglish ? 'Organizations' : 'Organizaciones',
-    usersLegend: isEnglish ? 'Users' : 'Usuarios',
+    productsTitle: isEnglish ? 'SaaS Product Control' : 'Control de productos SaaS',
+    productsSubtitle: isEnglish ? 'Real commercial entitlements by customer' : 'Entitlements comerciales reales por cliente',
+    activeEntitlements: isEnglish ? 'Active entitlements' : 'Entitlements activos',
+    trialEntitlements: isEnglish ? 'Trials' : 'Trials',
+    suspendedEntitlements: isEnglish ? 'Suspended' : 'Suspendidos',
+    bothProducts: isEnglish ? 'Both products' : 'Ambos productos',
+    isoOnly: isEnglish ? 'ISO only' : 'Solo ISO',
+    medsupplierOnly: isEnglish ? 'MedSupplier only' : 'Solo MedSupplier',
+    noActiveProduct: isEnglish ? 'No active product' : 'Sin producto activo',
+    isoSmartCustomers: isEnglish ? 'ISO Smart customers' : 'Clientes con ISO Smart',
+    medsupplierCustomers: isEnglish ? 'MedSupplier customers' : 'Clientes con MedSupplier',
+    readinessReady: isEnglish ? 'Ready' : 'Listo',
+    readinessAttention: isEnglish ? 'Attention required' : 'Requiere atención',
+    readinessUnavailable: isEnglish ? 'Readiness unavailable' : 'Readiness no disponible',
+    readinessSubtitle: isEnglish ? 'Control-plane readiness' : 'Readiness del control plane',
+    legacyWatchlist: isEnglish ? 'Legacy watchlist' : 'Watchlist legacy',
+    requiredProducts: isEnglish ? 'Required products' : 'Productos requeridos',
+    billingGate: isEnglish ? 'Billing gate' : 'Control billing',
+    review: isEnglish ? 'Review' : 'Revisar',
+    legacyIssues: isEnglish ? 'Legacy plans mention products without entitlement.' : 'Planes legacy mencionan productos sin entitlement.',
+    noLegacyIssues: isEnglish ? 'No legacy bypass risks detected' : 'Sin riesgos legacy detectados',
+    missingEntitlements: isEnglish ? 'Missing entitlements' : 'Entitlements faltantes',
     recentActivity: isEnglish ? 'Recent Activity' : 'Actividad Reciente',
     recentOrganizations: isEnglish ? 'Recent Organizations' : 'Organizaciones Recientes',
     viewAll: isEnglish ? 'View all ->' : 'Ver todas ->',
     alertsTitle: isEnglish ? 'Alerts and Pending' : 'Alertas y Pendientes',
-    trialsExpiring: isEnglish ? '3 trials expiring soon' : '3 trials por expirar',
-    trialsDesc: isEnglish ? 'Organizations with trial expiring in less than 7 days' : 'Organizaciones con trial que expira en menos de 7 dias',
-    expiredSubs: isEnglish ? '2 expired subscriptions' : '2 suscripciones vencidas',
-    expiredDesc: isEnglish ? 'Require immediate attention' : 'Requieren atencion inmediata',
-    pendingInvites: isEnglish ? '5 pending invitations' : '5 invitaciones pendientes',
-    pendingInvitesDesc: isEnglish ? 'Users who have not accepted yet' : 'Usuarios que aun no han aceptado',
-    jan: isEnglish ? 'Jan' : 'Ene',
-    feb: isEnglish ? 'Feb' : 'Feb',
-    mar: isEnglish ? 'Mar' : 'Mar',
-    apr: isEnglish ? 'Apr' : 'Abr',
-    may: isEnglish ? 'May' : 'May',
-    jun: isEnglish ? 'Jun' : 'Jun',
+    noActivity: isEnglish ? 'No recent activity available' : 'No hay actividad reciente disponible',
+    noAlerts: isEnglish ? 'No current alerts' : 'No hay alertas actuales',
   };
 
   const [stats, setStats] = useState({
@@ -142,62 +135,53 @@ const DashboardPage = () => {
     activeOrganizations: 0,
     totalUsers: 0,
     monthlyRevenue: 0,
+    products: {},
   });
   const [recentOrgs, setRecentOrgs] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [productReadiness, setProductReadiness] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Mock data for chart
-  const chartData = [
-    { name: t.jan, organizations: 4, users: 24 },
-    { name: t.feb, organizations: 6, users: 35 },
-    { name: t.mar, organizations: 8, users: 47 },
-    { name: t.apr, organizations: 10, users: 62 },
-    { name: t.may, organizations: 12, users: 78 },
-    { name: t.jun, organizations: 15, users: 95 },
-  ];
-
-  // Mock recent activity
-  const recentActivity = [
-    { id: 1, type: 'organization_created', message: 'Nueva organización "Tech Corp" registrada', time: 'Hace 5 minutos' },
-    { id: 2, type: 'user_created', message: 'Usuario juan@techcorp.com añadido', time: 'Hace 15 minutos' },
-    { id: 3, type: 'subscription_updated', message: 'Suscripción de "Acme Inc" actualizada a Premium', time: 'Hace 1 hora' },
-    { id: 4, type: 'alert', message: 'Trial de "StartupXYZ" expira en 3 días', time: 'Hace 2 horas' },
-    { id: 5, type: 'organization_created', message: 'Nueva organización "Global Services" registrada', time: 'Hace 3 horas' },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Try to fetch real data
-        const [dashboardData, orgsData] = await Promise.all([
+        const [dashboardData, orgsData, readinessData] = await Promise.all([
           dashboardService.getStats().catch(() => null),
           organizationService.getAll({ limit: 5 }).catch(() => null),
+          dashboardService.getProductReadiness().catch(() => null),
         ]);
 
         if (dashboardData) {
-          setStats(dashboardData);
-        } else {
-          // Use mock data
           setStats({
-            totalOrganizations: 24,
-            activeOrganizations: 18,
-            totalUsers: 156,
-            monthlyRevenue: 12450,
+            totalOrganizations: dashboardData.organizations?.total || 0,
+            activeOrganizations: dashboardData.organizations?.active || 0,
+            totalUsers: dashboardData.team?.total_admins || 0,
+            monthlyRevenue: dashboardData.monthly_revenue || 0,
+            products: dashboardData.products || {},
+          });
+          setRecentActivity(dashboardData.recent_activity || []);
+          setAlerts(dashboardData.alerts || []);
+        } else {
+          setStats({
+            totalOrganizations: 0,
+            activeOrganizations: 0,
+            totalUsers: 0,
+            monthlyRevenue: 0,
+            products: {},
           });
         }
 
         if (orgsData?.results) {
           setRecentOrgs(orgsData.results);
+        } else if (dashboardData?.recent_organizations) {
+          setRecentOrgs(dashboardData.recent_organizations);
         } else {
-          // Mock organizations
-          setRecentOrgs([
-            { id: 1, name: 'Tech Corp', status: 'active', users_count: 15 },
-            { id: 2, name: 'Acme Inc', status: 'active', users_count: 8 },
-            { id: 3, name: 'StartupXYZ', status: 'trial', users_count: 3 },
-            { id: 4, name: 'Global Services', status: 'active', users_count: 12 },
-            { id: 5, name: 'Local Shop', status: 'suspended', users_count: 2 },
-          ]);
+          setRecentOrgs([]);
         }
+
+        setProductReadiness(readinessData);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -237,99 +221,141 @@ const DashboardPage = () => {
         <StatCard
           title={t.totalOrganizations}
           value={stats.totalOrganizations}
-          change={12}
-          changeType="increase"
+          subtitle={`${stats.products.systems_active || 0} productos activos`}
           icon={Building2}
           color="blue"
-          changeLabel={t.changeVsMonth}
         />
         <StatCard
           title={t.activeOrganizations}
           value={stats.activeOrganizations}
-          change={8}
-          changeType="increase"
+          subtitle={`${stats.products.customers_with_both || 0} con ambos productos`}
           icon={CheckCircle}
           color="green"
-          changeLabel={t.changeVsMonth}
         />
         <StatCard
-          title={t.totalUsers}
-          value={stats.totalUsers}
-          change={15}
-          changeType="increase"
-          icon={Users}
+          title={t.activeEntitlements}
+          value={stats.products.entitlements_active || 0}
+          subtitle={`${stats.products.entitlements_trial || 0} trials activos`}
+          icon={PackageCheck}
           color="purple"
-          changeLabel={t.changeVsMonth}
         />
         <StatCard
-          title={t.monthlyRevenue}
-          value={`$${(stats.monthlyRevenue || 0).toLocaleString()}`}
-          change={5}
-          changeType="increase"
-          icon={TrendingUp}
-          color="orange"
-          changeLabel={t.changeVsMonth}
+          title={t.suspendedEntitlements}
+          value={stats.products.entitlements_suspended || 0}
+          subtitle="Requieren revisión operativa"
+          icon={PackageX}
+          color="red"
         />
       </div>
 
       {/* Charts and Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Growth Chart */}
+        {/* Product Control Summary */}
         <div className="lg:col-span-2 glass-card p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-100">{t.growth}</h2>
-              <p className="text-sm text-gray-500">{t.growthSubtitle}</p>
+              <h2 className="text-lg font-semibold text-gray-100">{t.productsTitle}</h2>
+              <p className="text-sm text-gray-500">{t.productsSubtitle}</p>
             </div>
-            <select className="bg-dark-400 border border-gray-700/50 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-primary-500/50">
-              <option>{t.period6m}</option>
-              <option>{t.period1y}</option>
-              <option>{t.periodAll}</option>
-            </select>
+            <PackageCheck className="h-5 w-5 text-primary-300" />
           </div>
-          
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorOrgs" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#004990" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#004990" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                <XAxis dataKey="name" stroke="#6b7280" fontSize={12} />
-                <YAxis stroke="#6b7280" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1e293b', 
-                    border: '1px solid rgba(71, 85, 105, 0.5)',
-                    borderRadius: '8px',
-                    color: '#f1f5f9'
-                  }} 
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="organizations" 
-                  stroke="#004990" 
-                  fillOpacity={1} 
-                  fill="url(#colorOrgs)" 
-                  name={t.organizationsLegend}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="users" 
-                  stroke="#10b981" 
-                  fillOpacity={1} 
-                  fill="url(#colorUsers)" 
-                  name={t.usersLegend}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/30 p-5">
+              <p className="text-sm text-gray-500">{t.isoSmartCustomers}</p>
+              <p className="mt-2 text-3xl font-bold text-gray-100">{stats.products.iso_smart_customers || 0}</p>
+            </div>
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/30 p-5">
+              <p className="text-sm text-gray-500">{t.medsupplierCustomers}</p>
+              <p className="mt-2 text-3xl font-bold text-gray-100">{stats.products.medsupplier_customers || 0}</p>
+            </div>
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/30 p-5">
+              <p className="text-sm text-gray-500">{t.bothProducts}</p>
+              <p className="mt-2 text-3xl font-bold text-emerald-300">{stats.products.customers_with_both || 0}</p>
+            </div>
+          </div>
+          <div className="mt-4 rounded-xl border border-gray-700/50 bg-slate-950/20 p-4 text-sm text-gray-400">
+            Los productos SaaS se cuentan desde <span className="text-gray-200">OrganizationProductEntitlement</span>. Los módulos legacy no se consideran acceso comercial.
+          </div>
+          <div className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className={`rounded-xl border p-4 ${
+              productReadiness?.status === 'ready'
+                ? 'border-emerald-500/25 bg-emerald-500/10'
+                : productReadiness
+                  ? 'border-amber-500/25 bg-amber-500/10'
+                  : 'border-gray-700/50 bg-dark-400/30'
+            }`}>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{t.readinessSubtitle}</p>
+                  <p className="mt-1 text-lg font-semibold text-gray-100">
+                    {productReadiness
+                      ? (productReadiness.status === 'ready' ? t.readinessReady : t.readinessAttention)
+                      : t.readinessUnavailable}
+                  </p>
+                </div>
+                {productReadiness?.status === 'ready' ? (
+                  <CheckCircle className="h-6 w-6 text-emerald-300" />
+                ) : (
+                  <AlertTriangle className="h-6 w-6 text-amber-300" />
+                )}
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-2 text-sm text-gray-300 sm:grid-cols-2">
+                <div className="rounded-lg border border-gray-700/40 bg-slate-950/20 p-3">
+                  <p className="text-gray-500">{t.requiredProducts}</p>
+                  <p className="mt-1 font-medium">
+                    {productReadiness?.checks?.required_products_exist && productReadiness?.checks?.required_products_available ? 'OK' : t.review}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-gray-700/40 bg-slate-950/20 p-3">
+                  <p className="text-gray-500">{t.billingGate}</p>
+                  <p className="mt-1 font-medium">
+                    {productReadiness?.checks?.billing_active_requires_entitlement ? 'OK' : t.review}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2 text-sm text-gray-300 lg:grid-cols-4">
+                <div className="rounded-lg border border-gray-700/40 bg-slate-950/20 p-3">
+                  <p className="text-gray-500">{t.isoOnly}</p>
+                  <p className="mt-1 font-semibold text-gray-100">{productReadiness?.commercial_scenarios?.iso_smart_only ?? '-'}</p>
+                </div>
+                <div className="rounded-lg border border-gray-700/40 bg-slate-950/20 p-3">
+                  <p className="text-gray-500">{t.medsupplierOnly}</p>
+                  <p className="mt-1 font-semibold text-gray-100">{productReadiness?.commercial_scenarios?.medsupplier_only ?? '-'}</p>
+                </div>
+                <div className="rounded-lg border border-gray-700/40 bg-slate-950/20 p-3">
+                  <p className="text-gray-500">{t.bothProducts}</p>
+                  <p className="mt-1 font-semibold text-emerald-200">{productReadiness?.commercial_scenarios?.both_products ?? '-'}</p>
+                </div>
+                <div className="rounded-lg border border-gray-700/40 bg-slate-950/20 p-3">
+                  <p className="text-gray-500">{t.noActiveProduct}</p>
+                  <p className="mt-1 font-semibold text-amber-200">{productReadiness?.commercial_scenarios?.no_active_product ?? '-'}</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-xl border border-gray-700/50 bg-dark-400/30 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-gray-500">{t.legacyWatchlist}</p>
+              <p className="mt-2 text-3xl font-bold text-gray-100">
+                {productReadiness?.legacy_bypass_watchlist?.plan_product_mentions_without_entitlement ?? '-'}
+              </p>
+              <p className="mt-2 text-sm text-gray-500">
+                {(productReadiness?.legacy_bypass_watchlist?.plan_product_mentions_without_entitlement || 0) === 0
+                  ? t.noLegacyIssues
+                  : t.legacyIssues}
+              </p>
+              {(productReadiness?.legacy_bypass_watchlist?.items || []).length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {productReadiness.legacy_bypass_watchlist.items.slice(0, 3).map((item) => (
+                    <div key={`${item.organization_id}-${item.plan_code}`} className="rounded-lg border border-amber-500/20 bg-amber-500/10 p-3">
+                      <p className="text-sm font-medium text-amber-100">{item.organization_code}</p>
+                      <p className="mt-1 text-xs text-amber-200/80">{item.plan_code}</p>
+                      <p className="mt-1 text-xs text-gray-400">
+                        {t.missingEntitlements}: {item.missing_entitlements?.join(', ')}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -340,9 +366,11 @@ const DashboardPage = () => {
             <Activity className="w-5 h-5 text-gray-500" />
           </div>
           <div className="space-y-1 -mx-4">
-            {recentActivity.slice(0, 5).map((activity) => (
+            {recentActivity.length > 0 ? recentActivity.slice(0, 5).map((activity) => (
               <ActivityItem key={activity.id} activity={activity} />
-            ))}
+            )) : (
+              <p className="px-4 py-8 text-center text-sm text-gray-500">{t.noActivity}</p>
+            )}
           </div>
         </div>
       </div>
@@ -358,9 +386,11 @@ const DashboardPage = () => {
             </a>
           </div>
           <div className="space-y-1 -mx-4">
-            {recentOrgs.map((org) => (
+            {recentOrgs.length > 0 ? recentOrgs.map((org) => (
               <OrganizationStatusCard key={org.id} org={org} usersLabel={t.users} />
-            ))}
+            )) : (
+              <p className="px-4 py-8 text-center text-sm text-gray-500">{t.noActivity}</p>
+            )}
           </div>
         </div>
 
@@ -369,29 +399,20 @@ const DashboardPage = () => {
           <h2 className="text-lg font-semibold text-gray-100 mb-4">{t.alertsTitle}</h2>
           
           <div className="space-y-4">
-            <div className="flex items-start gap-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-              <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-amber-400">{t.trialsExpiring}</p>
-                <p className="text-xs text-gray-400 mt-1">{t.trialsDesc}</p>
+            {alerts.length > 0 ? alerts.slice(0, 5).map((alert, index) => (
+              <div key={`${alert.message}-${index}`} className="flex items-start gap-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                <Clock className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-amber-300">{alert.message}</p>
+                  {alert.date && <p className="text-xs text-gray-400 mt-1">{new Date(alert.date).toLocaleString('es-MX')}</p>}
+                </div>
               </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <Clock className="w-5 h-5 text-red-400 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-red-400">{t.expiredSubs}</p>
-                <p className="text-xs text-gray-400 mt-1">{t.expiredDesc}</p>
+            )) : (
+              <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/10 p-6 text-center">
+                <CheckCircle className="mx-auto h-8 w-8 text-emerald-300" />
+                <p className="mt-3 text-sm font-medium text-emerald-200">{t.noAlerts}</p>
               </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 bg-primary-500/10 border border-primary-500/30 rounded-lg">
-              <Users className="w-5 h-5 text-primary-400 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-primary-400">{t.pendingInvites}</p>
-                <p className="text-xs text-gray-400 mt-1">{t.pendingInvitesDesc}</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

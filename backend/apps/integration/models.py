@@ -15,6 +15,8 @@ class IntegrationAPIKey(models.Model):
     name = models.CharField(max_length=100, help_text="Nombre del servicio")
     key = models.CharField(max_length=255, unique=True, help_text="API Key")
     is_active = models.BooleanField(default=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+    last_used_service = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

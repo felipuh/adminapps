@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   User,
@@ -418,7 +418,7 @@ const SecuritySettings = ({ changePassword, mustChangePassword, securityAlert, c
       try {
         const data = await authService.getMySessions();
         setSessions(Array.isArray(data) ? data : []);
-      } catch (error) {
+      } catch {
         setSessions([]);
       }
     };

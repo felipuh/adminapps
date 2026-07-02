@@ -121,7 +121,7 @@ class BillingIssueFlowTests(APITestCase):
             format='json',
         )
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.data['status'], 'paid')
         self.assertIsNotNone(response.data['paid_at'])
 
@@ -217,7 +217,7 @@ class BillingIssueFlowTests(APITestCase):
         self.assertEqual(pay_response.data['detail'], 'La factura ya se encuentra pagada.')
 
     def test_run_cycle_issues_due_subscription_and_advances_dates(self):
-        self.subscription.next_billing_date = timezone.now().date()
+        self.subscription.next_billing_date = timezone.localdate()
         self.subscription.save(update_fields=['next_billing_date'])
 
         self.client.force_authenticate(user=self.admin_user)
@@ -236,10 +236,10 @@ class BillingIssueFlowTests(APITestCase):
         self.subscription.refresh_from_db()
         self.assertIsNotNone(self.subscription.current_period_start)
         self.assertIsNotNone(self.subscription.current_period_end)
-        self.assertGreater(self.subscription.next_billing_date, timezone.now().date())
+        self.assertGreater(self.subscription.next_billing_date, timezone.localdate())
 
     def test_run_cycle_rejects_subscription_not_due(self):
-        self.subscription.next_billing_date = timezone.now().date() + timezone.timedelta(days=5)
+        self.subscription.next_billing_date = timezone.localdate() + timezone.timedelta(days=5)
         self.subscription.save(update_fields=['next_billing_date'])
 
         self.client.force_authenticate(user=self.admin_user)
@@ -348,7 +348,7 @@ class BillingIssueFlowTests(APITestCase):
             plan=self.plan,
             status='active',
             amount=Decimal('125.00'),
-            next_billing_date=timezone.now().date() + timezone.timedelta(days=4),
+            next_billing_date=timezone.localdate() + timezone.timedelta(days=4),
         )
         future_org.subscription = future_subscription
         future_org.save(update_fields=['subscription'])
@@ -364,12 +364,12 @@ class BillingIssueFlowTests(APITestCase):
             plan=self.plan,
             status='active',
             amount=Decimal('125.00'),
-            next_billing_date=timezone.now().date(),
+            next_billing_date=timezone.localdate(),
         )
         invalid_org.subscription = invalid_subscription
         invalid_org.save(update_fields=['subscription'])
 
-        self.subscription.next_billing_date = timezone.now().date()
+        self.subscription.next_billing_date = timezone.localdate()
         self.subscription.save(update_fields=['next_billing_date'])
 
         self.client.force_authenticate(user=self.admin_user)
@@ -391,7 +391,7 @@ class BillingIssueFlowTests(APITestCase):
         self.assertIn('identificacion fiscal', response.data['errors'][0]['error'])
 
     def test_management_command_outputs_batch_report(self):
-        self.subscription.next_billing_date = timezone.now().date()
+        self.subscription.next_billing_date = timezone.localdate()
         self.subscription.save(update_fields=['next_billing_date'])
 
         stdout = StringIO()
@@ -466,7 +466,7 @@ class BillingIssueFlowTests(APITestCase):
         self.assertEqual(original.status, 'reversed')
 
     def test_scheduler_run_now_command_creates_job_log(self):
-        self.subscription.next_billing_date = timezone.now().date()
+        self.subscription.next_billing_date = timezone.localdate()
         self.subscription.save(update_fields=['next_billing_date'])
 
         stdout = StringIO()
@@ -493,7 +493,7 @@ class BillingIssueFlowTests(APITestCase):
         self.assertIn('last_logs', response.data)
 
     def test_scheduler_post_triggers_batch_and_returns_log(self):
-        self.subscription.next_billing_date = timezone.now().date()
+        self.subscription.next_billing_date = timezone.localdate()
         self.subscription.save(update_fields=['next_billing_date'])
 
         self.client.force_authenticate(user=self.admin_user)

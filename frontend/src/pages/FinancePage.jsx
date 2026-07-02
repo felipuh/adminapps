@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
   AlertTriangle, BadgeCheck, BarChart3, Building2, Calendar, CheckCircle2, Coins, Clock,
   Download, ExternalLink, FileWarning, FileX2, Landmark, Mail, Plus, PlayCircle, Receipt,
   RefreshCw, Send, TrendingDown, Users, Wallet, X, PenSquare, Trash2, MousePointer,
+  Link2, Unlink,
 } from 'lucide-react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-import { billingService } from '../services/api';
+import { billingService, productSystemService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { showConfirm } from '../services/dialogs';
 
@@ -573,7 +574,7 @@ const InvoiceDrawer = ({ invoiceId, onClose, onCreditNoteIssued }) => {
   useEffect(() => {
     if (!invoiceId) return;
     billingService.getInvoiceDetail(invoiceId).then(setDetail).catch(() => toast.error(t.loadError));
-  }, [invoiceId]);
+  }, [invoiceId, t.loadError]);
 
   const issueCreditNote = async () => {
     if (!creditNoteReason.trim()) {
@@ -939,6 +940,24 @@ const FinancePage = () => {
     exemptSkippedReason: isEnglish ? 'Owner organization exempt from billing' : 'Organizacion dueña exenta de cobro',
     noBatchYet: isEnglish ? 'No batch has been run from this screen yet. Once you run one, the latest operational report will appear here.' : 'Aun no se ha ejecutado un batch desde esta pantalla. Cuando lo corras, aqui quedara el ultimo reporte operativo.',
     productDashboardSubtitle: isEnglish ? 'MRR, ARR and subscriptions by catalog product' : 'MRR, ARR y suscripciones por producto del catalogo',
+    productCatalogMapping: isEnglish ? 'Fiscal catalog and SaaS mapping' : 'Catálogo fiscal y mapeo SaaS',
+    productCatalogMappingSubtitle: isEnglish ? 'Connect billable catalog items with AdminApps product entitlements.' : 'Conecta productos facturables con entitlements de productos administrados por AdminApps.',
+    saasProduct: isEnglish ? 'SaaS Product' : 'Producto SaaS',
+    noSaasMapping: isEnglish ? 'No SaaS mapping' : 'Sin mapeo SaaS',
+    mappingSaved: isEnglish ? 'Product mapping updated.' : 'Mapeo de producto actualizado.',
+    mappingSaveError: isEnglish ? 'Could not update product mapping.' : 'No se pudo actualizar el mapeo.',
+    mappingConfirmTitle: isEnglish ? 'Update SaaS mapping' : 'Actualizar mapeo SaaS',
+    mappingConfirmText: isEnglish ? 'Billing will validate entitlements for this catalog item when mapped.' : 'Billing validará entitlements para este producto fiscal cuando quede mapeado.',
+    mappingAudit: isEnglish ? 'Mapping audit' : 'Auditoría de mapeo',
+    mappedItems: isEnglish ? 'Mapped' : 'Mapeados',
+    candidateItems: isEnglish ? 'Candidates' : 'Candidatos',
+    unmappedItems: isEnglish ? 'Unmapped' : 'Sin mapear',
+    runDryMapping: isEnglish ? 'Find candidates' : 'Buscar candidatos',
+    applyMapping: isEnglish ? 'Apply exact candidates' : 'Aplicar candidatos exactos',
+    mappingApplied: isEnglish ? 'Mappings applied' : 'Mapeos aplicados',
+    mappingAuditError: isEnglish ? 'Could not audit product mappings.' : 'No se pudo auditar el mapeo de productos.',
+    autoMapConfirmTitle: isEnglish ? 'Apply automatic mapping' : 'Aplicar mapeo automático',
+    autoMapConfirmText: isEnglish ? 'Only exact catalog/product matches will be mapped. Billing will start validating entitlements for those fiscal items.' : 'Solo se mapearán coincidencias exactas entre catálogo y producto. Billing empezará a validar entitlements para esos ítems fiscales.',
     product: isEnglish ? 'Product' : 'Producto',
     model: isEnglish ? 'Model' : 'Modelo',
     subscriptions: isEnglish ? 'Subscriptions' : 'Suscripciones',
@@ -1043,6 +1062,10 @@ const FinancePage = () => {
   const [churnData, setChurnData] = useState(null);
   const [reconciliation, setReconciliation] = useState(null);
   const [productDashboard, setProductDashboard] = useState([]);
+  const [productSystems, setProductSystems] = useState([]);
+  const [mappingProductId, setMappingProductId] = useState(null);
+  const [mappingAudit, setMappingAudit] = useState(null);
+  const [mappingAuditLoading, setMappingAuditLoading] = useState(false);
   const [pendingPayments, setPendingPayments] = useState([]);
   const [showRegisterPayment, setShowRegisterPayment] = useState(false);
   const [landingAnalytics, setLandingAnalytics] = useState(null);
@@ -1069,7 +1092,7 @@ const FinancePage = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [summaryData, productData, organizationData, timelineData, receivableData, invoiceData, fpData, prodData, schedData, reportSchedulesData, alertsData, churnData_, reconciliationData, dashboardData, landingAnalyticsData] = await Promise.all([
+      const [summaryData, productData, organizationData, timelineData, receivableData, invoiceData, fpData, prodData, systemProductsData, mappingAuditData, schedData, reportSchedulesData, alertsData, churnData_, reconciliationData, dashboardData, landingAnalyticsData] = await Promise.all([
         billingService.getSummary(),
         showRevenueDashboard ? billingService.getRevenueByProduct() : Promise.resolve([]),
         showRevenueDashboard ? billingService.getRevenueByOrganization() : Promise.resolve([]),
@@ -1078,6 +1101,8 @@ const FinancePage = () => {
         billingService.getInvoices({ ordering: '-created_at' }),
         billingService.getFiscalProfiles(),
         billingService.getProducts(),
+        productSystemService.list().catch(() => []),
+        billingService.getProductMappingAudit().catch(() => null),
         billingService.getSchedulerStatus().catch(() => null),
         billingService.getReportSchedules().catch(() => []),
         billingService.getAlerts().catch(() => ({ alerts: [] })),
@@ -1095,6 +1120,8 @@ const FinancePage = () => {
       setInvoices(invoiceData.results || invoiceData || []);
       setFiscalProfiles(fpData);
       setProducts(prodData);
+      setProductSystems(systemProductsData.results || systemProductsData || []);
+      setMappingAudit(mappingAuditData);
       if (schedData) setScheduler(schedData);
       setReportSchedules(reportSchedulesData.results || reportSchedulesData || []);
       setAlerts((alertsData?.alerts || alertsData || []));
@@ -1104,7 +1131,6 @@ const FinancePage = () => {
       setLandingAnalytics(landingAnalyticsData);
 
       // grab pending payments for reconciliation panel
-      const allInvoices = invoiceData.results || invoiceData || [];
       billingService.getInvoices({ ordering: '-created_at', page_size: 200 }).then((inv) => {
         const list = inv.results || inv || [];
         setPendingPayments(list.flatMap((i) => (i.payments || [])).filter((p) => p.status === 'pending'));
@@ -1119,6 +1145,9 @@ const FinancePage = () => {
 
   useEffect(() => {
     loadData();
+    // Landing filters are applied explicitly with the filter button; changing them
+    // should not trigger a full finance dashboard reload.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showRevenueDashboard]);
 
   const applyLandingFilters = async () => {
@@ -1158,6 +1187,68 @@ const FinancePage = () => {
       toast.error(error.response?.data?.detail || t.batchRunError);
     } finally {
       setRunningBatch(false);
+    }
+  };
+
+  const updateProductMapping = async (product, systemProductId) => {
+    const confirmed = await showConfirm({
+      title: t.mappingConfirmTitle,
+      text: t.mappingConfirmText,
+      confirmButtonText: isEnglish ? 'Update' : 'Actualizar',
+      cancelButtonText: isEnglish ? 'Cancel' : 'Cancelar',
+    });
+    if (!confirmed) return;
+
+    setMappingProductId(product.id);
+    try {
+      const updated = await billingService.updateProduct(product.id, {
+        system_product: systemProductId || null,
+      });
+      setProducts((current) => current.map((item) => (item.id === product.id ? updated : item)));
+      toast.success(t.mappingSaved);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || t.mappingSaveError);
+    } finally {
+      setMappingProductId(null);
+    }
+  };
+
+  const refreshMappingAudit = async () => {
+    setMappingAuditLoading(true);
+    try {
+      const audit = await billingService.getProductMappingAudit();
+      setMappingAudit(audit);
+      toast.success(t.mappingAudit);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || t.mappingAuditError);
+    } finally {
+      setMappingAuditLoading(false);
+    }
+  };
+
+  const applyAutoMapping = async () => {
+    const confirmed = await showConfirm({
+      title: t.autoMapConfirmTitle,
+      text: t.autoMapConfirmText,
+      confirmButtonText: isEnglish ? 'Apply' : 'Aplicar',
+      cancelButtonText: isEnglish ? 'Cancel' : 'Cancelar',
+    });
+    if (!confirmed) return;
+
+    setMappingAuditLoading(true);
+    try {
+      const result = await billingService.autoMapProducts({ dryRun: false });
+      toast.success(`${t.mappingApplied}: ${result.updated_count}`);
+      const [productList, audit] = await Promise.all([
+        billingService.getProducts(),
+        billingService.getProductMappingAudit(),
+      ]);
+      setProducts(productList.results || productList || []);
+      setMappingAudit(audit);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || t.mappingAuditError);
+    } finally {
+      setMappingAuditLoading(false);
     }
   };
 
@@ -1902,6 +1993,115 @@ const FinancePage = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {products.length > 0 && (
+        <div className="glass-card p-6">
+          <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-100">{t.productCatalogMapping}</h2>
+              <p className="text-sm text-gray-500">{t.productCatalogMappingSubtitle}</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={refreshMappingAudit}
+                disabled={mappingAuditLoading}
+                className="btn-secondary inline-flex items-center gap-2 px-4 py-2 text-sm disabled:opacity-60"
+              >
+                <RefreshCw className={`h-4 w-4 ${mappingAuditLoading ? 'animate-spin' : ''}`} />
+                {t.runDryMapping}
+              </button>
+              <button
+                type="button"
+                onClick={applyAutoMapping}
+                disabled={mappingAuditLoading || !mappingAudit?.summary?.candidate_found}
+                className="btn-primary inline-flex items-center gap-2 px-4 py-2 text-sm disabled:opacity-60"
+              >
+                <Link2 className="h-4 w-4" />
+                {t.applyMapping}
+              </button>
+            </div>
+          </div>
+
+          {mappingAudit?.summary && (
+            <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div className="rounded-xl border border-emerald-400/25 bg-emerald-500/10 p-4">
+                <p className="text-xs text-emerald-200/80">{t.mappedItems}</p>
+                <p className="mt-1 text-2xl font-semibold text-emerald-200">{mappingAudit.summary.mapped}</p>
+              </div>
+              <div className="rounded-xl border border-amber-400/25 bg-amber-500/10 p-4">
+                <p className="text-xs text-amber-200/80">{t.candidateItems}</p>
+                <p className="mt-1 text-2xl font-semibold text-amber-200">{mappingAudit.summary.candidate_found}</p>
+              </div>
+              <div className="rounded-xl border border-gray-700/60 bg-dark-400/35 p-4">
+                <p className="text-xs text-gray-500">{t.unmappedItems}</p>
+                <p className="mt-1 text-2xl font-semibold text-gray-100">{mappingAudit.summary.unmapped}</p>
+              </div>
+            </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="table-glass">
+              <thead>
+                <tr>
+                  <th>{t.product}</th>
+                  <th>{t.model}</th>
+                  <th>{t.saasProduct}</th>
+                  <th>{t.status}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr key={product.id}>
+                    <td>
+                      <div className="font-medium text-gray-100">{product.name}</div>
+                      <div className="text-xs text-gray-500">{product.code}</div>
+                    </td>
+                    <td className="text-xs text-gray-400">{product.billing_model}</td>
+                    <td>
+                      <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                        <select
+                          className="input-glass min-w-[260px] py-2 text-sm"
+                          value={product.system_product || ''}
+                          disabled={mappingProductId === product.id}
+                          onChange={(event) => updateProductMapping(product, event.target.value)}
+                        >
+                          <option value="">{t.noSaasMapping}</option>
+                          {productSystems.map((systemProduct) => (
+                            <option key={systemProduct.id} value={systemProduct.id}>
+                              {systemProduct.name} · {systemProduct.code}
+                            </option>
+                          ))}
+                        </select>
+                        {product.system_product ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-300">
+                            <Link2 className="h-3.5 w-3.5" />
+                            {product.system_product_code}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-gray-600/60 bg-dark-400/50 px-2 py-1 text-xs font-medium text-gray-400">
+                            <Unlink className="h-3.5 w-3.5" />
+                            {t.noSaasMapping}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <span className={product.is_active ? 'badge-success' : 'badge-neutral'}>
+                        {product.is_active ? 'active' : 'inactive'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-4 rounded-xl border border-amber-400/25 bg-amber-500/10 p-4 text-sm text-amber-100">
+            Cuando un producto fiscal queda mapeado a un producto SaaS, billing exige entitlement permitido antes de emitir facturas. Los productos sin mapeo mantienen compatibilidad legacy.
           </div>
         </div>
       )}

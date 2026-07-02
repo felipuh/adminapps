@@ -325,6 +325,64 @@ class UserRolePermissionTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(User.objects.filter(email='created.by.orgadmin@example.com').exists())
 
+    def test_org_admin_cannot_create_user_in_another_organization(self):
+        other_org = Organization.objects.create(
+            code='ORG00999',
+            name='Other Org',
+            email='other@example.com',
+        )
+        self.client.force_authenticate(user=self.org_admin)
+
+        response = self.client.post(
+            '/api/auth/users/',
+            {
+                'email': 'outside@example.com',
+                'password': 'NewStrongPass123!',
+                'password_confirm': 'NewStrongPass123!',
+                'first_name': 'Outside',
+                'last_name': 'User',
+                'organization': str(other_org.id),
+                'role': 'user',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(User.objects.filter(email='outside@example.com').exists())
+
+    def test_org_admin_cannot_create_global_admin_role(self):
+        self.client.force_authenticate(user=self.org_admin)
+
+        response = self.client.post(
+            '/api/auth/users/',
+            {
+                'email': 'escalated@example.com',
+                'password': 'NewStrongPass123!',
+                'password_confirm': 'NewStrongPass123!',
+                'first_name': 'Escalated',
+                'last_name': 'User',
+                'organization': str(self.organization.id),
+                'role': 'admin',
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(User.objects.filter(email='escalated@example.com').exists())
+
+    def test_org_admin_cannot_promote_user_to_global_admin(self):
+        self.client.force_authenticate(user=self.org_admin)
+
+        response = self.client.patch(
+            f'/api/auth/users/{self.regular_user.id}/',
+            {'role': 'admin'},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.regular_user.refresh_from_db()
+        self.assertEqual(self.regular_user.role, 'user')
+
     def test_org_admin_cannot_destroy_user(self):
         self.client.force_authenticate(user=self.org_admin)
 
@@ -513,6 +571,43 @@ class OrganizationIsolationTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Org B')
+
+    def test_org_users_endpoint_returns_only_users_for_that_organization(self):
+        self.client.force_authenticate(user=self.org_admin_a)
+
+        response = self.client.get(f'/api/organizations/{self.org_a.id}/users/', format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        result_emails = {item['email'] for item in response.data}
+        self.assertIn(self.user_a.email, result_emails)
+        self.assertIn(self.user_a2.email, result_emails)
+        self.assertNotIn(self.user_b.email, result_emails)
+
+    def test_org_admin_can_deactivate_user_in_own_organization(self):
+        self.client.force_authenticate(user=self.org_admin_a)
+
+        response = self.client.patch(
+            f'/api/auth/users/{self.user_a.id}/',
+            {'is_active': False},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user_a.refresh_from_db()
+        self.assertFalse(self.user_a.is_active)
+
+    def test_org_admin_cannot_deactivate_user_in_other_organization(self):
+        self.client.force_authenticate(user=self.org_admin_a)
+
+        response = self.client.patch(
+            f'/api/auth/users/{self.user_b.id}/',
+            {'is_active': False},
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.user_b.refresh_from_db()
+        self.assertTrue(self.user_b.is_active)
 
     # ------------------------------------------------------------------ #
     # Cross-org admin action blocked for org_admin                        #

@@ -8,6 +8,7 @@ from .models import (
     ModuleActivityLog,
     OrganizationModule,
     OrganizationProductEntitlement,
+    ProductEntitlementAuditLog,
     ProductSystem,
 )
 
@@ -32,7 +33,8 @@ class ProductSystemListSerializer(serializers.ModelSerializer):
         model = ProductSystem
         fields = [
             'id', 'code', 'name', 'slug', 'product_type', 'status',
-            'billing_enabled', 'icon', 'is_available',
+            'billing_enabled', 'default_plan', 'description', 'launch_url',
+            'api_base_url', 'icon', 'is_available',
         ]
 
 
@@ -41,6 +43,11 @@ class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
     organization_code = serializers.CharField(source='organization.code', read_only=True)
     product_code = serializers.CharField(source='product.code', read_only=True)
     product_name = serializers.CharField(source='product.name', read_only=True)
+    plan_name = serializers.CharField(source='plan.name', read_only=True, default=None)
+    plan_code = serializers.CharField(source='plan.code', read_only=True, default=None)
+    effective_plan = serializers.SerializerMethodField()
+    effective_plan_name = serializers.SerializerMethodField()
+    effective_plan_code = serializers.SerializerMethodField()
     subscription_status = serializers.CharField(source='subscription.status', read_only=True, default=None)
     billing_status = serializers.SerializerMethodField()
     is_active = serializers.ReadOnlyField()
@@ -53,7 +60,9 @@ class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'organization', 'organization_name', 'organization_code',
             'product', 'product_code', 'product_name', 'enabled', 'plan',
-            'subscription', 'subscription_status', 'billing_status', 'status',
+            'plan_name', 'plan_code', 'effective_plan', 'effective_plan_name',
+            'effective_plan_code', 'subscription', 'subscription_status',
+            'billing_status', 'status',
             'starts_at', 'ends_at', 'suspended_at', 'suspension_reason',
             'modules_enabled', 'scopes', 'metadata', 'activated_by',
             'activated_by_name', 'is_active', 'access_allowed',
@@ -66,6 +75,39 @@ class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
         if not subscription:
             return 'not_configured'
         return subscription.status
+
+    def get_effective_plan(self, obj):
+        plan = obj.effective_plan
+        return str(plan.id) if plan else None
+
+    def get_effective_plan_name(self, obj):
+        plan = obj.effective_plan
+        return plan.name if plan else None
+
+    def get_effective_plan_code(self, obj):
+        plan = obj.effective_plan
+        return plan.code if plan else None
+
+    def validate(self, attrs):
+        organization = attrs.get('organization') or getattr(self.instance, 'organization', None)
+        product = attrs.get('product') or getattr(self.instance, 'product', None)
+        subscription = attrs.get('subscription')
+        if subscription is None and self.instance is not None:
+            subscription = self.instance.subscription
+        subscription = subscription or getattr(organization, 'subscription', None)
+        status = attrs.get('status', getattr(self.instance, 'status', None))
+        enabled = attrs.get('enabled', getattr(self.instance, 'enabled', True))
+
+        if product and product.billing_enabled and enabled and status == 'active':
+            if not subscription:
+                raise serializers.ValidationError({
+                    'subscription': 'Un producto con billing activo requiere suscripcion efectiva para activarse.'
+                })
+            if not subscription.is_active:
+                raise serializers.ValidationError({
+                    'subscription': 'La suscripcion efectiva no permite activar este producto.'
+                })
+        return attrs
 
 
 class OrganizationProductEntitlementCreateSerializer(serializers.ModelSerializer):
@@ -84,7 +126,39 @@ class OrganizationProductEntitlementCreateSerializer(serializers.ModelSerializer
             raise serializers.ValidationError(
                 'La organizacion ya tiene configurado este producto.'
             )
+        product = attrs.get('product')
+        organization = attrs.get('organization')
+        subscription = attrs.get('subscription') or getattr(organization, 'subscription', None)
+        status = attrs.get('status', 'trial')
+        enabled = attrs.get('enabled', True)
+        if product and product.billing_enabled and enabled and status == 'active':
+            if not subscription:
+                raise serializers.ValidationError({
+                    'subscription': 'Un producto con billing activo requiere suscripcion efectiva para activarse.'
+                })
+            if not subscription.is_active:
+                raise serializers.ValidationError({
+                    'subscription': 'La suscripcion efectiva no permite activar este producto.'
+                })
         return attrs
+
+
+class ProductEntitlementAuditLogSerializer(serializers.ModelSerializer):
+    organization_name = serializers.CharField(source='organization.name', read_only=True)
+    organization_code = serializers.CharField(source='organization.code', read_only=True)
+    product_code = serializers.CharField(source='product.code', read_only=True)
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    actor_name = serializers.CharField(source='actor.full_name', read_only=True, default=None)
+
+    class Meta:
+        model = ProductEntitlementAuditLog
+        fields = [
+            'id', 'entitlement', 'organization', 'organization_name',
+            'organization_code', 'product', 'product_code', 'product_name',
+            'action', 'previous_state', 'new_state', 'actor', 'actor_name',
+            'metadata', 'created_at',
+        ]
+        read_only_fields = fields
 
 
 class OrganizationProductEntitlementToggleSerializer(serializers.Serializer):

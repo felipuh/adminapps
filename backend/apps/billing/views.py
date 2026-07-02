@@ -31,6 +31,7 @@ from .services import issue_invoice_for_organization, record_invoice_payment, ru
 from .services import prepare_invoice_for_hacienda, update_hacienda_status, poll_hacienda_status, generate_invoice_xml, create_credit_note_for_invoice
 from .services import register_pending_payment, confirm_payment_record, reject_payment_record, get_reconciliation_summary
 from .services import execute_recurring_report_schedule, process_due_recurring_reports
+from .services import auto_map_product_catalog_candidates, build_product_catalog_mapping_audit
 from .serializers import (
     AccountsReceivableSerializer,
     BatchBillingReportSerializer,
@@ -255,13 +256,74 @@ class FiscalProfileViewSet(viewsets.ModelViewSet):
 
 
 class ProductCatalogViewSet(viewsets.ModelViewSet):
-    queryset = ProductCatalog.objects.all()
+    queryset = ProductCatalog.objects.select_related('system_product')
     serializer_class = ProductCatalogSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['is_active', 'billing_model']
-    search_fields = ['code', 'name']
+    filterset_fields = ['is_active', 'billing_model', 'system_product']
+    search_fields = ['code', 'name', 'system_product__code', 'system_product__name']
     ordering = ['name']
+
+    def _audit_product_mapping(self, *, product, action, previous_system_product_id, new_system_product_id, metadata=None):
+        if str(previous_system_product_id or '') == str(new_system_product_id or ''):
+            return
+
+        UserActivityLog.objects.create(
+            user=self.request.user if getattr(self.request.user, 'is_authenticated', False) else None,
+            action='update',
+            module='billing',
+            entity_type='ProductCatalog',
+            entity_id=str(product.id),
+            description=f'Mapeo SaaS actualizado para producto fiscal {product.code}',
+            old_values={
+                'system_product': str(previous_system_product_id) if previous_system_product_id else None,
+            },
+            new_values={
+                'event': action,
+                'system_product': str(new_system_product_id) if new_system_product_id else None,
+                'product_code': product.code,
+                **(metadata or {}),
+            },
+        )
+
+    def perform_update(self, serializer):
+        previous_system_product_id = self.get_object().system_product_id
+        product = serializer.save()
+        self._audit_product_mapping(
+            product=product,
+            action='billing_product_mapping_updated',
+            previous_system_product_id=previous_system_product_id,
+            new_system_product_id=product.system_product_id,
+        )
+
+    @action(detail=False, methods=['get'])
+    def mapping_audit(self, request):
+        """Report billing catalog items that are or can be mapped to SaaS products."""
+        return Response(build_product_catalog_mapping_audit())
+
+    @action(detail=False, methods=['post'])
+    def auto_map(self, request):
+        """
+        Map exact billing catalog candidates to ProductSystem.
+
+        Defaults to dry-run so operators can inspect changes before applying them.
+        """
+        dry_run = request.data.get('dry_run', True)
+        dry_run = not (dry_run is False or str(dry_run).strip().lower() in {'false', '0', 'no'})
+        result = auto_map_product_catalog_candidates(dry_run=dry_run)
+
+        if not dry_run:
+            for item in result['items']:
+                product = ProductCatalog.objects.get(pk=item['id'])
+                self._audit_product_mapping(
+                    product=product,
+                    action='billing_product_auto_mapped',
+                    previous_system_product_id=None,
+                    new_system_product_id=product.system_product_id,
+                    metadata={'candidate_system_product_code': item['candidate_system_product_code']},
+                )
+
+        return Response(result)
 
 
 class ProductPriceViewSet(viewsets.ModelViewSet):

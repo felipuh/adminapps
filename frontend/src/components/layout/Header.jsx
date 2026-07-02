@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Menu, 
@@ -65,7 +65,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
       try {
         const data = await notificationService.getUnreadCount();
         setUnreadCount(data.unread_count || 0);
-      } catch (error) {
+      } catch {
         setUnreadCount(0);
       }
     };
@@ -79,7 +79,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
       const data = await notificationService.getAll({ limit: 8 });
       setNotifications(data.notifications || []);
       setUnreadCount(data.unread_count || 0);
-    } catch (error) {
+    } catch {
       setNotifications([]);
     } finally {
       setLoadingNotifications(false);
@@ -101,7 +101,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
         item.id === notificationId ? { ...item, is_read: true } : item
       )));
       setUnreadCount((prev) => Math.max(0, prev - 1));
-    } catch (error) {
+    } catch {
       // Keep UI stable if API fails.
     }
   };
@@ -111,7 +111,7 @@ const Header = ({ onMenuClick, sidebarOpen }) => {
       await notificationService.markAllRead();
       setNotifications((prev) => prev.map((item) => ({ ...item, is_read: true })));
       setUnreadCount(0);
-    } catch (error) {
+    } catch {
       // Keep UI stable if API fails.
     }
   };

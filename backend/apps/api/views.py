@@ -12,7 +12,8 @@ from django.utils.dateparse import parse_date
 
 from apps.organizations.models import Organization, OrganizationFeatureFlag
 from apps.users.models import User, UserActivityLog
-from apps.products.models import ISOStandard, OrganizationModule
+from apps.products.models import ISOStandard, OrganizationModule, OrganizationProductEntitlement, ProductSystem
+from apps.products.services import build_product_access_readiness_report
 from apps.users.permissions import IsAdmin
 from apps.integration.models import LandingAnalyticsEvent
 
@@ -61,6 +62,37 @@ class DashboardView(APIView):
                 status='trial',
                 expires_at__lte=now + timezone.timedelta(days=7)
             ).count(),
+        }
+
+        entitlement_qs = OrganizationProductEntitlement.objects.select_related('product', 'organization')
+        iso_smart_orgs = entitlement_qs.filter(
+            product__code='ISO_SMART',
+            enabled=True,
+            status__in=['active', 'trial'],
+        ).values('organization_id')
+        medsupplier_orgs = entitlement_qs.filter(
+            product__code='MEDSUPPLIER',
+            enabled=True,
+            status__in=['active', 'trial'],
+        ).values('organization_id')
+        product_stats = {
+            'systems_total': ProductSystem.objects.count(),
+            'systems_active': ProductSystem.objects.filter(status__in=['active', 'beta']).count(),
+            'entitlements_total': entitlement_qs.count(),
+            'entitlements_active': entitlement_qs.filter(enabled=True, status='active').count(),
+            'entitlements_trial': entitlement_qs.filter(enabled=True, status='trial').count(),
+            'entitlements_suspended': entitlement_qs.filter(status='suspended').count(),
+            'iso_smart_customers': iso_smart_orgs.distinct().count(),
+            'medsupplier_customers': medsupplier_orgs.distinct().count(),
+            'customers_with_both': Organization.objects.filter(
+                product_entitlements__product__code='ISO_SMART',
+                product_entitlements__enabled=True,
+                product_entitlements__status__in=['active', 'trial'],
+            ).filter(
+                product_entitlements__product__code='MEDSUPPLIER',
+                product_entitlements__enabled=True,
+                product_entitlements__status__in=['active', 'trial'],
+            ).distinct().count(),
         }
         
         # Módulos más usados
@@ -144,6 +176,7 @@ class DashboardView(APIView):
         return Response({
             'organizations': org_stats,
             'iso_modules': iso_stats,
+            'products': product_stats,
             'popular_modules': popular_modules,
             'team': user_stats,
             'recent_activity': activity_list,
@@ -196,6 +229,15 @@ class SystemStatsView(APIView):
             'size_distribution': size_distribution,
             'module_adoption': module_adoption,
         })
+
+
+class ProductReadinessView(APIView):
+    """Read-only SaaS product access readiness report for AdminApps operators."""
+
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get(self, request):
+        return Response(build_product_access_readiness_report())
 
 
 class QuickActionsView(APIView):

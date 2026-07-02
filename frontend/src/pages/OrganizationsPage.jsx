@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Building2, 
   BadgeCheck,
+  AlertTriangle,
   Plus, 
   Search, 
-  Filter,
   Eye,
   Edit,
   Trash2,
   Users,
-  Mail,
-  Globe,
   X
 } from 'lucide-react';
 import { organizationService } from '../services/api';
@@ -362,6 +360,9 @@ const OrganizationsPage = () => {
     suspendedPlural: isEnglish ? 'Suspended' : 'Suspendidas',
     inactivePlural: isEnglish ? 'Inactive' : 'Inactivas',
     loadingOrganizations: isEnglish ? 'Loading organizations...' : 'Cargando organizaciones...',
+    organizationsLoadError: isEnglish ? 'Could not load organizations' : 'No se pudieron cargar las organizaciones',
+    organizationsLoadErrorHelp: isEnglish ? 'Check the API connection and try again.' : 'Revisa la conexion con la API e intenta de nuevo.',
+    retry: isEnglish ? 'Retry' : 'Reintentar',
     noOrganizations: isEnglish ? 'No organizations found' : 'No se encontraron organizaciones',
     organization: isEnglish ? 'Organization' : 'Organizacion',
     users: isEnglish ? 'Users' : 'Usuarios',
@@ -371,12 +372,15 @@ const OrganizationsPage = () => {
   const navigate = useNavigate();
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState(null);
 
-  const fetchOrganizations = async () => {
+  const fetchOrganizations = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const params = {};
       if (search) params.search = search;
@@ -385,22 +389,16 @@ const OrganizationsPage = () => {
       const data = await organizationService.getAll(params);
       setOrganizations(data.results || data);
     } catch (error) {
-      // Use mock data on error
-      setOrganizations([
-        { id: '1', code: 'ORG00001', name: 'Tech Corp', email: 'contact@techcorp.com', industry: 'technology', status: 'active', users_count: 15, max_users: 20 },
-        { id: '2', code: 'ORG00002', name: 'Acme Inc', email: 'info@acme.com', industry: 'manufacturing', status: 'active', users_count: 8, max_users: 10 },
-        { id: '3', code: 'ORG00003', name: 'StartupXYZ', email: 'hello@startupxyz.io', industry: 'technology', status: 'trial', users_count: 3, max_users: 5 },
-        { id: '4', code: 'ORG00004', name: 'Global Services', email: 'contact@global.com', industry: 'services', status: 'active', users_count: 12, max_users: 15 },
-        { id: '5', code: 'ORG00005', name: 'Local Shop', email: 'shop@local.mx', industry: 'retail', status: 'suspended', users_count: 2, max_users: 5 },
-      ]);
+      setOrganizations([]);
+      setLoadError(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, statusFilter]);
 
   useEffect(() => {
     fetchOrganizations();
-  }, [search, statusFilter]);
+  }, [fetchOrganizations]);
 
   const handleView = (org) => {
     navigate(`/organizations/${org.id}`);
@@ -428,7 +426,7 @@ const OrganizationsPage = () => {
       await organizationService.delete(org.id);
       toast.success(t.orgDeleted);
       fetchOrganizations();
-    } catch (error) {
+    } catch {
       toast.error(t.orgDeleteError);
     }
   };
@@ -487,6 +485,19 @@ const OrganizationsPage = () => {
           <div className="p-8 text-center">
             <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-gray-500 mt-4">{t.loadingOrganizations}</p>
+          </div>
+        ) : loadError ? (
+          <div className="p-8 text-center">
+            <AlertTriangle className="w-12 h-12 text-amber-300 mx-auto mb-4" />
+            <p className="text-gray-200 font-medium">{t.organizationsLoadError}</p>
+            <p className="text-sm text-gray-500 mt-2">{t.organizationsLoadErrorHelp}</p>
+            <button
+              type="button"
+              onClick={fetchOrganizations}
+              className="mt-5 inline-flex items-center justify-center rounded-lg border border-gray-700 px-4 py-2 text-sm font-medium text-gray-200 hover:bg-dark-300 transition-colors"
+            >
+              {t.retry}
+            </button>
           </div>
         ) : organizations.length === 0 ? (
           <div className="p-8 text-center">

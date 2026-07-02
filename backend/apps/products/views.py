@@ -4,6 +4,7 @@ Control maestro de módulos ISO por cliente
 """
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,6 +16,7 @@ from .models import (
     ModuleActivityLog,
     OrganizationModule,
     OrganizationProductEntitlement,
+    ProductEntitlementAuditLog,
     ProductSystem,
 )
 from .serializers import (
@@ -28,6 +30,7 @@ from .serializers import (
     OrganizationProductEntitlementCreateSerializer,
     OrganizationProductEntitlementSerializer,
     OrganizationProductEntitlementToggleSerializer,
+    ProductEntitlementAuditLogSerializer,
     ProductSystemListSerializer,
     ProductSystemSerializer,
 )
@@ -63,6 +66,57 @@ class ProductSystemViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+def _entitlement_state(entitlement):
+    if not entitlement:
+        return {}
+    return {
+        'id': str(entitlement.id),
+        'organization_id': str(entitlement.organization_id),
+        'product_id': str(entitlement.product_id),
+        'product_code': entitlement.product.code if entitlement.product_id else None,
+        'enabled': entitlement.enabled,
+        'status': entitlement.status,
+        'plan_id': str(entitlement.plan_id) if entitlement.plan_id else None,
+        'effective_plan_id': str(entitlement.effective_plan.id) if entitlement.effective_plan else None,
+        'subscription_id': str(entitlement.subscription_id) if entitlement.subscription_id else None,
+        'starts_at': entitlement.starts_at.isoformat() if entitlement.starts_at else None,
+        'ends_at': entitlement.ends_at.isoformat() if entitlement.ends_at else None,
+        'suspended_at': entitlement.suspended_at.isoformat() if entitlement.suspended_at else None,
+        'suspension_reason': entitlement.suspension_reason,
+        'modules_enabled': entitlement.modules_enabled,
+        'scopes': entitlement.scopes,
+        'access_allowed': entitlement.access_allowed,
+        'access_denial_reason': entitlement.access_denial_reason,
+    }
+
+
+def _audit_entitlement(entitlement, action, *, actor=None, previous_state=None, metadata=None):
+    ProductEntitlementAuditLog.objects.create(
+        entitlement=entitlement,
+        organization=entitlement.organization,
+        product=entitlement.product,
+        action=action,
+        previous_state=previous_state or {},
+        new_state=_entitlement_state(entitlement),
+        actor=actor if getattr(actor, 'is_authenticated', False) else None,
+        metadata=metadata or {},
+    )
+
+
+def _validate_entitlement_can_activate(entitlement):
+    if not entitlement.product.billing_enabled:
+        return
+    subscription = entitlement.effective_subscription
+    if not subscription:
+        raise ValidationError({
+            'subscription': 'Un producto con billing activo requiere suscripcion efectiva para activarse.'
+        })
+    if not subscription.is_active:
+        raise ValidationError({
+            'subscription': 'La suscripcion efectiva no permite activar este producto.'
+        })
+
+
 class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
     """Habilitacion producto-neutral por organizacion."""
 
@@ -81,15 +135,32 @@ class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return OrganizationProductEntitlement.objects.select_related(
-            'organization', 'product', 'plan', 'subscription', 'activated_by'
+            'organization', 'product', 'product__default_plan', 'plan',
+            'subscription', 'subscription__plan', 'activated_by'
         )
 
     def perform_create(self, serializer):
-        serializer.save(activated_by=self.request.user)
+        entitlement = serializer.save(activated_by=self.request.user)
+        _audit_entitlement(entitlement, 'created', actor=self.request.user)
+
+    def perform_update(self, serializer):
+        previous_state = _entitlement_state(self.get_object())
+        entitlement = serializer.save()
+        new_plan_id = str(entitlement.plan_id) if entitlement.plan_id else None
+        if previous_state.get('enabled') and not entitlement.enabled:
+            action = 'disabled'
+        elif previous_state.get('status') != entitlement.status and entitlement.status == 'trial':
+            action = 'trial_started'
+        elif previous_state.get('plan_id') != new_plan_id:
+            action = 'plan_changed'
+        else:
+            action = 'updated'
+        _audit_entitlement(entitlement, action, actor=self.request.user, previous_state=previous_state)
 
     @action(detail=True, methods=['post'])
     def toggle(self, request, pk=None):
         entitlement = self.get_object()
+        previous_state = _entitlement_state(entitlement)
         serializer = OrganizationProductEntitlementToggleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -97,10 +168,13 @@ class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
         reason = serializer.validated_data.get('reason', '')
 
         if action_type == 'enable':
+            _validate_entitlement_can_activate(entitlement)
             entitlement.enable(user=request.user)
+            audit_action = 'enabled'
             message = f"Producto {entitlement.product.code} activado para {entitlement.organization.name}"
         elif action_type == 'disable':
             entitlement.disable(reason=reason)
+            audit_action = 'disabled'
             message = f"Producto {entitlement.product.code} suspendido para {entitlement.organization.name}"
         else:
             trial_days = serializer.validated_data.get('trial_days', 14)
@@ -111,7 +185,16 @@ class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
             entitlement.suspension_reason = ''
             entitlement.activated_by = request.user
             entitlement.save()
+            audit_action = 'trial_started'
             message = f"Producto {entitlement.product.code} en prueba por {trial_days} dias"
+
+        _audit_entitlement(
+            entitlement,
+            audit_action,
+            actor=request.user,
+            previous_state=previous_state,
+            metadata={'reason': reason, 'action': action_type},
+        )
 
         return Response({
             'status': 'success',
@@ -136,6 +219,29 @@ class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
             'organization_name': organization.name,
             'products': OrganizationProductEntitlementSerializer(entitlements, many=True).data,
         })
+
+    @action(detail=True, methods=['get'])
+    def audit_logs(self, request, pk=None):
+        entitlement = self.get_object()
+        logs = entitlement.audit_logs.select_related('organization', 'product', 'actor')
+        serializer = ProductEntitlementAuditLogSerializer(logs, many=True)
+        return Response(serializer.data)
+
+
+class ProductEntitlementAuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    """Read-only audit trail for product entitlement changes."""
+
+    queryset = ProductEntitlementAuditLog.objects.all()
+    serializer_class = ProductEntitlementAuditLogSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['organization', 'product', 'action', 'actor']
+    ordering = ['-created_at']
+
+    def get_queryset(self):
+        return ProductEntitlementAuditLog.objects.select_related(
+            'entitlement', 'organization', 'product', 'actor'
+        )
 
 
 class ISOStandardViewSet(viewsets.ModelViewSet):

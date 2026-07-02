@@ -146,7 +146,7 @@ export const authService = {
   },
 
   changePassword: async (currentPassword, newPassword, newPasswordConfirm) => {
-    const response = await api.post('/auth/change-password/', {
+    const response = await api.post('/auth/users/change_password/', {
       current_password: currentPassword,
       new_password: newPassword,
       new_password_confirm: newPasswordConfirm,
@@ -388,6 +388,11 @@ export const dashboardService = {
     return response.data;
   },
 
+  getProductReadiness: async () => {
+    const response = await api.get('/product-readiness/');
+    return response.data;
+  },
+
   getRecentActivity: async (limit = 10) => {
     const response = await api.get('/dashboard/activity/', { params: { limit } });
     return response.data;
@@ -444,6 +449,63 @@ export const moduleService = {
   },
 };
 
+export const productSystemService = {
+  list: async (params = {}) => {
+    const response = await api.get('/products/systems/', { params });
+    return response.data;
+  },
+
+  active: async () => {
+    const response = await api.get('/products/systems/active/');
+    return response.data;
+  },
+
+  retrieve: async (id) => {
+    const response = await api.get(`/products/systems/${id}/`);
+    return response.data;
+  },
+};
+
+export const entitlementService = {
+  list: async (params = {}) => {
+    const response = await api.get('/products/entitlements/', { params });
+    return response.data;
+  },
+
+  byOrganization: async (organizationId) => {
+    const response = await api.get('/products/entitlements/by_organization/', {
+      params: { organization_id: organizationId },
+    });
+    return response.data;
+  },
+
+  create: async (data) => {
+    const response = await api.post('/products/entitlements/', data);
+    return response.data;
+  },
+
+  update: async (id, data) => {
+    const response = await api.patch(`/products/entitlements/${id}/`, data);
+    return response.data;
+  },
+
+  toggle: async (id, action, extra = {}) => {
+    const payload = typeof action === 'string' ? { action, ...extra } : action;
+    const response = await api.post(`/products/entitlements/${id}/toggle/`, payload);
+    return response.data;
+  },
+
+  auditLogs: async (id) => {
+    const response = await api.get(`/products/entitlements/${id}/audit_logs/`);
+    return response.data;
+  },
+
+  validate: async (organizationId, productCode) => {
+    const response = await api.get(`/integration/organizations/${organizationId}/products/${productCode}/validate/`);
+    return response.data;
+  },
+};
+
 // ========================================
 // Billing Services
 // ========================================
@@ -492,6 +554,21 @@ export const billingService = {
   getProducts: async () => {
     const response = await api.get('/billing/products/?is_active=true');
     return response.data.results || response.data;
+  },
+
+  updateProduct: async (productId, data) => {
+    const response = await api.patch(`/billing/products/${productId}/`, data);
+    return response.data;
+  },
+
+  getProductMappingAudit: async () => {
+    const response = await api.get('/billing/products/mapping_audit/');
+    return response.data;
+  },
+
+  autoMapProducts: async ({ dryRun = true } = {}) => {
+    const response = await api.post('/billing/products/auto_map/', { dry_run: dryRun });
+    return response.data;
   },
 
   getSchedulerStatus: async () => {

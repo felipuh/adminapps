@@ -175,6 +175,9 @@ class FiscalProfileSerializer(serializers.ModelSerializer):
 
 
 class ProductCatalogSerializer(serializers.ModelSerializer):
+    system_product_code = serializers.CharField(source='system_product.code', read_only=True, default=None)
+    system_product_name = serializers.CharField(source='system_product.name', read_only=True, default=None)
+
     class Meta:
         model = ProductCatalog
         fields = '__all__'

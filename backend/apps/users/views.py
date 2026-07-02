@@ -215,6 +215,8 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'activate', 'deactivate', 'reset_password']:
             return [IsOrgAdmin()]
+        elif self.action in ['update', 'partial_update']:
+            return [IsOrgAdmin()]
         elif self.action in ['destroy', 'unlock']:
             return [IsAdmin()]
         return [IsAuthenticated()]

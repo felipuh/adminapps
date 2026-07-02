@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import {
-  AlertCircle, Check, Copy, Loader, Lock, Settings, Shield, ShieldAlert, X, Eye, EyeOff
+  AlertCircle, Check, Copy, Loader, Lock, Shield, ShieldAlert, Eye, EyeOff
 } from 'lucide-react';
 import { userService } from '../services/api';
 
-const TwoFactorSettings = ({ user, onUpdate }) => {
+const TwoFactorSettings = ({ onUpdate }) => {
   const [is2faEnabled, setIs2faEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [setupStep, setSetupStep] = useState(null); // null, 'initiate', 'verify', 'backup'

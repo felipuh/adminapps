@@ -181,6 +181,26 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 'password_confirm': 'Las contraseñas no coinciden'
             })
 
+        request = self.context.get('request')
+        actor = getattr(request, 'user', None)
+        requested_role = attrs.get('role', 'user')
+        requested_organization = attrs.get('organization')
+
+        if actor and actor.is_authenticated and not actor.is_admin:
+            if not actor.organization_id:
+                raise serializers.ValidationError({
+                    'organization': 'Tu usuario no tiene organización asignada.'
+                })
+            if requested_organization and requested_organization.id != actor.organization_id:
+                raise serializers.ValidationError({
+                    'organization': 'No puedes crear usuarios en otra organización.'
+                })
+            if requested_role in {'superadmin', 'admin'}:
+                raise serializers.ValidationError({
+                    'role': 'No puedes asignar roles administrativos globales.'
+                })
+            attrs['organization'] = actor.organization
+
         existing_user = User.objects.filter(email=attrs['email']).first()
         if existing_user:
             if _is_password_reused(existing_user, attrs['password']):
@@ -222,6 +242,22 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             'is_active', 'language', 'timezone', 'theme',
             'email_notifications', 'push_notifications'
         ]
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        actor = getattr(request, 'user', None)
+        requested_role = attrs.get('role')
+
+        if actor and actor.is_authenticated and not actor.is_admin:
+            if requested_role in {'superadmin', 'admin'}:
+                raise serializers.ValidationError({
+                    'role': 'No puedes asignar roles administrativos globales.'
+                })
+            if self.instance and self.instance.organization_id != actor.organization_id:
+                raise serializers.ValidationError(
+                    'No puedes modificar usuarios de otra organización.'
+                )
+        return attrs
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

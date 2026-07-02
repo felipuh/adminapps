@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { 
   CreditCard, 
   Plus, 
@@ -420,10 +420,13 @@ const SubscriptionsPage = () => {
     exemptAmount: isEnglish ? 'Exempt' : 'Exento',
     noChargeCycle: isEnglish ? 'No charge cycle' : 'Sin ciclo de cobro',
     ownerExemptNote: isEnglish ? 'This owner organization is exempt from billing, so manual plan changes and charge cycles do not apply.' : 'Esta organizacion dueña esta exenta de cobro, por lo que no aplican cambios manuales de plan ni ciclos de cobro.',
+    loadErrorHelp: isEnglish ? 'Check the subscriptions API and try again.' : 'Revisa la API de suscripciones e intenta de nuevo.',
+    retry: isEnglish ? 'Retry' : 'Reintentar',
   };
   const [subscriptions, setSubscriptions] = useState([]);
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [activeTab, setActiveTab] = useState('subscriptions');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -438,8 +441,9 @@ const SubscriptionsPage = () => {
 
   const normalizeList = (data) => (Array.isArray(data) ? data : (data?.results || []));
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const [subsData, plansData] = await Promise.all([
         subscriptionService.getAll(),
@@ -449,51 +453,17 @@ const SubscriptionsPage = () => {
       setPlans(normalizeList(plansData));
     } catch (error) {
       toast.error(t.loadError);
-      setSubscriptions([
-        { id: '1', organization_name: 'Tech Corp', plan_name: 'Premium', status: 'active', amount: 499, next_payment_date: '2026-02-15' },
-        { id: '2', organization_name: 'Acme Inc', plan_name: 'Basico', status: 'active', amount: 199, next_payment_date: '2026-02-20' },
-        { id: '3', organization_name: 'StartupXYZ', plan_name: 'Trial', status: 'trial', amount: 0, next_payment_date: '2026-02-10' },
-        { id: '4', organization_name: 'Global Services', plan_name: 'Enterprise', status: 'active', amount: 999, next_payment_date: '2026-03-01' },
-        { id: '5', organization_name: 'Local Shop', plan_name: 'Basico', status: 'past_due', amount: 199, next_payment_date: '2026-01-25' },
-        { id: '6', organization_name: 'Old Company', plan_name: 'Basico', status: 'cancelled', amount: 199, next_payment_date: null },
-      ]);
-      setPlans([
-        {
-          id: '1',
-          name: isEnglish ? 'Basic' : 'Basico',
-          description: isEnglish ? 'For small businesses' : 'Para pequenas empresas',
-          price: 199,
-          features: isEnglish
-            ? ['Up to 5 users', '100 documents', '500 MB storage', 'Core ISO modules', 'Email support']
-            : ['Hasta 5 usuarios', '100 documentos', '500 MB almacenamiento', 'Modulos basicos ISO', 'Soporte por email'],
-        },
-        {
-          id: '2',
-          name: 'Premium',
-          description: isEnglish ? 'For growing businesses' : 'Para empresas en crecimiento',
-          price: 499,
-          features: isEnglish
-            ? ['Up to 20 users', '500 documents', '2 GB storage', 'All ISO modules', 'AI analytics', 'Priority support']
-            : ['Hasta 20 usuarios', '500 documentos', '2 GB almacenamiento', 'Todos los modulos ISO', 'Analisis IA', 'Soporte prioritario'],
-        },
-        {
-          id: '3',
-          name: 'Enterprise',
-          description: isEnglish ? 'For enterprise organizations' : 'Para grandes corporativos',
-          price: 999,
-          features: isEnglish
-            ? ['Unlimited users', 'Unlimited documents', '10 GB storage', 'All ISO modules', 'Advanced AI analytics', 'API access', '24/7 support']
-            : ['Usuarios ilimitados', 'Documentos ilimitados', '10 GB almacenamiento', 'Todos los modulos ISO', 'Analisis IA avanzado', 'API acceso', 'Soporte 24/7'],
-        },
-      ]);
+      setSubscriptions([]);
+      setPlans([]);
+      setLoadError(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [t.loadError]);
 
   useEffect(() => {
     fetchData();
-  }, [isEnglish]);
+  }, [fetchData]);
 
   const handleViewDetails = async (subscription) => {
     setSelectedSubscription(subscription);
@@ -605,7 +575,7 @@ const SubscriptionsPage = () => {
         : `${baseUrl}/subscriptions/invoices/${invoice.id}/download/`;
 
       window.open(finalUrl, '_blank', 'noopener,noreferrer');
-    } catch (error) {
+    } catch {
       toast.error(t.openInvoiceError);
     }
   };
@@ -712,8 +682,23 @@ const SubscriptionsPage = () => {
         </button>
       </div>
 
+      {loadError && (
+        <div className="glass-card p-8 text-center">
+          <AlertTriangle className="w-12 h-12 text-amber-300 mx-auto mb-4" />
+          <p className="text-gray-200 font-medium">{t.loadError}</p>
+          <p className="text-sm text-gray-500 mt-2">{t.loadErrorHelp}</p>
+          <button
+            type="button"
+            onClick={fetchData}
+            className="mt-5 inline-flex items-center justify-center rounded-lg border border-gray-700 px-4 py-2 text-sm font-medium text-gray-200 hover:bg-dark-300 transition-colors"
+          >
+            {t.retry}
+          </button>
+        </div>
+      )}
+
       {/* Content */}
-      {activeTab === 'subscriptions' && (
+      {!loadError && activeTab === 'subscriptions' && (
         <>
           {/* Filters */}
           <div className="glass-card p-4">
@@ -765,7 +750,7 @@ const SubscriptionsPage = () => {
         </>
       )}
 
-      {activeTab === 'plans' && (
+      {!loadError && activeTab === 'plans' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {plans.map((plan, index) => (
             <PlanCard

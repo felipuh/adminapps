@@ -17,7 +17,7 @@ import hmac
 import json
 
 from apps.organizations.models import Organization
-from apps.products.models import OrganizationProductEntitlement
+from apps.products.models import OrganizationProductEntitlement, ProductEntitlementAuditLog, ProductSystem
 from apps.users.models import UserOrganization
 from .models import IntegrationAPIKey, LandingAnalyticsEvent
 
@@ -53,19 +53,30 @@ def _subscription_payload(subscription):
 
 
 def _entitlement_payload(entitlement):
-    subscription = entitlement.subscription or entitlement.organization.subscription
+    subscription = entitlement.effective_subscription
+    plan = entitlement.effective_plan
     return {
         'id': str(entitlement.id),
         'code': entitlement.product.code,
         'name': entitlement.product.name,
         'slug': entitlement.product.slug,
+        'billing_enabled': entitlement.product.billing_enabled,
         'enabled': entitlement.enabled,
         'status': entitlement.status,
         'is_active': entitlement.is_active,
         'access_allowed': entitlement.access_allowed,
         'access_denial_reason': entitlement.access_denial_reason,
+        'starts_at': entitlement.starts_at.isoformat() if entitlement.starts_at else None,
+        'ends_at': entitlement.ends_at.isoformat() if entitlement.ends_at else None,
+        'suspended_at': entitlement.suspended_at.isoformat() if entitlement.suspended_at else None,
         'modules_enabled': entitlement.modules_enabled,
         'scopes': entitlement.scopes,
+        'plan': {
+            'id': str(plan.id),
+            'code': plan.code,
+            'name': plan.name,
+            'billing_cycle': plan.billing_cycle,
+        } if plan else None,
         'billing_status': _subscription_payload(subscription)['billing_status'],
         'subscription': _subscription_payload(subscription),
     }
@@ -75,7 +86,42 @@ def _active_product_entitlements(org):
     return (
         OrganizationProductEntitlement.objects
         .filter(organization=org, enabled=True, product__status__in=['active', 'beta'])
-        .select_related('organization', 'product', 'subscription')
+        .select_related('organization', 'product', 'product__default_plan', 'subscription', 'subscription__plan', 'plan')
+    )
+
+
+def _product_system_aliases():
+    aliases = {'medsupplier', 'iso_smart', 'iso-smart', 'isosmart'}
+    for product in ProductSystem.objects.all().only('code', 'slug'):
+        for value in (product.code, product.slug):
+            normalized = str(value or '').strip().lower()
+            if normalized:
+                aliases.add(normalized)
+                aliases.add(normalized.replace('-', '_'))
+                aliases.add(normalized.replace('_', '-'))
+    return aliases
+
+
+def _truthy_query_param(value):
+    return str(value or '').strip().lower() in {'1', 'true', 'yes', 'y', 'on'}
+
+
+def _audit_product_access_validation(request, *, organization, product, entitlement=None, allowed=False, reason=''):
+    ProductEntitlementAuditLog.objects.create(
+        entitlement=entitlement,
+        organization=organization,
+        product=product,
+        action='validated',
+        previous_state={},
+        new_state={
+            'allowed': allowed,
+            'reason': reason,
+            'entitlement_id': str(entitlement.id) if entitlement else None,
+        },
+        metadata={
+            'integration_service': getattr(request, 'integration_service', None),
+            'path': request.path,
+        },
     )
 
 
@@ -95,6 +141,7 @@ def require_api_key(view_func):
         
         # Verificar primero contra la base de datos
         service_name = None
+        key_obj = None
         try:
             key_obj = IntegrationAPIKey.objects.get(key=api_key, is_active=True)
             service_name = key_obj.name
@@ -114,6 +161,10 @@ def require_api_key(view_func):
                 }, status=401)
 
         request.integration_service = service_name
+        if key_obj is not None:
+            key_obj.last_used_at = timezone.now()
+            key_obj.last_used_service = service_name[:100]
+            key_obj.save(update_fields=['last_used_at', 'last_used_service', 'updated_at'])
         
         return view_func(request, *args, **kwargs)
     
@@ -268,6 +319,7 @@ def get_organization_modules(request, org_id):
                 'billing_status': _subscription_payload(entitlement.subscription or org.subscription)['billing_status'],
             })
 
+    product_aliases = _product_system_aliases()
     subscription = org.subscription
     if not is_owner_exempt and subscription and subscription.is_active:
         plan_modules = subscription.plan.modules_included
@@ -275,12 +327,17 @@ def get_organization_modules(request, org_id):
             for module in plan_modules:
                 if isinstance(module, str):
                     normalized = module.strip().lower()
+                    if normalized in product_aliases:
+                        continue
                     mapped = MODULE_CODE_MAP.get(normalized)
                     if mapped:
                         modules.append(mapped)
                     else:
                         modules.append({'code': normalized.upper(), 'name': module})
                 elif isinstance(module, dict) and 'code' in module:
+                    normalized = str(module.get('code') or '').strip().lower()
+                    if normalized in product_aliases:
+                        continue
                     modules.append(module)
     
     # Eliminar duplicados por código
@@ -330,21 +387,59 @@ def validate_organization_product_access(request, org_id, product_code):
             'code': 'organization_not_found'
         }, status=404)
 
-    entitlement = (
-        OrganizationProductEntitlement.objects
-        .filter(organization=org, product__code=product_code.upper())
-        .select_related('organization', 'product', 'subscription')
-        .first()
-    )
-    if not entitlement:
+    normalized_product_code = product_code.upper()
+    product = ProductSystem.objects.filter(code=normalized_product_code).first()
+    if not product:
         return JsonResponse({
             'allowed': False,
             'organization_id': str(org.id),
-            'product_code': product_code.upper(),
+            'organization_status': org.status,
+            'product_code': normalized_product_code,
+            'reason': 'product_not_found',
+            'product': None,
+        }, status=404)
+
+    entitlement = (
+        OrganizationProductEntitlement.objects
+        .filter(organization=org, product=product)
+        .select_related('organization', 'product', 'product__default_plan', 'plan', 'subscription', 'subscription__plan')
+        .first()
+    )
+    if not entitlement:
+        _audit_product_access_validation(
+            request,
+            organization=org,
+            product=product,
+            entitlement=None,
+            allowed=False,
+            reason='product_not_enabled',
+        )
+        return JsonResponse({
+            'allowed': False,
+            'organization_id': str(org.id),
+            'organization_status': org.status,
+            'product_code': normalized_product_code,
             'reason': 'product_not_enabled',
+            'product': {
+                'id': str(product.id),
+                'code': product.code,
+                'name': product.name,
+                'slug': product.slug,
+                'status': product.status,
+                'billing_enabled': product.billing_enabled,
+            },
         }, status=403)
 
     payload = _entitlement_payload(entitlement)
+    if not entitlement.access_allowed or _truthy_query_param(request.GET.get('audit')):
+        _audit_product_access_validation(
+            request,
+            organization=org,
+            product=product,
+            entitlement=entitlement,
+            allowed=entitlement.access_allowed,
+            reason=entitlement.access_denial_reason,
+        )
     return JsonResponse({
         'allowed': entitlement.access_allowed,
         'organization_id': str(org.id),

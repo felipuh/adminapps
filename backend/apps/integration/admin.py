@@ -7,14 +7,18 @@ from .models import IntegrationAPIKey, LandingAnalyticsEvent
 
 @admin.register(IntegrationAPIKey)
 class IntegrationAPIKeyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'key', 'is_active', 'created_at')
-    list_filter = ('is_active', 'created_at')
+    list_display = ('name', 'is_active', 'last_used_at', 'last_used_service', 'created_at')
+    list_filter = ('is_active', 'last_used_at', 'created_at')
     search_fields = ('name', 'key')
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('last_used_at', 'last_used_service', 'created_at', 'updated_at')
     
     fieldsets = (
         ('Información Básica', {
             'fields': ('name', 'key', 'is_active')
+        }),
+        ('Uso', {
+            'fields': ('last_used_at', 'last_used_service'),
+            'classes': ('collapse',)
         }),
         ('Fechas', {
             'fields': ('created_at', 'updated_at'),

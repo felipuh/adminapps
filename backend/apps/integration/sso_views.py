@@ -21,6 +21,7 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
 from apps.users.models import UserOrganization
+from apps.products.models import OrganizationProductEntitlement
 from .views import require_api_key
 
 User = get_user_model()
@@ -50,6 +51,62 @@ def _serialize_memberships(memberships):
     ]
 
 
+def _serialize_product_entitlements(organization_id):
+    if not organization_id:
+        return []
+
+    entitlements = (
+        OrganizationProductEntitlement.objects
+        .filter(organization_id=organization_id)
+        .select_related('organization', 'product', 'product__default_plan', 'plan', 'subscription', 'subscription__plan')
+        .order_by('product__name')
+    )
+    payload = []
+    for entitlement in entitlements:
+        subscription = entitlement.effective_subscription
+        plan = entitlement.effective_plan
+        payload.append({
+            "id": str(entitlement.id),
+            "code": entitlement.product.code,
+            "name": entitlement.product.name,
+            "slug": entitlement.product.slug,
+            "enabled": entitlement.enabled,
+            "status": entitlement.status,
+            "access_allowed": entitlement.access_allowed,
+            "access_denial_reason": entitlement.access_denial_reason,
+            "scopes": entitlement.scopes,
+            "modules_enabled": entitlement.modules_enabled,
+            "starts_at": entitlement.starts_at.isoformat() if entitlement.starts_at else None,
+            "ends_at": entitlement.ends_at.isoformat() if entitlement.ends_at else None,
+            "plan": {
+                "id": str(plan.id),
+                "code": plan.code,
+                "name": plan.name,
+                "billing_cycle": plan.billing_cycle,
+            } if plan else None,
+            "subscription": {
+                "id": str(subscription.id),
+                "status": subscription.status,
+                "is_active": subscription.is_active,
+                "current_period_end": subscription.current_period_end.isoformat() if subscription.current_period_end else None,
+                "next_billing_date": subscription.next_billing_date.isoformat() if subscription.next_billing_date else None,
+            } if subscription else None,
+        })
+    return payload
+
+
+def _build_product_claims(organization_id):
+    products = _serialize_product_entitlements(organization_id)
+    return {
+        "product_entitlements": products,
+        "allowed_products": [
+            product["code"]
+            for product in products
+            if product.get("access_allowed")
+        ],
+    }
+
+
 def _build_token_pair(
     user,
     membership,
@@ -59,6 +116,7 @@ def _build_token_pair(
     client_id: str,
 ):
     issuer = getattr(settings, "SMART3AI_SSO_ISSUER", "https://sso.smart3ai.local")
+    product_claims = _build_product_claims(membership.organization.id)
 
     refresh = RefreshToken.for_user(user)
     refresh["iss"] = issuer
@@ -72,6 +130,8 @@ def _build_token_pair(
     refresh["role"] = membership.role
     refresh["memberships"] = _serialize_memberships(memberships)
     refresh["scope"] = "openid profile email tenant:read tenant:write"
+    refresh["allowed_products"] = product_claims["allowed_products"]
+    refresh["product_entitlements"] = product_claims["product_entitlements"]
 
     access = refresh.access_token
     access["iss"] = issuer
@@ -85,6 +145,8 @@ def _build_token_pair(
     access["role"] = membership.role
     access["memberships"] = _serialize_memberships(memberships)
     access["scope"] = "openid profile email tenant:read tenant:write"
+    access["allowed_products"] = product_claims["allowed_products"]
+    access["product_entitlements"] = product_claims["product_entitlements"]
 
     return {
         "token_type": "Bearer",
@@ -92,6 +154,8 @@ def _build_token_pair(
         "refresh_token": str(refresh),
         "expires_in": int(getattr(settings, "SIMPLE_JWT", {}).get("ACCESS_TOKEN_LIFETIME").total_seconds()),
         "refresh_expires_in": int(getattr(settings, "SIMPLE_JWT", {}).get("REFRESH_TOKEN_LIFETIME").total_seconds()),
+        "allowed_products": product_claims["allowed_products"],
+        "product_entitlements": product_claims["product_entitlements"],
     }
 
 
@@ -307,7 +371,6 @@ def sso_login_verify_2fa(request):
             "code": "2fa_not_enabled",
         }, status=400)
 
-    otp_ok = two_fa.verify_token(otp_code)
     two_fa_bypassed = False
     if _is_local_2fa_bypass(otp_code):
         two_fa_bypassed = True
@@ -381,16 +444,19 @@ def sso_introspect(request):
     except TokenError:
         return JsonResponse({"active": False}, status=200)
 
+    organization_id = str(parsed.get("organization_id") or "")
+
     return JsonResponse({
         "active": True,
         "sub": str(parsed.get("user_id") or parsed.get("sub") or ""),
         "email": parsed.get("email"),
         "full_name": parsed.get("full_name"),
         "role": parsed.get("role"),
-        "organization_id": parsed.get("organization_id"),
+        "organization_id": organization_id,
         "organization_name": parsed.get("organization_name"),
         "organization_code": parsed.get("organization_code"),
         "memberships": parsed.get("memberships", []),
+        "products": _serialize_product_entitlements(organization_id),
         "client_id": parsed.get("client_id"),
         "aud": parsed.get("aud"),
         "iss": parsed.get("iss"),

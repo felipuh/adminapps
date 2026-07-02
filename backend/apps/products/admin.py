@@ -4,6 +4,7 @@ from .models import (
     ModuleActivityLog,
     OrganizationModule,
     OrganizationProductEntitlement,
+    ProductEntitlementAuditLog,
     ProductSystem,
 )
 
@@ -26,6 +27,18 @@ class OrganizationProductEntitlementAdmin(admin.ModelAdmin):
     search_fields = ['organization__name', 'organization__code', 'product__code', 'product__name']
     raw_id_fields = ['organization', 'product', 'plan', 'subscription', 'activated_by']
     readonly_fields = ['id', 'created_at', 'updated_at']
+
+
+@admin.register(ProductEntitlementAuditLog)
+class ProductEntitlementAuditLogAdmin(admin.ModelAdmin):
+    list_display = ['organization', 'product', 'action', 'actor', 'created_at']
+    list_filter = ['action', 'product', 'created_at']
+    search_fields = ['organization__name', 'organization__code', 'product__code', 'product__name']
+    readonly_fields = [
+        'id', 'entitlement', 'organization', 'product', 'action',
+        'previous_state', 'new_state', 'actor', 'metadata', 'created_at',
+    ]
+    raw_id_fields = ['entitlement', 'organization', 'product', 'actor']
 
 
 @admin.register(ISOStandard)

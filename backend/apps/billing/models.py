@@ -203,6 +203,14 @@ class ProductCatalog(models.Model):
     code = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=120)
     description = models.TextField(blank=True)
+    system_product = models.ForeignKey(
+        'products.ProductSystem',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='billing_catalog_items',
+        help_text='Producto SaaS administrado por AdminApps que este item factura.',
+    )
     billing_model = models.CharField(max_length=20, choices=BILLING_MODEL_CHOICES, default='subscription')
     is_active = models.BooleanField(default=True)
     metadata = models.JSONField(default=dict, blank=True)
@@ -602,4 +610,3 @@ class RecurringReportSchedule(models.Model):
 
         # Fallback safety to avoid returning None in edge cases.
         return base_dt + timedelta(days=1)
-

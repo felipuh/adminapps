@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, AlertTriangle, Bell, CheckCheck, Info } from 'lucide-react';
 import { notificationService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -107,14 +107,18 @@ const NotificationsPage = () => {
     try {
       await notificationService.markRead(id);
       setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, is_read: true } : n));
-    } catch {}
+    } catch {
+      // Keep local state unchanged if the server rejects the read marker.
+    }
   };
 
   const markAllRead = async () => {
     try {
       await notificationService.markAllRead();
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
-    } catch {}
+    } catch {
+      // Keep local state unchanged if the server rejects the bulk read marker.
+    }
   };
 
   return (
