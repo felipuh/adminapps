@@ -173,7 +173,12 @@ class ISOStandardSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ISOStandard
-        fields = '__all__'
+        fields = [
+            'id', 'code', 'name', 'full_name', 'version', 'description',
+            'icon', 'color', 'status', 'is_base', 'monthly_price',
+            'annual_price', 'display_order', 'clauses_count', 'metadata',
+            'released_at', 'is_available', 'created_at', 'updated_at',
+        ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
@@ -199,7 +204,13 @@ class OrganizationModuleSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = OrganizationModule
-        fields = '__all__'
+        fields = [
+            'id', 'organization', 'organization_name', 'organization_code',
+            'iso_standard', 'iso_code', 'iso_name', 'status', 'is_enabled',
+            'is_active', 'activated_at', 'expires_at', 'suspended_at',
+            'activated_by', 'activated_by_name', 'internal_notes',
+            'created_at', 'updated_at',
+        ]
         read_only_fields = ['id', 'activated_at', 'created_at', 'updated_at']
 
 
@@ -237,7 +248,12 @@ class ModuleActivityLogSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ModuleActivityLog
-        fields = '__all__'
+        fields = [
+            'id', 'organization_module', 'organization_name', 'iso_code',
+            'action', 'performed_by', 'performed_by_name', 'notes',
+            'metadata', 'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
 
 
 class OrganizationModulesOverviewSerializer(serializers.Serializer):

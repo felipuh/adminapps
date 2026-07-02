@@ -171,7 +171,15 @@ class RecordPaymentSerializer(serializers.Serializer):
 class FiscalProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = FiscalProfile
-        fields = '__all__'
+        fields = [
+            'id', 'country', 'legal_name', 'commercial_name', 'tax_id',
+            'tax_activity_code', 'email', 'phone', 'address',
+            'hacienda_environment', 'hacienda_username', 'client_id',
+            'certificate_file', 'branch_code', 'terminal_code',
+            'invoice_sequence', 'credit_note_sequence', 'is_active',
+            'metadata', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class ProductCatalogSerializer(serializers.ModelSerializer):
@@ -180,7 +188,12 @@ class ProductCatalogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductCatalog
-        fields = '__all__'
+        fields = [
+            'id', 'code', 'name', 'description', 'system_product',
+            'system_product_code', 'system_product_name', 'billing_model',
+            'is_active', 'metadata', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class ProductPriceSerializer(serializers.ModelSerializer):
@@ -188,7 +201,12 @@ class ProductPriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductPrice
-        fields = '__all__'
+        fields = [
+            'id', 'product', 'product_name', 'name', 'currency', 'amount',
+            'billing_cycle', 'tax_rate', 'cabys_code', 'is_active',
+            'valid_from', 'valid_until', 'metadata', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
     def validate_cabys_code(self, value):
         if value and (not value.isdigit() or len(value) != 13):
@@ -199,7 +217,11 @@ class ProductPriceSerializer(serializers.ModelSerializer):
 class InvoiceLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceLine
-        fields = '__all__'
+        fields = [
+            'id', 'invoice', 'description', 'cabys_code', 'quantity',
+            'unit_price', 'discount_amount', 'tax_rate', 'subtotal',
+            'tax_amount', 'total', 'metadata', 'created_at',
+        ]
         read_only_fields = ['subtotal', 'tax_amount', 'total', 'created_at']
 
 
@@ -230,7 +252,20 @@ class ElectronicInvoiceDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ElectronicInvoice
-        fields = '__all__'
+        fields = [
+            'id', 'fiscal_profile', 'organization', 'organization_name',
+            'subscription', 'product', 'product_name', 'product_price',
+            'invoice_number', 'hci_key', 'document_type_code',
+            'consecutive_number', 'numeric_key', 'receiver_name',
+            'receiver_tax_id', 'receiver_email', 'sale_condition',
+            'payment_method_code', 'currency', 'exchange_rate', 'subtotal',
+            'tax_total', 'discount_total', 'total', 'status', 'issued_at',
+            'due_date', 'paid_at', 'hacienda_status', 'hacienda_message',
+            'hacienda_track_id', 'submitted_at', 'responded_at',
+            'xml_payload', 'xml_response', 'metadata', 'lines',
+            'billing_exempt', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class PaymentRecordSerializer(serializers.ModelSerializer):
@@ -243,7 +278,13 @@ class PaymentRecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentRecord
-        fields = '__all__'
+        fields = [
+            'id', 'invoice', 'invoice_number', 'organization',
+            'organization_name', 'amount', 'currency', 'method', 'reference',
+            'status', 'paid_at', 'notes', 'metadata', 'billing_exempt',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class RevenueSnapshotSerializer(serializers.ModelSerializer):
@@ -257,7 +298,14 @@ class RevenueSnapshotSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RevenueSnapshot
-        fields = '__all__'
+        fields = [
+            'id', 'snapshot_date', 'product', 'product_code', 'product_name',
+            'organization', 'organization_name', 'currency', 'gross_revenue',
+            'net_revenue', 'tax_collected', 'invoices_issued',
+            'invoices_paid', 'metadata', 'billing_exempt',
+            'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class ReconciliationSummarySerializer(serializers.Serializer):
@@ -366,7 +414,12 @@ class ProductDashboardSerializer(serializers.Serializer):
 class RecurringReportScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecurringReportSchedule
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'report_type', 'frequency', 'day_of_week',
+            'day_of_month', 'hour', 'minute', 'timezone', 'recipients',
+            'is_active', 'last_run_at', 'next_run_at', 'metadata',
+            'created_at', 'updated_at',
+        ]
         read_only_fields = ['last_run_at', 'next_run_at', 'created_at', 'updated_at']
 
     def validate(self, attrs):

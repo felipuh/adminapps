@@ -320,7 +320,10 @@ class UserOrganizationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserOrganization
-        fields = '__all__'
+        fields = [
+            'id', 'user', 'user_email', 'organization', 'organization_name',
+            'role', 'is_primary', 'is_active', 'joined_at', 'updated_at',
+        ]
         read_only_fields = ['id', 'joined_at', 'updated_at']
 
 
@@ -342,7 +345,13 @@ class UserActivityLogSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserActivityLog
-        fields = '__all__'
+        fields = [
+            'id', 'user', 'user_email', 'organization', 'organization_name',
+            'action', 'module', 'entity_type', 'entity_id', 'description',
+            'old_values', 'new_values', 'ip_address', 'user_agent',
+            'created_at',
+        ]
+        read_only_fields = fields
 
 
 class UserNotificationSerializer(serializers.Serializer):

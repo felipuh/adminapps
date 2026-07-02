@@ -48,7 +48,15 @@ class PlanDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Plan
-        fields = '__all__'
+        fields = [
+            'id', 'code', 'name', 'description', 'price', 'currency',
+            'billing_cycle', 'max_users', 'max_documents', 'max_storage_mb',
+            'max_organizations', 'modules_included', 'features',
+            'ai_analysis_enabled', 'ai_monthly_quota', 'is_active',
+            'is_featured', 'is_trial_available', 'trial_days',
+            'display_order', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class SubscriptionListSerializer(serializers.ModelSerializer):
@@ -92,7 +100,17 @@ class SubscriptionDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Subscription
-        fields = '__all__'
+        fields = [
+            'id', 'plan', 'days_remaining', 'trial_days_remaining',
+            'usage_percentage', 'is_active', 'is_trial', 'organization_name',
+            'billing_exempt', 'status', 'trial_started_at', 'trial_ends_at',
+            'started_at', 'current_period_start', 'current_period_end',
+            'cancelled_at', 'next_billing_date', 'amount', 'discount_percent',
+            'current_users', 'current_documents', 'current_storage_mb',
+            'ai_usage_this_month', 'payment_method', 'external_subscription_id',
+            'notes', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
     def _get_organization(self, obj):
         invoice = obj.invoices.select_related('organization').order_by('-issued_at').first()
@@ -143,7 +161,15 @@ class InvoiceDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Invoice
-        fields = '__all__'
+        fields = [
+            'id', 'number', 'subscription', 'subscription_plan',
+            'organization', 'organization_name', 'subtotal', 'tax',
+            'discount', 'total', 'currency', 'status', 'issued_at',
+            'due_date', 'paid_at', 'period_start', 'period_end',
+            'line_items', 'notes', 'payment_method', 'payment_reference',
+            'billing_exempt', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
     def get_billing_exempt(self, obj):
         return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))

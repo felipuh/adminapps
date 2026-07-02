@@ -11,6 +11,11 @@ from apps.users.models import User, UserOrganization
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class IntegrationAPIKeyUsageTests(APITestCase):
+    def test_integration_health_rejects_missing_api_key(self):
+        response = self.client.get('/api/integration/health/')
+
+        self.assertEqual(response.status_code, 401)
+
     def test_persisted_api_key_tracks_last_usage(self):
         api_key = IntegrationAPIKey.objects.create(
             name='medsupplier-service',

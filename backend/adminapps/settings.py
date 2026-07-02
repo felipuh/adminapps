@@ -6,6 +6,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
@@ -17,10 +18,31 @@ def _env_bool(name, default=False):
         return default
     return value.strip().lower() in ('1', 'true', 'yes', 'on')
 
+
+def _env_list(name, default=''):
+    value = os.environ.get(name, default)
+    return [item.strip() for item in value.split(',') if item.strip()]
+
 # SECURITY
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'change-this-dev-secret-key-before-deploy')
-DEBUG = _env_bool('DEBUG', default=True)
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'adminapps.isosmart.local', '192.168.100.100']
+DJANGO_ENV = os.environ.get('DJANGO_ENV', 'development').strip().lower()
+IS_PRODUCTION = DJANGO_ENV == 'production'
+DEBUG = _env_bool('DEBUG', default=False)
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+
+if not SECRET_KEY:
+    if IS_PRODUCTION:
+        raise ImproperlyConfigured('DJANGO_SECRET_KEY must be set in production')
+    SECRET_KEY = 'dev-only-adminapps-secret-key-change-before-production'
+
+if IS_PRODUCTION and DEBUG:
+    raise ImproperlyConfigured('DEBUG must be disabled in production')
+
+ALLOWED_HOSTS = _env_list(
+    'ALLOWED_HOSTS',
+    default='localhost,127.0.0.1,adminapps.isosmart.local,192.168.100.100' if not IS_PRODUCTION else '',
+)
+if IS_PRODUCTION and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured('ALLOWED_HOSTS must be configured in production')
 
 # APLICACIONES
 INSTALLED_APPS = [
@@ -146,13 +168,19 @@ SIMPLE_JWT = {
 }
 
 # CORS
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://adminapps.isosmart.local',
-    'http://isosmart.local',
-]
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = _env_list(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:3000,http://localhost:3001,http://adminapps.isosmart.local,http://isosmart.local' if not IS_PRODUCTION else '',
+)
+CORS_ALLOW_CREDENTIALS = _env_bool('CORS_ALLOW_CREDENTIALS', default=bool(CORS_ALLOWED_ORIGINS))
+CSRF_TRUSTED_ORIGINS = _env_list('CSRF_TRUSTED_ORIGINS')
+SESSION_COOKIE_SECURE = _env_bool('SESSION_COOKIE_SECURE', default=IS_PRODUCTION)
+CSRF_COOKIE_SECURE = _env_bool('CSRF_COOKIE_SECURE', default=IS_PRODUCTION)
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = os.environ.get('SESSION_COOKIE_SAMESITE', 'Lax')
+CSRF_COOKIE_SAMESITE = os.environ.get('CSRF_COOKIE_SAMESITE', 'Lax')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if _env_bool('USE_X_FORWARDED_PROTO', default=IS_PRODUCTION) else None
 
 # =============================================================================
 # CONFIGURACIÓN DE INTEGRACIÓN API

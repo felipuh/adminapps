@@ -65,7 +65,17 @@ class OrganizationDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Organization
-        fields = '__all__'
+        fields = [
+            'id', 'code', 'name', 'legal_name', 'tax_id', 'email', 'phone',
+            'website', 'address', 'city', 'state', 'country', 'postal_code',
+            'industry', 'size', 'employees_count', 'logo', 'primary_color',
+            'secondary_color', 'status', 'subscription', 'max_users',
+            'max_documents', 'max_storage_mb', 'trial_ends_at',
+            'subscription_ends_at', 'iso_standards', 'notes', 'metadata',
+            'settings', 'users_count', 'can_add_users', 'trial_expired',
+            'subscription_expired', 'subscription_name', 'billing_exempt',
+            'created_at', 'updated_at',
+        ]
         read_only_fields = ['id', 'code', 'created_at', 'updated_at']
 
 
@@ -109,7 +119,11 @@ class OrganizationInvitationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = OrganizationInvitation
-        fields = '__all__'
+        fields = [
+            'id', 'organization', 'organization_name', 'email', 'role', 'token',
+            'status', 'invited_by', 'invited_by_name', 'message', 'expires_at',
+            'accepted_at', 'is_expired', 'created_at',
+        ]
         read_only_fields = ['id', 'token', 'status', 'invited_by', 'created_at', 'accepted_at']
 
 
