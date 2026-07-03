@@ -5,6 +5,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { authService } from '../services/api';
 import toast from 'react-hot-toast';
 
+const LANDING_URL = import.meta.env.VITE_LANDING_URL || '';
+
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -310,17 +312,19 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <div className="mt-6 border-t border-slate-200 pt-4 text-center text-sm">
-            <p className="text-slate-500 mb-2">Conoce la propuesta comercial de IsoSmart</p>
-            <a
-              href="http://landing.isosmart.local/"
-              target="_blank"
-              rel="noreferrer"
-              className="font-semibold text-primary-700 hover:text-primary-900"
-            >
-              Ver landing corporativa y demo conversacional
-            </a>
-          </div>
+          {LANDING_URL && (
+            <div className="mt-6 border-t border-slate-200 pt-4 text-center text-sm">
+              <p className="text-slate-500 mb-2">Conoce la propuesta comercial de IsoSmart</p>
+              <a
+                href={LANDING_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-primary-700 hover:text-primary-900"
+              >
+                Ver landing corporativa y demo conversacional
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
