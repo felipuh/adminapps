@@ -16,6 +16,7 @@ env/
 **/venv*/
 **/env*/
 **/node_modules/
+frontend/dist/
 
 # Python cache artifacts
 **/__pycache__/
