@@ -130,6 +130,83 @@ class ProductSystemEntitlementTests(APITestCase):
         self.assertTrue(entitlement.access_allowed)
         self.assertEqual(entitlement.product.code, 'ISO_SMART')
 
+    def test_provision_pilot_entitlement_dry_run_does_not_write(self):
+        self.org.subscription = None
+        self.org.save(update_fields=['subscription'])
+        out = StringIO()
+
+        call_command(
+            'provision_pilot_entitlement',
+            organization=self.org.code,
+            product='ISO_SMART',
+            dry_run=True,
+            stdout=out,
+        )
+
+        payload = json.loads(out.getvalue())
+        self.assertTrue(payload['dry_run'])
+        self.assertTrue(payload['planned_changes']['create_plan'])
+        self.assertTrue(payload['planned_changes']['create_subscription'])
+        self.assertIsNone(payload['after']['entitlement'])
+        self.assertFalse(Plan.objects.filter(code='ISO_SMART_PILOT').exists())
+        self.assertFalse(
+            OrganizationProductEntitlement.objects.filter(
+                organization=self.org,
+                product=self.iso_product,
+            ).exists()
+        )
+
+    def test_provision_pilot_entitlement_allows_iso_smart_access(self):
+        self.org.subscription = None
+        self.org.save(update_fields=['subscription'])
+        out = StringIO()
+
+        call_command(
+            'provision_pilot_entitlement',
+            organization=self.org.code,
+            product='ISO_SMART',
+            scopes='pilot,qms',
+            stdout=out,
+        )
+
+        payload = json.loads(out.getvalue())
+        entitlement = OrganizationProductEntitlement.objects.get(
+            organization=self.org,
+            product=self.iso_product,
+        )
+        self.assertTrue(payload['access_allowed'])
+        self.assertEqual(payload['source'], 'adminapps')
+        self.assertFalse(payload['fallback'])
+        self.assertTrue(entitlement.access_allowed)
+        self.assertEqual(entitlement.access_denial_reason, 'ok')
+        self.assertEqual(entitlement.scopes, ['pilot', 'qms'])
+        self.org.refresh_from_db()
+        self.assertEqual(self.org.subscription.status, 'active')
+        self.assertTrue(
+            ProductEntitlementAuditLog.objects.filter(
+                entitlement=entitlement,
+                metadata__source='provision_pilot_entitlement',
+            ).exists()
+        )
+
+    def test_provision_pilot_entitlement_is_idempotent(self):
+        self.org.subscription = None
+        self.org.save(update_fields=['subscription'])
+        out = StringIO()
+
+        call_command('provision_pilot_entitlement', organization=self.org.code, product='ISO_SMART', stdout=out)
+        call_command('provision_pilot_entitlement', organization=self.org.code, product='ISO_SMART', stdout=out)
+
+        self.assertEqual(Plan.objects.filter(code='ISO_SMART_PILOT').count(), 1)
+        self.assertEqual(
+            OrganizationProductEntitlement.objects.filter(
+                organization=self.org,
+                product=self.iso_product,
+            ).count(),
+            1,
+        )
+        self.assertEqual(Subscription.objects.filter(plan__code='ISO_SMART_PILOT').count(), 1)
+
     def test_entitlement_api_exposes_subscription_plan_as_effective_plan(self):
         entitlement = OrganizationProductEntitlement.objects.create(
             organization=self.org,

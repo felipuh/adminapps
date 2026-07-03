@@ -25,7 +25,35 @@ Date: 2026-07-03
 | Invalid API key | Retry integration request with a known invalid key | Request is rejected. |
 | Missing entitlement | Use a pilot user or org without product entitlement | Access is denied. |
 
+## ISO Smart entitlement pre-kickoff evidence
+
+Required result before kickoff:
+
+- Organization: `SMART3AI` / Smart3AI
+- Product: `ISO_SMART`
+- Access allowed: `true`
+- Source: AdminApps
+- Fallback: `false`
+- Billing/subscription configured: `true`
+- Evidence captured at: 2026-07-03, local controlled AdminApps Django client smoke
+
+Evidence command:
+
+```bash
+python manage.py provision_pilot_entitlement --organization SMART3AI --product ISO_SMART --plan pilot --scopes owner,admin,billing_exempt,all_modules
+```
+
+Expected contract response:
+
+```text
+GET /api/integration/organizations/<SMART3AI_ID>/products/ISO_SMART/validate/
+HTTP 200
+allowed=true
+reason=ok
+product.access_allowed=true
+product.billing_status=active
+```
+
 ## GO/NO GO
 
 GO for kickoff requires all smoke steps to pass in the target pilot environment, with evidence captured in the release notes. Any silent fallback in staging/production, invalid API key acceptance, or entitlement bypass is NO GO for the pilot.
-

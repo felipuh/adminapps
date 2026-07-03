@@ -48,6 +48,37 @@ MedSupplier:
 - If AdminApps is unavailable, production fails closed.
 - Development/demo fallback requires an explicit flag and is scoped to local records.
 
+## ISO Smart entitlement pre-kickoff evidence
+
+Required result before kickoff:
+
+- Organization: `SMART3AI` / Smart3AI
+- Product: `ISO_SMART`
+- Access allowed: `true`
+- Source: AdminApps
+- Fallback: `false`
+- Billing/subscription configured: `true`
+- Evidence captured at: 2026-07-03, local controlled AdminApps Django client smoke
+
+Contract evidence:
+
+```text
+GET /api/integration/organizations/<SMART3AI_ID>/products/ISO_SMART/validate/
+HTTP 200
+allowed=true
+reason=ok
+product.access_allowed=true
+product.billing_status=active
+```
+
+Negative controls:
+
+```text
+invalid API key -> HTTP 401 invalid_api_key
+organization without ISO_SMART entitlement -> HTTP 403 product_not_enabled
+billing-blocked fixture -> HTTP 403 billing_blocked
+```
+
 ## Remaining E2E Gap
 
 The current contract suite uses strict Django/APIClient tests and mocked AdminApps outages for fail-closed behavior. A full live E2E run with all three services listening on their target ports remains a production-readiness task, not a controlled pilot blocker.

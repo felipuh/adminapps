@@ -57,9 +57,29 @@ GO requires all official QA gates, frontend builds, and the pilot smoke checklis
 - Confirm target URLs and TLS.
 - Confirm AdminApps health endpoint.
 - Confirm pilot organization and entitlements.
+- Confirm ISO Smart entitlement pre-kickoff evidence.
 - Confirm users, roles, and support contacts.
 - Run `docs/PILOT_SMOKE_CHECKLIST.md`.
 - Capture evidence and owner sign-off.
+
+## ISO Smart entitlement pre-kickoff evidence
+
+Required result before kickoff:
+
+- Organization: `SMART3AI` / Smart3AI
+- Product: `ISO_SMART`
+- Access allowed: `true`
+- Source: AdminApps
+- Fallback: `false`
+- Billing/subscription configured: `true`
+- Evidence captured at: 2026-07-03, local controlled AdminApps Django client smoke
+
+Provisioning must stay data/configuration driven. Use the idempotent command below for local/staging/pilot data, not hardcoded product access:
+
+```bash
+python manage.py provision_pilot_entitlement --organization <org_code_or_id> --product ISO_SMART --plan pilot --dry-run
+python manage.py provision_pilot_entitlement --organization <org_code_or_id> --product ISO_SMART --plan pilot
+```
 
 ## 8. Daily/Weekly Pilot Checklist
 
@@ -84,4 +104,3 @@ Before MVP enterprise, complete target-environment validation, monitoring, backu
 ## 11. Production And Regulated Status
 
 Controlled production remains NO GO. Regulated/formal production remains NO GO until WORM, SOPs, validation evidence, audit controls, restore drills, and regulated operational governance are complete.
-
