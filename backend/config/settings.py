@@ -26,8 +26,10 @@ def _env_list(name, default=''):
     return [item.strip() for item in value.split(',') if item.strip()]
 
 
-ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development').strip().lower()
+ENVIRONMENT = os.environ.get('DJANGO_ENV') or os.environ.get('ENVIRONMENT', 'development')
+ENVIRONMENT = ENVIRONMENT.strip().lower()
 IS_PRODUCTION = ENVIRONMENT in ('production', 'prod')
+IS_DEVELOPMENT = ENVIRONMENT in ('development', 'dev', 'local', 'test')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'change-this-dev-secret-key-before-deploy')
@@ -323,15 +325,21 @@ CSRF_COOKIE_SECURE = _env_bool('CSRF_COOKIE_SECURE', default=IS_PRODUCTION or no
 ISOSMART_API_URL = os.environ.get('ISOSMART_API_URL', 'http://localhost:8000/api')
 FRONTEND_BASE_URL = os.environ.get('FRONTEND_BASE_URL', 'http://localhost:3000')
 
-# Integration API key hashes (fallback when key not stored in DB)
+# Integration API key hashes (fallback when key not stored in DB).
+# Development/test may use deterministic hashes for local demos. Staging and
+# production require explicit hashes or persisted IntegrationAPIKey rows.
+_DEV_INTEGRATION_API_KEYS = {
+    'isosmart': '20985646232d3504aeddb985345b81ec968ed8d86a6993ab7efcfdd35cd537e7',
+    'landing_analytics': '0dc7befde90cc98351939f394cc9cccef2376a74c634d45a6ceb1a576f4dac3f',
+}
 INTEGRATION_API_KEYS = {
     'isosmart': os.environ.get(
         'ISOSMART_API_KEY_HASH',
-        '20985646232d3504aeddb985345b81ec968ed8d86a6993ab7efcfdd35cd537e7',
+        _DEV_INTEGRATION_API_KEYS['isosmart'] if IS_DEVELOPMENT else '',
     ),
     'landing_analytics': os.environ.get(
         'LANDING_ANALYTICS_API_KEY_HASH',
-        '0dc7befde90cc98351939f394cc9cccef2376a74c634d45a6ceb1a576f4dac3f',
+        _DEV_INTEGRATION_API_KEYS['landing_analytics'] if IS_DEVELOPMENT else '',
     ),
 }
 
