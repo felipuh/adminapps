@@ -10,16 +10,20 @@ from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.db import transaction
 from django.db.models import Count
 from functools import wraps
 import hashlib
 import hmac
 import json
+import uuid
 
 from apps.organizations.models import Organization
 from apps.products.models import OrganizationProductEntitlement, ProductEntitlementAuditLog, ProductSystem
 from apps.users.models import UserOrganization
-from .models import IntegrationAPIKey, LandingAnalyticsEvent
+from .models import DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
 
 User = get_user_model()
 
@@ -676,6 +680,83 @@ def ingest_landing_analytics(request):
         'campaign': campaign or 'direct',
         'received_at': timezone.now().isoformat(),
     }, status=201)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@require_api_key
+def create_demo_request(request):
+    """Create an idempotent pre-tenant demo request from the landing proxy."""
+    if getattr(request, 'integration_service', '') not in {'landing_demo', 'landing_analytics'}:
+        return JsonResponse({
+            'error': 'Servicio de integración no autorizado',
+            'code': 'service_not_allowed',
+        }, status=403)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido', 'code': 'invalid_json'}, status=400)
+
+    if str(data.get('website') or '').strip():
+        return JsonResponse({'ok': True, 'accepted': True}, status=201)
+
+    full_name = str(data.get('name') or '').strip()
+    work_email = str(data.get('email') or '').strip().lower()
+    organization_name = str(data.get('organization') or '').strip()
+    product_code = str(data.get('product') or '').strip().upper()
+    priority = str(data.get('priority') or '').strip()
+    consent_given = data.get('consent') is True
+
+    errors = {}
+    if len(full_name) < 2 or len(full_name) > 160:
+        errors['name'] = 'Indica un nombre válido.'
+    try:
+        validate_email(work_email)
+    except ValidationError:
+        errors['email'] = 'Indica un correo válido.'
+    if len(organization_name) < 2 or len(organization_name) > 200:
+        errors['organization'] = 'Indica una organización válida.'
+    if product_code not in {'ISO_SMART', 'MEDSUPPLIER'}:
+        errors['product'] = 'Producto no reconocido.'
+    valid_priorities = {choice[0] for choice in DemoRequest.PRIORITY_CHOICES}
+    if priority not in valid_priorities:
+        errors['priority'] = 'Prioridad no reconocida.'
+    if not consent_given:
+        errors['consent'] = 'El consentimiento es obligatorio.'
+
+    try:
+        external_id = uuid.UUID(str(data.get('request_id') or ''))
+    except (ValueError, TypeError, AttributeError):
+        errors['request_id'] = 'Identificador de solicitud inválido.'
+
+    if errors:
+        return JsonResponse({'error': 'Solicitud inválida', 'code': 'validation_error', 'fields': errors}, status=400)
+
+    with transaction.atomic():
+        demo_request, created = DemoRequest.objects.get_or_create(
+            external_id=external_id,
+            defaults={
+                'full_name': full_name,
+                'work_email': work_email,
+                'organization_name': organization_name,
+                'product_code': product_code,
+                'priority': priority,
+                'source': str(data.get('source') or 'landing').strip()[:80],
+                'campaign': str(data.get('campaign') or '').strip()[:120],
+                'page_url': str(data.get('page_url') or '').strip()[:500],
+                'consent_given': True,
+                'consented_at': timezone.now(),
+                'source_service': str(request.integration_service)[:100],
+            },
+        )
+
+    return JsonResponse({
+        'ok': True,
+        'created': created,
+        'request_id': str(demo_request.external_id),
+        'status': demo_request.status,
+    }, status=201 if created else 200)
 
 
 @csrf_exempt

@@ -1,33 +1,35 @@
+@import "../../../design-system/styles/platform.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-bg: #f6f8fb;
-  --color-bg-soft: #eef3f8;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f8fafc;
-  --color-border: #d9e2ec;
-  --color-border-strong: #c3cfdd;
-  --color-text: #111827;
-  --color-text-soft: #475569;
-  --color-text-muted: #64748b;
-  --color-primary: #155eef;
-  --color-primary-strong: #0f49ba;
-  --color-primary-soft: #e8f0ff;
-  --color-success: #047857;
-  --color-success-soft: #ecfdf5;
-  --color-warning: #b45309;
-  --color-warning-soft: #fffbeb;
-  --color-danger: #b91c1c;
-  --color-danger-soft: #fef2f2;
-  --color-info: #0369a1;
-  --color-info-soft: #eff6ff;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 10px 28px rgba(15, 23, 42, 0.08);
-  --radius-sm: 8px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --color-bg: var(--s3-color-bg);
+  --color-bg-soft: var(--s3-color-bg-soft);
+  --color-surface: var(--s3-color-surface);
+  --color-surface-muted: var(--s3-color-surface-muted);
+  --color-border: var(--s3-color-border);
+  --color-border-strong: var(--s3-color-border-strong);
+  --color-text: var(--s3-color-text);
+  --color-text-soft: var(--s3-color-text-soft);
+  --color-text-muted: var(--s3-color-text-muted);
+  --color-primary: var(--s3-color-brand-500);
+  --color-primary-strong: var(--s3-color-brand-700);
+  --color-primary-soft: var(--s3-color-brand-50);
+  --color-success: var(--s3-color-success);
+  --color-success-soft: var(--s3-color-success-soft);
+  --color-warning: var(--s3-color-warning);
+  --color-warning-soft: var(--s3-color-warning-soft);
+  --color-danger: var(--s3-color-danger);
+  --color-danger-soft: var(--s3-color-danger-soft);
+  --color-info: var(--s3-color-info);
+  --color-info-soft: var(--s3-color-info-soft);
+  --shadow-sm: var(--s3-shadow-xs);
+  --shadow-md: var(--s3-shadow-sm);
+  --radius-sm: var(--s3-radius-sm);
+  --radius-md: var(--s3-radius-md);
+  --radius-lg: var(--s3-radius-xl);
 }
 
 html {

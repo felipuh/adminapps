@@ -4,7 +4,7 @@ from django.test import override_settings
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
-from apps.integration.models import IntegrationAPIKey
+from apps.integration.models import DemoRequest, IntegrationAPIKey
 from apps.organizations.models import Organization
 from apps.products.models import OrganizationProductEntitlement, ProductSystem
 from apps.subscriptions.models import Plan, Subscription
@@ -68,6 +68,88 @@ class IntegrationAPIKeyUsageTests(APITestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+class DemoRequestIntegrationTests(APITestCase):
+    def setUp(self):
+        self.api_key = IntegrationAPIKey.objects.create(
+            name='landing_demo',
+            key='demo-request-contract-key',
+            is_active=True,
+        )
+        self.payload = {
+            'request_id': 'f30e6c84-ec2c-49ec-b3e6-0a6f4d0ee00a',
+            'name': 'Ana Calidad',
+            'email': 'ANA@EXAMPLE.COM',
+            'organization': 'Example Quality',
+            'product': 'ISO_SMART',
+            'priority': 'audit_readiness',
+            'consent': True,
+            'source': 'landing',
+            'page_url': 'https://example.com/',
+        }
+
+    def _post(self, payload=None, key='demo-request-contract-key'):
+        return self.client.post(
+            '/api/integration/demo-requests/',
+            payload if payload is not None else self.payload,
+            format='json',
+            HTTP_X_API_KEY=key,
+        )
+
+    def test_rejects_missing_api_key(self):
+        response = self.client.post('/api/integration/demo-requests/', self.payload, format='json')
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(DemoRequest.objects.count(), 0)
+
+    def test_rejects_invalid_fields_and_missing_consent(self):
+        response = self._post({
+            **self.payload,
+            'email': 'invalid',
+            'priority': 'unknown',
+            'consent': False,
+        })
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['code'], 'validation_error')
+        self.assertIn('email', response.json()['fields'])
+        self.assertIn('priority', response.json()['fields'])
+        self.assertIn('consent', response.json()['fields'])
+        self.assertEqual(DemoRequest.objects.count(), 0)
+
+    def test_creates_pretenant_request_without_creating_organization_or_user(self):
+        organizations_before = Organization.objects.count()
+        users_before = User.objects.count()
+
+        response = self._post()
+
+        self.assertEqual(response.status_code, 201)
+        request_record = DemoRequest.objects.get()
+        self.assertEqual(request_record.work_email, 'ana@example.com')
+        self.assertEqual(request_record.status, 'new')
+        self.assertEqual(request_record.source_service, 'landing_demo')
+        self.assertTrue(request_record.consent_given)
+        self.assertEqual(Organization.objects.count(), organizations_before)
+        self.assertEqual(User.objects.count(), users_before)
+
+    def test_is_idempotent_for_same_external_request(self):
+        first = self._post()
+        second = self._post()
+
+        self.assertEqual(first.status_code, 201)
+        self.assertEqual(second.status_code, 200)
+        self.assertFalse(second.json()['created'])
+        self.assertEqual(DemoRequest.objects.count(), 1)
+
+    def test_rejects_unapproved_integration_service(self):
+        IntegrationAPIKey.objects.create(name='isosmart-service', key='wrong-service-key', is_active=True)
+
+        response = self._post(key='wrong-service-key')
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.json()['code'], 'service_not_allowed')
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])

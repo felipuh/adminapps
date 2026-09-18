@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from django.db.models import Count, Q
+from django.db import transaction
 
 from .models import Organization, OrganizationSettings, OrganizationInvitation
 from .serializers import (
@@ -34,6 +35,9 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'code', 'email', 'legal_name']
     ordering_fields = ['name', 'created_at', 'status']
     ordering = ['-created_at']
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({'code': 'tenant_deprovision_not_supported'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     def get_serializer_class(self):
         if self.action == 'list':
@@ -45,7 +49,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         return OrganizationDetailSerializer
     
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
+        if self.action in ['create', 'destroy', 'activate', 'suspend']:
             return [IsSuperAdmin()]
         elif self.action in ['update', 'partial_update']:
             return [IsAdmin()]
@@ -119,16 +123,26 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     def activate(self, request, pk=None):
         """Activar una organización"""
         organization = self.get_object()
-        organization.status = 'active'
-        organization.save()
+        from .tenant_events import record_tenant_event
+        with transaction.atomic():
+            organization = Organization.objects.select_for_update().get(pk=organization.pk)
+            if organization.status != 'active':
+                organization.status = 'active'
+                organization.save(update_fields=['status', 'updated_at'])
+                record_tenant_event(organization, actor_id=request.user.id)
         return Response({'status': 'activated'})
     
     @action(detail=True, methods=['post'])
     def suspend(self, request, pk=None):
         """Suspender una organización"""
         organization = self.get_object()
-        organization.status = 'suspended'
-        organization.save()
+        from .tenant_events import record_tenant_event
+        with transaction.atomic():
+            organization = Organization.objects.select_for_update().get(pk=organization.pk)
+            if organization.status != 'suspended':
+                organization.status = 'suspended'
+                organization.save(update_fields=['status', 'updated_at'])
+                record_tenant_event(organization, actor_id=request.user.id)
         return Response({'status': 'suspended'})
 
 

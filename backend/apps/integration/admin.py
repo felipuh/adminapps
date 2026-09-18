@@ -2,7 +2,7 @@
 Admin configuration for Integration module
 """
 from django.contrib import admin
-from .models import IntegrationAPIKey, LandingAnalyticsEvent
+from .models import DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
 
 
 @admin.register(IntegrationAPIKey)
@@ -41,3 +41,30 @@ class LandingAnalyticsEventAdmin(admin.ModelAdmin):
     list_filter = ('event_name', 'campaign', 'variant', 'intent', 'event_date')
     search_fields = ('campaign', 'session_id', 'persona', 'page_path')
     ordering = ('-occurred_at',)
+
+
+@admin.register(DemoRequest)
+class DemoRequestAdmin(admin.ModelAdmin):
+    list_display = (
+        'organization_name',
+        'full_name',
+        'work_email',
+        'product_code',
+        'priority',
+        'status',
+        'owner',
+        'created_at',
+    )
+    list_filter = ('status', 'product_code', 'priority', 'source', 'created_at')
+    search_fields = ('organization_name', 'full_name', 'work_email', 'campaign')
+    readonly_fields = (
+        'id',
+        'external_id',
+        'source_service',
+        'consent_given',
+        'consented_at',
+        'created_at',
+        'updated_at',
+    )
+    ordering = ('-created_at',)
+    list_select_related = ('owner',)

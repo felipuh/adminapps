@@ -1,5 +1,9 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -22,6 +26,14 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    resolve: {
+      alias: {
+        '@smart3ai/design-system': path.resolve(__dirname, '../../design-system/src/index.js'),
+        react: path.resolve(__dirname, 'node_modules/react'),
+        'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+        'lucide-react': path.resolve(__dirname, 'node_modules/lucide-react/dist/esm/lucide-react.mjs'),
+      },
+    },
     server: {
       port: 3000,
       host: '0.0.0.0',
@@ -35,7 +47,7 @@ export default defineConfig(({ mode }) => {
       ],
       proxy: {
         '/api': {
-          target: 'http://localhost:8000',
+          target: 'http://127.0.0.1:8000',
           changeOrigin: true,
         },
       },

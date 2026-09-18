@@ -14,7 +14,22 @@ import { organizationService } from '../services/api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { showConfirm } from '../services/dialogs';
-import { DataTable, EmptyState, ErrorState, LoadingState, PageHeader, SearchInput, StatusBadge } from '../components/ui/EnterpriseUI';
+import {
+  ActiveFilters,
+  DataTable,
+  EmptyState,
+  ErrorState,
+  FilterBar,
+  FilterChip,
+  FilterSelect,
+  LoadingState,
+  PageContent,
+  PageHeader,
+  PageLayout,
+  ResultsSummary,
+  SearchInput,
+  StatusBadge,
+} from '../components/ui/EnterpriseUI';
 
 const getProductSignals = (org, t) => {
   const rawProducts = org.products || org.active_products || org.entitlements || org.product_codes || [];
@@ -469,8 +484,17 @@ const OrganizationsPage = () => {
     setModalOpen(true);
   };
 
+  const hasActiveFilters = Boolean(search || statusFilter);
+  const statusFilterLabel = {
+    active: t.activePlural,
+    trial: 'Trial',
+    suspended: t.suspendedPlural,
+    inactive: t.inactivePlural,
+  }[statusFilter] || statusFilter;
+
   return (
-    <div className="enterprise-page">
+    <PageLayout>
+      <PageContent>
       <PageHeader
         eyebrow={isEnglish ? 'Customer administration' : 'Administración de clientes'}
         title={t.pageTitle}
@@ -485,18 +509,21 @@ const OrganizationsPage = () => {
 
       {/* Filters */}
       <div className="enterprise-card p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <FilterBar label={isEnglish ? 'Organization filters' : 'Filtros de organizaciones'}>
           <div className="flex-1">
             <SearchInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              label={isEnglish ? 'Search' : 'Buscar'}
               placeholder={t.searchPlaceholder}
+              clearLabel={isEnglish ? 'Clear search' : 'Limpiar busqueda'}
             />
           </div>
           <div className="flex gap-3">
-            <select
+            <FilterSelect
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={setStatusFilter}
+              label={isEnglish ? 'Status' : 'Estado'}
               className="input-glass w-auto"
             >
               <option value="">{t.allStatuses}</option>
@@ -504,9 +531,29 @@ const OrganizationsPage = () => {
               <option value="trial">Trial</option>
               <option value="suspended">{t.suspendedPlural}</option>
               <option value="inactive">{t.inactivePlural}</option>
-            </select>
+            </FilterSelect>
           </div>
-        </div>
+        </FilterBar>
+        {hasActiveFilters && (
+          <ActiveFilters label={isEnglish ? 'Active filters' : 'Filtros activos'} className="mt-3">
+            {search && (
+              <FilterChip
+                label={isEnglish ? 'Search' : 'Buscar'}
+                value={search}
+                removeLabel={isEnglish ? 'Remove search filter' : 'Quitar filtro de busqueda'}
+                onRemove={() => setSearch('')}
+              />
+            )}
+            {statusFilter && (
+              <FilterChip
+                label={isEnglish ? 'Status' : 'Estado'}
+                value={statusFilterLabel}
+                removeLabel={isEnglish ? 'Remove status filter' : 'Quitar filtro de estado'}
+                onRemove={() => setStatusFilter('')}
+              />
+            )}
+          </ActiveFilters>
+        )}
       </div>
 
       {/* Table */}
@@ -529,7 +576,11 @@ const OrganizationsPage = () => {
             />
           </div>
         ) : (
-          <DataTable>
+          <>
+            <div className="px-4 py-3">
+              <ResultsSummary>{isEnglish ? `${organizations.length} organizations` : `${organizations.length} organizaciones`}</ResultsSummary>
+            </div>
+            <DataTable>
               <thead>
                 <tr>
                   <th>{t.organization}</th>
@@ -553,7 +604,8 @@ const OrganizationsPage = () => {
                   />
                 ))}
               </tbody>
-          </DataTable>
+            </DataTable>
+          </>
         )}
       </div>
 
@@ -566,7 +618,8 @@ const OrganizationsPage = () => {
         t={t}
         isEnglish={isEnglish}
       />
-    </div>
+      </PageContent>
+    </PageLayout>
   );
 };
 

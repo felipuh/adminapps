@@ -37,4 +37,5 @@ urlpatterns = [
     # Analítica de landing Smart3AI
     path('landing-analytics/events/', views.ingest_landing_analytics, name='landing-analytics-events'),
     path('landing-analytics/summary/', views.landing_analytics_summary, name='landing-analytics-summary'),
+    path('demo-requests/', views.create_demo_request, name='create-demo-request'),
 ]

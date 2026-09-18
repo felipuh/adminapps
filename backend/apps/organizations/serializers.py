@@ -2,6 +2,7 @@
 Serializers for Organizations - Admin Apps
 """
 from django.conf import settings
+from django.db import transaction
 from rest_framework import serializers
 from .models import Organization, OrganizationSettings, OrganizationInvitation
 
@@ -85,16 +86,22 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = [
+            'id',
             'name', 'legal_name', 'tax_id', 'email', 'phone', 'website',
             'address', 'city', 'state', 'country', 'postal_code',
             'industry', 'size', 'employees_count', 'iso_standards', 'notes'
         ]
+        read_only_fields = ['id']
     
     def create(self, validated_data):
-        organization = Organization.objects.create(**validated_data)
-        # Crear settings por defecto
-        OrganizationSettings.objects.create(organization=organization)
-        return organization
+        from .tenant_events import record_tenant_event
+        request = self.context.get('request')
+        actor_id = getattr(getattr(request, 'user', None), 'id', None)
+        with transaction.atomic():
+            organization = Organization.objects.create(**validated_data)
+            OrganizationSettings.objects.create(organization=organization)
+            record_tenant_event(organization, actor_id=actor_id)
+            return organization
 
 
 class OrganizationUpdateSerializer(serializers.ModelSerializer):
@@ -110,6 +117,19 @@ class OrganizationUpdateSerializer(serializers.ModelSerializer):
             'iso_standards', 'notes', 'metadata',
             'primary_color', 'secondary_color'
         ]
+
+    def update(self, instance, validated_data):
+        from .tenant_events import record_tenant_event
+        request = self.context.get('request')
+        actor_id = getattr(getattr(request, 'user', None), 'id', None)
+        with transaction.atomic():
+            instance = Organization.objects.select_for_update().get(pk=instance.pk)
+            changed = any(getattr(instance, key) != validated_data[key]
+                          for key in ('name', 'status') if key in validated_data)
+            instance = super().update(instance, validated_data)
+            if changed:
+                record_tenant_event(instance, actor_id=actor_id)
+            return instance
 
 
 class OrganizationInvitationSerializer(serializers.ModelSerializer):

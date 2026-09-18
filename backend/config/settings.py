@@ -331,6 +331,7 @@ FRONTEND_BASE_URL = os.environ.get('FRONTEND_BASE_URL', 'http://localhost:3000')
 _DEV_INTEGRATION_API_KEYS = {
     'isosmart': '20985646232d3504aeddb985345b81ec968ed8d86a6993ab7efcfdd35cd537e7',
     'landing_analytics': '0dc7befde90cc98351939f394cc9cccef2376a74c634d45a6ceb1a576f4dac3f',
+    'landing_demo': '',
 }
 INTEGRATION_API_KEYS = {
     'isosmart': os.environ.get(
@@ -341,6 +342,7 @@ INTEGRATION_API_KEYS = {
         'LANDING_ANALYTICS_API_KEY_HASH',
         _DEV_INTEGRATION_API_KEYS['landing_analytics'] if IS_DEVELOPMENT else '',
     ),
+    'landing_demo': os.environ.get('LANDING_DEMO_API_KEY_HASH', ''),
 }
 
 # Billing Scheduler

@@ -185,7 +185,8 @@ class Organization(models.Model):
     @property
     def is_trial(self):
         return self.status == 'trial'
-    
+
+
     @property
     def trial_expired(self):
         if self.trial_ends_at:
@@ -205,6 +206,29 @@ class Organization(models.Model):
     @property
     def can_add_users(self):
         return self.users_count < self.max_users
+
+
+class TenantIntegrationOutbox(models.Model):
+    """Durable AdminApps tenant facts, committed with the customer mutation."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(Organization, on_delete=models.PROTECT, related_name='tenant_events')
+    source_version = models.PositiveBigIntegerField()
+    envelope = models.JSONField()
+    status = models.CharField(max_length=20, default='pending')
+    attempts = models.PositiveIntegerField(default=0)
+    available_at = models.DateTimeField(default=timezone.now)
+    delivered_at = models.DateTimeField(null=True, blank=True)
+    last_error = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'tenant_integration_outbox'
+        indexes = [models.Index(fields=['status', 'available_at'], name='tenant_outbox_ready_idx')]
+        constraints = [
+            models.UniqueConstraint(fields=['organization', 'source_version'], name='tenant_outbox_org_version_unique'),
+            models.CheckConstraint(check=models.Q(status__in=['pending', 'processing', 'delivered', 'failed']), name='tenant_outbox_status_valid'),
+        ]
 
 
 class OrganizationSettings(models.Model):

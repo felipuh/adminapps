@@ -1,5 +1,34 @@
 # Product-Neutral AdminApps Contract
 
+## Canonical tenant provisioning identity (tenant events v1)
+
+`apps.organizations.Organization.id` is the canonical, immutable global tenant
+UUID. ISO Smart stores it in `TenantProjection.adminapps_tenant_id`; the local
+`TenantProjection.id` and QMS `Organization.id` are separate IDs. One tenant may
+have many QMS organizations. AdminApps owns provisioning and global status.
+
+The active organization creation API commits the customer, settings and
+`TenantIntegrationOutbox` event together. Its initial `source_version` is 1;
+each changed name or status emits exactly one later version. The event envelope
+uses `tenant.provisioned`, `tenant.updated` or `tenant.suspended`, schema version
+1, `source=adminapps`, UUID `event_id`/`trace_id`/tenant ID, timezone-aware
+`occurred_at`, optional `actor_id`, and `payload.display_name`, `payload.adminapps_status` and
+`payload.lifecycle_status`. `aggregate_type=tenant` and `aggregate_id` equals
+the canonical UUID. `correlation_id` is optional. Display name is a mutable
+snapshot, never an identifier. Status maps `trial|active → active` and
+`inactive|suspended → suspended`; an ISO Smart operation still needs a fresh
+product entitlement check. Deactivation suspends access but preserves IDs and
+historical QMS records. Hard deletion is unavailable until a separate governed
+deprovision operation exists.
+
+The outbox dispatcher posts the unchanged envelope over HTTPS to ISO Smart's
+`/api/integration/adminapps/tenant-events/` with `X-API-Key`. The key is
+configured as `ISO_SMART_TENANT_EVENT_KEY` at the producer and its SHA-256 hash
+as `ADMINAPPS_TENANT_EVENT_KEY_SHA256` at the consumer; neither is in an event
+or log. Retry preserves event ID and payload. ISO Smart authenticates the
+service before validating the envelope and records an ingress receipt for every
+valid authenticated event, including replay and processing status.
+
 Fecha: 2026-06-29
 
 ## Objetivo

@@ -1,6 +1,8 @@
 """
 Models for Integration module
 """
+import uuid
+
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -64,3 +66,58 @@ class LandingAnalyticsEvent(models.Model):
         if self.occurred_at:
             self.event_date = timezone.localtime(self.occurred_at).date()
         super().save(*args, **kwargs)
+
+
+class DemoRequest(models.Model):
+    """Pre-tenant commercial request received from an approved landing service."""
+
+    STATUS_CHOICES = [
+        ('new', 'Nueva'),
+        ('contacted', 'Contactada'),
+        ('qualified', 'Calificada'),
+        ('scheduled', 'Agendada'),
+        ('closed', 'Cerrada'),
+    ]
+    PRIORITY_CHOICES = [
+        ('document_control', 'Control documental'),
+        ('audit_readiness', 'Preparación de auditorías'),
+        ('findings_actions', 'Hallazgos y acciones'),
+        ('indicators_followup', 'Indicadores y seguimiento'),
+        ('general_evaluation', 'Evaluación general'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    external_id = models.UUIDField(unique=True, db_index=True)
+    full_name = models.CharField(max_length=160)
+    work_email = models.EmailField(db_index=True)
+    organization_name = models.CharField(max_length=200, db_index=True)
+    product_code = models.CharField(max_length=40, db_index=True)
+    priority = models.CharField(max_length=32, choices=PRIORITY_CHOICES, db_index=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new', db_index=True)
+    source = models.CharField(max_length=80, default='landing', db_index=True)
+    campaign = models.CharField(max_length=120, blank=True, db_index=True)
+    page_url = models.URLField(max_length=500, blank=True)
+    consent_given = models.BooleanField(default=False)
+    consented_at = models.DateTimeField()
+    source_service = models.CharField(max_length=100)
+    owner = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='owned_demo_requests',
+    )
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'integration_demo_requests'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'created_at'], name='demo_req_status_created_idx'),
+            models.Index(fields=['product_code', 'priority'], name='demo_req_product_priority_idx'),
+        ]
+
+    def __str__(self):
+        return f'{self.organization_name} — {self.work_email}'

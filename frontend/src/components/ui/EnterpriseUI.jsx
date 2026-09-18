@@ -1,4 +1,27 @@
-import { AlertTriangle, Inbox, Loader2, Search } from 'lucide-react';
+import { AlertTriangle, Inbox } from 'lucide-react';
+import {
+  S3ActiveFilters,
+  S3ActionBar,
+  S3Banner,
+  S3FilterBar,
+  S3FilterChip,
+  S3FilterSelect,
+  S3LoadingState,
+  S3PageContent,
+  S3PageLayout,
+  S3Panel,
+  S3Popover,
+  S3ResultsSummary,
+  S3SearchInput,
+  S3StatusBadge,
+  S3Table,
+  S3TableContainer,
+  S3TableHeader,
+  S3Toast,
+  S3ToastAction,
+  S3ToastViewport,
+  S3Tooltip,
+} from '@smart3ai/design-system';
 
 export const PageHeader = ({ eyebrow, title, description, actions }) => (
   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -9,6 +32,16 @@ export const PageHeader = ({ eyebrow, title, description, actions }) => (
     </div>
     {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
   </div>
+);
+
+export const PageLayout = ({ children, size = 'wide', className = '' }) => (
+  <S3PageLayout as="div" size={size} className={`enterprise-page ${className}`}>
+    {children}
+  </S3PageLayout>
+);
+
+export const PageContent = ({ children, className = '' }) => (
+  <S3PageContent className={className}>{children}</S3PageContent>
 );
 
 export const SectionHeader = ({ eyebrow, title, description, action }) => (
@@ -23,7 +56,7 @@ export const SectionHeader = ({ eyebrow, title, description, action }) => (
 );
 
 export const Card = ({ children, className = '' }) => (
-  <div className={`enterprise-card ${className}`}>{children}</div>
+  <S3Panel className={`enterprise-card ${className}`} bodyClassName="s3-panel__body-reset" padding="none">{children}</S3Panel>
 );
 
 export const MetricCard = ({ label, value, helper, icon: Icon, tone = 'blue' }) => {
@@ -56,25 +89,25 @@ export const MetricCard = ({ label, value, helper, icon: Icon, tone = 'blue' }) 
 export const StatusBadge = ({ status, children }) => {
   const normalized = String(status || '').toLowerCase();
   const map = {
-    active: 'badge-success',
-    activo: 'badge-success',
-    enabled: 'badge-success',
-    paid: 'badge-success',
-    trial: 'badge-info',
-    pending: 'badge-warning',
-    overdue: 'badge-warning',
-    suspended: 'badge-warning',
-    inactive: 'badge-neutral',
-    disabled: 'badge-neutral',
-    not_configured: 'badge-neutral',
-    cancelled: 'badge-danger',
-    canceled: 'badge-danger',
-    revoked: 'badge-danger',
-    expired: 'badge-danger',
-    error: 'badge-danger',
+    active: 'success',
+    activo: 'success',
+    enabled: 'success',
+    paid: 'success',
+    trial: 'info',
+    pending: 'warning',
+    overdue: 'warning',
+    suspended: 'warning',
+    inactive: 'neutral',
+    disabled: 'neutral',
+    not_configured: 'neutral',
+    cancelled: 'danger',
+    canceled: 'danger',
+    revoked: 'danger',
+    expired: 'danger',
+    error: 'danger',
   };
 
-  return <span className={map[normalized] || 'badge-neutral'}>{children || status || 'Sin configurar'}</span>;
+  return <S3StatusBadge tone={map[normalized] || 'neutral'}>{children || status || 'Sin configurar'}</S3StatusBadge>;
 };
 
 export const EmptyState = ({ icon: Icon = Inbox, title, description, action }) => (
@@ -87,10 +120,7 @@ export const EmptyState = ({ icon: Icon = Inbox, title, description, action }) =
 );
 
 export const LoadingState = ({ label = 'Cargando...' }) => (
-  <div className="rounded-xl border border-slate-200 bg-white p-8 text-center">
-    <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary-600" />
-    <p className="mt-3 text-sm text-slate-500">{label}</p>
-  </div>
+  <S3LoadingState variant="section" size="lg" label={label} />
 );
 
 export const ErrorState = ({ title, description, action }) => (
@@ -102,21 +132,44 @@ export const ErrorState = ({ title, description, action }) => (
   </div>
 );
 
-export const SearchInput = ({ value, onChange, placeholder }) => (
-  <div className="relative">
-    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-    <input
-      type="text"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className="input-glass pl-10"
-    />
-  </div>
+export const Banner = ({ tone = 'info', title, description, actions, onDismiss, children }) => (
+  <S3Banner tone={tone} title={title} description={description} actions={actions} onDismiss={onDismiss}>
+    {children}
+  </S3Banner>
+);
+
+export const Tooltip = ({ content, children, placement }) => (
+  <S3Tooltip content={content} placement={placement}>{children}</S3Tooltip>
+);
+
+export const Popover = ({ content, children, open, onOpenChange, placement }) => (
+  <S3Popover content={content} open={open} onOpenChange={onOpenChange} placement={placement}>{children}</S3Popover>
+);
+
+export const ToastViewport = S3ToastViewport;
+export const Toast = S3Toast;
+export const ToastAction = S3ToastAction;
+
+export const SearchInput = ({ value, onChange, placeholder, label, clearLabel }) => (
+  <S3SearchInput
+    value={value}
+    onChange={(nextValue) => onChange?.({ target: { value: nextValue }, currentTarget: { value: nextValue } })}
+    label={label}
+    placeholder={placeholder}
+    clearLabel={clearLabel}
+  />
 );
 
 export const DataTable = ({ children }) => (
-  <div className="overflow-x-auto">
-    <table className="table-glass">{children}</table>
-  </div>
+  <S3TableContainer>
+    <S3Table className="table-glass">{children}</S3Table>
+  </S3TableContainer>
 );
+
+export const FilterBar = S3FilterBar;
+export const ActionBar = S3ActionBar;
+export const FilterSelect = S3FilterSelect;
+export const ActiveFilters = S3ActiveFilters;
+export const FilterChip = S3FilterChip;
+export const ResultsSummary = S3ResultsSummary;
+export const SortableHeader = S3TableHeader;
