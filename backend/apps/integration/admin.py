@@ -7,24 +7,42 @@ from .models import DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
 
 @admin.register(IntegrationAPIKey)
 class IntegrationAPIKeyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_active', 'last_used_at', 'last_used_service', 'created_at')
-    list_filter = ('is_active', 'last_used_at', 'created_at')
-    search_fields = ('name', 'key')
-    readonly_fields = ('last_used_at', 'last_used_service', 'created_at', 'updated_at')
-    
-    fieldsets = (
-        ('Información Básica', {
-            'fields': ('name', 'key', 'is_active')
-        }),
-        ('Uso', {
-            'fields': ('last_used_at', 'last_used_service'),
-            'classes': ('collapse',)
-        }),
-        ('Fechas', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
+    list_display = (
+        'name',
+        'credential_id',
+        'credential_format',
+        'fingerprint',
+        'status',
+        'last_used_at',
+        'created_at',
     )
+    list_filter = ('credential_format', 'status', 'is_active', 'created_at')
+    search_fields = ('name', 'credential_id', 'fingerprint')
+    fields = (
+        'name',
+        'credential_id',
+        'credential_format',
+        'fingerprint',
+        'status',
+        'is_active',
+        'replaced_by',
+        'last_used_at',
+        'last_used_service',
+        'created_at',
+        'revoked_at',
+        'rotated_at',
+        'updated_at',
+    )
+    readonly_fields = fields
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(LandingAnalyticsEvent)

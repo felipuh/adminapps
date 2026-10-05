@@ -15,8 +15,6 @@ from django.core.validators import validate_email
 from django.db import transaction
 from django.db.models import Count
 from functools import wraps
-import hashlib
-import hmac
 import json
 import uuid
 
@@ -24,6 +22,7 @@ from apps.organizations.models import Organization
 from apps.products.models import OrganizationProductEntitlement, ProductEntitlementAuditLog, ProductSystem
 from apps.users.models import UserOrganization
 from .models import DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
+from .services import authenticate_integration_api_key
 
 User = get_user_model()
 
@@ -143,32 +142,19 @@ def require_api_key(view_func):
                 'code': 'missing_api_key'
             }, status=401)
         
-        # Verificar primero contra la base de datos
-        service_name = None
-        key_obj = None
-        try:
-            key_obj = IntegrationAPIKey.objects.get(key=api_key, is_active=True)
-            service_name = key_obj.name
-        except IntegrationAPIKey.DoesNotExist:
-            # Fallback opcional a hashes en settings para claves de entorno.
-            valid_keys = getattr(settings, 'INTEGRATION_API_KEYS', {})
-            provided_hash = hashlib.sha256(api_key.encode()).hexdigest()
-            for name, key_hash in valid_keys.items():
-                if key_hash and hmac.compare_digest(provided_hash, key_hash):
-                    service_name = name
-                    break
+        credential = authenticate_integration_api_key(api_key)
+        if credential is None:
+            return JsonResponse({
+                'error': 'API Key inválida',
+                'code': 'invalid_api_key'
+            }, status=401)
 
-            if not service_name:
-                return JsonResponse({
-                    'error': 'API Key inválida',
-                    'code': 'invalid_api_key'
-                }, status=401)
-
+        service_name = credential.name if isinstance(credential, IntegrationAPIKey) else credential
         request.integration_service = service_name
-        if key_obj is not None:
-            key_obj.last_used_at = timezone.now()
-            key_obj.last_used_service = service_name[:100]
-            key_obj.save(update_fields=['last_used_at', 'last_used_service', 'updated_at'])
+        if isinstance(credential, IntegrationAPIKey):
+            credential.last_used_at = timezone.now()
+            credential.last_used_service = service_name[:100]
+            credential.save(update_fields=['last_used_at', 'last_used_service', 'updated_at'])
         
         return view_func(request, *args, **kwargs)
     
