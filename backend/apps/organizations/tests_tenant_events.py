@@ -14,7 +14,47 @@ from .models import Organization, TenantIntegrationOutbox
 from .serializers import OrganizationCreateSerializer, OrganizationUpdateSerializer
 
 
+def _disposable_actions_module():
+    path = (Path(__file__).resolve().parents[4] / 'isosmart' / 'docs' / 'governance' /
+            'tools' / 'phase31_4_v2_5_operational_actions.py')
+    spec = importlib.util.spec_from_file_location('disposable_operational_actions', path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 class TenantEventProductionTests(TestCase):
+    def test_disposable_authority_creation_emits_canonical_tenant_event(self):
+        actor = User.objects.create_user(email='disposable-owner@example.test')
+        organization = _disposable_actions_module().create_authority_tenant(
+            actor=actor, name='Disposable Tenant', email='disposable@example.test')
+        events = TenantIntegrationOutbox.objects.filter(organization=organization)
+        self.assertEqual(events.count(), 1)
+        event = events.get()
+        self.assertEqual(event.envelope['event_id'], str(event.id))
+        self.assertEqual(event.envelope['aggregate_id'], str(organization.id))
+        self.assertEqual(event.envelope['adminapps_tenant_id'], str(organization.id))
+        self.assertEqual(event.envelope['actor_id'], str(actor.id))
+        self.assertEqual(event.envelope['event_type'], 'tenant.provisioned')
+        self.assertEqual(event.envelope['payload'], {
+            'display_name': organization.name,
+            'lifecycle_status': 'active',
+            'adminapps_status': 'trial',
+        })
+
+    def test_disposable_authority_creation_rolls_back_tenant_and_event(self):
+        from django.db import transaction
+
+        actor = User.objects.create_user(email='disposable-rollback@example.test')
+        with self.assertRaises(RuntimeError):
+            with transaction.atomic():
+                _disposable_actions_module().create_authority_tenant(
+                    actor=actor, name='Rollback Tenant', email='rollback-disposable@example.test')
+                raise RuntimeError('rollback')
+        self.assertFalse(Organization.objects.filter(email='rollback-disposable@example.test').exists())
+        self.assertFalse(TenantIntegrationOutbox.objects.exists())
+
     def test_native_create_and_update_commit_versioned_outbox(self):
         organization = OrganizationCreateSerializer().create({
             'name': 'Example Quality', 'email': 'owner@example.test',
