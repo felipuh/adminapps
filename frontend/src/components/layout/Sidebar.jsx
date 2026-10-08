@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   BarChart3,
+  Bot,
   Bell,
   Building2,
   ChevronLeft,
@@ -25,6 +26,7 @@ const Sidebar = ({ isOpen, onToggle, mobileOpen, onMobileClose }) => {
     { name: isEnglish ? 'Users' : 'Usuarios', href: '/users', icon: Users },
     { name: isEnglish ? 'Subscriptions' : 'Suscripciones', href: '/subscriptions', icon: CreditCard },
     { name: isEnglish ? 'Finance' : 'Finanzas', href: '/finance', icon: BarChart3 },
+    { name: isEnglish ? 'AI Usage & Costs' : 'Uso y costos de IA', href: '/ai-usage', icon: Bot },
     { name: isEnglish ? 'Notifications' : 'Notificaciones', href: '/notifications', icon: Bell },
     { name: isEnglish ? 'Settings' : 'Configuración', href: '/settings', icon: Settings },
   ];

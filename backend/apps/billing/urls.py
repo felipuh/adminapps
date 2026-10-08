@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     AccountsReceivableView,
+    AIUsageDashboardView,
     BillingAlertsView,
     BillingChurnAnalyticsView,
     BillingReconciliationView,
@@ -31,6 +32,7 @@ router.register(r'revenue-snapshots', RevenueSnapshotViewSet, basename='billing-
 router.register(r'reports/schedules', RecurringReportScheduleViewSet, basename='billing-report-schedule')
 
 urlpatterns = [
+    path('ai-usage/', AIUsageDashboardView.as_view(), name='billing-ai-usage'),
     path('summary/', BillingSummaryView.as_view(), name='billing-summary'),
     path('revenue/by-product/', RevenueByProductView.as_view(), name='billing-revenue-by-product'),
     path('revenue/by-organization/', RevenueByOrganizationView.as_view(), name='billing-revenue-by-organization'),

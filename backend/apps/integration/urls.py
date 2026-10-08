@@ -10,6 +10,7 @@ app_name = 'integration'
 urlpatterns = [
     # Health check
     path('health/', views.health_check, name='health-check'),
+    path('ai-usage/', views.ingest_ai_usage, name='ingest-ai-usage'),
     
     # Organizaciones
     path('organizations/', views.list_organizations, name='list-organizations'),

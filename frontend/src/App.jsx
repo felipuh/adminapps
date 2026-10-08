@@ -18,6 +18,7 @@ import SubscriptionsPage from './pages/SubscriptionsPage';
 import SettingsPage from './pages/SettingsPage';
 import FinancePage from './pages/FinancePage';
 import NotificationsPage from './pages/NotificationsPage';
+import AIUsagePage from './pages/AIUsagePage';
 import ImmersiveEffects from './components/ui/ImmersiveEffects';
 
 // Protected Route Component
@@ -112,6 +113,7 @@ function AppRoutes() {
         <Route path="users" element={<UsersPage />} />
         <Route path="subscriptions" element={<SubscriptionsPage />} />
         <Route path="finance" element={<FinancePage />} />
+        <Route path="ai-usage" element={<AIUsagePage />} />
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>

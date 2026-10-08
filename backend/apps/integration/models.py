@@ -243,3 +243,46 @@ class DemoRequest(models.Model):
 
     def __str__(self):
         return f'{self.organization_name} — {self.work_email}'
+
+
+class AIUsageProjection(models.Model):
+    """Idempotent administrative projection of provider usage produced by ISO Smart.
+
+    It records provider-cost observability only; it is intentionally not a
+    customer invoice, tariff, or entitlement decision.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    source = models.CharField(max_length=80, default='iso-smart')
+    usage_event_id = models.UUIDField()
+    usage_record_id = models.UUIDField()
+    organization = models.ForeignKey('organizations.Organization', on_delete=models.PROTECT, related_name='ai_usage_records')
+    product_identifier = models.CharField(max_length=80)
+    agent_name = models.CharField(max_length=120)
+    capability_name = models.CharField(max_length=120)
+    execution_id = models.UUIDField()
+    correlation_id = models.UUIDField()
+    provider = models.CharField(max_length=120)
+    model_identifier = models.CharField(max_length=200)
+    attempted_at = models.DateTimeField(db_index=True)
+    attempt_status = models.CharField(max_length=24)
+    usage_status = models.CharField(max_length=24)
+    input_tokens = models.BigIntegerField(null=True, blank=True)
+    output_tokens = models.BigIntegerField(null=True, blank=True)
+    total_tokens = models.BigIntegerField(null=True, blank=True)
+    estimated_provider_cost = models.DecimalField(max_digits=20, decimal_places=10, null=True, blank=True)
+    currency = models.CharField(max_length=3, null=True, blank=True)
+    cost_status = models.CharField(max_length=24)
+    received_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'integration_ai_usage_projection'
+        ordering = ['-attempted_at']
+        constraints = [
+            models.UniqueConstraint(fields=['source', 'usage_event_id'], name='integration_ai_usage_event_unique'),
+            models.UniqueConstraint(fields=['source', 'usage_record_id'], name='integration_ai_usage_record_unique'),
+        ]
+        indexes = [
+            models.Index(fields=['organization', 'attempted_at'], name='ai_usage_org_time_idx'),
+            models.Index(fields=['product_identifier', 'model_identifier', 'attempted_at'], name='ai_usage_dims_time_idx'),
+        ]

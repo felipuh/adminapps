@@ -670,4 +670,9 @@ export const billingService = {
     const response = await api.get('/analytics/landing/', { params });
     return response.data;
   },
+
+  getAIUsage: async (params = {}) => {
+    const response = await api.get('/billing/ai-usage/', { params });
+    return response.data;
+  },
 };

@@ -1,11 +1,12 @@
 from decimal import Decimal
 import csv
 import io
-from datetime import date
+from datetime import date, datetime, time, timedelta
 
 from django.conf import settings
-from django.db.models import Count, Sum
-from django.db.models.functions import TruncMonth
+from django.db.models import Count, Q, Sum
+from django.db.models.functions import TruncDay, TruncMonth
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.utils import timezone
 from rest_framework import filters, viewsets
@@ -17,6 +18,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.users.permissions import IsAdmin, IsSuperAdmin
 from apps.users.models import UserActivityLog
+from apps.integration.models import AIUsageProjection
 from .models import (
     ElectronicInvoice,
     FiscalProfile,
@@ -133,6 +135,51 @@ class BillingSummaryView(APIView):
             'trial_conversion_rate': trial_conversion_rate,
         }
         return Response(BillingSummarySerializer(summary).data)
+
+
+class AIUsageDashboardView(APIView):
+    """Cross-tenant provider-usage observability; never customer billing."""
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get(self, request):
+        queryset = AIUsageProjection.objects.select_related('organization').all()
+        try:
+            start = request.query_params.get('start')
+            end = request.query_params.get('end')
+            if start:
+                queryset = queryset.filter(attempted_at__gte=timezone.make_aware(datetime.combine(date.fromisoformat(start), time.min)))
+            if end:
+                queryset = queryset.filter(attempted_at__lt=timezone.make_aware(datetime.combine(date.fromisoformat(end) + timedelta(days=1), time.min)))
+        except ValueError:
+            return Response({'detail': 'start and end must be YYYY-MM-DD'}, status=400)
+        filters = {'organization_id': 'tenant', 'product_identifier': 'product', 'model_identifier': 'model',
+                   'agent_name': 'agent', 'capability_name': 'capability'}
+        for field, param in filters.items():
+            value = request.query_params.get(param)
+            if value:
+                queryset = queryset.filter(**{field: value})
+        totals = queryset.aggregate(
+            requests=Count('id'), consuming_tenants=Count('organization_id', distinct=True),
+            input_tokens=Sum('input_tokens'), output_tokens=Sum('output_tokens'), total_tokens=Sum('total_tokens'),
+            known_cost=Sum('estimated_provider_cost', filter=Q(cost_status='estimated')),
+            unknown_usage=Count('id', filter=Q(usage_status='unknown')),
+            unpriced_cost=Count('id', filter=Q(cost_status='unpriced')),
+            failed_requests=Count('id', filter=Q(attempt_status='failed')),
+        )
+        grouped = queryset.values('organization_id', 'organization__name', 'product_identifier').annotate(
+            requests=Count('id'), input_tokens=Sum('input_tokens'), output_tokens=Sum('output_tokens'),
+            total_tokens=Sum('total_tokens'), known_cost=Sum('estimated_provider_cost', filter=Q(cost_status='estimated')),
+            incomplete=Count('id', filter=Q(usage_status='unknown') | Q(cost_status='unpriced')),
+        ).order_by('-total_tokens', 'organization__name')
+        page = Paginator(grouped, min(max(int(request.query_params.get('page_size', 25)), 1), 100)).get_page(request.query_params.get('page', 1))
+        trend = queryset.annotate(day=TruncDay('attempted_at')).values('day').annotate(
+            requests=Count('id'), total_tokens=Sum('total_tokens'), known_cost=Sum('estimated_provider_cost', filter=Q(cost_status='estimated')),
+        ).order_by('day')
+        return Response({
+            'overview': {key: (value if value is not None else 0) for key, value in totals.items()},
+            'results': list(page.object_list), 'pagination': {'page': page.number, 'pages': page.paginator.num_pages, 'count': page.paginator.count},
+            'trend': list(trend),
+        })
 
 
 class RevenueByProductView(APIView):

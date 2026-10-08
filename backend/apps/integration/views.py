@@ -21,7 +21,7 @@ import uuid
 from apps.organizations.models import Organization
 from apps.products.models import OrganizationProductEntitlement, ProductEntitlementAuditLog, ProductSystem
 from apps.users.models import UserOrganization
-from .models import DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
+from .models import AIUsageProjection, DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
 from .services import authenticate_integration_api_key
 
 User = get_user_model()
@@ -173,6 +173,64 @@ def health_check(request):
         'service': 'Admin Apps Integration',
         'version': '1.0'
     })
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@require_api_key
+def ingest_ai_usage(request):
+    """Accept a replay-safe, secret-free ISO Smart usage event.
+
+    This endpoint is intentionally an internal contract.  Deployment/configuration
+    of a delivery client remains a separate operational authorization.
+    """
+    try:
+        payload = json.loads(request.body.decode('utf-8'))
+        required = ('usage_event_id', 'usage_record_id', 'adminapps_tenant_id', 'execution_id', 'correlation_id',
+                    'product_identifier', 'agent_name', 'capability_name', 'provider', 'model_identifier',
+                    'attempted_at', 'attempt_status', 'usage_status', 'cost_status')
+        if not isinstance(payload, dict) or any(not payload.get(key) for key in required):
+            raise ValueError('missing required AI usage fields')
+        organization = Organization.objects.get(id=uuid.UUID(str(payload['adminapps_tenant_id'])))
+        attempted_at = parse_datetime(str(payload['attempted_at']))
+        if attempted_at is None:
+            raise ValueError('attempted_at must be ISO-8601 datetime')
+        numeric = {}
+        for key in ('input_tokens', 'output_tokens', 'total_tokens'):
+            value = payload.get(key)
+            if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 0):
+                raise ValueError(f'{key} must be a nonnegative integer or null')
+            numeric[key] = value
+        if all(numeric[key] is not None for key in numeric) and numeric['total_tokens'] != numeric['input_tokens'] + numeric['output_tokens']:
+            raise ValueError('total_tokens must equal input_tokens plus output_tokens')
+        cost = payload.get('estimated_provider_cost')
+        if cost is not None:
+            from decimal import Decimal, InvalidOperation
+            try:
+                cost = Decimal(str(cost))
+            except InvalidOperation as exc:
+                raise ValueError('estimated_provider_cost must be decimal') from exc
+            if cost < 0:
+                raise ValueError('estimated_provider_cost cannot be negative')
+        defaults = {
+            'usage_record_id': uuid.UUID(str(payload['usage_record_id'])), 'organization': organization,
+            'product_identifier': payload['product_identifier'], 'agent_name': payload['agent_name'],
+            'capability_name': payload['capability_name'], 'execution_id': uuid.UUID(str(payload['execution_id'])),
+            'correlation_id': uuid.UUID(str(payload['correlation_id'])), 'provider': payload['provider'],
+            'model_identifier': payload['model_identifier'], 'attempted_at': attempted_at, 'attempt_status': payload['attempt_status'],
+            'usage_status': payload['usage_status'], 'cost_status': payload['cost_status'],
+            'estimated_provider_cost': cost, 'currency': payload.get('currency'), **numeric,
+        }
+        projection, created = AIUsageProjection.objects.get_or_create(
+            source='iso-smart', usage_event_id=uuid.UUID(str(payload['usage_event_id'])), defaults=defaults,
+        )
+        if not created and projection.usage_record_id != defaults['usage_record_id']:
+            return JsonResponse({'error': 'usage event identity conflict', 'code': 'usage_event_conflict'}, status=409)
+        return JsonResponse({'id': str(projection.id), 'replay': not created}, status=201 if created else 200)
+    except Organization.DoesNotExist:
+        return JsonResponse({'error': 'authoritative tenant not found', 'code': 'tenant_not_found'}, status=404)
+    except (ValueError, TypeError, json.JSONDecodeError):
+        return JsonResponse({'error': 'invalid AI usage payload', 'code': 'invalid_ai_usage_payload'}, status=400)
 
 
 @csrf_exempt
