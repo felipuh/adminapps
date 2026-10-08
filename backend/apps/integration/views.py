@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Count
 from functools import wraps
 import json
@@ -184,6 +184,13 @@ def ingest_ai_usage(request):
     This endpoint is intentionally an internal contract.  Deployment/configuration
     of a delivery client remains a separate operational authorization.
     """
+    allowed_producers = {
+        str(value).strip().lower()
+        for value in getattr(settings, 'AI_USAGE_INGESTION_SERVICES', ('isosmart', 'isosmart-usage'))
+        if str(value).strip()
+    }
+    if str(getattr(request, 'integration_service', '')).strip().lower() not in allowed_producers:
+        return JsonResponse({'error': 'service is not authorized to ingest AI usage', 'code': 'unauthorized_ai_usage_producer'}, status=403)
     try:
         payload = json.loads(request.body.decode('utf-8'))
         required = ('usage_event_id', 'usage_record_id', 'adminapps_tenant_id', 'execution_id', 'correlation_id',
@@ -212,6 +219,10 @@ def ingest_ai_usage(request):
                 raise ValueError('estimated_provider_cost must be decimal') from exc
             if cost < 0:
                 raise ValueError('estimated_provider_cost cannot be negative')
+        if payload['cost_status'] == 'estimated' and (cost is None or not payload.get('currency')):
+            raise ValueError('estimated usage requires a currency and known cost')
+        if payload['cost_status'] == 'unpriced' and cost is not None:
+            raise ValueError('unpriced usage cannot carry a known cost')
         defaults = {
             'usage_record_id': uuid.UUID(str(payload['usage_record_id'])), 'organization': organization,
             'product_identifier': payload['product_identifier'], 'agent_name': payload['agent_name'],
@@ -221,15 +232,27 @@ def ingest_ai_usage(request):
             'usage_status': payload['usage_status'], 'cost_status': payload['cost_status'],
             'estimated_provider_cost': cost, 'currency': payload.get('currency'), **numeric,
         }
-        projection, created = AIUsageProjection.objects.get_or_create(
-            source='iso-smart', usage_event_id=uuid.UUID(str(payload['usage_event_id'])), defaults=defaults,
-        )
-        if not created and projection.usage_record_id != defaults['usage_record_id']:
-            return JsonResponse({'error': 'usage event identity conflict', 'code': 'usage_event_conflict'}, status=409)
-        return JsonResponse({'id': str(projection.id), 'replay': not created}, status=201 if created else 200)
+        with transaction.atomic():
+            event_id = uuid.UUID(str(payload['usage_event_id']))
+            projection = AIUsageProjection.objects.select_for_update().filter(
+                source='iso-smart', usage_event_id=event_id,
+            ).first()
+            if projection is not None:
+                conflicting = any(getattr(projection, field) != value for field, value in defaults.items())
+                if conflicting:
+                    return JsonResponse({'error': 'usage event identity conflict', 'code': 'usage_event_conflict'}, status=409)
+                return JsonResponse({'id': str(projection.id), 'replay': True}, status=200)
+            if AIUsageProjection.objects.select_for_update().filter(
+                source='iso-smart', usage_record_id=defaults['usage_record_id'],
+            ).exists():
+                return JsonResponse({'error': 'usage record identity conflict', 'code': 'usage_record_conflict'}, status=409)
+            projection = AIUsageProjection.objects.create(
+                source='iso-smart', usage_event_id=event_id, **defaults,
+            )
+        return JsonResponse({'id': str(projection.id), 'replay': False}, status=201)
     except Organization.DoesNotExist:
         return JsonResponse({'error': 'authoritative tenant not found', 'code': 'tenant_not_found'}, status=404)
-    except (ValueError, TypeError, json.JSONDecodeError):
+    except (ValueError, TypeError, json.JSONDecodeError, IntegrityError):
         return JsonResponse({'error': 'invalid AI usage payload', 'code': 'invalid_ai_usage_payload'}, status=400)
 
 

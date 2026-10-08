@@ -45,6 +45,15 @@ class AIUsageIntegrationTests(APITestCase):
         payload = self.payload(); payload['adminapps_tenant_id'] = str(uuid4())
         self.assertEqual(self.client.post('/api/integration/ai-usage/', payload, format='json', HTTP_X_API_KEY=self.key).status_code, 404)
 
+    def test_conflicting_replay_and_wrong_producer_are_rejected(self):
+        payload = self.payload()
+        self.assertEqual(self.client.post('/api/integration/ai-usage/', payload, format='json', HTTP_X_API_KEY=self.key).status_code, 201)
+        conflicting = {**payload, 'total_tokens': 133, 'output_tokens': 32}
+        self.assertEqual(self.client.post('/api/integration/ai-usage/', conflicting, format='json', HTTP_X_API_KEY=self.key).status_code, 409)
+        wrong_key = 'another-service-key'
+        IntegrationAPIKey.objects.create(name='unrelated-service', key=wrong_key, is_active=True)
+        self.assertEqual(self.client.post('/api/integration/ai-usage/', self.payload(), format='json', HTTP_X_API_KEY=wrong_key).status_code, 403)
+
     def test_administrative_dashboard_denies_non_admin_and_aggregates_for_admin(self):
         payload = self.payload()
         self.client.post('/api/integration/ai-usage/', payload, format='json', HTTP_X_API_KEY=self.key)
@@ -57,3 +66,20 @@ class AIUsageIntegrationTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['overview']['total_tokens'], 132)
         self.assertEqual(str(response.data['results'][0]['organization_id']), str(self.org.id))
+
+    def test_unpriced_usage_remains_null_and_is_counted_separately(self):
+        payload = self.payload()
+        payload.update({
+            'usage_event_id': str(uuid4()), 'usage_record_id': str(uuid4()),
+            'usage_status': 'unknown', 'input_tokens': None, 'output_tokens': None,
+            'total_tokens': None, 'cost_status': 'unpriced',
+            'estimated_provider_cost': None, 'currency': None,
+        })
+        self.assertEqual(self.client.post('/api/integration/ai-usage/', payload, format='json', HTTP_X_API_KEY=self.key).status_code, 201)
+        admin = User.objects.create_user(email='cost-admin@example.test', password='test', first_name='Cost', last_name='Admin', organization=self.org, role='admin')
+        self.client.force_authenticate(admin)
+        response = self.client.get('/api/billing/ai-usage/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['overview']['unpriced_cost'], 1)
+        self.assertEqual(response.data['overview']['unknown_usage'], 1)
+        self.assertEqual(AIUsageProjection.objects.get().estimated_provider_cost, None)
