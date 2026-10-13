@@ -2,19 +2,40 @@
 2FA Tests - AdminApps
 Tests for two-factor authentication setup, verification, and management
 """
+import unittest
+
+import pyotp
+from django.db import connection
 from django.test import override_settings
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.test import APITestCase
-import pyotp
+from rest_framework.test import APITransactionTestCase
 
 from apps.organizations.models import Organization
 from apps.users.models import User
 from apps.users.models_2fa import TwoFactorAuth, TwoFactorAuthLog
+from apps.users.two_factor_service import issue_challenge
+
+
+requires_postgresql = unittest.skipUnless(
+    connection.vendor == 'postgresql',
+    'Requires PostgreSQL durable transactions for 2FA persistence',
+)
+
+
+def _enable_2fa_for_test_user(user):
+    two_fa = TwoFactorAuth.objects.create(user=user)
+    secret = two_fa.generate_secret()
+    two_fa.secret = secret
+    two_fa.is_enabled = True
+    two_fa.verified_at = timezone.now()
+    backup_codes = two_fa.generate_backup_codes()
+    two_fa.save()
+    return two_fa, secret, backup_codes
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class TwoFactorAuthSetupTests(APITestCase):
+class TwoFactorAuthSetupTests(APITransactionTestCase):
     """Tests for 2FA setup flow"""
     
     def setUp(self):
@@ -38,6 +59,7 @@ class TwoFactorAuthSetupTests(APITestCase):
         response = self.client.post('/api/auth/2fa/setup/initiate/')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
     
+    @requires_postgresql
     def test_initiate_2fa_setup_returns_secret_and_qr(self):
         """Initiating 2FA setup returns secret and QR code"""
         self.client.force_authenticate(user=self.user)
@@ -49,6 +71,7 @@ class TwoFactorAuthSetupTests(APITestCase):
         self.assertIn('manual_entry_key', response.data)
         self.assertTrue(response.data['qr_code'].startswith('data:image/png;base64,'))
     
+    @requires_postgresql
     def test_2fa_config_created_on_initiate(self):
         """2FA config is created when setup is initiated"""
         self.client.force_authenticate(user=self.user)
@@ -57,6 +80,7 @@ class TwoFactorAuthSetupTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(TwoFactorAuth.objects.filter(user=self.user).exists())
     
+    @requires_postgresql
     def test_verify_2fa_with_invalid_token(self):
         """Verifying 2FA with invalid token fails"""
         self.client.force_authenticate(user=self.user)
@@ -70,6 +94,7 @@ class TwoFactorAuthSetupTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('Invalid OTP token', str(response.data))
     
+    @requires_postgresql
     def test_verify_2fa_with_valid_token(self):
         """Verifying 2FA with valid token enables it"""
         self.client.force_authenticate(user=self.user)
@@ -95,6 +120,7 @@ class TwoFactorAuthSetupTests(APITestCase):
         self.assertTrue(two_fa.is_enabled)
         self.assertIsNotNone(two_fa.verified_at)
     
+    @requires_postgresql
     def test_cannot_setup_2fa_twice_simultaneously(self):
         """Cannot initiate 2FA setup if already enabled"""
         self.client.force_authenticate(user=self.user)
@@ -113,7 +139,7 @@ class TwoFactorAuthSetupTests(APITestCase):
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class TwoFactorAuthVerificationTests(APITestCase):
+class TwoFactorAuthVerificationTests(APITransactionTestCase):
     """Tests for 2FA token verification during login/operations"""
     
     def setUp(self):
@@ -132,59 +158,57 @@ class TwoFactorAuthVerificationTests(APITestCase):
         self.user.set_password('VerifyPass123!')
         self.user.save()
         
-        # Setup 2FA for this user
-        self.client.force_authenticate(user=self.user)
-        init_response = self.client.post('/api/auth/2fa/setup/initiate/')
-        self.secret = init_response.data['secret']
-        totp = pyotp.TOTP(self.secret)
-        setup_response = self.client.post('/api/auth/2fa/setup/verify/', {'token': totp.now()})
-        self.backup_codes = setup_response.data['backup_codes']
+        self.two_fa, self.secret, self.backup_codes = _enable_2fa_for_test_user(self.user)
+
+    def verify(self, token):
+        challenge = issue_challenge(self.user)
+        return self.client.post(
+            '/api/auth/2fa/verify/',
+            {'token': token},
+            HTTP_AUTHORIZATION=f'Bearer {challenge}',
+        )
     
+    @requires_postgresql
     def test_verify_2fa_token(self):
         """Verifying valid OTP token succeeds"""
-        self.client.force_authenticate(user=self.user)
-        
         totp = pyotp.TOTP(self.secret)
-        response = self.client.post('/api/auth/2fa/verify/', {'token': totp.now()})
+        response = self.verify(totp.now())
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], 'verified')
     
+    @requires_postgresql
     def test_verify_with_invalid_token(self):
         """Verifying with invalid token fails"""
-        self.client.force_authenticate(user=self.user)
-        
-        response = self.client.post('/api/auth/2fa/verify/', {'token': '000000'})
+        response = self.verify('000000')
         
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
+    @requires_postgresql
     def test_verify_with_backup_code(self):
         """Verifying with backup code succeeds and marks it as used"""
-        self.client.force_authenticate(user=self.user)
-        
-        response = self.client.post('/api/auth/2fa/verify/', {'token': self.backup_codes[0]})
+        response = self.verify(self.backup_codes[0])
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['status'], 'verified')
         self.assertIn('backup code used', response.data['message'].lower())
     
+    @requires_postgresql
     def test_cannot_reuse_backup_code(self):
         """Backup codes can only be used once"""
-        self.client.force_authenticate(user=self.user)
-        
         code = self.backup_codes[0]
         
         # Use backup code once
-        self.client.post('/api/auth/2fa/verify/', {'token': code})
+        self.assertEqual(self.verify(code).status_code, status.HTTP_200_OK)
         
         # Try to use same backup code again
-        response = self.client.post('/api/auth/2fa/verify/', {'token': code})
+        response = self.verify(code)
         
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class TwoFactorAuthDisableTests(APITestCase):
+class TwoFactorAuthDisableTests(APITransactionTestCase):
     """Tests for disabling 2FA"""
     
     def setUp(self):
@@ -203,12 +227,7 @@ class TwoFactorAuthDisableTests(APITestCase):
         self.user.set_password('DisablePass123!')
         self.user.save()
         
-        # Setup 2FA for this user
-        self.client.force_authenticate(user=self.user)
-        init_response = self.client.post('/api/auth/2fa/setup/initiate/')
-        secret = init_response.data['secret']
-        totp = pyotp.TOTP(secret)
-        self.client.post('/api/auth/2fa/setup/verify/', {'token': totp.now()})
+        self.two_fa, _, _ = _enable_2fa_for_test_user(self.user)
     
     def test_disable_2fa_requires_password(self):
         """Disabling 2FA requires password verification"""
@@ -218,6 +237,7 @@ class TwoFactorAuthDisableTests(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
     
+    @requires_postgresql
     def test_disable_2fa_with_wrong_password(self):
         """Disabling 2FA with wrong password fails"""
         self.client.force_authenticate(user=self.user)
@@ -226,6 +246,7 @@ class TwoFactorAuthDisableTests(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
     
+    @requires_postgresql
     def test_disable_2fa_with_correct_password(self):
         """Disabling 2FA with correct password succeeds"""
         self.client.force_authenticate(user=self.user)
@@ -242,7 +263,7 @@ class TwoFactorAuthDisableTests(APITestCase):
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class TwoFactorAuthStatusTests(APITestCase):
+class TwoFactorAuthStatusTests(APITransactionTestCase):
     """Tests for checking 2FA status"""
     
     def setUp(self):
@@ -275,11 +296,7 @@ class TwoFactorAuthStatusTests(APITestCase):
         """Getting 2FA status when enabled"""
         self.client.force_authenticate(user=self.user)
         
-        # Setup 2FA
-        init_response = self.client.post('/api/auth/2fa/setup/initiate/')
-        secret = init_response.data['secret']
-        totp = pyotp.TOTP(secret)
-        self.client.post('/api/auth/2fa/setup/verify/', {'token': totp.now()})
+        _enable_2fa_for_test_user(self.user)
         
         # Check status
         response = self.client.get('/api/auth/2fa/status/')
@@ -291,7 +308,7 @@ class TwoFactorAuthStatusTests(APITestCase):
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class TwoFactorAuthLoggingTests(APITestCase):
+class TwoFactorAuthLoggingTests(APITransactionTestCase):
     """Tests for 2FA audit logging"""
     
     def setUp(self):
@@ -310,6 +327,7 @@ class TwoFactorAuthLoggingTests(APITestCase):
         self.user.set_password('LogPass123!')
         self.user.save()
     
+    @requires_postgresql
     def test_2fa_events_logged(self):
         """2FA events are logged to audit trail"""
         self.client.force_authenticate(user=self.user)
@@ -335,7 +353,7 @@ class TwoFactorAuthLoggingTests(APITestCase):
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class LoginWith2FATests(APITestCase):
+class LoginWith2FATests(APITransactionTestCase):
     """Tests for login flow with 2FA enabled"""
     
     def setUp(self):
@@ -355,16 +373,11 @@ class LoginWith2FATests(APITestCase):
         self.user.save()
         
         # Setup 2FA for this user
-        two_fa = TwoFactorAuth.objects.create(user=self.user)
-        secret = two_fa.generate_secret()
-        two_fa.secret = secret
-        two_fa.is_enabled = True
-        two_fa.verified_at = timezone.now()
-        backup_codes = two_fa.generate_backup_codes()
-        two_fa.save()
+        _, secret, backup_codes = _enable_2fa_for_test_user(self.user)
         self.secret = secret
         self.backup_codes = backup_codes
     
+    @requires_postgresql
     def test_login_with_2fa_enabled_requires_token(self):
         """Login with 2FA enabled returns requires_2fa flag"""
         response = self.client.post('/api/auth/login/', {
@@ -374,10 +387,11 @@ class LoginWith2FATests(APITestCase):
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data.get('requires_2fa'))
+        self.assertEqual(response.data['token_type'], '2fa_temporary')
+        self.assertEqual(response.data['temporary_token'], response.data['access'])
         self.assertIn('user', response.data)
         self.assertEqual(response.data['user']['email'], 'login_2fa@example.com')
-        # Should have access token to verify 2FA
-        self.assertIn('access', response.data)
+        self.assertNotIn('refresh', response.data)
     
     def test_login_without_2fa_enabled_works_normally(self):
         """Login without 2FA enabled works as before"""
@@ -403,6 +417,7 @@ class LoginWith2FATests(APITestCase):
         self.assertIn('access', response.data)
         self.assertIn('refresh', response.data)
     
+    @requires_postgresql
     def test_verify_2fa_token_after_login(self):
         """Verifying 2FA token after login returns complete user data"""
         # First, login with email/password
@@ -411,7 +426,7 @@ class LoginWith2FATests(APITestCase):
             'password': 'LoginPass123!',
         })
         
-        access_token = login_response.data['access']
+        access_token = login_response.data['temporary_token']
         
         # Now verify 2FA with the access token
         totp = pyotp.TOTP(self.secret)
@@ -428,6 +443,7 @@ class LoginWith2FATests(APITestCase):
         self.assertEqual(response.data['user']['role'], 'user')
         self.assertIsNotNone(response.data['user']['organization_id'])
     
+    @requires_postgresql
     def test_verify_2fa_with_backup_code_after_login(self):
         """Verifying 2FA with backup code after login"""
         # First, login with email/password
@@ -436,7 +452,7 @@ class LoginWith2FATests(APITestCase):
             'password': 'LoginPass123!',
         })
         
-        access_token = login_response.data['access']
+        access_token = login_response.data['temporary_token']
         
         # Now verify 2FA with backup code
         response = self.client.post(
@@ -482,7 +498,7 @@ class LoginWith2FATests(APITestCase):
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
-class TwoFactorAuthRateLimitTests(APITestCase):
+class TwoFactorAuthRateLimitTests(APITransactionTestCase):
     """Tests for 2FA rate limiting to prevent brute force attacks"""
     
     def setUp(self):
@@ -502,12 +518,7 @@ class TwoFactorAuthRateLimitTests(APITestCase):
         self.user.save()
         
         # Setup 2FA for this user
-        two_fa = TwoFactorAuth.objects.create(user=self.user)
-        secret = two_fa.generate_secret()
-        two_fa.secret = secret
-        two_fa.is_enabled = True
-        two_fa.verified_at = timezone.now()
-        two_fa.save()
+        _, secret, _ = _enable_2fa_for_test_user(self.user)
         self.secret = secret
         
         # Login to get access token
@@ -515,8 +526,9 @@ class TwoFactorAuthRateLimitTests(APITestCase):
             'email': 'ratelimit@example.com',
             'password': 'LimitPass123!',
         })
-        self.access_token = login_response.data['access']
+        self.access_token = login_response.data['temporary_token']
     
+    @requires_postgresql
     def test_rate_limit_increments_on_failed_attempts(self):
         """Rate limit should increment on failed OTP attempts"""
         # First failed attempt
@@ -529,6 +541,7 @@ class TwoFactorAuthRateLimitTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(int(response.data['remaining_attempts']), 4)
     
+    @requires_postgresql
     def test_rate_limit_resets_on_successful_verification(self):
         """Rate limit should reset on successful OTP verification"""
         # Add some failed attempts
@@ -550,6 +563,7 @@ class TwoFactorAuthRateLimitTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['remaining_attempts'], 5)
     
+    @requires_postgresql
     def test_rate_limit_blocks_after_max_attempts(self):
         """Should block after MAX_TWO_FA_ATTEMPTS (5) failed attempts"""
         # Make 5 failed attempts
@@ -572,6 +586,7 @@ class TwoFactorAuthRateLimitTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertIn('detail', response.data)
     
+    @requires_postgresql
     def test_rate_limit_shows_warning_when_near_limit(self):
         """Should show warning when user is near rate limit"""
         # Make 3 failed attempts (2 left)
@@ -594,6 +609,7 @@ class TwoFactorAuthRateLimitTests(APITestCase):
         self.assertIn('warning', response.data)
         self.assertIn('1 attempt', response.data['warning'].lower())
     
+    @requires_postgresql
     def test_rate_limit_returns_403_with_details(self):
         """Rate limited response (403) should include helpful details"""
         # Make 5 failed attempts to trigger lockout
