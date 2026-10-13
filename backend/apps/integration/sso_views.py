@@ -8,11 +8,14 @@ supports 2FA challenge flow, and provides token introspection for services.
 from __future__ import annotations
 
 import json
+from functools import wraps
 from typing import Any
 
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
-from django.core import signing
+from django.db import DatabaseError, transaction
+from rest_framework.exceptions import APIException, ValidationError
+from apps.users import two_factor_service as two_factor
 from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -25,10 +28,6 @@ from apps.products.models import OrganizationProductEntitlement
 from .views import require_api_key
 
 User = get_user_model()
-
-_TWO_FA_SALT = "smart3ai.sso.2fa"
-_TWO_FA_BYPASS_CODE = "BYPASS-LOCAL-2FA"
-
 
 def _json_body(request) -> dict[str, Any]:
     try:
@@ -107,7 +106,7 @@ def _build_product_claims(organization_id):
     }
 
 
-def _build_token_pair(
+def _build_token_pair_unchecked(
     user,
     membership,
     memberships,
@@ -159,6 +158,14 @@ def _build_token_pair(
     }
 
 
+def _build_token_pair(*args, **kwargs):
+    try:
+        two_factor.require_commit_boundary()
+        return _build_token_pair_unchecked(*args, **kwargs)
+    except Exception:
+        raise APIException('Unable to complete authentication') from None
+
+
 def _auth_user(request, email: str, password: str):
     user = authenticate(request, email=email, password=password)
     if not user:
@@ -166,15 +173,29 @@ def _auth_user(request, email: str, password: str):
     return user
 
 
-def _is_local_2fa_bypass(otp_code: str) -> bool:
-    return bool(
-        getattr(settings, "SMART3AI_SSO_ALLOW_2FA_BYPASS", False)
-        and otp_code == _TWO_FA_BYPASS_CODE
-    )
+def _authentication_errors(view):
+    @wraps(view)
+    def wrapped(request, *args, **kwargs):
+        try:
+            return view(request, *args, **kwargs)
+        except two_factor.ChallengeRejected:
+            return JsonResponse({'error': 'Reto 2FA inválido o expirado',
+                                 'code': 'invalid_or_expired_challenge'}, status=401)
+        except ValidationError as exc:
+            detail = exc.detail if isinstance(exc.detail, dict) else {}
+            return JsonResponse({'error': 'Código OTP inválido', 'code': 'invalid_otp',
+                                 **{k: v for k, v in detail.items() if k != 'token'}}, status=401)
+        except APIException as exc:
+            return JsonResponse({'error': exc.detail}, status=exc.status_code)
+        except DatabaseError:
+            return JsonResponse({'error': 'Unable to complete authentication'}, status=503)
+    return wrapped
 
 
+@transaction.non_atomic_requests
 @csrf_exempt
 @require_http_methods(["POST"])
+@_authentication_errors
 def sso_login(request):
     """
     Unified login endpoint with optional 2FA challenge.
@@ -217,6 +238,8 @@ def sso_login(request):
             "code": "user_inactive",
         }, status=403)
 
+    two_factor.validate_user_eligibility(user, timezone.now())
+
     memberships = list(
         UserOrganization.objects.filter(
             user=user,
@@ -244,45 +267,21 @@ def sso_login(request):
     two_fa = getattr(user, "two_factor_auth", None)
     two_fa_enabled = bool(two_fa and two_fa.is_enabled)
 
-    if two_fa_enabled and not otp_code:
-        challenge_token = signing.dumps(
-            {
-                "user_id": str(user.id),
-                "organization_id": str(membership.organization.id),
-                "client_id": client_id,
-                "audience": audience,
-            },
-            salt=_TWO_FA_SALT,
-        )
-        return JsonResponse({
-            "requires_2fa": True,
-            "challenge_token": challenge_token,
-            "challenge_expires_in": 300,
-            "user": {
-                "id": str(user.id),
-                "email": user.email,
-                "full_name": user.full_name,
-            },
-            "organizations": _serialize_memberships(memberships),
-        }, status=200)
+    if two_fa_enabled:
+        challenge_token = two_factor.issue_challenge(user, 'sso', context={
+            'organization_id': str(membership.organization.id),
+            'client_id': client_id, 'audience': audience,
+        })
+        if not otp_code:
+            return JsonResponse({
+                'requires_2fa': True, 'challenge_token': challenge_token,
+                'challenge_expires_in': 300,
+                'user': {'id': str(user.id), 'email': user.email, 'full_name': user.full_name},
+                'organizations': _serialize_memberships(memberships),
+            }, status=200)
+        user, _ = two_factor.consume_challenge(challenge_token, otp_code, 'sso', request=request)
 
     two_fa_bypassed = False
-    if two_fa_enabled:
-        if _is_local_2fa_bypass(otp_code):
-            two_fa_bypassed = True
-        else:
-            otp_ok = two_fa.verify_token(otp_code)
-            backup_ok = False
-            if not otp_ok:
-                backup_ok = two_fa.use_backup_code(otp_code)
-                if backup_ok:
-                    two_fa.save(update_fields=["backup_codes_used", "updated_at"])
-            if not otp_ok and not backup_ok:
-                return JsonResponse({
-                    "error": "Código OTP inválido",
-                    "code": "invalid_otp",
-                }, status=401)
-
     tokens = _build_token_pair(
         user,
         membership,
@@ -315,8 +314,10 @@ def sso_login(request):
     }, status=200)
 
 
+@transaction.non_atomic_requests
 @csrf_exempt
 @require_http_methods(["POST"])
+@_authentication_errors
 def sso_login_verify_2fa(request):
     """
     Completes a pending 2FA challenge and returns final token pair.
@@ -331,13 +332,7 @@ def sso_login_verify_2fa(request):
             "code": "missing_2fa_payload",
         }, status=400)
 
-    try:
-        challenge_data = signing.loads(challenge_token, salt=_TWO_FA_SALT, max_age=300)
-    except signing.BadSignature:
-        return JsonResponse({
-            "error": "Reto 2FA inválido o expirado",
-            "code": "invalid_or_expired_challenge",
-        }, status=401)
+    challenge_data = two_factor.decode_challenge(challenge_token, 'sso')
 
     user_id = str(challenge_data.get("user_id") or "")
     organization_id = str(challenge_data.get("organization_id") or "")
@@ -364,28 +359,8 @@ def sso_login_verify_2fa(request):
             "code": "invalid_membership",
         }, status=403)
 
-    two_fa = getattr(user, "two_factor_auth", None)
-    if not two_fa or not two_fa.is_enabled:
-        return JsonResponse({
-            "error": "2FA no está habilitado",
-            "code": "2fa_not_enabled",
-        }, status=400)
-
+    user, _ = two_factor.consume_challenge(challenge_token, otp_code, 'sso', request=request)
     two_fa_bypassed = False
-    if _is_local_2fa_bypass(otp_code):
-        two_fa_bypassed = True
-    else:
-        otp_ok = two_fa.verify_token(otp_code)
-        backup_ok = False
-        if not otp_ok:
-            backup_ok = two_fa.use_backup_code(otp_code)
-            if backup_ok:
-                two_fa.save(update_fields=["backup_codes_used", "updated_at"])
-        if not otp_ok and not backup_ok:
-            return JsonResponse({
-                "error": "Código OTP inválido",
-                "code": "invalid_otp",
-            }, status=401)
 
     memberships = list(
         UserOrganization.objects.filter(

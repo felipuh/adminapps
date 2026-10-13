@@ -2,49 +2,41 @@
 2FA API Endpoints - AdminApps
 Setup, verification, and management of two-factor authentication
 """
-from rest_framework import status, viewsets
-from rest_framework.decorators import api_view, authentication_classes, permission_classes, action
+from rest_framework import status
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError, PermissionDenied
-from django.core import signing
-from django.utils import timezone
+from rest_framework.exceptions import APIException, ValidationError, PermissionDenied
+from django.db import transaction
 import pyotp
 import qrcode
 from io import BytesIO
 import base64
 
-from apps.users.models import User
-from apps.users.models_2fa import TwoFactorAuth, TwoFactorAuthLog
+from apps.users.models_2fa import TwoFactorAuth
+from apps.users.serializers import CustomTokenObtainPairSerializer
+from . import two_factor_service as two_factor
 
 
-def _resolve_2fa_verification_user(request):
+def _verification_challenge(request):
     auth_header = request.META.get('HTTP_AUTHORIZATION', '')
-    if auth_header.lower().startswith('bearer '):
-        token = auth_header.split(' ', 1)[1].strip()
-        try:
-            payload = signing.loads(token, salt='adminapps.2fa.login', max_age=300)
-        except signing.BadSignature:
-            payload = None
-        except signing.SignatureExpired:
-            raise PermissionDenied('2FA verification token expired')
-
-        if payload:
-            if (
-                payload.get('purpose') != '2fa_verification'
-                or payload.get('scope') != 'totp_verification_only'
-            ):
-                raise PermissionDenied('Invalid 2FA verification token scope')
-            try:
-                return User.objects.get(id=payload.get('user_id'), is_active=True)
-            except User.DoesNotExist:
-                raise PermissionDenied('Invalid 2FA verification user')
-
-    if request.user and request.user.is_authenticated:
-        return request.user
-    raise PermissionDenied('2FA verification token required')
+    if not auth_header.lower().startswith('bearer '):
+        raise PermissionDenied('2FA verification token required')
+    return auth_header.split(' ', 1)[1].strip()
 
 
+def _issue_verified_2fa_tokens(user):
+    """Use the standard login issuer and claims, only after factor verification."""
+    try:
+        two_factor.require_commit_boundary()
+        refresh = CustomTokenObtainPairSerializer.get_token(user)
+        return {'access': str(refresh.access_token), 'refresh': str(refresh)}
+    except Exception:
+        # Never expose issuer/persistence errors or return a partial token pair.
+        raise APIException('Unable to complete 2FA authentication') from None
+
+
+@transaction.non_atomic_requests
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def initiate_2fa_setup(request):
@@ -56,19 +48,8 @@ def initiate_2fa_setup(request):
     """
     user = request.user
     
-    # Get or create 2FA config
-    try:
-        two_fa = user.two_factor_auth
-        if two_fa.is_enabled:
-            raise ValidationError('2FA is already enabled for this user')
-    except TwoFactorAuth.DoesNotExist:
-        two_fa = TwoFactorAuth.objects.create(user=user)
-    
-    # Generate new secret
-    secret = two_fa.generate_secret()
-    two_fa.secret = secret
-    two_fa.save()
-    
+    secret = two_factor.initiate_configuration(user.pk)
+
     # Generate QR code
     totp = pyotp.TOTP(secret)
     provision_uri = totp.provisioning_uri(
@@ -87,15 +68,6 @@ def initiate_2fa_setup(request):
     img_bytes.seek(0)
     qr_code_base64 = base64.b64encode(img_bytes.getvalue()).decode()
     
-    # Log event
-    TwoFactorAuthLog.objects.create(
-        user=user,
-        event_type='setup_initiated',
-        status='success',
-        ip_address=get_client_ip(request),
-        user_agent=request.META.get('HTTP_USER_AGENT', '')[:500]
-    )
-    
     return Response({
         'secret': secret,
         'qr_code': f'data:image/png;base64,{qr_code_base64}',
@@ -104,6 +76,7 @@ def initiate_2fa_setup(request):
     })
 
 
+@transaction.non_atomic_requests
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def verify_2fa_setup(request):
@@ -120,39 +93,8 @@ def verify_2fa_setup(request):
     if not token:
         raise ValidationError({'token': 'OTP token is required'})
     
-    try:
-        two_fa = user.two_factor_auth
-    except TwoFactorAuth.DoesNotExist:
-        raise ValidationError('2FA setup was not initiated')
-    
-    # Verify token
-    if not two_fa.verify_token(token):
-        TwoFactorAuthLog.objects.create(
-            user=user,
-            event_type='setup_cancelled',
-            status='failure',
-            ip_address=get_client_ip(request),
-            user_agent=request.META.get('HTTP_USER_AGENT', '')[:500],
-            details={'reason': 'Invalid OTP token'}
-        )
-        raise ValidationError({'token': 'Invalid OTP token. Please try again.'})
-    
-    # Generate backup codes
-    backup_codes = two_fa.generate_backup_codes(count=10)
-    two_fa.is_enabled = True
-    two_fa.verified_at = timezone.now()
-    two_fa.save()
-    
-    # Log event
-    TwoFactorAuthLog.objects.create(
-        user=user,
-        event_type='setup_verified',
-        status='success',
-        ip_address=get_client_ip(request),
-        user_agent=request.META.get('HTTP_USER_AGENT', '')[:500],
-        details={'backup_codes_count': len(backup_codes)}
-    )
-    
+    two_fa, backup_codes = two_factor.verify_configuration(user.pk, token)
+
     return Response({
         'status': 'enabled',
         'verified_at': two_fa.verified_at.isoformat(),
@@ -161,9 +103,11 @@ def verify_2fa_setup(request):
     }, status=status.HTTP_201_CREATED)
 
 
+@transaction.non_atomic_requests
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([AllowAny])
+@two_factor.sanitize_database_errors
 def verify_2fa_token(request):
     """
     POST /api/auth/2fa/verify/
@@ -171,126 +115,35 @@ def verify_2fa_token(request):
     
     Verifies an OTP token during login or for sensitive operations.
     Used by login flow to complete authentication.
-    Returns user data on successful verification.
+    Returns user data and the standard JWT pair on successful verification.
     
     Rate limited: Max 5 failed attempts in 15 minutes.
     """
-    from apps.users.rate_limit import (
-        check_two_fa_rate_limit,
-        increment_two_fa_attempts,
-        reset_two_fa_attempts,
-        MAX_TWO_FA_ATTEMPTS
-    )
-    
-    user = _resolve_2fa_verification_user(request)
     token = request.data.get('token')
-    
-    # Check rate limit before processing
-    try:
-        check_two_fa_rate_limit(user)
-    except PermissionDenied as e:
-        raise e
-    
     if not token:
         raise ValidationError({'token': 'OTP token is required'})
-    
-    try:
-        two_fa = user.two_factor_auth
-        if not two_fa.is_enabled:
-            raise PermissionDenied('2FA is not enabled for this user')
-    except TwoFactorAuth.DoesNotExist:
-        raise PermissionDenied('2FA is not configured')
-    
-    # Try OTP token
-    if two_fa.verify_token(token):
-        # Record login if it wasn't already recorded
-        if hasattr(user, 'record_login'):
-            user.record_login()
-        
-        # Reset rate limit on successful verification
-        reset_two_fa_attempts(user)
-        
-        TwoFactorAuthLog.objects.create(
-            user=user,
-            event_type='token_verified',
-            status='success',
-            ip_address=get_client_ip(request),
-            user_agent=request.META.get('HTTP_USER_AGENT', '')[:500]
-        )
-        
-        # Return user data for login completion
-        return Response({
-            'status': 'verified',
-            'message': 'OTP token verified successfully',
-            'user': {
-                'id': str(user.id),
-                'email': user.email,
-                'full_name': user.full_name,
-                'role': user.role,
-                'organization_id': str(user.organization.id) if user.organization else None,
-                'organization_name': user.organization.name if user.organization else None,
-                'theme': user.theme,
-                'avatar': user.avatar.url if user.avatar else None,
-            },
-            'remaining_attempts': MAX_TWO_FA_ATTEMPTS
-        })
-    
-    # Try backup code
-    if two_fa.use_backup_code(token):
-        two_fa.save()
-        
-        # Record login if it wasn't already recorded
-        if hasattr(user, 'record_login'):
-            user.record_login()
-        
-        # Reset rate limit on successful verification
-        reset_two_fa_attempts(user)
-        
-        TwoFactorAuthLog.objects.create(
-            user=user,
-            event_type='backup_code_used',
-            status='success',
-            ip_address=get_client_ip(request),
-            user_agent=request.META.get('HTTP_USER_AGENT', '')[:500]
-        )
-        
-        return Response({
-            'status': 'verified',
-            'message': 'Backup code used successfully. Consider regenerating your backup codes.',
-            'user': {
-                'id': str(user.id),
-                'email': user.email,
-                'full_name': user.full_name,
-                'role': user.role,
-                'organization_id': str(user.organization.id) if user.organization else None,
-                'organization_name': user.organization.name if user.organization else None,
-                'theme': user.theme,
-                'avatar': user.avatar.url if user.avatar else None,
-            },
-            'remaining_attempts': MAX_TWO_FA_ATTEMPTS
-        })
-    
-    # Token invalid - increment rate limit
-    attempts = increment_two_fa_attempts(user)
-    remaining = MAX_TWO_FA_ATTEMPTS - attempts
-    
-    TwoFactorAuthLog.objects.create(
-        user=user,
-        event_type='token_failed',
-        status='failure',
-        ip_address=get_client_ip(request),
-        user_agent=request.META.get('HTTP_USER_AGENT', '')[:500]
+    user, event = two_factor.consume_challenge(
+        _verification_challenge(request), token, request=request,
     )
-    
-    error_data = {'token': 'Invalid OTP token or backup code'}
-    error_data['remaining_attempts'] = max(0, remaining)
-    
-    if remaining <= 2 and remaining > 0:
-        error_data['warning'] = f'Only {remaining} attempt(s) remaining before lockout'
-    
-    raise ValidationError(error_data)
+    # The service has returned only after its durable transaction committed.
+    tokens = _issue_verified_2fa_tokens(user)
+    user.record_login()
+    message = ('Backup code used successfully. Consider regenerating your backup codes.'
+               if event == 'backup_code_used' else 'OTP token verified successfully')
+    return Response({
+        'status': 'verified', **tokens, 'message': message,
+        'user': {
+            'id': str(user.id), 'email': user.email, 'full_name': user.full_name,
+            'role': user.role,
+            'organization_id': str(user.organization.id) if user.organization else None,
+            'organization_name': user.organization.name if user.organization else None,
+            'theme': user.theme, 'avatar': user.avatar.url if user.avatar else None,
+        },
+        'remaining_attempts': two_factor.MAX_ATTEMPTS,
+    })
 
 
+@transaction.non_atomic_requests
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def disable_2fa(request):
@@ -306,26 +159,8 @@ def disable_2fa(request):
     if not password:
         raise ValidationError({'password': 'Password is required to disable 2FA'})
     
-    # Verify password
-    if not user.check_password(password):
-        raise PermissionDenied('Invalid password')
-    
-    try:
-        two_fa = user.two_factor_auth
-        two_fa.disable(reason='User requested')
-        two_fa.save()
-    except TwoFactorAuth.DoesNotExist:
-        raise ValidationError('2FA is not configured')
-    
-    # Log event
-    TwoFactorAuthLog.objects.create(
-        user=user,
-        event_type='disabled',
-        status='success',
-        ip_address=get_client_ip(request),
-        user_agent=request.META.get('HTTP_USER_AGENT', '')[:500]
-    )
-    
+    two_factor.disable_configuration(user.pk, password=password, reason='User requested')
+
     return Response({'status': 'disabled', 'message': '2FA has been disabled'})
 
 
@@ -352,13 +187,3 @@ def get_2fa_status(request):
             'verified_at': None,
             'backup_codes_available': 0
         })
-
-
-def get_client_ip(request):
-    """Extract client IP from request"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip

@@ -2,9 +2,12 @@
 Serializers for Users - Admin Apps
 """
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import APIException, AuthenticationFailed
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer
+from rest_framework_simplejwt.settings import api_settings
 from django.conf import settings
-from django.core import signing
+from django.db import DatabaseError
+from django.contrib.auth.models import update_last_login
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
@@ -43,7 +46,20 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
     
     def validate(self, attrs):
-        data = super().validate(attrs)
+        try:
+            return self._validate_login(attrs)
+        except DatabaseError:
+            from .two_factor_service import PersistenceUnavailable
+            raise PersistenceUnavailable() from None
+
+    def _validate_login(self, attrs):
+        # Authenticate with SimpleJWT's configured rule, without issuing a pair
+        # (TokenObtainPairSerializer.validate also persists OutstandingToken).
+        data = TokenObtainSerializer.validate(self, attrs)
+        if not self.user.is_active:
+            raise AuthenticationFailed(
+                self.error_messages['no_active_account'], 'no_active_account',
+            )
         
         # Verificar si la cuenta está bloqueada
         if self.user.is_locked:
@@ -64,22 +80,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             two_fa = self.user.two_factor_auth
             if two_fa.is_enabled:
                 two_fa_required = True
-        except Exception:
+        except User.two_factor_auth.RelatedObjectDoesNotExist:
             # 2FA no configurado, continuar normalmente
             pass
         
         if two_fa_required:
-            # Token firmado de uso unico/limitado para completar la verificacion TOTP.
-            # No es un JWT de acceso y solo lo acepta /api/auth/2fa/verify/.
-            temp_token = signing.dumps(
-                {
-                    'email': self.user.email,
-                    'user_id': str(self.user.id),
-                    'purpose': '2fa_verification',
-                    'scope': 'totp_verification_only',
-                },
-                salt='adminapps.2fa.login',
-            )
+            from .two_factor_service import issue_challenge
+            temp_token = issue_challenge(self.user)
             
             return {
                 'requires_2fa': True,
@@ -95,6 +102,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 # NO incluir access_token ni refresh_token
             }
         
+        # Issue once, only after all login gates; keep the custom claims hook.
+        try:
+            refresh = self.get_token(self.user)
+            data.update(refresh=str(refresh), access=str(refresh.access_token))
+        except Exception:
+            raise APIException('Unable to complete authentication') from None
+
+        if api_settings.UPDATE_LAST_LOGIN:
+            update_last_login(None, self.user)
+
         # Registrar login (solo si no requiere 2FA)
         self.user.record_login()
         

@@ -7,9 +7,7 @@ SECURITY: Secretos TOTP y backup codes están cifrados en reposo.
 import uuid
 import pyotp
 import logging
-from datetime import timedelta
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from cryptography.fernet import Fernet
@@ -36,8 +34,8 @@ def _encrypt_value(value):
     try:
         f = Fernet(_get_encryption_key())
         return f.encrypt(value.encode()).decode()
-    except Exception as exc:
-        logger.error(f"Encryption failed: {exc}")
+    except Exception:
+        logger.error("Encryption failed")
         raise ValueError("Failed to encrypt sensitive data")
 
 
@@ -48,8 +46,8 @@ def _decrypt_value(encrypted_value):
     try:
         f = Fernet(_get_encryption_key())
         return f.decrypt(encrypted_value.encode()).decode()
-    except Exception as exc:
-        logger.error(f"Decryption failed: {exc}")
+    except Exception:
+        logger.error("Decryption failed")
         # Si falla la desencriptación, retornar None en lugar de fallar
         # (puede haber claves antiguas)
         return None
@@ -71,6 +69,12 @@ class TwoFactorAuth(models.Model):
         help_text='TOTP secret encriptado (DO NOT ACCESS DIRECTLY - use .secret property)'
     )
     
+    # Shared anti-replay state, serialized by the user/configuration row locks.
+    generation = models.UUIDField(default=uuid.uuid4, editable=False)
+    last_totp_counter = models.BigIntegerField(null=True, blank=True)
+    failed_attempts = models.PositiveSmallIntegerField(default=0)
+    attempts_expires_at = models.DateTimeField(null=True, blank=True)
+
     # Status
     is_enabled = models.BooleanField(default=False, help_text='Is 2FA active for this user?')
     verified_at = models.DateTimeField(null=True, blank=True, help_text='When 2FA was first verified')
@@ -108,7 +112,9 @@ class TwoFactorAuth(models.Model):
     
     @secret.setter
     def secret(self, value):
-        """Cifrar y almacenar secreto"""
+        """Rotate the generation whenever a secret is assigned."""
+        self.generation = uuid.uuid4()
+        self.last_totp_counter = None
         if value:
             self._secret_encrypted = _encrypt_value(value)
         else:
@@ -142,14 +148,12 @@ class TwoFactorAuth(models.Model):
         return pyotp.TOTP(secret)
     
     def verify_token(self, token):
-        """Verify a 6-digit OTP token"""
-        if not token or not str(token).isdigit() or len(str(token)) != 6:
-            return False
-        totp = self.get_totp()
-        if not totp:
-            return False
-        return totp.verify(token, valid_window=1)
-    
+        """Consume a factor through the same persistent ledger as login/SSO."""
+        from .two_factor_service import consume_factor
+        accepted = consume_factor(self.user_id, token, allow_backup=False)
+        self.refresh_from_db()
+        return accepted
+
     def get_backup_codes(self):
         """Get list of backup codes (decrypted)"""
         codes_str = self.backup_codes
@@ -169,54 +173,34 @@ class TwoFactorAuth(models.Model):
         return codes
     
     def use_backup_code(self, code):
-        """
-        Verify and mark backup code as used (DECRYPTED comparison).
-        Returns True if valid and unused.
-        """
-        codes = self.get_backup_codes()
-        used_indices = self.backup_codes_used or []
-        
-        for idx, stored_code in enumerate(codes):
-            if idx not in used_indices and stored_code == code.upper():
-                used_indices.append(idx)
-                self.backup_codes_used = used_indices
-                return True
-        
-        return False
-    
+        """Consume under shared locks; callers must not save a stale instance."""
+        from .two_factor_service import consume_factor
+        accepted = consume_factor(self.user_id, code, backup_only=True)
+        self.refresh_from_db()
+        return accepted
+
     def disable(self, reason='User disabled 2FA'):
-        """Disable 2FA for this user"""
-        self.is_enabled = False
-        self.disabled_at = timezone.now()
-        self.disabled_reason = reason
-        self.save()
-        codes = [secrets.token_hex(4).upper() for _ in range(count)]
-        # In production, hash these before storing
-        self.backup_codes = ','.join(codes)
-        return codes
-    
-    def use_backup_code(self, code):
-        """
-        Verify and mark backup code as used.
-        Returns True if valid and unused.
-        """
-        codes = self.get_backup_codes()
-        used_indices = self.backup_codes_used
-        
-        for idx, stored_code in enumerate(codes):
-            if idx not in used_indices and stored_code == code.upper():
-                used_indices.append(idx)
-                self.backup_codes_used = used_indices
-                return True
-        
-        return False
-    
-    def disable(self, reason='User disabled 2FA'):
-        """Disable 2FA for this user"""
-        self.is_enabled = False
-        self.disabled_at = timezone.now()
-        self.disabled_reason = reason
-        self.save()
+        from .two_factor_service import disable_configuration
+        disable_configuration(self.user_id, reason=reason)
+        self.refresh_from_db()
+
+
+class TwoFactorChallenge(models.Model):
+    """Only a nonce digest and bound metadata are persisted, never the token."""
+
+    nonce_digest = models.CharField(max_length=64, primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    version = models.PositiveSmallIntegerField(default=1)
+    purpose = models.CharField(max_length=40)
+    scope = models.CharField(max_length=40)
+    generation = models.UUIDField()
+    context_digest = models.CharField(max_length=64)
+    issued_at = models.DateTimeField()
+    expires_at = models.DateTimeField()
+    consumed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'two_factor_challenges'
 
 
 class TwoFactorAuthLog(models.Model):
