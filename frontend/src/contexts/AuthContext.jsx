@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authService, featureFlagService } from '../services/api';
+import { authSession } from '../services/authRefresh.js';
 
 const AuthContext = createContext(null);
 
@@ -35,42 +36,50 @@ export const AuthProvider = ({ children }) => {
     document.documentElement.lang = language || 'es';
   }, []);
 
-  const loadFeatureFlags = useCallback(async () => {
-    const token = localStorage.getItem('access_token');
+  const loadFeatureFlags = useCallback(async (isEffectCurrent = () => true) => {
+    const session = authSession.snapshot();
+    const token = session.access;
     if (!token) {
-      setFeatureFlags({});
-      setFeatureFlagsLoading(false);
+      if (isEffectCurrent() && authSession.isCurrent(session)) {
+        setFeatureFlags({});
+        setFeatureFlagsLoading(false);
+      }
       return {};
     }
 
     try {
+      if (!isEffectCurrent() || !authSession.isCurrent(session)) return {};
       setFeatureFlagsLoading(true);
       const data = await featureFlagService.getAll();
+      if (!isEffectCurrent() || !authSession.isCurrent(session)) return {};
       const nextFlags = data && typeof data === 'object' ? data : {};
       setFeatureFlags(nextFlags);
       return nextFlags;
-    } catch (error) {
-      console.warn('Feature flags unavailable, using defaults:', error);
+    } catch {
+      if (!isEffectCurrent() || !authSession.isCurrent(session)) return {};
       setFeatureFlags({});
       return {};
     } finally {
-      setFeatureFlagsLoading(false);
+      if (isEffectCurrent() && authSession.isCurrent(session)) setFeatureFlagsLoading(false);
     }
   }, []);
 
-  // Check if user is logged in on mount
-  const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem('access_token');
+  const checkAuthRun = useCallback(async (isEffectCurrent) => {
+    const session = authSession.snapshot();
+    const isRunCurrent = () => isEffectCurrent() && authSession.isCurrent(session);
+    const token = session.access;
     if (token) {
       try {
         const userData = await authService.getCurrentUser();
+        if (!isRunCurrent()) return;
         setUser(userData);
         setIsAuthenticated(true);
-        await loadFeatureFlags();
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        await loadFeatureFlags(isEffectCurrent);
+      } catch {
+        if (!isEffectCurrent() || !authSession.isCurrent(session)) return;
+        if (!authSession.clear(session)) return;
+        if (!isEffectCurrent()) return;
+        setLoading(false);
         setUser(null);
         setSecurityAlert(null);
         setFeatureFlags({});
@@ -78,15 +87,23 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
       }
     } else {
+      if (!isRunCurrent()) return;
       setFeatureFlags({});
       setFeatureFlagsLoading(false);
     }
-    setLoading(false);
+    if (isRunCurrent()) setLoading(false);
   }, [loadFeatureFlags]);
 
+  // Check if user is logged in on mount
+  const checkAuth = useCallback(() => checkAuthRun(() => true), [checkAuthRun]);
+
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    let effectCurrent = true;
+    checkAuthRun(() => effectCurrent);
+    return () => {
+      effectCurrent = false;
+    };
+  }, [checkAuthRun]);
 
   useEffect(() => {
     const persistedTheme = localStorage.getItem('ui_theme') || 'light';
@@ -110,18 +127,28 @@ export const AuthProvider = ({ children }) => {
 
   // Login function
   const login = async (email, password) => {
+    setUser(null);
+    setSecurityAlert(null);
+    setFeatureFlags({});
+    setFeatureFlagsLoading(false);
+    setIsAuthenticated(false);
+    setLoading(false);
     try {
       const response = await authService.login({ email, password });
       
-      // Store tokens
-      localStorage.setItem('access_token', response.access);
-      localStorage.setItem('refresh_token', response.refresh);
+      if (!authSession.isLoginCurrent(response)) {
+        return { success: false, error: 'La sesión ha cambiado o requiere verificación' };
+      }
       
       // Set user data
       setUser(response.user);
       setSecurityAlert(response.security_alert || null);
       setIsAuthenticated(true);
+      setLoading(false);
       await loadFeatureFlags();
+      if (!authSession.isLoginCurrent(response)) {
+        return { success: false, error: 'La sesión ha cambiado' };
+      }
       
       return {
         success: true,
@@ -140,27 +167,31 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = async () => {
+    // authService invalidates the generation before its first await.
+    const pending = authService.logout();
+    const loggedOut = authSession.snapshot();
+    setUser(null);
+    setSecurityAlert(null);
+    setFeatureFlags({});
+    setFeatureFlagsLoading(false);
+    setIsAuthenticated(false);
+    setLoading(false);
     try {
-      await authService.logout();
-    } catch (error) {
-      console.error('Logout error:', error);
+      await pending;
     } finally {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      setUser(null);
-      setSecurityAlert(null);
-      setFeatureFlags({});
-      setFeatureFlagsLoading(false);
-      setIsAuthenticated(false);
-      applyTheme(localStorage.getItem('ui_theme') || 'light');
-      applyLanguage(localStorage.getItem('ui_language') || 'es');
+      if (authSession.isCurrent(loggedOut)) {
+        applyTheme(localStorage.getItem('ui_theme') || 'light');
+        applyLanguage(localStorage.getItem('ui_language') || 'es');
+      }
     }
   };
 
   // Update user profile
   const updateProfile = async (data) => {
+    const session = authSession.snapshot();
     try {
       const updatedUser = await authService.updateProfile(data);
+      authSession.assertCurrent(session);
       setUser(updatedUser);
       return { success: true, user: updatedUser };
     } catch (error) {
@@ -170,8 +201,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const changePassword = async (currentPassword, newPassword, newPasswordConfirm) => {
+    const session = authSession.snapshot();
     try {
       await authService.changePassword(currentPassword, newPassword, newPasswordConfirm);
+      authSession.assertCurrent(session);
       setUser((currentUser) => (
         currentUser
           ? { ...currentUser, must_change_password: false }
