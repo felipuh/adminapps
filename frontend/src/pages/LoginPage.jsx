@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 const LANDING_URL = import.meta.env.VITE_LANDING_URL || '';
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { checkAuth } = useAuth();
   const navigate = useNavigate();
   
   // Login form state
@@ -46,23 +46,19 @@ const LoginPage = () => {
       // Check if 2FA is required
       if (response.requires_2fa) {
         setRequires2FA(true);
-        setTempAccessToken(response.access);
+        setTempAccessToken(response.temporary_token || response.access);
         setUser2FA(response.user);
         toast.info('Por favor, ingresa tu código de autenticación');
         setLoading(false);
         return;
       }
 
-      // Normal login - use auth context
-      const result = await login(normalizedEmail, normalizedPassword);
-      
-      if (result.success) {
-        navigate(result.mustChangePassword ? '/settings' : '/', { replace: true });
-        toast.success(`¡Bienvenido, ${result.user.full_name}!`);
-      } else {
-        setError(result.error);
-        toast.error(result.error);
-      }
+      // Normal login - authService.login already accepted login via authSession
+      await checkAuth();
+      const user = response.user;
+      const mustChangePassword = Boolean(user?.must_change_password);
+      navigate(mustChangePassword ? '/settings' : '/', { replace: true });
+      toast.success(`¡Bienvenido, ${user?.full_name || 'Usuario'}!`);
     } catch (err) {
       const errorMsg = err.response?.data?.detail || err.response?.data?.error || 'Error al iniciar sesión';
       setError(errorMsg);
@@ -90,18 +86,29 @@ const LoginPage = () => {
       );
 
       if (response.status === 'verified') {
-        // Store tokens and redirect
-        localStorage.setItem('access_token', tempAccessToken);
-        // The refresh token should already be in storage from the initial login
-        
-        // Update auth context with full user data
-        await login(email, password);
-        
-        toast.success('¡Sesión iniciada correctamente!');
-        navigate('/', { replace: true });
+        const access = response.access || response.tokens?.access;
+        const refresh = response.refresh || response.tokens?.refresh;
+
+        if (access && refresh) {
+          localStorage.setItem('access_token', access);
+          localStorage.setItem('refresh_token', refresh);
+          await checkAuth();
+          toast.success('¡Sesión iniciada correctamente!');
+          navigate('/', { replace: true });
+        } else {
+          setError('El servidor no retornó credenciales de sesión.');
+          toast.error('Error de autenticación: faltan tokens de acceso.');
+        }
+      } else {
+        const errorMsg = response.message || 'Código de autenticación inválido';
+        setError(errorMsg);
+        toast.error(errorMsg);
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.token?.[0] || 'Código de autenticación inválido';
+      const errorMsg = err.response?.data?.token?.[0]
+        || err.response?.data?.detail
+        || err.response?.data?.message
+        || 'Código de autenticación inválido';
       setError(errorMsg);
       toast.error(errorMsg);
     }

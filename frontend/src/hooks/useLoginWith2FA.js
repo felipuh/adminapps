@@ -33,7 +33,7 @@ export const useLoginWith2FA = () => {
       // Check if 2FA is required
       if (response.requires_2fa) {
         setRequires2FA(true);
-        setAccessToken(response.access);
+        setAccessToken(response.temporary_token || response.access);
         setUserEmail(email);
         setLoading(false);
         
@@ -79,12 +79,18 @@ export const useLoginWith2FA = () => {
 
     try {
       // Use the temporary access token to verify 2FA
-      const response = await authService.verify2fa({
-        token: otp,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await authService.verify2fa(
+        { token: otp },
+        accessToken
+      );
+
+      const access = response.access || response.tokens?.access;
+      const refresh = response.refresh || response.tokens?.refresh;
+
+      if (access && refresh) {
+        localStorage.setItem('access_token', access);
+        localStorage.setItem('refresh_token', refresh);
+      }
 
       // 2FA verified successfully
       setRequires2FA(false);
@@ -97,6 +103,7 @@ export const useLoginWith2FA = () => {
         success: true,
         user: response.user,
         message: response.message,
+        tokens: access && refresh ? { access, refresh } : null,
       };
     } catch (err) {
       const errorMsg = err.response?.data?.token?.[0] || 'OTP verification failed';
