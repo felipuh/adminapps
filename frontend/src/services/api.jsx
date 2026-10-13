@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { authSession, installAuthInterceptors } from './authRefresh.js';
 
 // Base API URL - usa variable de entorno de Vite o el proxy por defecto
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
@@ -19,57 +20,14 @@ const api2FA = axios.create({
   },
 });
 
-// Request interceptor - add auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+// Refresh and logout use the separate transport: neither can recursively refresh.
+installAuthInterceptors(api, {
+  requestRefresh: async (refresh) => {
+    const response = await api2FA.post('/auth/refresh/', { refresh });
+    return response.data;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor - handle token refresh
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    const requestUrl = originalRequest?.url || '';
-    const isAuthEndpoint = requestUrl.includes('/auth/login/') || requestUrl.includes('/auth/refresh/');
-
-    // If 401 and not already retrying
-    if (error.response?.status === 401 && !originalRequest?._retry && !isAuthEndpoint) {
-      originalRequest._retry = true;
-
-      try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (refreshToken) {
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh/`, {
-            refresh: refreshToken,
-          });
-
-          const { access } = response.data;
-          localStorage.setItem('access_token', access);
-
-          originalRequest.headers.Authorization = `Bearer ${access}`;
-          return api(originalRequest);
-        }
-      } catch (refreshError) {
-        // Refresh failed - logout user
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
-      }
-    }
-
-    return Promise.reject(error);
-  }
-);
+  onExpired: () => { window.location.href = '/login'; },
+});
 
 export default api;
 
@@ -98,8 +56,9 @@ export const authService = {
       throw validationError;
     }
 
-    const response = await api.post('/auth/login/', { email, password });
-    return response.data;
+    const session = authSession.beginLogin();
+    const response = await api2FA.post('/auth/login/', { email, password });
+    return authSession.acceptLogin(session, response.data);
   },
 
   verify2fa: async (data, tempToken) => {
@@ -116,16 +75,24 @@ export const authService = {
   },
 
   logout: async () => {
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (refreshToken) {
+    const session = authSession.snapshot();
+    // Invalidate synchronously; retain the captured pair for this remote attempt.
+    let cleanupError;
+    try {
+      authSession.clear(session, { throwOnStorageError: true });
+    } catch (error) {
+      cleanupError = error;
+    }
+    if (session.refresh) {
       try {
-        await api.post('/auth/logout/', { refresh: refreshToken });
-      } catch (error) {
-        console.error('Logout error:', error);
+        await api2FA.post('/auth/logout/', { refresh: session.refresh }, {
+          headers: session.access ? { Authorization: `Bearer ${session.access}` } : {},
+        });
+      } catch {
+        // Local logout remains effective even if remote revocation is unavailable.
       }
     }
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    if (cleanupError) throw cleanupError;
   },
 
   getCurrentUser: async () => {
