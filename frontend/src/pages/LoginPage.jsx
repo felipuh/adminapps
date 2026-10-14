@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Shield, Mail, Lock, Eye, EyeOff, AlertCircle, KeyRound } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { authService } from '../services/api';
+import { authSession } from '../services/authRefresh.js';
 import toast from 'react-hot-toast';
 
 const LANDING_URL = import.meta.env.VITE_LANDING_URL || '';
@@ -19,8 +20,11 @@ const LoginPage = () => {
   // 2FA state
   const [requires2FA, setRequires2FA] = useState(false);
   const [otp, setOTP] = useState('');
+  const [verificationMethod, setVerificationMethod] = useState('totp');
   const [tempAccessToken, setTempAccessToken] = useState('');
   const [user2FA, setUser2FA] = useState(null);
+  const otpSubmissionInProgress = useRef(false);
+  const challengeSession = useRef(null);
   
   // UI state
   const [loading, setLoading] = useState(false);
@@ -45,10 +49,11 @@ const LoginPage = () => {
 
       // Check if 2FA is required
       if (response.requires_2fa) {
+        challengeSession.current = authSession.snapshot();
         setRequires2FA(true);
         setTempAccessToken(response.temporary_token || response.access);
         setUser2FA(response.user);
-        toast.info('Por favor, ingresa tu código de autenticación');
+        toast('Por favor, ingresa tu código de autenticación');
         setLoading(false);
         return;
       }
@@ -70,16 +75,29 @@ const LoginPage = () => {
 
   const handleOTPSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    if (otp.length !== 6) {
-      setError('El código debe tener 6 dígitos');
-      setLoading(false);
+    if (otpSubmissionInProgress.current) {
       return;
     }
 
+    setError('');
+
+    const isValidCode = verificationMethod === 'totp'
+      ? /^\d{6}$/.test(otp)
+      : /^[A-F0-9]{8}$/.test(otp);
+    if (!isValidCode) {
+      setError(verificationMethod === 'totp'
+        ? 'El código de autenticación debe tener 6 dígitos.'
+        : 'El código de respaldo debe tener 8 caracteres hexadecimales (0-9, A-F).');
+      return;
+    }
+
+    otpSubmissionInProgress.current = true;
+    setLoading(true);
+
     try {
+      const session = challengeSession.current;
+      if (!session) throw new Error('No hay un desafío de verificación vigente');
+      authSession.assertCurrent(session);
       const response = await authService.verify2fa(
         { token: otp },
         tempAccessToken
@@ -90,9 +108,9 @@ const LoginPage = () => {
         const refresh = response.refresh || response.tokens?.refresh;
 
         if (access && refresh) {
-          localStorage.setItem('access_token', access);
-          localStorage.setItem('refresh_token', refresh);
+          authSession.acceptLogin(session, { access, refresh });
           await checkAuth();
+          authSession.assertCurrent(session);
           toast.success('¡Sesión iniciada correctamente!');
           navigate('/', { replace: true });
         } else {
@@ -105,20 +123,27 @@ const LoginPage = () => {
         toast.error(errorMsg);
       }
     } catch (err) {
-      const errorMsg = err.response?.data?.token?.[0]
+      const tokenError = err.response?.data?.token;
+      const errorMsg = (Array.isArray(tokenError) ? tokenError[0] : tokenError)
         || err.response?.data?.detail
         || err.response?.data?.message
-        || 'Código de autenticación inválido';
+        || (verificationMethod === 'totp'
+          ? 'No se pudo verificar el código de autenticación. Intenta de nuevo o vuelve a iniciar sesión.'
+          : 'No se pudo verificar el código de respaldo. Intenta de nuevo o vuelve a iniciar sesión.');
       setError(errorMsg);
       toast.error(errorMsg);
+    } finally {
+      otpSubmissionInProgress.current = false;
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const handleCancel2FA = () => {
+    if (otpSubmissionInProgress.current) return;
+    challengeSession.current = null;
     setRequires2FA(false);
     setOTP('');
+    setVerificationMethod('totp');
     setTempAccessToken('');
     setUser2FA(null);
     setError('');
@@ -140,35 +165,83 @@ const LoginPage = () => {
           <div className="auth-card rounded-2xl p-8">
             <div className="text-center mb-6">
               <p className="text-slate-600">
-                Hemos enviado un código a <span className="font-semibold text-slate-900">{user2FA?.email}</span>
+                Verifica tu identidad para <span className="font-semibold text-slate-900">{user2FA?.email}</span>
               </p>
-              <p className="text-slate-500 text-sm mt-2">Ingresa tu código de 6 dígitos</p>
+              <p className="text-slate-500 text-sm mt-2">
+                {verificationMethod === 'totp'
+                  ? 'Ingresa el código de 6 dígitos de tu aplicación de autenticación.'
+                  : 'Ingresa uno de tus códigos de respaldo de 8 caracteres hexadecimales.'}
+              </p>
             </div>
 
             {/* Error message */}
             {error && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
+              <div id="two-factor-error" role="alert" className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-red-400">{error}</p>
               </div>
             )}
 
             <form onSubmit={handleOTPSubmit} className="space-y-5">
+              <fieldset className="space-y-3">
+                <legend className="block text-sm font-medium text-slate-600 mb-2">
+                  Método de verificación
+                </legend>
+                <label className="flex items-center gap-3 cursor-pointer text-sm text-slate-600">
+                  <input
+                    type="radio"
+                    name="verificationMethod"
+                    value="totp"
+                    checked={verificationMethod === 'totp'}
+                    onChange={() => {
+                      setVerificationMethod('totp');
+                      setOTP('');
+                      setError('');
+                    }}
+                    disabled={loading}
+                  />
+                  <span>Código de autenticación (6 dígitos)</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer text-sm text-slate-600">
+                  <input
+                    type="radio"
+                    name="verificationMethod"
+                    value="backup"
+                    checked={verificationMethod === 'backup'}
+                    onChange={() => {
+                      setVerificationMethod('backup');
+                      setOTP('');
+                      setError('');
+                    }}
+                    disabled={loading}
+                  />
+                  <span>Código de respaldo (8 caracteres hexadecimales)</span>
+                </label>
+              </fieldset>
+
               {/* OTP field */}
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  Código de Autenticación
+                <label htmlFor="two-factor-code" className="block text-sm font-medium text-slate-600 mb-2">
+                  {verificationMethod === 'totp' ? 'Código de autenticación' : 'Código de respaldo'}
                 </label>
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <input
+                    id="two-factor-code"
                     type="text"
-                    inputMode="numeric"
-                    maxLength="6"
+                    inputMode={verificationMethod === 'totp' ? 'numeric' : 'text'}
+                    maxLength={verificationMethod === 'totp' ? 6 : undefined}
                     value={otp}
-                    onChange={(e) => setOTP(e.target.value.replace(/\D/g, ''))}
+                    onChange={(e) => setOTP(verificationMethod === 'totp'
+                      ? e.target.value.replace(/\D/g, '')
+                      : e.target.value.toUpperCase())}
                     className="input-glass pl-11 text-center text-2xl tracking-widest"
-                    placeholder="000000"
+                    placeholder={verificationMethod === 'totp' ? '000000' : 'A1B2C3D4'}
+                    autoComplete={verificationMethod === 'totp' ? 'one-time-code' : 'off'}
+                    spellCheck={false}
+                    disabled={loading}
+                    aria-invalid={Boolean(error)}
+                    aria-describedby={error ? 'two-factor-error' : undefined}
                     required
                   />
                 </div>
@@ -177,7 +250,7 @@ const LoginPage = () => {
               {/* Submit button */}
               <button
                 type="submit"
-                disabled={loading || otp.length !== 6}
+                disabled={loading}
                 className="w-full btn-primary py-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
@@ -186,7 +259,7 @@ const LoginPage = () => {
                     <span>Verificando...</span>
                   </>
                 ) : (
-                  <span>Verificar Código</span>
+                  <span>Verificar {verificationMethod === 'totp' ? 'código' : 'código de respaldo'}</span>
                 )}
               </button>
 
@@ -194,17 +267,13 @@ const LoginPage = () => {
               <button
                 type="button"
                 onClick={handleCancel2FA}
+                disabled={loading}
                 className="w-full btn-secondary py-3"
               >
                 Cancelar
               </button>
             </form>
 
-            {/* Backup code option */}
-            <div className="mt-6 pt-4 border-t border-gray-700/40 text-center text-sm">
-              <p className="text-gray-500">¿Tienes un código de respaldo?</p>
-              <p className="text-gray-600 text-xs mt-2">Los códigos de respaldo tienen el mismo formato (6 dígitos)</p>
-            </div>
           </div>
 
         <p className="text-center text-slate-500 text-sm mt-6">
