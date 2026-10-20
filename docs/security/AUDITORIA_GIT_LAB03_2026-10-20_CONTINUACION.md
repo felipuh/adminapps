@@ -8,7 +8,22 @@ El archivo `AUDITORIA_GIT_LAB03_2026-10-20.md` citado en el traspaso no estaba d
 
 No se observaron procesos Git concurrentes. Los tres índices estaban vacíos. Inventario inicial `tracked unstaged / untracked`: AdminApps `23/337`, ISO Smart `22/38`, MedSupplier `14/25`. HEAD: AdminApps `3ef6d2145293956d1a4838673d8aab62d85af410`, ISO Smart `0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e`, MedSupplier `6a5fd0366841d0511901e0f41a98dc1d801b9f4f`.
 
-Los siete commits locales AdminApps y los dos ISO Smart declaran autor y committer Felipe; esto identifica la procedencia Git, pero por sí solo no acredita revisión de seguridad ni autorización de publicación. El reporte LAB03 atribuye el commit `3ef6d214` a los dos cambios de orden de rutas y tres pruebas de resolución. Sus cuatro archivos y el diff se contrastaron con el reporte; no incluyen evidencia privada. Los seis commits AdminApps anteriores se separan en dos de medición/costos de IA (`1e7f1d9`, `42f007d`) y cuatro de autenticación (`2e92e48`, `56bd373`, `418a516`, `b144b25`). Los dos ISO Smart (`f19fbd3`, `0ce01df`) pertenecen a medición/costos/entrega de IA. El inventario por commit y `git diff --check` pasaron; permanece pendiente la revisión íntegra de contenido, dependencias, pruebas y efectos de cada uno de los ocho commits. No se declara una rama publicable por inferencia de autoría.
+Los siete commits locales AdminApps y los dos ISO Smart declaran autor y committer Felipe; esto identifica la procedencia Git, pero por sí solo no acredita revisión de seguridad ni autorización de publicación. `2e92e48` también declara coautoría de Copilot. El reporte LAB03 atribuye el commit `3ef6d214` a los dos cambios de orden de rutas y tres pruebas de resolución. Sus cuatro archivos y el diff se contrastaron con el reporte; no incluyen evidencia privada. Los seis commits AdminApps anteriores se separan en dos de medición/costos de IA (`1e7f1d9`, `42f007d`) y cuatro de autenticación (`2e92e48`, `56bd373`, `418a516`, `b144b25`). Los dos ISO Smart (`f19fbd3`, `0ce01df`) pertenecen a medición/costos/entrega de IA. El inventario por commit y `git show --check` pasaron. No se declara una rama publicable por inferencia de autoría.
+
+### Revisión de los ocho commits anteriores
+
+| Repositorio / commit | Alcance verificado | Resultado de revisión |
+| --- | --- | --- |
+| AdminApps `1e7f1d9` | Endpoint de ingestión y dashboard, modelo/migración, UI, tests | **RETENIDO**: dashboard usa `IsAdmin` (incluye rol `admin` de tenant) con queryset de todas las organizaciones; test solo cubre un tenant. Un admin puede consultar uso/costo de otros tenants. No se mezclará la reparación financiera con IAM. |
+| AdminApps `42f007d` | Endurecimiento de productor, transacción y conflicto de replay | **RETENIDO** con el commit anterior; no corrige el alcance del dashboard. |
+| AdminApps `2e92e48` | Refresh frontend y contexto de sesión | 41/41 tests Node PASS; transporte de refresh separado, generación y limpieza revisados. |
+| AdminApps `56bd373` | Paso 2FA frontend | Challenge no se trata como sesión final; revisión estática de diff. |
+| AdminApps `418a516` | Consumo 2FA transaccional, antirreplay, migración 0004 y rutas | Suite histórica sin adaptar: 11 FAIL/21 con IAM actual. Sucesora R1 ejecuta los mismos 21 métodos: 21/21 PASS offline, DB/red 0. No equivale a migración desplegada. |
+| AdminApps `b144b25` | UI de códigos de respaldo | Revisión estática de diff; build frontend PASS. |
+| ISO Smart `f19fbd3` | Medición/costos, migración RLS, Value Discovery y documentos | **RETENIDO**: incluye un reporte de validación con consumo/saldo real en un repositorio público. Tratarlo como evidencia privada antes de publicar. |
+| ISO Smart `0ce01df` | Entrega por outbox, reintentos y permiso SQL de worker | **RETENIDO** junto con `f19fbd3`; entrega deshabilitada por defecto en código, pero no se certifica esquema ni worker. |
+
+El build AdminApps y los tres tests de rutas pasaron. El análisis de paths de los diffs no halló bloques de clave privada ni credenciales literales; la búsqueda por patrón no prueba ausencia total de secretos. El fallo de aislamiento del dashboard se desprende del código del commit y de `IsAdmin`; requiere prueba adversarial con dos organizaciones y corrección separada antes de publicar la historia financiera.
 
 ## Once excepciones históricas por consumidor
 
@@ -34,4 +49,4 @@ Este mapeo no afirma equivalencia exacta de todos los asserts antiguos. Identifi
 
 ## Límite de publicación
 
-Los refs remotos leídos seguían en `f39acc54f51dd5f2679a66e1cdaace9f80c22621` (AdminApps), `52bcdf65e70851480b1a729f5ded2e93774d05c7` (ISO Smart) y `6a5fd0366841d0511901e0f41a98dc1d801b9f4f` (MedSupplier). Ningún push, migración, grant, activación de settings, DB compartida ni despliegue se ejecutó. Las ramas actuales mezclan historia financiera con IAM o contienen historia financiera pendiente; cualquier push requiere cerrar primero la auditoría íntegra de los ocho commits y decidir un destino que preserve esa separación. La evidencia privada en `/tmp` no es material de publicación.
+Los refs remotos leídos seguían en `f39acc54f51dd5f2679a66e1cdaace9f80c22621` (AdminApps), `52bcdf65e70851480b1a729f5ded2e93774d05c7` (ISO Smart) y `6a5fd0366841d0511901e0f41a98dc1d801b9f4f` (MedSupplier). Son ancestros de los HEAD locales; no hay divergencia. Las tres ramas remotas indican `protected=false` y la API pública de reglas efectivas devolvió lista vacía, pero esto no supera los bloqueos de contenido. Ningún push, migración, grant, activación de settings, DB compartida ni despliegue se ejecutó. Las ramas actuales mezclan historia financiera con IAM o contienen historia financiera pendiente. La evidencia privada en `/tmp` y en el commit ISO indicado no es material de publicación.
