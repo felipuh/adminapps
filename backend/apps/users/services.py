@@ -8,7 +8,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, UntypedToken
+from rest_framework_simplejwt.settings import api_settings
 
 from .models import User, UserActivityLog
 
@@ -29,12 +30,32 @@ class RequestContext:
     user_agent: str
 
 
-def blacklist_refresh_token(refresh_token: str | None) -> None:
-    """Blacklist refresh token when provided."""
+def blacklist_refresh_token(refresh_token: str | None, *, expected_user_id=None) -> None:
+    """Withdraw bound refresh families; retain legacy blacklist-only logout."""
     if not refresh_token:
         return
     try:
-        token = RefreshToken(refresh_token)
+        try:
+            token = RefreshToken(refresh_token)
+        except TokenError:
+            # A previously blacklisted refresh is safe to revoke again. Still
+            # verify its signature, expiry, type and owner before any effect.
+            verified = UntypedToken(refresh_token)
+            if verified.get(api_settings.TOKEN_TYPE_CLAIM) != 'refresh':
+                raise TokenError('Invalid refresh type')
+            token = RefreshToken(refresh_token, verify=False)
+        if expected_user_id is not None and str(token.get(api_settings.USER_ID_CLAIM)) != str(expected_user_id):
+            raise LogoutError('El token no pertenece a la sesión humana autenticada')
+        from .human_sessions import FAMILY, logout_cookie_refresh
+        if token.get('token_family') == FAMILY:
+            from rest_framework.exceptions import AuthenticationFailed
+            if expected_user_id is None:
+                raise LogoutError('Se requiere un usuario autenticado')
+            try:
+                logout_cookie_refresh(User(pk=expected_user_id), refresh_token)
+            except AuthenticationFailed as exc:
+                raise LogoutError('Token de refresco invalido') from exc
+            return
         token.blacklist()
     except TokenError as exc:
         raise LogoutError("Token de refresco invalido") from exc

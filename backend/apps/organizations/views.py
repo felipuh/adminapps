@@ -1,6 +1,8 @@
 """
 Views for Organizations - Admin Apps
 """
+from apps.users.api_authorization import ControlPlaneMixin
+
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -24,7 +26,7 @@ from .serializers import (
 from apps.users.permissions import IsSuperAdmin, IsAdmin, IsOrgAdmin
 
 
-class OrganizationViewSet(viewsets.ModelViewSet):
+class OrganizationViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de organizaciones
     """
@@ -49,7 +51,9 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         return OrganizationDetailSerializer
     
     def get_permissions(self):
-        if self.action in ['create', 'destroy', 'activate', 'suspend']:
+        if self.action == 'organization_settings' and self.request.method == 'PATCH':
+            return [IsOrgAdmin()]
+        elif self.action in ['create', 'destroy', 'activate', 'suspend']:
             return [IsSuperAdmin()]
         elif self.action in ['update', 'partial_update']:
             return [IsAdmin()]
@@ -75,7 +79,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         
         if request.method == 'PATCH':
             serializer = OrganizationSettingsSerializer(
-                org_settings, data=request.data, partial=True
+                org_settings, data=request.data, partial=True, context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -146,7 +150,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
         return Response({'status': 'suspended'})
 
 
-class OrganizationInvitationViewSet(viewsets.ModelViewSet):
+class OrganizationInvitationViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de invitaciones
     """
@@ -231,6 +235,8 @@ class OrganizationInvitationViewSet(viewsets.ModelViewSet):
             )
         
         # Retornar datos para registro
+        from .invitation_authority import validate_invitation_authority
+        validate_invitation_authority(invitation)
         return Response({
             'invitation_id': str(invitation.id),
             'organization_name': invitation.organization.name,

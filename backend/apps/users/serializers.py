@@ -1,12 +1,14 @@
 """
 Serializers for Users - Admin Apps
 """
+from apps.users.api_authorization import StrictInputMixin, reject_reparenting, may_manage_user
+
 from rest_framework import serializers
 from rest_framework.exceptions import APIException, AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer
 from rest_framework_simplejwt.settings import api_settings
 from django.conf import settings
-from django.db import DatabaseError
+from django.db import DatabaseError, transaction
 from django.contrib.auth.models import update_last_login
 from django.contrib.auth.hashers import check_password
 from django.utils import timezone
@@ -33,7 +35,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     
     @classmethod
     def get_token(cls, user):
-        token = super().get_token(user)
+        from .human_sessions import issue_refresh
+        token = issue_refresh(user)
         
         # Agregar claims personalizados
         token['email'] = user.email
@@ -106,6 +109,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         try:
             refresh = self.get_token(self.user)
             data.update(refresh=str(refresh), access=str(refresh.access_token))
+        except AuthenticationFailed:
+            raise
         except Exception:
             raise APIException('Unable to complete authentication') from None
 
@@ -178,7 +183,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para crear usuarios"""
     email = serializers.EmailField(validators=[])
     password = serializers.CharField(write_only=True, validators=[validate_password])
@@ -202,6 +207,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
         actor = getattr(request, 'user', None)
         requested_role = attrs.get('role', 'user')
         requested_organization = attrs.get('organization')
+
+        if actor and actor.is_authenticated:
+            if requested_role == 'superadmin' and not actor.is_superadmin:
+                raise serializers.ValidationError({
+                    'role': 'Solo un superadministrador puede asignar ese rol.'
+                })
+            if requested_role == 'admin' and not actor.is_admin:
+                raise serializers.ValidationError({
+                    'role': 'No puedes asignar roles administrativos globales.'
+                })
 
         if actor and actor.is_authenticated and not actor.is_admin:
             if not actor.organization_id:
@@ -248,7 +263,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return user
 
 
-class UserUpdateSerializer(serializers.ModelSerializer):
+class UserUpdateSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para actualizar usuarios"""
     
     class Meta:
@@ -265,11 +280,26 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         actor = getattr(request, 'user', None)
         requested_role = attrs.get('role')
 
-        if actor and actor.is_authenticated and not actor.is_admin:
-            if requested_role in {'superadmin', 'admin'}:
+        if actor and actor.is_authenticated:
+            if (
+                self.instance
+                and self.instance.pk == actor.pk
+                and requested_role is not None
+                and requested_role != self.instance.role
+            ):
+                raise serializers.ValidationError({
+                    'role': 'No puedes cambiar tu propio rol.'
+                })
+            if requested_role == 'superadmin' and not actor.is_superadmin:
+                raise serializers.ValidationError({
+                    'role': 'Solo un superadministrador puede asignar ese rol.'
+                })
+            if requested_role == 'admin' and not actor.is_admin:
                 raise serializers.ValidationError({
                     'role': 'No puedes asignar roles administrativos globales.'
                 })
+
+        if actor and actor.is_authenticated and not actor.is_admin:
             if self.instance and self.instance.organization_id != actor.organization_id:
                 raise serializers.ValidationError(
                     'No puedes modificar usuarios de otra organización.'
@@ -277,7 +307,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para que el usuario actualice su propio perfil"""
     
     class Meta:
@@ -330,7 +360,7 @@ class ResetPasswordConfirmSerializer(serializers.Serializer):
         return attrs
 
 
-class UserOrganizationSerializer(serializers.ModelSerializer):
+class UserOrganizationSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para membresías de organización"""
     organization_name = serializers.CharField(source='organization.name', read_only=True)
     user_email = serializers.CharField(source='user.email', read_only=True)
@@ -342,6 +372,61 @@ class UserOrganizationSerializer(serializers.ModelSerializer):
             'role', 'is_primary', 'is_active', 'joined_at', 'updated_at',
         ]
         read_only_fields = ['id', 'joined_at', 'updated_at']
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        actor = getattr(request, 'user', None)
+        if not actor or not actor.is_authenticated:
+            raise serializers.ValidationError('Se requiere una sesión autenticada.')
+
+        reject_reparenting(self.instance, attrs, ('user', 'organization'))
+        member = attrs.get('user', getattr(self.instance, 'user', None))
+        if member is not None and not may_manage_user(actor, member):
+            raise serializers.ValidationError({'user': 'Principal de mayor autoridad.'})
+        if member is not None and (
+            member == actor
+            or getattr(member, 'pk', None) == getattr(actor, 'pk', None)
+        ):
+            raise serializers.ValidationError({
+                'user': 'No puedes modificar tu propia membresía.'
+            })
+
+        role = attrs.get('role', getattr(self.instance, 'role', None))
+        if role == 'superadmin' and not actor.is_superadmin:
+            raise serializers.ValidationError({
+                'role': 'Solo un superadministrador puede asignar ese rol.'
+            })
+        if role == 'admin' and not actor.is_admin:
+            raise serializers.ValidationError({
+                'role': 'No puedes asignar roles administrativos globales.'
+            })
+
+        if actor.is_admin:
+            return attrs
+
+        organization = attrs.get(
+            'organization',
+            getattr(self.instance, 'organization', None),
+        )
+        organization_id = getattr(
+            organization,
+            'pk',
+            getattr(organization, 'id', organization),
+        )
+        if str(organization_id) != str(actor.organization_id):
+            raise serializers.ValidationError({
+                'organization': 'No puedes administrar membresías de otra organización.'
+            })
+
+        if not member or str(getattr(member, 'organization_id', None)) != str(actor.organization_id):
+            raise serializers.ValidationError({'user': 'Usuario fuera de tu organización.'})
+
+        if role in {'superadmin', 'admin'}:
+            raise serializers.ValidationError({
+                'role': 'No puedes asignar roles administrativos globales.'
+            })
+
+        return attrs
 
 
 class UserSessionSerializer(serializers.ModelSerializer):
@@ -384,7 +469,7 @@ class UserNotificationSerializer(serializers.Serializer):
     created_at = serializers.DateTimeField()
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para registro público"""
     email = serializers.EmailField(validators=[])
     password = serializers.CharField(write_only=True, validators=[validate_password])
@@ -398,7 +483,40 @@ class RegisterSerializer(serializers.ModelSerializer):
             'first_name', 'last_name', 'phone',
             'invitation_token'
         ]
-    
+
+    def _get_valid_invitation(self, token, email, *, lock=False):
+        from apps.organizations.models import OrganizationInvitation
+        from apps.organizations.invitation_authority import validate_invitation_authority
+
+        invitations = OrganizationInvitation.objects
+        if lock:
+            # The existing B authority triggers acquire this same fence before
+            # user/membership/tenant mutations. Keep fence -> invitation order.
+            from apps.integration.models import SSOSecurityFence
+            fence = SSOSecurityFence.objects.select_for_update().get(pk=1)
+            if fence.enabled is not True:
+                raise serializers.ValidationError({'invitation_token': 'Autoridad no disponible.'})
+            invitations = invitations.select_for_update()
+        try:
+            invitation = invitations.get(token=token, status='pending')
+        except OrganizationInvitation.DoesNotExist:
+            raise serializers.ValidationError({
+                'invitation_token': 'La invitación no es válida o ya fue utilizada.'
+            })
+
+        if invitation.is_expired:
+            raise serializers.ValidationError({
+                'invitation_token': 'La invitación ha expirado.'
+            })
+        if invitation.email.strip().casefold() != email.strip().casefold():
+            raise serializers.ValidationError({
+                'email': 'El correo debe coincidir con el de la invitación.'
+            })
+
+        validate_invitation_authority(invitation)
+
+        return invitation
+
     def validate(self, attrs):
         if attrs['password'] != attrs.pop('password_confirm'):
             raise serializers.ValidationError({
@@ -414,6 +532,10 @@ class RegisterSerializer(serializers.ModelSerializer):
                 })
             raise serializers.ValidationError({'email': 'Este email ya está registrado'})
 
+        invitation_token = attrs.get('invitation_token')
+        if invitation_token:
+            self._get_valid_invitation(invitation_token, attrs['email'])
+
         return attrs
     
     def validate_email(self, value):
@@ -422,40 +544,38 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         invitation_token = validated_data.pop('invitation_token', None)
         password = validated_data.pop('password')
-        
-        user = User(**validated_data)
-        user.mark_temporary_password()
-        user.set_password(password)
-        
-        # Procesar invitación si existe
-        if invitation_token:
-            from apps.organizations.models import OrganizationInvitation
-            try:
-                invitation = OrganizationInvitation.objects.get(
-                    token=invitation_token,
-                    status='pending'
+
+        with transaction.atomic():
+            invitation = None
+            if invitation_token:
+                invitation = self._get_valid_invitation(
+                    invitation_token,
+                    validated_data['email'],
+                    lock=True,
                 )
+
+            user = User(**validated_data)
+            user.mark_temporary_password()
+            user.set_password(password)
+
+            if invitation:
                 user.organization = invitation.organization
                 user.role = invitation.role
                 user.is_verified = True
-                
-                # Marcar invitación como aceptada
-                from django.utils import timezone
+
+            user.save()
+
+            if user.organization:
+                UserOrganization.objects.create(
+                    user=user,
+                    organization=user.organization,
+                    role=user.role,
+                    is_primary=True
+                )
+
+            if invitation:
                 invitation.status = 'accepted'
                 invitation.accepted_at = timezone.now()
-                invitation.save()
-            except OrganizationInvitation.DoesNotExist:
-                pass
-        
-        user.save()
-        
-        # Crear membresía si tiene organización
-        if user.organization:
-            UserOrganization.objects.create(
-                user=user,
-                organization=user.organization,
-                role=user.role,
-                is_primary=True
-            )
-        
-        return user
+                invitation.save(update_fields=['status', 'accepted_at'])
+
+            return user

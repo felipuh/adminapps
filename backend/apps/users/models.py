@@ -4,7 +4,7 @@ Sistema de usuarios con roles y permisos multi-organización
 """
 import uuid
 from datetime import timedelta
-from django.db import models
+from django.db import models, router, transaction
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.conf import settings
 from django.utils import timezone
@@ -85,6 +85,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     failed_login_attempts = models.PositiveIntegerField(default=0)
     locked_until = models.DateTimeField(null=True, blank=True)
     password_changed_at = models.DateTimeField(null=True, blank=True)
+    # Maintained by the local-human authority trigger, including bulk/SQL writes.
+    human_auth_version = models.PositiveBigIntegerField(default=1, editable=False)
     must_change_password = models.BooleanField(default=False)
     
     # Preferencias
@@ -122,6 +124,26 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return f"{self.full_name} ({self.email})"
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if update_fields is not None:
+            update_fields = frozenset(update_fields)
+        using = using or router.db_for_write(type(self), instance=self)
+        options = dict(force_insert=force_insert, force_update=force_update,
+                       using=using, update_fields=update_fields)
+        if update_fields is not None and 'password' in update_fields:
+            # Django check_password upgrades old hashes with this partial write.
+            # The trigger advances authority; read it while our UPDATE still
+            # holds the user row lock, before any external mutation can commit.
+            with transaction.atomic(using=using):
+                current = type(self).objects.db_manager(using).select_for_update().get(pk=self.pk)
+                if current.human_auth_version != self.human_auth_version:
+                    from rest_framework.exceptions import AuthenticationFailed
+                    raise AuthenticationFailed('Human authority changed; authenticate again')
+                super().save(**options)
+                self.refresh_from_db(using=using, fields=['human_auth_version'])
+        else:
+            super().save(**options)
     
     @property
     def full_name(self):
@@ -270,6 +292,14 @@ class UserSession(models.Model):
     
     # Información de sesión
     token_jti = models.CharField(max_length=255, unique=True)  # JWT ID
+    # Legacy rows deliberately retain version 0 and no family binding.
+    contract_version = models.PositiveSmallIntegerField(default=0, editable=False)
+    token_family = models.CharField(max_length=40, default='', editable=False)
+    family_id = models.UUIDField(null=True, unique=True, editable=False)
+    generation = models.PositiveBigIntegerField(default=1, editable=False)
+    authority_version = models.PositiveBigIntegerField(default=0, editable=False)
+    revoked_at = models.DateTimeField(null=True, blank=True, editable=False)
+    revocation_reason = models.CharField(max_length=80, blank=True, editable=False)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.TextField(blank=True)
     device_type = models.CharField(max_length=50, blank=True)  # desktop, mobile, tablet

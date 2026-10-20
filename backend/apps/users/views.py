@@ -1,13 +1,15 @@
 """
 Views for Users - Admin Apps
 """
+from apps.users.api_authorization import ControlPlaneMixin, require_human
+
 from rest_framework import viewsets, status, filters, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from django.conf import settings
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.tokens import default_token_generator
@@ -156,7 +158,7 @@ class RegisterView(APIView):
         user = serializer.save()
         
         # Generar tokens
-        refresh = RefreshToken.for_user(user)
+        refresh = CustomTokenObtainPairSerializer.get_token(user)
         
         return Response({
             'user': {
@@ -177,10 +179,22 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
+        require_human(request)
+        actor = request.user
         try:
-            blacklist_refresh_token(request.data.get('refresh'))
+            from .human_sessions import FAMILY, logout_session
+            auth = getattr(request, 'auth', None)
+            if hasattr(auth, 'get') and auth.get('token_family') == FAMILY:
+                logout_session(request.user, auth, request.data.get('refresh'))
+            else:
+                # Transitional legacy logout only withdraws credentials. The new
+                # authenticator never admits legacy JWTs to protected handlers.
+                blacklist_refresh_token(request.data.get('refresh'), expected_user_id=actor.pk)
+            if getattr(request, 'session', None) is not None:
+                from django.contrib.auth import logout
+                logout(request)
             log_logout_activity(
-                user=request.user,
+                user=actor,
                 context=RequestContext(
                     ip_address=request.META.get('REMOTE_ADDR'),
                     user_agent=request.META.get('HTTP_USER_AGENT', ''),
@@ -191,7 +205,7 @@ class LogoutView(APIView):
             return Response({'error': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de usuarios
     """
@@ -379,15 +393,73 @@ class UserViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'])
     def revoke_sessions(self, request):
-        """Revocar todas las sesiones excepto la actual"""
-        current_token = request.data.get('current_token_jti')
+        """Revoke other owned human families; preserve the authenticated SID."""
+        auth = getattr(request, 'auth', None)
+        current_token = auth.get('jti') if hasattr(auth, 'get') else None
+        supplied = request.data.get('current_token_jti')
+        if supplied is not None and supplied != current_token:
+            raise serializers.ValidationError({'current_token_jti': 'No coincide con la sesión autenticada.'})
+
+        from .human_sessions import FAMILY, revoke
+        if hasattr(auth, 'get') and auth.get('token_family') == FAMILY:
+            count = revoke(request.user, keep_session_id=auth.get('sid'))
+            return Response({'scope': 'local_human_jwt', 'revoked': count,
+                             'access_tokens_revoked': True, 'central_sessions_revoked': False})
+        if auth is None:
+            # A Django cookie has no JWT SID. All owned JWT families are other
+            # sessions; retain the current cookie and make that scope explicit.
+            count = revoke(request.user)
+            return Response({'scope': 'local_human_jwt', 'revoked': count,
+                             'access_tokens_revoked': True, 'django_cookie_revoked': False,
+                             'central_sessions_revoked': False})
         
         UserSession.objects.filter(
             user=request.user,
             is_active=True
         ).exclude(token_jti=current_token).update(is_active=False)
         
-        return Response({'detail': 'Otras sesiones revocadas'})
+        return Response({'detail': 'Registros de otras sesiones locales desactivados',
+                         'scope': 'local_registry', 'access_tokens_revoked': False,
+                         'central_sessions_revoked': False})
+
+    @action(detail=False, methods=['post'])
+    def revoke_session(self, request):
+        """Owned individual revocation or explicit all=true (including current)."""
+        from .human_sessions import revoke
+
+        class RevocationInput(serializers.Serializer):
+            session_id = serializers.UUIDField(required=False)
+            all = serializers.BooleanField(default=False)
+
+            def validate(self, attrs):
+                if ('session_id' in attrs) == attrs['all']:
+                    raise serializers.ValidationError('Specify session_id or all=true.')
+                return attrs
+
+        payload = RevocationInput(data=request.data)
+        payload.is_valid(raise_exception=True)
+        count = revoke(request.user, session_id=payload.validated_data.get('session_id'))
+        return Response({'scope': 'local_human_jwt', 'revoked': count,
+                         'access_tokens_revoked': True, 'central_sessions_revoked': False})
+
+    @action(detail=False, methods=['post'])
+    def revoke_sso_sessions(self, request):
+        """Explicit central self-revocation; omitted SID means all central sessions."""
+        from apps.integration.session_lifecycle import revoke_for_user
+        from django.db import DatabaseError
+        from .two_factor_service import PersistenceUnavailable
+
+        class RevocationInput(serializers.Serializer):
+            session_id = serializers.UUIDField(required=False)
+
+        payload = RevocationInput(data=request.data)
+        payload.is_valid(raise_exception=True)
+        try:
+            count = revoke_for_user(actor=request.user, **payload.validated_data)
+        except DatabaseError:
+            raise PersistenceUnavailable() from None
+        return Response({'scope': 'central_sso', 'revoked': count,
+                         'local_sessions_revoked': False})
     
     @action(detail=False, methods=['get'])
     def activity(self, request):
@@ -400,7 +472,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class UserOrganizationViewSet(viewsets.ModelViewSet):
+class UserOrganizationViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de membresías de usuarios en organizaciones
     """
@@ -416,8 +488,13 @@ class UserOrganizationViewSet(viewsets.ModelViewSet):
             return UserOrganization.objects.all()
         return UserOrganization.objects.filter(organization=user.organization)
 
+    def perform_destroy(self, instance):
+        if instance.user == self.request.user:
+            raise PermissionDenied('No puedes eliminar tu propia membresía.')
+        instance.delete()
 
-class UserActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
+
+class UserActivityLogViewSet(ControlPlaneMixin, viewsets.ReadOnlyModelViewSet):
     """
     ViewSet para consultar logs de actividad (solo lectura)
     """
@@ -437,7 +514,7 @@ class UserActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
         return UserActivityLog.objects.filter(organization=user.organization)
 
 
-class UserNotificationViewSet(viewsets.ViewSet):
+class UserNotificationViewSet(ControlPlaneMixin, viewsets.ViewSet):
     """In-app notification center built from activity and alert logs."""
 
     permission_classes = [IsAuthenticated]

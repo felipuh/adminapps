@@ -1,6 +1,8 @@
 """
 Serializers for Organizations - Admin Apps
 """
+from apps.users.api_authorization import StrictInputMixin, reject_reparenting
+
 from django.conf import settings
 from django.db import transaction
 from rest_framework import serializers
@@ -27,10 +29,17 @@ def _is_billing_exempt_owner_org(organization):
     return False
 
 
-class OrganizationSettingsSerializer(serializers.ModelSerializer):
+class OrganizationSettingsSerializer(StrictInputMixin, serializers.ModelSerializer):
     class Meta:
         model = OrganizationSettings
         exclude = ['organization']
+
+    def validate(self, attrs):
+        actor = getattr(self.context.get('request'), 'user', None)
+        privileged = {key for key in attrs if key.startswith('module_') or key == 'last_backup_at'}
+        if privileged and not (actor and actor.is_staff and actor.is_admin):
+            raise serializers.ValidationError({key: 'Campo reservado a plataforma.' for key in privileged})
+        return attrs
 
 
 class OrganizationListSerializer(serializers.ModelSerializer):
@@ -80,7 +89,7 @@ class OrganizationDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'code', 'created_at', 'updated_at']
 
 
-class OrganizationCreateSerializer(serializers.ModelSerializer):
+class OrganizationCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para crear organizaciones"""
     
     class Meta:
@@ -104,7 +113,7 @@ class OrganizationCreateSerializer(serializers.ModelSerializer):
             return organization
 
 
-class OrganizationUpdateSerializer(serializers.ModelSerializer):
+class OrganizationUpdateSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para actualizar organizaciones"""
     
     class Meta:
@@ -132,7 +141,7 @@ class OrganizationUpdateSerializer(serializers.ModelSerializer):
             return instance
 
 
-class OrganizationInvitationSerializer(serializers.ModelSerializer):
+class OrganizationInvitationSerializer(StrictInputMixin, serializers.ModelSerializer):
     organization_name = serializers.CharField(source='organization.name', read_only=True)
     invited_by_name = serializers.CharField(source='invited_by.full_name', read_only=True)
     is_expired = serializers.ReadOnlyField()
@@ -146,12 +155,47 @@ class OrganizationInvitationSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'token', 'status', 'invited_by', 'created_at', 'accepted_at']
 
+    def validate(self, attrs):
+        reject_reparenting(self.instance, attrs, ('organization',))
+        if self.instance and self.instance.status != 'pending':
+            raise serializers.ValidationError('Solo se pueden modificar invitaciones pendientes.')
+        return OrganizationInvitationCreateSerializer.validate(self, attrs)
 
-class OrganizationInvitationCreateSerializer(serializers.ModelSerializer):
+
+class OrganizationInvitationCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
     class Meta:
         model = OrganizationInvitation
         fields = ['organization', 'email', 'role', 'message']
-    
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        actor = getattr(request, 'user', None)
+        if not actor or not actor.is_authenticated:
+            raise serializers.ValidationError('Se requiere una sesión autenticada.')
+
+        role = attrs.get('role', getattr(self.instance, 'role', None))
+        if role == 'superadmin' and not actor.is_superadmin:
+            raise serializers.ValidationError({
+                'role': 'Solo un superadministrador puede asignar ese rol.'
+            })
+        if role == 'admin' and not actor.is_admin:
+            raise serializers.ValidationError({
+                'role': 'No puedes asignar roles administrativos globales.'
+            })
+
+        organization = attrs.get('organization', getattr(self.instance, 'organization', None))
+        organization_id = getattr(
+            organization,
+            'pk',
+            getattr(organization, 'id', organization),
+        )
+        if not actor.is_admin and str(organization_id) != str(actor.organization_id):
+            raise serializers.ValidationError({
+                'organization': 'No puedes crear invitaciones para otra organización.'
+            })
+
+        return attrs
+
     def validate_email(self, value):
         from apps.users.models import User
         # Verificar si ya existe un usuario con este email en la organización

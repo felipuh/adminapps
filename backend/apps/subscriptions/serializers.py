@@ -1,8 +1,11 @@
 """
 Serializers for Subscriptions - Admin Apps
 """
+from apps.users.api_authorization import StrictInputMixin, reject_reparenting
+
 from django.conf import settings
 from rest_framework import serializers
+from apps.organizations.models import Organization
 from .models import Plan, Subscription, Invoice, PaymentMethod
 
 
@@ -43,7 +46,7 @@ class PlanListSerializer(serializers.ModelSerializer):
         ]
 
 
-class PlanDetailSerializer(serializers.ModelSerializer):
+class PlanDetailSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer completo para detalle de planes"""
     
     class Meta:
@@ -76,7 +79,11 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
         ]
 
     def _get_organization(self, obj):
-        invoice = obj.invoices.select_related('organization').order_by('-issued_at').first()
+        invoices = obj.invoices.select_related('organization')
+        actor = getattr(self.context.get('request'), 'user', None)
+        if actor and not actor.is_admin:
+            invoices = invoices.filter(organization_id=actor.organization_id)
+        invoice = invoices.order_by('-issued_at').first()
         return invoice.organization if invoice and invoice.organization else None
 
     def get_organization_name(self, obj):
@@ -87,7 +94,7 @@ class SubscriptionListSerializer(serializers.ModelSerializer):
         return _is_billing_exempt_owner_org(self._get_organization(obj))
 
 
-class SubscriptionDetailSerializer(serializers.ModelSerializer):
+class SubscriptionDetailSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer completo para detalle de suscripciones"""
     plan = PlanListSerializer(read_only=True)
     days_remaining = serializers.ReadOnlyField()
@@ -113,7 +120,11 @@ class SubscriptionDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def _get_organization(self, obj):
-        invoice = obj.invoices.select_related('organization').order_by('-issued_at').first()
+        invoices = obj.invoices.select_related('organization')
+        actor = getattr(self.context.get('request'), 'user', None)
+        if actor and not actor.is_admin:
+            invoices = invoices.filter(organization_id=actor.organization_id)
+        invoice = invoices.order_by('-issued_at').first()
         return invoice.organization if invoice and invoice.organization else None
 
     def get_organization_name(self, obj):
@@ -124,7 +135,7 @@ class SubscriptionDetailSerializer(serializers.ModelSerializer):
         return _is_billing_exempt_owner_org(self._get_organization(obj))
 
 
-class SubscriptionCreateSerializer(serializers.ModelSerializer):
+class SubscriptionCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para crear suscripciones"""
     
     class Meta:
@@ -135,6 +146,12 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         subscription = Subscription.objects.create(**validated_data)
         subscription.start_trial()
         return subscription
+
+
+class MarkInvoicePaidSerializer(StrictInputMixin, serializers.Serializer):
+    payment_reference = serializers.CharField(
+        required=False, allow_blank=True, max_length=255, trim_whitespace=False,
+    )
 
 
 class InvoiceListSerializer(serializers.ModelSerializer):
@@ -153,7 +170,7 @@ class InvoiceListSerializer(serializers.ModelSerializer):
         return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))
 
 
-class InvoiceDetailSerializer(serializers.ModelSerializer):
+class InvoiceDetailSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer completo para detalle de facturas"""
     organization_name = serializers.CharField(source='organization.name', read_only=True)
     subscription_plan = serializers.CharField(source='subscription.plan.name', read_only=True)
@@ -171,23 +188,43 @@ class InvoiceDetailSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
+    def validate(self, attrs):
+        reject_reparenting(self.instance, attrs, ('organization', 'subscription'))
+        organization = attrs.get('organization') or getattr(self.instance, 'organization', None)
+        subscription = attrs.get('subscription') or getattr(self.instance, 'subscription', None)
+        if subscription and (not organization or organization.subscription_id != subscription.pk):
+            raise serializers.ValidationError({'subscription': 'La suscripción no es la relación canónica de la organización.'})
+        return attrs
+
     def get_billing_exempt(self, obj):
         return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))
 
 
-class PaymentMethodSerializer(serializers.ModelSerializer):
+class PaymentMethodSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para métodos de pago"""
     display_name = serializers.SerializerMethodField()
+    organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all(), required=False, write_only=True)
     
     class Meta:
         model = PaymentMethod
         fields = [
-            'id', 'type', 'name', 'display_name',
+            'id', 'organization', 'type', 'name', 'display_name',
             'card_last_four', 'card_brand', 'card_exp_month', 'card_exp_year',
             'bank_name', 'is_default', 'is_active', 'created_at'
         ]
         read_only_fields = ['id', 'created_at']
     
+    def validate(self, attrs):
+        reject_reparenting(self.instance, attrs, ('organization',))
+        actor = self.context['request'].user
+        organization = attrs.get('organization') or getattr(self.instance, 'organization', None) or actor.organization
+        if not organization or not organization.is_active:
+            raise serializers.ValidationError({'organization': 'Se requiere una organización activa.'})
+        if not actor.is_admin and str(organization.pk) != str(actor.organization_id):
+            raise serializers.ValidationError({'organization': 'Organización no autorizada.'})
+        attrs['organization'] = organization
+        return attrs
+
     def get_display_name(self, obj):
         return str(obj)
 

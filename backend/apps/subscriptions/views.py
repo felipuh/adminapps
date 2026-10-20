@@ -1,7 +1,9 @@
 """
 Views for Subscriptions - Admin Apps
 """
-from rest_framework import viewsets, status, filters
+from apps.users.api_authorization import ControlPlaneMixin
+
+from rest_framework import viewsets, status, filters, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +12,7 @@ from django.utils import timezone
 from django.db.models import Sum, Count, Q
 from decimal import Decimal
 
+from apps.organizations.models import Organization
 from .models import Plan, Subscription, Invoice, PaymentMethod
 from .serializers import (
     PlanListSerializer,
@@ -19,13 +22,14 @@ from .serializers import (
     SubscriptionCreateSerializer,
     InvoiceListSerializer,
     InvoiceDetailSerializer,
+    MarkInvoicePaidSerializer,
     PaymentMethodSerializer,
     SubscriptionStatsSerializer,
 )
 from apps.users.permissions import IsSuperAdmin, IsAdmin, IsOrgAdmin
 
 
-class PlanViewSet(viewsets.ModelViewSet):
+class PlanViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de planes
     """
@@ -72,7 +76,7 @@ class PlanViewSet(viewsets.ModelViewSet):
         return Response(comparison)
 
 
-class SubscriptionViewSet(viewsets.ModelViewSet):
+class SubscriptionViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de suscripciones
     """
@@ -91,7 +95,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         return SubscriptionDetailSerializer
     
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
+        if self.action in ['create', 'update', 'partial_update', 'destroy', 'activate', 'cancel', 'change_plan', 'stats']:
             return [IsAdmin()]
         return [IsAuthenticated()]
     
@@ -102,7 +106,9 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         if not user.is_admin:
             # Solo ver suscripción de su organización
             if user.organization:
-                queryset = queryset.filter(invoices__organization=user.organization).distinct()
+                queryset = queryset.filter(organizations=user.organization).exclude(
+                    organizations__in=Organization.objects.exclude(pk=user.organization_id)
+                ).distinct()
             else:
                 queryset = queryset.none()
         
@@ -134,6 +140,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        new_plan_id = serializers.UUIDField().run_validation(new_plan_id)
         try:
             new_plan = Plan.objects.get(pk=new_plan_id, is_active=True)
         except Plan.DoesNotExist:
@@ -182,11 +189,13 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         """Listar facturas de una suscripción"""
         subscription = self.get_object()
         invoices_qs = Invoice.objects.filter(subscription=subscription).select_related('organization').order_by('-issued_at')
+        if not request.user.is_admin:
+            invoices_qs = invoices_qs.filter(organization_id=request.user.organization_id)
         serializer = InvoiceListSerializer(invoices_qs, many=True)
         return Response(serializer.data)
 
 
-class InvoiceViewSet(viewsets.ModelViewSet):
+class InvoiceViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de facturas
     """
@@ -204,7 +213,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         return InvoiceDetailSerializer
     
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action in ['create', 'update', 'partial_update', 'destroy', 'mark_paid']:
             return [IsAdmin()]
         return [IsAuthenticated()]
     
@@ -221,9 +230,20 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     def mark_paid(self, request, pk=None):
         """Marcar factura como pagada"""
         invoice = self.get_object()
+        payload = MarkInvoicePaidSerializer(data=request.data)
+        payload.is_valid(raise_exception=True)
+        reference = payload.validated_data.get('payment_reference')
+        if invoice.status == 'paid':
+            # Retrying a completed payment must not rewrite evidence or
+            # reactivate authority withdrawn since the original payment.
+            if reference is not None and reference != invoice.payment_reference:
+                return Response({'code': 'payment_reference_conflict'}, status=status.HTTP_409_CONFLICT)
+            return Response({'status': 'paid'})
+        if invoice.status not in {'pending', 'overdue'}:
+            return Response({'code': 'invoice_state_denied'}, status=status.HTTP_400_BAD_REQUEST)
         invoice.status = 'paid'
         invoice.paid_at = timezone.now()
-        invoice.payment_reference = request.data.get('payment_reference', '')
+        invoice.payment_reference = reference if reference is not None else ''
         invoice.save()
         
         # Activar suscripción si estaba pendiente
@@ -240,7 +260,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         return Response({'url': f'/api/invoices/{invoice.id}/pdf/'})
 
 
-class PaymentMethodViewSet(viewsets.ModelViewSet):
+class PaymentMethodViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de métodos de pago
     """
@@ -258,13 +278,7 @@ class PaymentMethodViewSet(viewsets.ModelViewSet):
         return PaymentMethod.objects.filter(organization=user.organization)
     
     def perform_create(self, serializer):
-        organization = self.request.user.organization
-        if self.request.user.is_admin:
-            org_id = self.request.data.get('organization')
-            if org_id:
-                from apps.organizations.models import Organization
-                organization = Organization.objects.get(pk=org_id)
-        
+        organization = serializer.validated_data.get('organization', self.request.user.organization)
         serializer.save(organization=organization)
     
     @action(detail=True, methods=['post'])

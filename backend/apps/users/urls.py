@@ -3,7 +3,7 @@ URLs for Users - Admin Apps
 """
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenRefreshView
+from .human_token_views import HumanTokenRefreshView
 
 from .views import (
     CustomTokenObtainPairView,
@@ -33,7 +33,7 @@ router.register(r'activity-logs', UserActivityLogViewSet, basename='activity-log
 urlpatterns = [
     # Autenticación
     path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('refresh/', HumanTokenRefreshView.as_view(), name='token_refresh'),
     path('register/', RegisterView.as_view(), name='register'),
     path('logout/', LogoutView.as_view(), name='logout'),
     

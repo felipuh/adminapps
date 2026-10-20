@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db import IntegrityError, transaction
+from django.db import DatabaseError, IntegrityError, transaction
 from django.db.models import Count
 from functools import wraps
 import json
@@ -23,6 +23,7 @@ from apps.products.models import OrganizationProductEntitlement, ProductEntitlem
 from apps.users.models import UserOrganization
 from .models import AIUsageProjection, DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
 from .services import authenticate_integration_api_key
+from .api_authorization import service_data_access
 
 User = get_user_model()
 
@@ -151,6 +152,7 @@ def require_api_key(view_func):
 
         service_name = credential.name if isinstance(credential, IntegrationAPIKey) else credential
         request.integration_service = service_name
+        request.integration_principal = credential
         if isinstance(credential, IntegrationAPIKey):
             credential.last_used_at = timezone.now()
             credential.last_used_service = service_name[:100]
@@ -259,11 +261,12 @@ def ingest_ai_usage(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 @require_api_key
+@service_data_access
 def list_organizations(request):
     """
     Lista todas las organizaciones activas
     """
-    organizations = Organization.objects.filter(status='active')
+    organizations = Organization.objects.filter(status='active', pk__in=request.authorized_tenant_ids)
     
     data = {
         'organizations': [
@@ -286,6 +289,7 @@ def list_organizations(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 @require_api_key
+@service_data_access
 def get_organization(request, org_id):
     """
     Obtiene detalle de una organización
@@ -314,6 +318,7 @@ def get_organization(request, org_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 @require_api_key
+@service_data_access
 def get_organization_users(request, org_id):
     """
     Obtiene usuarios de una organización
@@ -353,6 +358,7 @@ def get_organization_users(request, org_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 @require_api_key
+@service_data_access
 def get_organization_modules(request, org_id):
     """
     Obtiene módulos habilitados para una organización
@@ -378,7 +384,9 @@ def get_organization_modules(request, org_id):
 
     modules = list(MODULE_CODE_MAP.values()) if is_owner_exempt else []
 
-    product_entitlements = list(_active_product_entitlements(org))
+    product_entitlements = list(_active_product_entitlements(org).filter(
+        product__code__in=request.authorized_product_codes
+    ))
     for entitlement in product_entitlements:
         if entitlement.access_allowed:
             modules.append({
@@ -412,7 +420,10 @@ def get_organization_modules(request, org_id):
                     modules.append(module)
     
     # Eliminar duplicados por código
-    unique_modules = list({m['code']: m for m in modules if isinstance(m, dict)}.values())
+    # Unmapped legacy modules cannot acquire product scope through owner exemptions
+    # or plan aliases. Their commercial mapping needs a separate adjudication.
+    unique_modules = list({m['code']: m for m in modules if isinstance(m, dict)
+                           and m.get('code') in request.authorized_product_codes}.values())
     
     data = {
         'organization_id': str(org.id),
@@ -426,6 +437,7 @@ def get_organization_modules(request, org_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 @require_api_key
+@service_data_access
 def get_organization_products(request, org_id):
     """Lista productos/sistemas habilitados para una organizacion."""
     try:
@@ -436,7 +448,9 @@ def get_organization_products(request, org_id):
             'code': 'organization_not_found'
         }, status=404)
 
-    entitlements = [_entitlement_payload(item) for item in _active_product_entitlements(org)]
+    entitlements = [_entitlement_payload(item) for item in _active_product_entitlements(org).filter(
+        product__code__in=request.authorized_product_codes
+    )]
     return JsonResponse({
         'organization_id': str(org.id),
         'organization_name': org.name,
@@ -447,6 +461,7 @@ def get_organization_products(request, org_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 @require_api_key
+@service_data_access
 def validate_organization_product_access(request, org_id, product_code):
     """Valida acceso producto-neutral de una organizacion."""
     try:
@@ -520,8 +535,20 @@ def validate_organization_product_access(request, org_id, product_code):
     }, status=200 if entitlement.access_allowed else 403)
 
 
+def _credential_errors(view):
+    @wraps(view)
+    def wrapped(request, *args, **kwargs):
+        try:
+            return view(request, *args, **kwargs)
+        except DatabaseError:
+            return JsonResponse({'valid': False, 'code': 'authentication_unavailable',
+                                 'error': 'Unable to complete authentication'}, status=503)
+    return wrapped
+
+
 @csrf_exempt
 @require_http_methods(["POST"])
+@_credential_errors
 @require_api_key
 def validate_credentials(request):
     """
@@ -535,6 +562,9 @@ def validate_credentials(request):
             'code': 'invalid_json'
         }, status=400)
     
+    if not isinstance(data, dict):
+        return JsonResponse({'valid': False, 'code': 'invalid_json'}, status=400)
+
     email = data.get('email')
     password = data.get('password')
     organization_id = data.get('organization_id')
@@ -555,6 +585,14 @@ def validate_credentials(request):
             'code': 'invalid_credentials'
         }, status=401)
     
+    if not user.is_active:
+        return JsonResponse({'valid': False, 'code': 'invalid_credentials'}, status=401)
+    # Password verification precedes the MFA guard to avoid exposing enrollment.
+    factor = getattr(user, 'two_factor_auth', None)
+    if factor and factor.is_enabled:
+        return JsonResponse({'valid': False, 'code': 'second_factor_required',
+                             'error': 'Complete central SSO authentication'}, status=403)
+
     # Obtener organizaciones del usuario
     memberships = UserOrganization.objects.filter(
         user=user,
@@ -615,6 +653,7 @@ def validate_credentials(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 @require_api_key
+@service_data_access
 def get_user_by_id(request):
     """
     Obtiene información de un usuario por ID
@@ -655,6 +694,9 @@ def get_user_by_id(request):
     if organization_id:
         memberships = memberships.filter(organization_id=organization_id)
     
+    if not memberships.exists():
+        return JsonResponse({'code': 'user_not_found'}, status=404)
+
     response_data = {
         'id': user.id,
         'email': user.email,

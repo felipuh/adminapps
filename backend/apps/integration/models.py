@@ -286,3 +286,37 @@ class AIUsageProjection(models.Model):
             models.Index(fields=['organization', 'attempted_at'], name='ai_usage_org_time_idx'),
             models.Index(fields=['product_identifier', 'model_identifier', 'attempted_at'], name='ai_usage_dims_time_idx'),
         ]
+
+
+class SSOClient(models.Model):
+    """Durable receiver contract. Empty tenant/key lists grant no access.
+
+    One credential row authenticates exactly one client. Rotation requires an
+    explicit registry rebind; neither service names nor request data confer trust.
+    """
+
+    client_id = models.CharField(max_length=100, unique=True)
+    principal = models.OneToOneField(IntegrationAPIKey, on_delete=models.PROTECT, related_name='sso_client')
+    product = models.ForeignKey('products.ProductSystem', on_delete=models.PROTECT, related_name='sso_clients')
+    audience = models.CharField(max_length=255, unique=True)
+    issuer = models.URLField(max_length=500)
+    enabled = models.BooleanField(default=False)
+    tenants = models.ManyToManyField('organizations.Organization', related_name='sso_clients')
+    token_family = models.CharField(max_length=16, default='CENTRAL')
+    algorithm = models.CharField(max_length=16, default='RS256')
+    allowed_kids = models.JSONField(default=list)
+    credential_policy = models.CharField(max_length=32, default='hashed_v1')
+    contract_version = models.CharField(max_length=40, default='rec-sso-03b-ch-v1')
+
+    class Meta:
+        db_table = 'integration_sso_clients'
+
+    def clean(self):
+        from .client_registry import ClientContract
+        try:
+            ClientContract.from_row(self, require_enabled=False)
+        except Exception:
+            raise ValidationError('Invalid SSO client contract.') from None
+
+# Central session authority is separate from legacy user_sessions.
+from .session_models import SSOSecurityFence, SSOSession, SSORevocationOutbox  # noqa: E402,F401

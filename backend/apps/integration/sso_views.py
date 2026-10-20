@@ -8,10 +8,11 @@ supports 2FA challenge flow, and provides token introspection for services.
 from __future__ import annotations
 
 import json
+import uuid
+import time
 from functools import wraps
 from typing import Any
 
-from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.db import DatabaseError, transaction
 from rest_framework.exceptions import APIException, ValidationError
@@ -20,12 +21,14 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
-from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken  # noqa: F401 - historical probes
 
 from apps.users.models import UserOrganization
 from apps.products.models import OrganizationProductEntitlement
-from .views import require_api_key
+from .client_registry import require_client, require_tenant
+from .trust_jwt import CONTRACT, decode, encode, trust
+from . import session_lifecycle as lifecycle
+from .authorization import entitlement_eligible
 
 User = get_user_model()
 
@@ -72,6 +75,7 @@ def _serialize_product_entitlements(organization_id):
             "enabled": entitlement.enabled,
             "status": entitlement.status,
             "access_allowed": entitlement.access_allowed,
+            "authorization_eligible": entitlement_eligible(entitlement),
             "access_denial_reason": entitlement.access_denial_reason,
             "scopes": entitlement.scopes,
             "modules_enabled": entitlement.modules_enabled,
@@ -106,56 +110,40 @@ def _build_product_claims(organization_id):
     }
 
 
-def _build_token_pair_unchecked(
-    user,
-    membership,
-    memberships,
-    *,
-    audience: list[str],
-    client_id: str,
-):
-    issuer = getattr(settings, "SMART3AI_SSO_ISSUER", "https://sso.smart3ai.local")
-    product_claims = _build_product_claims(membership.organization.id)
-
-    refresh = RefreshToken.for_user(user)
-    refresh["iss"] = issuer
-    refresh["aud"] = audience
-    refresh["client_id"] = client_id
-    refresh["email"] = user.email
-    refresh["full_name"] = user.full_name
-    refresh["organization_id"] = str(membership.organization.id)
-    refresh["organization_code"] = membership.organization.code
-    refresh["organization_name"] = membership.organization.name
-    refresh["role"] = membership.role
-    refresh["memberships"] = _serialize_memberships(memberships)
-    refresh["scope"] = "openid profile email tenant:read tenant:write"
-    refresh["allowed_products"] = product_claims["allowed_products"]
-    refresh["product_entitlements"] = product_claims["product_entitlements"]
-
-    access = refresh.access_token
-    access["iss"] = issuer
-    access["aud"] = audience
-    access["client_id"] = client_id
-    access["email"] = user.email
-    access["full_name"] = user.full_name
-    access["organization_id"] = str(membership.organization.id)
-    access["organization_code"] = membership.organization.code
-    access["organization_name"] = membership.organization.name
-    access["role"] = membership.role
-    access["memberships"] = _serialize_memberships(memberships)
-    access["scope"] = "openid profile email tenant:read tenant:write"
-    access["allowed_products"] = product_claims["allowed_products"]
-    access["product_entitlements"] = product_claims["product_entitlements"]
-
-    return {
-        "token_type": "Bearer",
-        "access_token": str(access),
-        "refresh_token": str(refresh),
-        "expires_in": int(getattr(settings, "SIMPLE_JWT", {}).get("ACCESS_TOKEN_LIFETIME").total_seconds()),
-        "refresh_expires_in": int(getattr(settings, "SIMPLE_JWT", {}).get("REFRESH_TOKEN_LIFETIME").total_seconds()),
-        "allowed_products": product_claims["allowed_products"],
-        "product_entitlements": product_claims["product_entitlements"],
+def _render_session(session, user, membership, products, *, client):
+    config, _ = trust('CENTRAL', signing=True)
+    if config['ISSUER'] != client.issuer or config['SIGNING_KID'] not in client.allowed_kids:
+        raise APIException('Invalid emission contract.')
+    now = int(time.time())
+    claims = {
+        'auth_contract': CONTRACT, 'token_family': 'CENTRAL',
+        'iss': client.issuer, 'aud': [client.audience], 'client_id': client.client_id,
+        'product': client.product, 'sub': str(user.id), 'user_id': str(user.id),
+        'tenant_id': str(membership.organization_id), 'organization_id': str(membership.organization_id),
+        'email': user.email, 'role': membership.role,
+        'amr': session.authentication_methods, 'iat': now,
+        **lifecycle.claims(session),
     }
+    if session.mfa_generation:
+        claims['mfa_generation'] = str(session.mfa_generation)
+    result = {'token_type': 'Bearer', 'allowed_products': [client.product], 'product_entitlements': products}
+    for kind in ('access', 'refresh'):
+        payload = dict(claims, token_type=kind, jti=str(getattr(session, kind + '_jti')),
+                       exp=int(session.expires_at.timestamp()))
+        result[kind + '_token'] = encode(payload, family='CENTRAL', audience=client.audience,
+                                         product=client.product, client_id=client.client_id)
+        result['expires_in' if kind == 'access' else 'refresh_expires_in'] = payload['exp'] - now
+    return result
+
+
+def _build_token_pair_unchecked(user, membership, memberships, *, audience, client_id,
+                                authentication_methods=None, mfa_generation=None, client,
+                                mfa_challenge_digest=None, expected_epoch=None):
+    if client.client_id != client_id or audience != [client.audience]:
+        raise APIException('Invalid emission contract.')
+    return lifecycle.issue(user, membership, client, list(authentication_methods or []),
+                           mfa_generation, mfa_challenge_digest, expected_epoch,
+                           lambda *args: _render_session(*args, client=client))
 
 
 def _build_token_pair(*args, **kwargs):
@@ -196,6 +184,7 @@ def _authentication_errors(view):
 @csrf_exempt
 @require_http_methods(["POST"])
 @_authentication_errors
+@require_client
 def sso_login(request):
     """
     Unified login endpoint with optional 2FA challenge.
@@ -208,16 +197,9 @@ def sso_login(request):
     password = str(data.get("password") or "")
     organization_id = str(data.get("organization_id") or "").strip() or None
     otp_code = str(data.get("otp_code") or "").strip()
-    client_id = str(data.get("client_id") or "smart3ai-portfolio").strip() or "smart3ai-portfolio"
-
-    raw_audience = data.get("audience") or ["smart3ai-portfolio"]
-    if isinstance(raw_audience, str):
-        audience = [raw_audience.strip()] if raw_audience.strip() else ["smart3ai-portfolio"]
-    elif isinstance(raw_audience, list):
-        audience = [str(item).strip() for item in raw_audience if str(item).strip()]
-        audience = audience or ["smart3ai-portfolio"]
-    else:
-        audience = ["smart3ai-portfolio"]
+    client = request.sso_client
+    client_id = client.client_id
+    audience = [client.audience]
 
     if not email or not password:
         return JsonResponse({
@@ -225,6 +207,7 @@ def sso_login(request):
             "code": "missing_credentials",
         }, status=400)
 
+    expected_epoch = request.sso_authority_epoch
     user = _auth_user(request, email, password)
     if not user:
         return JsonResponse({
@@ -264,20 +247,23 @@ def sso_login(request):
     if not membership:
         membership = next((m for m in memberships if m.is_primary), None) or memberships[0]
 
+    require_tenant(request, str(membership.organization.id))
     two_fa = getattr(user, "two_factor_auth", None)
     two_fa_enabled = bool(two_fa and two_fa.is_enabled)
 
     if two_fa_enabled:
         challenge_token = two_factor.issue_challenge(user, 'sso', context={
+            'authority_epoch': expected_epoch,
             'organization_id': str(membership.organization.id),
             'client_id': client_id, 'audience': audience,
+            'product': client.product, 'principal_id': client.principal_id, 'contract_version': CONTRACT,
         })
         if not otp_code:
             return JsonResponse({
                 'requires_2fa': True, 'challenge_token': challenge_token,
                 'challenge_expires_in': 300,
                 'user': {'id': str(user.id), 'email': user.email, 'full_name': user.full_name},
-                'organizations': _serialize_memberships(memberships),
+                'organizations': _serialize_memberships([membership]),
             }, status=200)
         user, _ = two_factor.consume_challenge(challenge_token, otp_code, 'sso', request=request)
 
@@ -288,6 +274,11 @@ def sso_login(request):
         memberships,
         audience=audience,
         client_id=client_id,
+        client=request.sso_client,
+        authentication_methods=["pwd", "otp"] if two_fa_enabled else ["pwd"],
+        mfa_generation=two_factor.decode_challenge(challenge_token, "sso").get("generation") if two_fa_enabled else None,
+        mfa_challenge_digest=lifecycle.challenge_digest(two_factor.decode_challenge(challenge_token, "sso")) if two_fa_enabled else None,
+        expected_epoch=expected_epoch,
     )
 
     user.last_login_at = timezone.now()
@@ -310,7 +301,7 @@ def sso_login(request):
             "name": membership.organization.name,
             "code": membership.organization.code,
         },
-        "organizations": _serialize_memberships(memberships),
+        "organizations": _serialize_memberships([membership]),
     }, status=200)
 
 
@@ -318,6 +309,7 @@ def sso_login(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 @_authentication_errors
+@require_client
 def sso_login_verify_2fa(request):
     """
     Completes a pending 2FA challenge and returns final token pair.
@@ -336,8 +328,16 @@ def sso_login_verify_2fa(request):
 
     user_id = str(challenge_data.get("user_id") or "")
     organization_id = str(challenge_data.get("organization_id") or "")
-    client_id = str(challenge_data.get("client_id") or "smart3ai-portfolio")
-    audience = challenge_data.get("audience") or ["smart3ai-portfolio"]
+    client = request.sso_client
+    client_id = client.client_id
+    audience = [client.audience]
+    if any(challenge_data.get(k) != v for k, v in {
+        'client_id': client_id, 'audience': audience, 'product': client.product,
+        'principal_id': client.principal_id, 'contract_version': CONTRACT,
+        'authority_epoch': request.sso_authority_epoch,
+    }.items()):
+        return JsonResponse({'code': 'challenge_context_mismatch'}, status=403)
+    require_tenant(request, organization_id)
 
     try:
         user = User.objects.get(id=user_id, is_active=True)
@@ -376,6 +376,11 @@ def sso_login_verify_2fa(request):
         memberships,
         audience=[str(item) for item in audience],
         client_id=client_id,
+        client=request.sso_client,
+        authentication_methods=["pwd", "otp"],
+        mfa_generation=challenge_data.get("generation"),
+        mfa_challenge_digest=lifecycle.challenge_digest(challenge_data),
+        expected_epoch=challenge_data.get("authority_epoch"),
     )
 
     user.last_login_at = timezone.now()
@@ -384,6 +389,7 @@ def sso_login_verify_2fa(request):
     user.save(update_fields=["last_login_at", "last_activity_at", "failed_login_attempts", "updated_at"])
 
     return JsonResponse({
+        "requires_2fa": False,
         "two_fa_bypassed": two_fa_bypassed,
         "tokens": tokens,
         "user": {
@@ -397,13 +403,27 @@ def sso_login_verify_2fa(request):
             "name": membership.organization.name,
             "code": membership.organization.code,
         },
-        "organizations": _serialize_memberships(memberships),
+        "organizations": _serialize_memberships([membership]),
     }, status=200)
 
 
+def _introspection_errors(view):
+    @wraps(view)
+    def wrapped(request, *args, **kwargs):
+        try:
+            return view(request, *args, **kwargs)
+        except DatabaseError:
+            return JsonResponse({
+                "active": False, "error": "Unable to complete introspection",
+            }, status=503)
+    return wrapped
+
+
+@transaction.non_atomic_requests
 @csrf_exempt
 @require_http_methods(["POST"])
-@require_api_key
+@_introspection_errors
+@require_client
 def sso_introspect(request):
     """
     Service-to-service token introspection.
@@ -414,27 +434,42 @@ def sso_introspect(request):
     if not token:
         return JsonResponse({"active": False, "error": "token requerido"}, status=400)
 
+    client = request.sso_client
     try:
-        parsed = AccessToken(token)
-    except TokenError:
-        return JsonResponse({"active": False}, status=200)
+        parsed = decode(token, family='CENTRAL', audience=client.audience,
+                        product=client.product, client_id=client.client_id, allowed_kids=client.allowed_kids)
+    except APIException as exc:
+        if exc.status_code == 503:
+            raise
+        return JsonResponse({'active': False}, status=200)
+    session, user, membership, products, authorization = lifecycle.introspect(parsed, client, expected_epoch=request.sso_authority_epoch)
+    return JsonResponse(dict(parsed, active=True, products=products, authorization=authorization,
+                             full_name=user.full_name,
+                             organization_name=membership.organization.name,
+                             organization_code=membership.organization.code,
+                             memberships=_serialize_memberships([membership])))
 
-    organization_id = str(parsed.get("organization_id") or "")
 
-    return JsonResponse({
-        "active": True,
-        "sub": str(parsed.get("user_id") or parsed.get("sub") or ""),
-        "email": parsed.get("email"),
-        "full_name": parsed.get("full_name"),
-        "role": parsed.get("role"),
-        "organization_id": organization_id,
-        "organization_name": parsed.get("organization_name"),
-        "organization_code": parsed.get("organization_code"),
-        "memberships": parsed.get("memberships", []),
-        "products": _serialize_product_entitlements(organization_id),
-        "client_id": parsed.get("client_id"),
-        "aud": parsed.get("aud"),
-        "iss": parsed.get("iss"),
-        "exp": parsed.get("exp"),
-        "iat": parsed.get("iat"),
-    }, status=200)
+@transaction.non_atomic_requests
+@csrf_exempt
+@require_http_methods(['POST'])
+@require_client
+def sso_logout(request):
+    client = request.sso_client
+    parsed = decode(_json_body(request).get('token'), family='CENTRAL', audience=client.audience,
+                    product=client.product, client_id=client.client_id, allowed_kids=client.allowed_kids)
+    lifecycle.logout(parsed, client, expected_epoch=request.sso_authority_epoch)
+    return JsonResponse({'revoked': True})
+
+
+@transaction.non_atomic_requests
+@csrf_exempt
+@require_http_methods(['POST'])
+@require_client
+def sso_rotate(request):
+    client = request.sso_client
+    parsed = decode(_json_body(request).get('token'), family='CENTRAL', audience=client.audience,
+                    product=client.product, client_id=client.client_id, allowed_kids=client.allowed_kids)
+    tokens = lifecycle.rotate(parsed, client, lambda *args: _render_session(*args, client=client),
+                              expected_epoch=request.sso_authority_epoch)
+    return JsonResponse({'tokens': tokens})

@@ -2,6 +2,9 @@
 API Views - Admin Apps
 Dashboard y endpoints generales para Comtech (backoffice)
 """
+from apps.users.api_authorization import ControlPlaneMixin
+from apps.users.platform_api_authorization import PlatformOperationMixin
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -31,7 +34,7 @@ class HealthCheckView(APIView):
         })
 
 
-class DashboardView(APIView):
+class DashboardView(PlatformOperationMixin, APIView):
     """
     Dashboard principal de Admin Apps
     Panel de control interno de Comtech
@@ -186,7 +189,7 @@ class DashboardView(APIView):
         })
 
 
-class SystemStatsView(APIView):
+class SystemStatsView(PlatformOperationMixin, APIView):
     """
     Estadísticas detalladas del sistema
     Métricas internas de Comtech
@@ -231,7 +234,7 @@ class SystemStatsView(APIView):
         })
 
 
-class ProductReadinessView(APIView):
+class ProductReadinessView(PlatformOperationMixin, APIView):
     """Read-only SaaS product access readiness report for AdminApps operators."""
 
     permission_classes = [IsAuthenticated, IsAdmin]
@@ -240,7 +243,7 @@ class ProductReadinessView(APIView):
         return Response(build_product_access_readiness_report())
 
 
-class QuickActionsView(APIView):
+class QuickActionsView(PlatformOperationMixin, APIView):
     """
     Acciones rápidas para el dashboard de Comtech
     """
@@ -281,7 +284,7 @@ class QuickActionsView(APIView):
         return Response(actions)
 
 
-class LandingAnalyticsSummaryView(APIView):
+class LandingAnalyticsSummaryView(PlatformOperationMixin, APIView):
     """Resumen centralizado de analítica del landing para backoffice."""
     permission_classes = [IsAuthenticated, IsAdmin]
 
@@ -341,7 +344,7 @@ class LandingAnalyticsSummaryView(APIView):
         })
 
 
-class FeatureFlagsView(APIView):
+class FeatureFlagsView(ControlPlaneMixin, APIView):
     """Resolve feature flags for the current user organization context."""
 
     permission_classes = [IsAuthenticated]

@@ -30,6 +30,8 @@ urlpatterns = [
     # Smart3AI centralized SSO
     path('sso/login/', sso_views.sso_login, name='sso-login'),
     path('sso/login/verify-2fa/', sso_views.sso_login_verify_2fa, name='sso-login-verify-2fa'),
+    path('sso/logout/', sso_views.sso_logout, name='sso-logout'),
+    path('sso/rotate/', sso_views.sso_rotate, name='sso-rotate'),
     path('sso/introspect/', sso_views.sso_introspect, name='sso-introspect'),
     
     # Usuarios
