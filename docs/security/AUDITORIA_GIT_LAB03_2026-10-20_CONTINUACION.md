@@ -1,6 +1,6 @@
 # Continuación de auditoría Git LAB03 — 2026-10-20
 
-Estado: **PUBLICACIÓN RETENIDA**. `PRODUCTION_READY = FALSE`.
+Estado: **RAMAS ORIGINALES RETENIDAS; PUBLICACIÓN AISLADA VERIFICADA**. `PRODUCTION_READY = FALSE`.
 
 El archivo `AUDITORIA_GIT_LAB03_2026-10-20.md` citado en el traspaso no estaba disponible en el workspace ni en `/tmp` al iniciar esta continuación. Se usaron el reporte LAB03, los registros históricos conservados y los objetos Git locales. Este documento no sustituye una auditoría de código completa de los commits pendientes.
 
@@ -49,4 +49,16 @@ Este mapeo no afirma equivalencia exacta de todos los asserts antiguos. Identifi
 
 ## Límite de publicación
 
-Los refs remotos leídos seguían en `f39acc54f51dd5f2679a66e1cdaace9f80c22621` (AdminApps), `52bcdf65e70851480b1a729f5ded2e93774d05c7` (ISO Smart) y `6a5fd0366841d0511901e0f41a98dc1d801b9f4f` (MedSupplier). Son ancestros de los HEAD locales; no hay divergencia. Las tres ramas remotas indican `protected=false` y la API pública de reglas efectivas devolvió lista vacía, pero esto no supera los bloqueos de contenido. Ningún push, migración, grant, activación de settings, DB compartida ni despliegue se ejecutó. Las ramas actuales mezclan historia financiera con IAM o contienen historia financiera pendiente. La evidencia privada en `/tmp` y en el commit ISO indicado no es material de publicación.
+Los refs remotos originales siguieron en `f39acc54f51dd5f2679a66e1cdaace9f80c22621` (AdminApps), `52bcdf65e70851480b1a729f5ded2e93774d05c7` (ISO Smart) y `6a5fd0366841d0511901e0f41a98dc1d801b9f4f` (MedSupplier). Son ancestros de los HEAD locales; no hay divergencia. Las tres ramas remotas indican `protected=false` y la API pública de reglas efectivas devolvió lista vacía. Las ramas originales mezclan historia financiera con IAM o incluyen la evidencia privada ISO, por lo que **no se hizo push a ninguna rama original**. No se ejecutó migración, grant, activación de settings, DB compartida ni despliegue.
+
+### Publicación aislada posterior
+
+Tras revisar destinos sin ref previo y reglas efectivas vacías, se usó únicamente `git push origin HEAD:refs/heads/<rama>` normal. Los refs se leyeron de nuevo del remoto después:
+
+| Repositorio | Rama nueva | SHA remoto verificado | Contenido |
+| --- | --- | --- | --- |
+| AdminApps | `audit/iam-isolated-20261020` | `fe671855ffae2893f6af48559e49a680e74c60b8` | Cinco commits reconstruidos desde el ancestro remoto: refresh, 2FA, rutas. Sin financiero ni evidencia. 21 MFA, 41 frontend, 3 rutas y build PASS. |
+| AdminApps | `audit/financial-isolated-20261020` | `8e67dcb374301eb39b6ed03c78b0c4568bd40980` | Dos commits financieros originales más corrección separada: dashboard de todos los tenants exige superadmin. Seis tests PASS en DB de prueba local, incluido admin de tenant ante tenant ajeno. |
+| ISO Smart | `audit/financial-sanitized-20261020` | `c441235ae63f8807206e0b185a83ee5d1b25311f` | Dos commits financieros reconstruidos; árbol igual al HEAD local original salvo el documento de consumo/saldo real excluido. Nueve tests SQLite PASS. |
+
+Ninguna de estas ramas se integró a `development`, `main` ni `hardening/p0-p1-enterprise-readiness`; no se abrió PR ni se ejecutó deploy. MedSupplier no recibió commit ni push. Los worktrees originales conservan sus cambios no rastreados y los tres índices vacíos.
