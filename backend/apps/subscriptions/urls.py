@@ -7,9 +7,9 @@ from .views import PlanViewSet, SubscriptionViewSet, InvoiceViewSet, PaymentMeth
 
 router = DefaultRouter()
 router.register(r'plans', PlanViewSet, basename='plan')
-router.register(r'', SubscriptionViewSet, basename='subscription')
 router.register(r'invoices', InvoiceViewSet, basename='invoice')
 router.register(r'payment-methods', PaymentMethodViewSet, basename='payment-method')
+router.register(r'', SubscriptionViewSet, basename='subscription')
 
 urlpatterns = [
     path('', include(router.urls)),
