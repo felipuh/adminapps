@@ -139,7 +139,7 @@ class BillingSummaryView(APIView):
 
 class AIUsageDashboardView(APIView):
     """Cross-tenant provider-usage observability; never customer billing."""
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsSuperAdmin]
 
     def get(self, request):
         queryset = AIUsageProjection.objects.select_related('organization').all()
