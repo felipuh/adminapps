@@ -1,0 +1,252 @@
+{
+  "runners": [
+    {
+      "tests": 30,
+      "failures": 30,
+      "errors": 3,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "__main__.CurrentLocal.test_api_key_required_and_invalid_denied",
+      "method": "test_api_key_required_and_invalid_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 273,
+      "qualname": "LocalFixTests.test_api_key_required_and_invalid_denied",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_api_key_usage_write_failure_is_closed",
+      "method": "test_api_key_usage_write_failure_is_closed",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 258,
+      "qualname": "LocalFixTests.test_api_key_usage_write_failure_is_closed",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_bad_signature_expiry_and_refresh_rejected",
+      "method": "test_bad_signature_expiry_and_refresh_rejected",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 266,
+      "qualname": "LocalFixTests.test_bad_signature_expiry_and_refresh_rejected",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_database_failures_are_closed_and_sanitized",
+      "method": "test_database_failures_are_closed_and_sanitized",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 246,
+      "qualname": "LocalFixTests.test_database_failures_are_closed_and_sanitized",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_deleted_membership",
+      "method": "test_deleted_membership",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 194,
+      "qualname": "LocalFixTests.test_deleted_membership",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_deleted_user",
+      "method": "test_deleted_user",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 183,
+      "qualname": "LocalFixTests.test_deleted_user",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_entitlement_denial_and_allowed_products",
+      "method": "test_entitlement_denial_and_allowed_products",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 301,
+      "qualname": "LocalFixTests.test_entitlement_denial_and_allowed_products",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_foreign_tenant",
+      "method": "test_foreign_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 208,
+      "qualname": "LocalFixTests.test_foreign_tenant",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_invalid_identifiers",
+      "method": "test_invalid_identifiers",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 215,
+      "qualname": "LocalFixTests.test_invalid_identifiers",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_live_membership_revocation",
+      "method": "test_live_membership_revocation",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 188,
+      "qualname": "LocalFixTests.test_live_membership_revocation",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_live_organization_revocation",
+      "method": "test_live_organization_revocation",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 199,
+      "qualname": "LocalFixTests.test_live_organization_revocation",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_live_user_revocation",
+      "method": "test_live_user_revocation",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 177,
+      "qualname": "LocalFixTests.test_live_user_revocation",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_missing_issuer",
+      "method": "test_missing_issuer",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 224,
+      "qualname": "LocalFixTests.test_missing_issuer",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_missing_subject",
+      "method": "test_missing_subject",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 212,
+      "qualname": "LocalFixTests.test_missing_subject",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_missing_tenant",
+      "method": "test_missing_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 204,
+      "qualname": "LocalFixTests.test_missing_tenant",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_product_database_error_prevents_issuance",
+      "method": "test_product_database_error_prevents_issuance",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 280,
+      "qualname": "LocalFixTests.test_product_database_error_prevents_issuance",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_product_revocation_reloaded",
+      "method": "test_product_revocation_reloaded",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 240,
+      "qualname": "LocalFixTests.test_product_revocation_reloaded",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_sso_2fa_enabled_never_issues_without_factor",
+      "method": "test_sso_2fa_enabled_never_issues_without_factor",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 289,
+      "qualname": "LocalFixTests.test_sso_2fa_enabled_never_issues_without_factor",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_valid_response_contract",
+      "method": "test_valid_response_contract",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 34,
+      "qualname": "CurrentLocal.test_valid_response_contract",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CurrentLocal.test_wrong_issuer",
+      "method": "test_wrong_issuer",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_02_offline.py",
+      "line": 221,
+      "qualname": "LocalFixTests.test_wrong_issuer",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.DecisionATests.test_legacy_mfa_denied",
+      "method": "test_legacy_mfa_denied",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 51,
+      "qualname": "DecisionATests.test_legacy_mfa_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.DecisionATests.test_legacy_mfa_lookup_and_key_db_fail_closed",
+      "method": "test_legacy_mfa_lookup_and_key_db_fail_closed",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 65,
+      "qualname": "DecisionATests.test_legacy_mfa_lookup_and_key_db_fail_closed",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.DecisionATests.test_legacy_no_mfa_succeeds",
+      "method": "test_legacy_no_mfa_succeeds",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 56,
+      "qualname": "DecisionATests.test_legacy_no_mfa_succeeds",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.DecisionATests.test_legacy_wrong_password_does_not_disclose_mfa",
+      "method": "test_legacy_wrong_password_does_not_disclose_mfa",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 60,
+      "qualname": "DecisionATests.test_legacy_wrong_password_does_not_disclose_mfa",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.DecisionATests.test_mfa_enrollment_invalidates_password_only_proof",
+      "method": "test_mfa_enrollment_invalidates_password_only_proof",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 76,
+      "qualname": "DecisionATests.test_mfa_enrollment_invalidates_password_only_proof",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.DecisionATests.test_old_token_requires_new_auth",
+      "method": "test_old_token_requires_new_auth",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 74,
+      "qualname": "DecisionATests.test_old_token_requires_new_auth",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.DecisionATests.test_reset_disabled_or_foreign_generation_denied",
+      "method": "test_reset_disabled_or_foreign_generation_denied",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 84,
+      "qualname": "DecisionATests.test_reset_disabled_or_foreign_generation_denied",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.DecisionATests.test_valid_mfa_proof",
+      "method": "test_valid_mfa_proof",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 79,
+      "qualname": "DecisionATests.test_valid_mfa_proof",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.DecisionATests.test_verify_complete_contract_and_generation",
+      "method": "test_verify_complete_contract_and_generation",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 95,
+      "qualname": "DecisionATests.test_verify_complete_contract_and_generation",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.DecisionATests.test_verify_foreign_context_does_not_consume",
+      "method": "test_verify_foreign_context_does_not_consume",
+      "source": "backend/scripts/rec_sso_03a_offline.py",
+      "line": 88,
+      "qualname": "DecisionATests.test_verify_foreign_context_does_not_consume",
+      "status": "FAIL"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "manifest": "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/baseline.json",
+  "manifest_sha256": "c97793ddbe9cfd10f0dd67565355a73ec0455ef66b3b3cee14ae42fc597548de",
+  "repositories": {
+    "adminapps": {
+      "head": "b144b2505659ad39f756b9bc4530a7f24fe8c3ad",
+      "index_sha256": "183cd78b6013f56801465bf8aeb9dd31f746a5bd43389003fcf4383d1e584da3",
+      "file_count": 15761
+    },
+    "isosmart": {
+      "head": "0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e",
+      "index_sha256": "e6def75069870dc31a434d379b14abe9cc7d3cfcdbaa111eb8616af4d435245d",
+      "file_count": 15076
+    },
+    "ISO_Smart_MedSupplier": {
+      "head": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f",
+      "index_sha256": "cfd4a1341fa59cb5c51acc3c7180121b27aafa392d8027d878f975792d455165",
+      "file_count": 15015
+    }
+  }
+}

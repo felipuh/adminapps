@@ -2,7 +2,9 @@
 Views for Products - Admin Apps
 Control maestro de módulos ISO por cliente
 """
-from rest_framework import viewsets, status, filters
+from apps.users.api_authorization import ControlPlaneMixin
+
+from rest_framework import viewsets, status, filters, serializers
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -10,6 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from django.db.models import Count, Q
+from django.db import transaction
 
 from .models import (
     ISOStandard,
@@ -24,6 +27,7 @@ from .serializers import (
     ISOStandardListSerializer,
     OrganizationModuleSerializer,
     OrganizationModuleCreateSerializer,
+    OrganizationModuleBulkSerializer,
     OrganizationModuleToggleSerializer,
     ModuleActivityLogSerializer,
     OrganizationModulesOverviewSerializer,
@@ -38,7 +42,7 @@ from apps.users.permissions import IsSuperAdmin, IsAdmin
 from apps.organizations.models import Organization
 
 
-class ProductSystemViewSet(viewsets.ModelViewSet):
+class ProductSystemViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """Catalogo producto-neutral de sistemas administrables."""
 
     queryset = ProductSystem.objects.all()
@@ -104,6 +108,8 @@ def _audit_entitlement(entitlement, action, *, actor=None, previous_state=None, 
 
 
 def _validate_entitlement_can_activate(entitlement):
+    if entitlement.subscription_id and entitlement.subscription_id != entitlement.organization.subscription_id:
+        raise ValidationError({'subscription': 'La suscripción no pertenece al tenant canónico.'})
     if not entitlement.product.billing_enabled:
         return
     subscription = entitlement.effective_subscription
@@ -117,7 +123,7 @@ def _validate_entitlement_can_activate(entitlement):
         })
 
 
-class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
+class OrganizationProductEntitlementViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """Habilitacion producto-neutral por organizacion."""
 
     queryset = OrganizationProductEntitlement.objects.all()
@@ -208,6 +214,7 @@ class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
         if not org_id:
             return Response({'error': 'organization_id es requerido'}, status=status.HTTP_400_BAD_REQUEST)
 
+        org_id = serializers.UUIDField().run_validation(org_id)
         try:
             organization = Organization.objects.get(pk=org_id)
         except Organization.DoesNotExist:
@@ -228,7 +235,7 @@ class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class ProductEntitlementAuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+class ProductEntitlementAuditLogViewSet(ControlPlaneMixin, viewsets.ReadOnlyModelViewSet):
     """Read-only audit trail for product entitlement changes."""
 
     queryset = ProductEntitlementAuditLog.objects.all()
@@ -244,7 +251,7 @@ class ProductEntitlementAuditLogViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
 
-class ISOStandardViewSet(viewsets.ModelViewSet):
+class ISOStandardViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de estándares ISO
     Solo administradores de Comtech pueden crear/editar
@@ -286,7 +293,7 @@ class ISOStandardViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class OrganizationModuleViewSet(viewsets.ModelViewSet):
+class OrganizationModuleViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
     """
     ViewSet para gestión de módulos por organización
     CONTROL MAESTRO - Solo equipo Comtech
@@ -434,67 +441,31 @@ class OrganizationModuleViewSet(viewsets.ModelViewSet):
         POST /api/modules/bulk_assign/
         Body: {"organization_id": "xxx", "iso_standards": ["uuid1", "uuid2"], "status": "trial"}
         """
-        org_id = request.data.get('organization_id')
-        iso_ids = request.data.get('iso_standards', [])
-        initial_status = request.data.get('status', 'trial')
-        
-        # Validar que org_id sea válido
-        if not org_id or org_id == 'new' or len(str(org_id)) < 10:
-            return Response(
-                {'error': 'ID de organización inválido'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            organization = Organization.objects.get(pk=org_id)
-        except Organization.DoesNotExist:
-            return Response(
-                {'error': 'Organización no encontrada'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            return Response(
-                {'error': 'ID de organización inválido'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        created = []
-        skipped = []
-        
-        for iso_id in iso_ids:
-            try:
-                iso_standard = ISOStandard.objects.get(pk=iso_id)
-                
-                # Verificar si ya existe
-                if OrganizationModule.objects.filter(
-                    organization=organization, 
-                    iso_standard=iso_standard
-                ).exists():
+        serializer = OrganizationModuleBulkSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        organization = serializer.validated_data['organization_id']
+        standards = serializer.validated_data['iso_standards']
+        initial_status = serializer.validated_data['status']
+        created, skipped = [], []
+        with transaction.atomic():
+            for iso_standard in standards:
+                if OrganizationModule.objects.filter(organization=organization, iso_standard=iso_standard).exists():
                     skipped.append(iso_standard.code)
                     continue
-                
                 module = OrganizationModule.objects.create(
-                    organization=organization,
-                    iso_standard=iso_standard,
-                    status=initial_status,
-                    activated_by=request.user
+                    organization=organization, iso_standard=iso_standard,
+                    status=initial_status, activated_by=request.user,
                 )
-                
                 if initial_status == 'trial':
                     module.set_trial(days=14)
-                
                 ModuleActivityLog.objects.create(
                     organization_module=module,
                     action='enabled' if initial_status == 'active' else 'trial_started',
                     performed_by=request.user,
-                    notes=f"Asignación masiva - Status inicial: {initial_status}"
+                    notes=f"Asignación masiva - Status inicial: {initial_status}",
                 )
-                
                 created.append(iso_standard.code)
-                
-            except ISOStandard.DoesNotExist:
-                continue
-        
+
         return Response({
             'status': 'success',
             'created': created,
@@ -503,7 +474,7 @@ class OrganizationModuleViewSet(viewsets.ModelViewSet):
         })
 
 
-class ModuleActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
+class ModuleActivityLogViewSet(ControlPlaneMixin, viewsets.ReadOnlyModelViewSet):
     """
     ViewSet para consultar logs de actividad (solo lectura)
     Auditoría interna de Comtech

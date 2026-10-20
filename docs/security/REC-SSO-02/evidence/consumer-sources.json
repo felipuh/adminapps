@@ -1,0 +1,20 @@
+{
+  "isosmart": {
+    "HEAD": "0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e",
+    "sources_sha256": {
+      "backend/integration/client.py": "9edceb9510fd70e1c2c5e7c1c7040a8c16d74a26f8c143abce62b976f4e6639a",
+      "backend/integration/backends.py": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136",
+      "backend/backend/settings.py": "14255f0ac7051c535443dac1c255d1042a6de8772e8934089dee0d5cfd9b67bf"
+    },
+    "mode": "read-only; captured after inspection, not an initial whole-repository baseline"
+  },
+  "ISO_Smart_MedSupplier": {
+    "HEAD": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f",
+    "sources_sha256": {
+      "backend/integration/client.py": "1341bd80b0442b0bf385530f17450afb666472b2f7dd90c49c37a6bd7e6eb31d",
+      "backend/integration/backends.py": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136",
+      "backend/backend/settings.py": "ffe1253fa622e8d393ec51edda106d62e88c384c000a7b3cfbffad654c6998e0"
+    },
+    "mode": "read-only; captured after inspection, not an initial whole-repository baseline"
+  }
+}

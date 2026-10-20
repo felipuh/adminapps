@@ -1,0 +1,10 @@
+--- a/backend/apps/integration/sso_views.py
++++ b/backend/apps/integration/sso_views.py
+@@ -459,6 +459,7 @@
+         organization_id=organization_id,
+         is_active=True,
+         organization__status="active",
++        role=parsed.get("role"),  # DRAFT B: invalidate after role changes.
+     ).exists():
+         return JsonResponse({"active": False}, status=200)
+ 

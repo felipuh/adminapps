@@ -1,0 +1,7 @@
+{
+  "git rev-parse HEAD": "b144b2505659ad39f756b9bc4530a7f24fe8c3ad\n",
+  "git status --porcelain=v1": " M backend/apps/integration/sso_views.py\n M backend/config/settings.py\n?? backend/apps/financial/\n?? backend/scripts/rec_sso_02_2fa_regression.py\n?? backend/scripts/rec_sso_02_checks.py\n?? backend/scripts/rec_sso_02_offline.py\n?? backend/scripts/s3_isolation_host_lab.sh\n?? backend/scripts/tests/\n?? backend/scripts/verify_financial_s1_postgres.sh\n?? backend/scripts/verify_financial_s3_postgres.sh\n?? docs/financial/\n?? docs/security/\n",
+  "git branch -vv": "  development                                f313da5b [origin/development] feat: add EnterpriseUI component with reusable UI elements for enterprise features\n  hardening/p0-enterprise-readiness-20260702 71a6aa3c [origin/hardening/p0-enterprise-readiness-20260702] Refactor code structure for improved readability and maintainability\n* hardening/p0-p1-enterprise-readiness       b144b250 [origin/hardening/p0-p1-enterprise-readiness: ahead 6] fix(auth): support 2FA backup codes in login UI\n",
+  "git worktree list": "/home/felipe/proyectos/adminapps  b144b250 [hardening/p0-p1-enterprise-readiness]\n",
+  "git diff --cached": ""
+}

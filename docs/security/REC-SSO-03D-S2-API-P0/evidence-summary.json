@@ -1,0 +1,11 @@
+{
+  "executed_methods": 1167,
+  "new_api_methods": 50,
+  "historical_admin_plus_prior_api": 29,
+  "extra_guardrail": 1,
+  "allow_handler_actions_with_some_branch_evidence": 40,
+  "all_routes_fully_verified": false,
+  "verdict": "DECISION_D_S2_ADMINAPPS_API_P0_PARTIAL",
+  "final_review_date": "2026-10-19",
+  "timezone": "America/Costa_Rica"
+}

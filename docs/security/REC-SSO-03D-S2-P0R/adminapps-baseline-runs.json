@@ -1,0 +1,40 @@
+[
+  {
+    "suite": "baseline-admin-a",
+    "exit": 1,
+    "cmd": [
+      "/home/felipe/proyectos/adminapps/backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/baseline-admin-a.methods.json",
+      "backend/scripts/rec_sso_03a_offline.py"
+    ]
+  },
+  {
+    "suite": "baseline-admin-ch",
+    "exit": 1,
+    "cmd": [
+      "/home/felipe/proyectos/adminapps/backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/baseline-admin-ch.methods.json",
+      "backend/scripts/rec_sso_03b_ch_offline.py"
+    ]
+  },
+  {
+    "suite": "baseline-historical-api-admin",
+    "exit": 0,
+    "cmd": [
+      "/home/felipe/proyectos/adminapps/backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/baseline-historical-api-admin.methods.json",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py",
+      "apps.users.test_authorization",
+      "apps.users.test_admin_authorization",
+      "apps.organizations.test_authorization",
+      "apps.subscriptions.test_authorization",
+      "apps.api.tests_security_guardrails"
+    ]
+  }
+]

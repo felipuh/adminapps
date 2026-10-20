@@ -1,0 +1,107 @@
+[
+  {
+    "repository": "adminapps",
+    "file": "backend/apps/integration/views.py",
+    "sha256": "333459137cbc21e7b5519b27c6c2fa8aa46275cdf6821075ffa83339087515dd"
+  },
+  {
+    "repository": "adminapps",
+    "file": "backend/apps/integration/sso_views.py",
+    "sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6"
+  },
+  {
+    "repository": "adminapps",
+    "file": "backend/apps/integration/urls.py",
+    "sha256": "af5788cc9a39af2813d27db4265af79864bb170ba6b1ca099456821a2e10ea79"
+  },
+  {
+    "repository": "adminapps",
+    "file": "backend/apps/users/urls.py",
+    "sha256": "1cd54e5fa6d02d8cd086dd56d719ca9070d8d11791392450e496834bce45bd3a"
+  },
+  {
+    "repository": "adminapps",
+    "file": "backend/apps/users/two_factor_service.py",
+    "sha256": "c7b80c3ff34ddb99597d09ec7f54ccad9e15743c9a8ccc8b985b8ecfbf9ca971"
+  },
+  {
+    "repository": "adminapps",
+    "file": "docs/PRODUCT_NEUTRAL_ADMINAPPS_CONTRACT.md",
+    "sha256": "69bba978d4cbf02652b175289e845bb159cc1cbfe3959503abce3c4865479da2"
+  },
+  {
+    "repository": "isosmart",
+    "file": "AGENTS.md",
+    "sha256": "fc475d23b2545b27305aee78dc394be47546a54a8be7db83f70533023763e82f"
+  },
+  {
+    "repository": "isosmart",
+    "file": "backend/authentication/serializers.py",
+    "sha256": "0afed8538e75c6880ae582fc8be3dab899d502954dc4509ca523de79b1eaaa7e"
+  },
+  {
+    "repository": "isosmart",
+    "file": "backend/backend/settings.py",
+    "sha256": "14255f0ac7051c535443dac1c255d1042a6de8772e8934089dee0d5cfd9b67bf"
+  },
+  {
+    "repository": "isosmart",
+    "file": "frontend/src/services/authService.js",
+    "sha256": "84aa61087336c22418a265168ecddef7e62327ccdc03fbb384018b66544b6451"
+  },
+  {
+    "repository": "isosmart",
+    "file": "docs/transformation/ISO_SMART_AI_ADMINAPPS_CONTRACT.md",
+    "sha256": "482b8fb28a55e7ce57950f93745b83fd1b0be2e8bd477be54e3ac492d27812ab"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "backend/integration/client.py",
+    "sha256": "1341bd80b0442b0bf385530f17450afb666472b2f7dd90c49c37a6bd7e6eb31d"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "backend/integration/backends.py",
+    "sha256": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "backend/integration/sso_auth.py",
+    "sha256": "7df0bac1cbdc90ca91e5dbcc7e0148a89cd20b583d8974a0365e4aea433b282e"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "backend/authentication/serializers.py",
+    "sha256": "fcb2ae9de989cb780267f83cd79cc998d8d7df28ee354bedfe39e6dd5280b60e"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "backend/authentication/views.py",
+    "sha256": "c9770171e199c80debfe7721acf840142ddb8a73f88490a4cbdbfd116a81ebde"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "backend/authentication/urls.py",
+    "sha256": "be5782ba466cd914450dad272caa8636cbe9f257da334586d132c67dae7d572f"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "backend/backend/settings.py",
+    "sha256": "ffe1253fa622e8d393ec51edda106d62e88c384c000a7b3cfbffad654c6998e0"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "frontend/src/services/authService.js",
+    "sha256": "b87f058c7e14ec3d6b8748d37b8c39949d60ce6d93f9cc3b78b6bfd3569f6adc"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "docs/internal/ADMINAPPS_MEDSUPPLIER_CONTRACT.md",
+    "sha256": "a58e4700375efabc5bd77220fac5e64e208db1d9dc583d1fe04b825d691d85e5"
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "file": "docs/validation/AdminApps_Integration_Decision.md",
+    "sha256": "9965f2f429586ff3e5ee7b9b63583785a3a1457e4705c732f62126a7f68c4f23"
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "organization_product_entitlements": {
+    "missing_columns": [],
+    "unexpected_columns": []
+  },
+  "two_factor_auth": {
+    "missing_columns": [
+      "attempts_expires_at",
+      "failed_attempts",
+      "generation",
+      "last_totp_counter"
+    ],
+    "unexpected_columns": []
+  },
+  "two_factor_challenges": {
+    "missing_columns": [
+      "consumed_at",
+      "context_digest",
+      "expires_at",
+      "generation",
+      "issued_at",
+      "nonce_digest",
+      "purpose",
+      "scope",
+      "user_id",
+      "version"
+    ],
+    "unexpected_columns": []
+  },
+  "integration_api_keys": {
+    "missing_columns": [
+      "credential_format",
+      "credential_hash",
+      "credential_id",
+      "fingerprint",
+      "replaced_by_id",
+      "revoked_at",
+      "rotated_at",
+      "status"
+    ],
+    "unexpected_columns": []
+  },
+  "disk_migrations_not_recorded": [
+    [
+      "integration",
+      "0006_integration_api_key_lifecycle"
+    ],
+    [
+      "integration",
+      "0007_aiusageprojection"
+    ],
+    [
+      "organizations",
+      "0004_tenantintegrationoutbox"
+    ],
+    [
+      "users",
+      "0004_transactional_2fa"
+    ]
+  ]
+}

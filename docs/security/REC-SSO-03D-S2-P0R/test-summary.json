@@ -1,0 +1,318 @@
+{
+  "new_unique_methods": 40,
+  "inherited_unique_methods": 891,
+  "executions": 1421,
+  "unique_method_origins": 931,
+  "statuses_per_execution": {
+    "PASS": 1337,
+    "ERROR": 60,
+    "FAIL": 24
+  },
+  "suites": [
+    {
+      "suite": "p0r",
+      "methods_executed": 34,
+      "PASS": 34,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 34,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "p0r-sessions",
+      "methods_executed": 6,
+      "PASS": 6,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "api-p0",
+      "methods_executed": 50,
+      "PASS": 50,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 50,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "historical-api-admin",
+      "methods_executed": 30,
+      "PASS": 29,
+      "FAIL": 0,
+      "ERROR": 1,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 30,
+          "failures": 0,
+          "errors": 1,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "admin-d",
+      "methods_executed": 57,
+      "PASS": 57,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 57,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "admin-b",
+      "methods_executed": 43,
+      "PASS": 43,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 43,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "admin-ch",
+      "methods_executed": 18,
+      "PASS": 2,
+      "FAIL": 4,
+      "ERROR": 12,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 18,
+          "failures": 4,
+          "errors": 37,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "admin-a",
+      "methods_executed": 30,
+      "PASS": 7,
+      "FAIL": 20,
+      "ERROR": 3,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 30,
+          "failures": 30,
+          "errors": 3,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "admin-mfa",
+      "methods_executed": 21,
+      "PASS": 21,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 21,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "iso-d",
+      "methods_executed": 361,
+      "PASS": 361,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 361,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "iso-d_session",
+      "methods_executed": 36,
+      "PASS": 36,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "iso-b",
+      "methods_executed": 35,
+      "PASS": 35,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 35,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "iso-ch",
+      "methods_executed": 28,
+      "PASS": 17,
+      "FAIL": 0,
+      "ERROR": 11,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 28,
+          "failures": 0,
+          "errors": 11,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "iso-decision_a",
+      "methods_executed": 20,
+      "PASS": 9,
+      "FAIL": 0,
+      "ERROR": 11,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 20,
+          "failures": 0,
+          "errors": 11,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "med-d",
+      "methods_executed": 533,
+      "PASS": 533,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 533,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "med-d_session",
+      "methods_executed": 36,
+      "PASS": 36,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "med-b",
+      "methods_executed": 35,
+      "PASS": 35,
+      "FAIL": 0,
+      "ERROR": 0,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 35,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "med-ch",
+      "methods_executed": 28,
+      "PASS": 17,
+      "FAIL": 0,
+      "ERROR": 11,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 28,
+          "failures": 0,
+          "errors": 11,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "suite": "med-decision_a",
+      "methods_executed": 20,
+      "PASS": 9,
+      "FAIL": 0,
+      "ERROR": 11,
+      "SKIP": 0,
+      "unittest": [
+        {
+          "tests": 20,
+          "failures": 0,
+          "errors": 11,
+          "skipped": 0
+        }
+      ]
+    }
+  ],
+  "note": "One final selected run per suite. Development repeats, baseline and reproduction excluded. Inheritance deduplicated by source/line/method; generated concrete methods distinguished by their names."
+}

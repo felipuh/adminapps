@@ -1,0 +1,21 @@
+--- /dev/null
++++ b/docs/security/contracts/H-proposed.md
+@@ -0,0 +1,18 @@
++# DRAFT H — integration service scope; NOT APPROVED
++
++Bind each key credential_id to an immutable registered service principal, then
++explicit allowed operations, client IDs, products and canonical tenant UUIDs.
++Reject missing registrations, unknown scopes and tenant/product mismatches.
++A mutable IntegrationAPIKey.name or a caller supplied client_id cannot establish
++that authority. Configured fallback credentials need the same principal binding.
++
++Introspection must intersect the authenticated service registration with the
++verified token context; product validation and legacy identity endpoints must
++apply their own operation/tenant/product permission. No wildcard is implicit.
++
++Approve central-service cross-tenant exceptions individually with audit and
++expiry. Inventory ISO Smart and MedSupplier keys first; plan compatibility,
++rotation, revocation, audit failure behavior and migration from global keys.
++Acceptance includes same-key cross-product and cross-tenant denial, revoked or
++rotated keys, DatabaseError at authentication/audit, and no permissive fallback.
++No grants, key rotations, schema or deployment are authorized by this draft.

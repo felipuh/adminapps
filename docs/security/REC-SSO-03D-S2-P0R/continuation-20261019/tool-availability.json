@@ -1,0 +1,48 @@
+{
+  "adminapps": {
+    "venv_tools": {
+      "ruff": false,
+      "flake8": false,
+      "pylint": false,
+      "pytest": false
+    },
+    "diff_check": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "isosmart": {
+    "venv_tools": {
+      "ruff": false,
+      "flake8": false,
+      "pylint": false,
+      "pytest": false
+    },
+    "diff_check": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "ISO_Smart_MedSupplier": {
+    "venv_tools": {
+      "ruff": false,
+      "flake8": false,
+      "pylint": false,
+      "pytest": false
+    },
+    "diff_check": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "system_tools": {
+    "node": "/usr/bin/node",
+    "ruff": null,
+    "flake8": null,
+    "pylint": null,
+    "pytest": null
+  }
+}

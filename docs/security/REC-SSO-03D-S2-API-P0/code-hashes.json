@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-19",
+  "timezone": "America/Costa_Rica",
+  "algorithm": "SHA-256",
+  "repository": "adminapps",
+  "files": {
+    "backend/apps/api/test_control_plane.py": "4c2bb3ad454711cd35d708a3c8e4f14cbc17e9329f51bb3b39b9e6a8f1ec6dc3",
+    "backend/apps/api/views.py": "749890347916f13de59707cd3043937ad317396597a1328ac95a8f57796a9253",
+    "backend/apps/billing/serializers.py": "c3fc27fd56d4fc4e7add9b0466f19c9858444b1e670128774186d76bec754092",
+    "backend/apps/billing/views.py": "2d91c4e047d21a93941f4ad06c9b280444bdf5f990ecfc869264d541af19e05c",
+    "backend/apps/integration/api_authorization.py": "d1d1dc92f4ea84f5c6aabba0b32816129716ad80dc2bb6a74b5997490bb9c11e",
+    "backend/apps/integration/views.py": "6b0b99a205bcae95c4cc5f65661807d0f12d9b746174a75f05ed77cdae75666b",
+    "backend/apps/organizations/serializers.py": "4019f0ff690bd0074712018cec8a1abecc71ffed133c59838fd7b83820d9191b",
+    "backend/apps/organizations/views.py": "5062abe7f04fd5bf2acd2e0b3ee789239ae90435de0b9b7d3eefaa28ac58e5f4",
+    "backend/apps/products/serializers.py": "ede277d4d64a6684d0390dd6bb03a10cc3c7bfd4f0014a492eae36e59fb2262d",
+    "backend/apps/products/views.py": "f2a4a9bceb82d4349a8531a2efd579ca3e4cface0ac96920535133605f6d380d",
+    "backend/apps/subscriptions/serializers.py": "8c75767c3d8ccb879b73fdcf0374c5bb1bebf6be123279aa270e2db0ab6965ea",
+    "backend/apps/subscriptions/views.py": "f00b5b3e5141d31ca514f01a6b908c5e7418175237bb51d51fe6d4e9f8f12934",
+    "backend/apps/users/api_authorization.py": "1bb3ee893db6e7b58ec04f56469179da92477dfe65f0a22630bde2c64d55f365",
+    "backend/apps/users/platform_api_authorization.py": "80207703eb11ef9675628f6be928396daf06ef0436418a8ea11ff39c704876ec",
+    "backend/apps/users/serializers.py": "71d8812af0eb78b9dbde640ea4436cc4a755a4928766e81ca99430617ee9254f",
+    "backend/apps/users/services.py": "a05c19d5e9e8996a9768874e79035f4270b80213498e8774f82a8139431e097e",
+    "backend/apps/users/views.py": "c98c6c62b826741bfdedc942b38f3962be4ba87ed98d0b3b133305fcf5b8240f",
+    "backend/scripts/rec_sso_03d_api_inventory.py": "0e2b3d47df97da28e783a5124056ddc5d87e815d5e0d3d09289ed62610722c0b",
+    "backend/scripts/rec_sso_03d_api_p0_offline.py": "50b386f527b5d983bd9cafd8d53f3384ca6d381432afdb4316a8d0844716b975"
+  }
+}

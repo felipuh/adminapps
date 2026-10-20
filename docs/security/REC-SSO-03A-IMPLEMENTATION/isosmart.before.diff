@@ -1,0 +1,470 @@
+diff --git a/backend/backend/settings.py b/backend/backend/settings.py
+index e42e3011..89a99cef 100755
+--- a/backend/backend/settings.py
++++ b/backend/backend/settings.py
+@@ -111,6 +111,20 @@ ADMIN_APPS_INTEGRATION = {
+     'CACHE_TTL': int(os.getenv('ADMIN_APPS_CACHE_TTL', '300')),
+     'SYNC_USERS': _env_bool('ADMIN_APPS_SYNC_USERS', default=True),
+ }
++
++# AI-usage export stays explicitly disabled until a deployment supplies both
++# the authenticated AdminApps destination and its bounded delivery settings.
++# Keeping this separate from the general AdminApps client prevents inference
++# from acquiring an implicit outbound dependency.
++AI_USAGE_ADMINAPPS_ENDPOINT = os.getenv('AI_USAGE_ADMINAPPS_ENDPOINT', '').strip()
++AI_USAGE_ADMINAPPS_API_KEY = os.getenv('AI_USAGE_ADMINAPPS_API_KEY', '').strip()
++AI_USAGE_ADMINAPPS_DELIVERY_ENABLED = _env_bool('AI_USAGE_ADMINAPPS_DELIVERY_ENABLED', default=False)
++AI_USAGE_ADMINAPPS_TIMEOUT_SECONDS = int(os.getenv('AI_USAGE_ADMINAPPS_TIMEOUT_SECONDS', '5'))
++AI_USAGE_ADMINAPPS_MAX_ATTEMPTS = int(os.getenv('AI_USAGE_ADMINAPPS_MAX_ATTEMPTS', '3'))
++# This is deliberately distinct from the provider URL/key.  Supplying a key
++# never authorizes paid execution: an approved AdminApps entitlement and
++# central budget-reservation contract are also required.
++AI_REAL_INFERENCE_AUTHORIZED = _env_bool('AI_REAL_INFERENCE_AUTHORIZED', default=False)
+ ISO_SMART_PRODUCT_CODE = os.getenv('ISO_SMART_PRODUCT_CODE', 'ISO_SMART').strip().upper()
+ ALLOW_LOCAL_AUTH_FALLBACK = (
+     IS_DEVELOPMENT
+diff --git a/backend/foundation/ai_usage.py b/backend/foundation/ai_usage.py
+index b519a20b..56016b2d 100644
+--- a/backend/foundation/ai_usage.py
++++ b/backend/foundation/ai_usage.py
+@@ -8,6 +8,7 @@ from uuid import NAMESPACE_URL, uuid5
+ 
+ from django.db import IntegrityError, transaction
+ from django.db.models import Q
++from django.conf import settings
+ from django.utils import timezone
+ 
+ from .canonical import canonical_hash
+@@ -55,6 +56,34 @@ class AIUsageReplay(Exception):
+     pass
+ 
+ 
++class AIFinancialGuardrailBlocked(Exception):
++    """Raised before any paid-provider network operation is possible."""
++
++    def __init__(self, code, detail):
++        super().__init__(detail)
++        self.code = code
++
++
++def assert_paid_provider_admission(provider):
++    """Keep real inference disabled until AdminApps exposes an authority contract.
++
++    This executes at the common metered edge, immediately before the provider
++    can be called.  A local ISO Smart policy must never be mistaken for the
++    AdminApps-owned entitlement or a cross-product spending cap.
++    """
++    if getattr(provider, "execution_mode", None) != "REAL_AI":
++        return
++    if not getattr(settings, "AI_REAL_INFERENCE_AUTHORIZED", False):
++        raise AIFinancialGuardrailBlocked(
++            "AI_REAL_INFERENCE_NOT_AUTHORIZED",
++            "real provider execution remains operationally disabled",
++        )
++    raise AIFinancialGuardrailBlocked(
++        "AI_FINANCIAL_AUTHORITY_CONTRACT_MISSING",
++        "AdminApps has no authenticated entitlement and central reservation contract",
++    )
++
++
+ class AIUsageLedger:
+     PRODUCT = "iso-smart"
+     AGENT = "value-discovery"
+@@ -122,6 +151,10 @@ class AIUsageLedger:
+ 
+ 
+ def run_metered_capability(*, ledger, capability, provider, context, validate, invocation_id):
++    # This is the sole Value Discovery provider execution path.  The check is
++    # deliberately before both the usage record and provider I/O so an
++    # unauthorized request cannot consume tokens or masquerade as a call.
++    assert_paid_provider_admission(provider)
+     record = ledger.reserve(invocation_id=invocation_id, capability=capability, provider=provider)
+     started = monotonic()
+     response = None
+diff --git a/backend/foundation/ai_usage_delivery.py b/backend/foundation/ai_usage_delivery.py
+index 106be5c5..f408570e 100644
+--- a/backend/foundation/ai_usage_delivery.py
++++ b/backend/foundation/ai_usage_delivery.py
+@@ -9,16 +9,18 @@ from datetime import timedelta
+ 
+ import requests
+ from django.conf import settings
++from django.db import transaction
+ from django.utils import timezone
+ 
+ from .ai_usage import AI_USAGE_EVENT_TYPE
+-from .eventing import OutboxDeliveryService
++from .eventing import OutboxDeliveryService, ReplayService
+ from .models import DomainEvent, TransactionalOutbox
+ from .tenant_context import trusted_tenant_context
+ 
+ 
+ PERMANENT_REJECTION = "AI_USAGE_PERMANENT_REJECTION"
+ RETRYABLE_FAILURE = "AI_USAGE_RETRYABLE_FAILURE"
++RETRY_EXHAUSTED = "AI_USAGE_RETRY_EXHAUSTED"
+ 
+ 
+ @dataclass(frozen=True)
+@@ -35,6 +37,11 @@ def delivery_failure_kind(status_code):
+     return "retryable"
+ 
+ 
++def retry_cycle_exhausted(*, publish_attempts, max_attempts):
++    """Keep a manually reopened cycle bounded without discarding history."""
++    return publish_attempts > 0 and publish_attempts % max_attempts == 0
++
++
+ class AIUsageDelivery:
+     """At-least-once dispatcher with stable event IDs and bounded retries."""
+ 
+@@ -46,7 +53,11 @@ class AIUsageDelivery:
+         self.api_key = api_key if api_key is not None else getattr(settings, "AI_USAGE_ADMINAPPS_API_KEY", "")
+         self.enabled = enabled if enabled is not None else getattr(settings, "AI_USAGE_ADMINAPPS_DELIVERY_ENABLED", False)
+         self.timeout_seconds = timeout_seconds or getattr(settings, "AI_USAGE_ADMINAPPS_TIMEOUT_SECONDS", 5)
+-        self.max_attempts = max_attempts or getattr(settings, "AI_USAGE_ADMINAPPS_MAX_ATTEMPTS", 3)
++        self.max_attempts = max_attempts if max_attempts is not None else getattr(
++            settings, "AI_USAGE_ADMINAPPS_MAX_ATTEMPTS", 3
++        )
++        if self.max_attempts < 1:
++            raise ValueError("AI usage delivery max attempts must be positive")
+ 
+     def _assert_configured(self):
+         if not self.enabled:
+@@ -62,7 +73,7 @@ class AIUsageDelivery:
+             worker_id=worker_id,
+             trace_id=trace_id,
+             event_type=AI_USAGE_EVENT_TYPE,
+-            excluded_error_codes=(PERMANENT_REJECTION,),
++            excluded_error_codes=(PERMANENT_REJECTION, RETRY_EXHAUSTED),
+         )
+         if outbox_id is None:
+             return None
+@@ -94,13 +105,16 @@ class AIUsageDelivery:
+     def _retryable(self, delivery, identity, outbox_id, worker_id, trace_id, status_code=None):
+         with trusted_tenant_context(identity, actor_id=worker_id, trace_id=trace_id, using=self.using):
+             row = TransactionalOutbox.objects.using(self.using).get(pk=outbox_id)
+-            exhausted = row.publish_attempts >= self.max_attempts
++            exhausted = retry_cycle_exhausted(
++                publish_attempts=row.publish_attempts,
++                max_attempts=self.max_attempts,
++            )
+         if exhausted:
+             delivery.mark_failed(
+                 identity=identity, outbox_id=outbox_id, worker_id=worker_id, trace_id=trace_id,
+-                error_code=PERMANENT_REJECTION,
++                error_code=RETRY_EXHAUSTED,
+             )
+-            return DeliveryResult("PERMANENT_REJECTION", outbox_id, status_code)
++            return DeliveryResult("RETRY_EXHAUSTED", outbox_id, status_code)
+         # A bounded backoff avoids a tight retry loop while leaving the source
+         # ledger and exact event intact for a later authorized replay.
+         delay = min(60, 2 ** max(0, row.publish_attempts - 1))
+@@ -110,3 +124,42 @@ class AIUsageDelivery:
+             available_at=timezone.now() + timedelta(seconds=delay),
+         )
+         return DeliveryResult("RETRYABLE_FAILURE", outbox_id, status_code)
++
++    def recover_exhausted(self, *, identity, outbox_id, actor_id, trace_id, reason):
++        """Authorize one new bounded cycle for a retry-exhausted usage event.
++
++        Recovery is deliberately manual: the normal dispatcher excludes these
++        rows until this operation records the existing replay audit request and
++        atomically makes the same durable event eligible again.
++        """
++        self._assert_configured()
++        if not reason or not reason.strip():
++            raise ValueError("AI usage delivery recovery reason is required")
++        with trusted_tenant_context(identity, actor_id=actor_id, trace_id=trace_id, using=self.using):
++            with transaction.atomic(using=self.using):
++                row = (
++                    TransactionalOutbox.objects.using(self.using)
++                    .select_for_update()
++                    .select_related("domain_event")
++                    .get(pk=outbox_id)
++                )
++                if row.domain_event.event_type != AI_USAGE_EVENT_TYPE:
++                    raise ValueError("outbox row is not an AI usage delivery")
++                if row.status != TransactionalOutbox.Status.FAILED or row.last_error_code != RETRY_EXHAUSTED:
++                    raise ValueError("only retry-exhausted AI usage deliveries may be recovered")
++                ReplayService(using=self.using).request(
++                    identity=identity,
++                    event_id=row.domain_event_id,
++                    consumer_name="adminapps.ai_usage",
++                    actor_id=actor_id,
++                    trace_id=trace_id,
++                    reason=reason,
++                )
++                row.status = TransactionalOutbox.Status.PENDING
++                row.available_at = timezone.now()
++                row.last_error_code = None
++                row.save(
++                    using=self.using,
++                    update_fields=("status", "available_at", "last_error_code", "updated_at"),
++                )
++        return row.id
+diff --git a/backend/foundation/eventing.py b/backend/foundation/eventing.py
+index fbedb943..11da35fc 100644
+--- a/backend/foundation/eventing.py
++++ b/backend/foundation/eventing.py
+@@ -26,6 +26,10 @@ class PayloadIntegrityConflict(RuntimeError):
+     status_equivalent = 409
+ 
+ 
++class OutboxLeaseConflict(RuntimeError):
++    """A worker may only settle the lease it still owns."""
++
++
+ class ReceiptResultKind(Enum):
+     PROCESSED = "processed"
+     IDEMPOTENT_DUPLICATE = "idempotent_duplicate"
+@@ -184,6 +188,13 @@ class OutboxDeliveryService:
+             identity, actor_id=worker_id, trace_id=trace_id, using=self.using
+         ):
+             row = TransactionalOutbox.objects.using(self.using).select_for_update().get(pk=outbox_id)
++            if (
++                row.status != TransactionalOutbox.Status.PROCESSING
++                or row.lease_owner != str(worker_id)
++                or row.lease_expires_at is None
++                or row.lease_expires_at <= timezone.now()
++            ):
++                raise OutboxLeaseConflict("outbox delivery lease is no longer owned by this worker")
+             row.status = TransactionalOutbox.Status.PUBLISHED
+             row.published_at = timezone.now()
+             row.lease_owner = None
+@@ -202,6 +213,13 @@ class OutboxDeliveryService:
+             identity, actor_id=worker_id, trace_id=trace_id, using=self.using
+         ):
+             row = TransactionalOutbox.objects.using(self.using).select_for_update().get(pk=outbox_id)
++            if (
++                row.status != TransactionalOutbox.Status.PROCESSING
++                or row.lease_owner != str(worker_id)
++                or row.lease_expires_at is None
++                or row.lease_expires_at <= timezone.now()
++            ):
++                raise OutboxLeaseConflict("outbox delivery lease is no longer owned by this worker")
+             row.status = TransactionalOutbox.Status.FAILED
+             row.lease_owner = None
+             row.lease_expires_at = None
+diff --git a/backend/foundation/management/commands/run_ai_usage_delivery.py b/backend/foundation/management/commands/run_ai_usage_delivery.py
+index 8f131d45..b4639a21 100644
+--- a/backend/foundation/management/commands/run_ai_usage_delivery.py
++++ b/backend/foundation/management/commands/run_ai_usage_delivery.py
+@@ -15,6 +15,8 @@ class Command(BaseCommand):
+         parser.add_argument("--tenant-id", required=True)
+         parser.add_argument("--worker-id", default="ai-usage-delivery-worker")
+         parser.add_argument("--once", action="store_true")
++        parser.add_argument("--recover-exhausted-outbox-id")
++        parser.add_argument("--reason")
+ 
+     def handle(self, *args, **options):
+         try:
+@@ -25,10 +27,23 @@ class Command(BaseCommand):
+             raise CommandError("--tenant-id must be a UUID") from exc
+         dispatcher = AIUsageDelivery()
+         try:
++            recovery_id = options["recover_exhausted_outbox_id"]
++            if recovery_id:
++                if not options["reason"]:
++                    raise CommandError("--reason is required with --recover-exhausted-outbox-id")
++                recovered = dispatcher.recover_exhausted(
++                    identity=identity,
++                    outbox_id=UUID(recovery_id),
++                    actor_id=options["worker_id"],
++                    trace_id=uuid4(),
++                    reason=options["reason"],
++                )
++                self.stdout.write(f"AI usage delivery recovery scheduled outbox={recovered}")
++                return
+             result = dispatcher.deliver_next(
+                 identity=identity, worker_id=options["worker_id"], trace_id=uuid4()
+             )
+-        except RuntimeError as exc:
++        except (RuntimeError, ValueError) as exc:
+             raise CommandError(str(exc)) from exc
+         if result is None:
+             self.stdout.write("no eligible AI usage delivery")
+diff --git a/backend/foundation/models.py b/backend/foundation/models.py
+index 5f7f4123..8acbccc0 100644
+--- a/backend/foundation/models.py
++++ b/backend/foundation/models.py
+@@ -1972,6 +1972,61 @@ class AIUsageRecord(models.Model):
+         db_table = 'ai_usage"."usage_record'
+ 
+ 
++class AIFinancialGuardrailPolicy(models.Model):
++    """ISO Smart's deliberately product-scoped, non-billing pilot limit.
++
++    This is not a platform budget or an AdminApps entitlement projection.  It
++    exists solely to make a controlled ISO Smart cap reservable while the
++    cross-product reservation authority is intentionally not defined.
++    """
++
++    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
++    tenant = models.ForeignKey(TenantProjection, on_delete=models.PROTECT, db_column="tenant_id")
++    product_identifier = models.CharField(max_length=80)
++    provider = models.CharField(max_length=120)
++    model_identifier = models.CharField(max_length=200)
++    period_start = models.DateTimeField()
++    period_end = models.DateTimeField()
++    currency = models.CharField(max_length=3)
++    max_request_count = models.PositiveIntegerField()
++    max_input_tokens = models.BigIntegerField()
++    max_output_tokens = models.BigIntegerField()
++    max_reserved_cost = models.DecimalField(max_digits=20, decimal_places=10)
++    policy_scope = models.CharField(max_length=40)
++    authority_reference = models.TextField()
++    status = models.CharField(max_length=24)
++    created_at = models.DateTimeField(auto_now_add=True)
++    updated_at = models.DateTimeField(auto_now=True)
++
++    class Meta:
++        managed = False
++        db_table = 'ai_usage"."financial_guardrail_policy'
++
++
++class AIFinancialReservation(models.Model):
++    """Auditable pre-provider exposure; unknown consumption is never released."""
++
++    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
++    policy = models.ForeignKey(AIFinancialGuardrailPolicy, on_delete=models.PROTECT, db_column="policy_id")
++    tenant = models.ForeignKey(TenantProjection, on_delete=models.PROTECT, db_column="tenant_id")
++    invocation_id = models.CharField(max_length=200)
++    usage_record = models.OneToOneField(AIUsageRecord, null=True, blank=True, on_delete=models.PROTECT, db_column="usage_record_id")
++    reserved_input_tokens = models.BigIntegerField()
++    reserved_output_tokens = models.BigIntegerField()
++    reserved_cost = models.DecimalField(max_digits=20, decimal_places=10)
++    settled_cost = models.DecimalField(max_digits=20, decimal_places=10, null=True, blank=True)
++    currency = models.CharField(max_length=3)
++    status = models.CharField(max_length=24)
++    resolution_reason = models.CharField(max_length=80, null=True, blank=True)
++    created_at = models.DateTimeField(auto_now_add=True)
++    settled_at = models.DateTimeField(null=True, blank=True)
++    updated_at = models.DateTimeField(auto_now=True)
++
++    class Meta:
++        managed = False
++        db_table = 'ai_usage"."financial_reservation'
++
++
+ class CapabilityActivation(models.Model):
+     """Tenant-scoped activation of a published global capability."""
+ 
+diff --git a/backend/foundation/tenant_context.py b/backend/foundation/tenant_context.py
+index b409cc0e..d9bd7ea7 100644
+--- a/backend/foundation/tenant_context.py
++++ b/backend/foundation/tenant_context.py
+@@ -55,6 +55,8 @@ def bind_trusted_tenant_context_in_transaction(
+ def trusted_tenant_context(identity, *, actor_id, trace_id, using="default"):
+     """Set and verify transaction-local context from a trusted identity object."""
+ 
++    if not isinstance(identity, TrustedTenantIdentity):
++        raise TypeError("identity must be a TrustedTenantIdentity")
+     connection = transaction.get_connection(using)
+     if connection.in_atomic_block:
+         raise RuntimeError(
+diff --git a/backend/foundation/test_ai_usage.py b/backend/foundation/test_ai_usage.py
+index d92f1300..feeddeb9 100644
+--- a/backend/foundation/test_ai_usage.py
++++ b/backend/foundation/test_ai_usage.py
+@@ -1,11 +1,19 @@
+ from types import SimpleNamespace
++from contextlib import nullcontext
+ from unittest import TestCase
++from unittest.mock import Mock, patch
+ from uuid import uuid4
+ 
+ from django.utils import timezone
+ 
+ from foundation.ai_usage import normalize_usage, serialize_for_adminapps, usage_event_id_for
+-from foundation.ai_usage_delivery import delivery_failure_kind
++from foundation.ai_usage_delivery import (
++    AIUsageDelivery,
++    PERMANENT_REJECTION,
++    RETRY_EXHAUSTED,
++    delivery_failure_kind,
++    retry_cycle_exhausted,
++)
+ 
+ 
+ class AIUsageNormalizationTests(TestCase):
+@@ -36,3 +44,21 @@ class AIUsageNormalizationTests(TestCase):
+         self.assertEqual(delivery_failure_kind(422), 'permanent')
+         self.assertEqual(delivery_failure_kind(503), 'retryable')
+         self.assertEqual(delivery_failure_kind(None), 'retryable')
++        self.assertNotEqual(RETRY_EXHAUSTED, PERMANENT_REJECTION)
++
++    def test_retry_exhaustion_is_bounded_per_authorized_cycle_without_erasing_history(self):
++        self.assertTrue(retry_cycle_exhausted(publish_attempts=2, max_attempts=2))
++        self.assertFalse(retry_cycle_exhausted(publish_attempts=3, max_attempts=2))
++        self.assertTrue(retry_cycle_exhausted(publish_attempts=4, max_attempts=2))
++
++    @patch('foundation.ai_usage_delivery.trusted_tenant_context', return_value=nullcontext())
++    @patch('foundation.ai_usage_delivery.TransactionalOutbox.objects')
++    def test_exhausted_503_is_recorded_for_recovery_not_as_a_permanent_rejection(self, objects, _context):
++        objects.using.return_value.get.return_value = SimpleNamespace(publish_attempts=2)
++        delivery = Mock()
++        dispatcher = AIUsageDelivery(enabled=True, endpoint='http://loopback.test', api_key='synthetic', max_attempts=2)
++        result = dispatcher._retryable(delivery, object(), uuid4(), 'worker', uuid4(), 503)
++        self.assertEqual(result.state, 'RETRY_EXHAUSTED')
++        self.assertEqual(result.status_code, 503)
++        self.assertEqual(delivery.mark_failed.call_args.kwargs['error_code'], RETRY_EXHAUSTED)
++        self.assertNotEqual(delivery.mark_failed.call_args.kwargs['error_code'], PERMANENT_REJECTION)
+diff --git a/backend/foundation/test_source_artifact_postgres_integration.py b/backend/foundation/test_source_artifact_postgres_integration.py
+index 9faa716e..e51555c1 100644
+--- a/backend/foundation/test_source_artifact_postgres_integration.py
++++ b/backend/foundation/test_source_artifact_postgres_integration.py
+@@ -2122,7 +2122,7 @@ class SourceArtifactPostgreSQLIntegrationTests(TransactionTestCase):
+         executor = MigrationExecutor(connections["default"])
+         self.assertEqual(
+             executor.loader.graph.leaf_nodes("foundation")[-1],
+-            ("foundation", "0040_ai_usage_delivery_outbox_retry"),
++            ("foundation", "0041_ai_usage_retry_exhausted_recovery"),
+         )
+         executor.migrate([("foundation", "0028_capability_activation")])
+         try:
+@@ -2151,9 +2151,11 @@ class SourceArtifactPostgreSQLIntegrationTests(TransactionTestCase):
+                              reversed_executor.loader.applied_migrations)
+             self.assertNotIn(("foundation", "0040_ai_usage_delivery_outbox_retry"),
+                              reversed_executor.loader.applied_migrations)
++            self.assertNotIn(("foundation", "0041_ai_usage_retry_exhausted_recovery"),
++                             reversed_executor.loader.applied_migrations)
+         finally:
+             forward_executor = MigrationExecutor(connections["default"])
+-            forward_executor.migrate([("foundation", "0040_ai_usage_delivery_outbox_retry")])
++            forward_executor.migrate([("foundation", "0041_ai_usage_retry_exhausted_recovery")])
+         restored = MigrationExecutor(connections["default"])
+         self.assertIn(("foundation", "0029_context_twin_result_completion"),
+                       restored.loader.applied_migrations)
+@@ -2168,6 +2170,7 @@ class SourceArtifactPostgreSQLIntegrationTests(TransactionTestCase):
+         self.assertIn(("foundation", "0038_value_discovery_execution"), restored.loader.applied_migrations)
+         self.assertIn(("foundation", "0039_ai_usage_metering"), restored.loader.applied_migrations)
+         self.assertIn(("foundation", "0040_ai_usage_delivery_outbox_retry"), restored.loader.applied_migrations)
++        self.assertIn(("foundation", "0041_ai_usage_retry_exhausted_recovery"), restored.loader.applied_migrations)
+ 
+     def test_adminapps_tenant_projection_persists_optional_source_fields(self):
+         from foundation.models import IndustryProfile, TenantProjection
+diff --git a/backend/foundation/value_discovery.py b/backend/foundation/value_discovery.py
+index f60fa11b..cfac8cfe 100644
+--- a/backend/foundation/value_discovery.py
++++ b/backend/foundation/value_discovery.py
+@@ -19,7 +19,10 @@ from django.db import transaction
+ from django.db.models import Max
+ from django.utils import timezone
+ 
+-from .ai_usage import AIUsageLedger, AIUsageReplay, ProviderInferenceResult, run_metered_capability
++from .ai_usage import (
++    AIFinancialGuardrailBlocked, AIUsageLedger, AIUsageReplay,
++    ProviderInferenceResult, run_metered_capability,
++)
+ from .audit import AuditAppend, AuditWriterService
+ from .canonical import canonical_hash, canonical_json
+ from .document_evidence import DocumentEvidenceCommandService
+@@ -424,6 +427,8 @@ class ValueDiscoveryService:
+                 invocation_id=f"{event_id}:purpose_alignment")
+         except AIUsageReplay as exc:
+             raise ValueDiscoveryError("AI_USAGE_REPLAY", str(exc)) from exc
++        except AIFinancialGuardrailBlocked as exc:
++            raise ValueDiscoveryError(exc.code, str(exc)) from exc
+         result = {"contract_version": CONTRACT_VERSION, "organization_id": str(organization_id), "profile_input_hash": profile_hash,
+                   "organization_declared_purpose_reference": "organization_declared_purpose", "agent_run_id": str(execution_id),
+                   "execution_mode": provider.execution_mode, "organizational_profile_result": profile_result,

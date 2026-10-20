@@ -1,3 +1,4 @@
+from apps.users.platform_api_authorization import PlatformOperationMixin
 from decimal import Decimal
 import csv
 import io
@@ -79,7 +80,7 @@ def _create_notification_event(*, user, organization, action, description, sever
     )
 
 
-class BillingSummaryView(APIView):
+class BillingSummaryView(PlatformOperationMixin, APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
@@ -137,7 +138,7 @@ class BillingSummaryView(APIView):
         return Response(BillingSummarySerializer(summary).data)
 
 
-class AIUsageDashboardView(APIView):
+class AIUsageDashboardView(PlatformOperationMixin, APIView):
     """Cross-tenant provider-usage observability; never customer billing."""
     permission_classes = [IsAuthenticated, IsAdmin]
 
@@ -182,7 +183,7 @@ class AIUsageDashboardView(APIView):
         })
 
 
-class RevenueByProductView(APIView):
+class RevenueByProductView(PlatformOperationMixin, APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
@@ -199,7 +200,7 @@ class RevenueByProductView(APIView):
         return Response(RevenueByProductSerializer(queryset, many=True).data)
 
 
-class RevenueByOrganizationView(APIView):
+class RevenueByOrganizationView(PlatformOperationMixin, APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
@@ -237,7 +238,7 @@ class RevenueByOrganizationView(APIView):
         return Response(RevenueByOrganizationSerializer(payload, many=True).data)
 
 
-class RevenueTimelineView(APIView):
+class RevenueTimelineView(PlatformOperationMixin, APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
@@ -267,7 +268,7 @@ class RevenueTimelineView(APIView):
         return Response(RevenueTimelineSerializer(payload, many=True).data)
 
 
-class AccountsReceivableView(APIView):
+class AccountsReceivableView(PlatformOperationMixin, APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
@@ -294,7 +295,7 @@ class AccountsReceivableView(APIView):
         return Response(AccountsReceivableSerializer(data).data)
 
 
-class FiscalProfileViewSet(viewsets.ModelViewSet):
+class FiscalProfileViewSet(PlatformOperationMixin, viewsets.ModelViewSet):
     queryset = FiscalProfile.objects.all()
     serializer_class = FiscalProfileSerializer
     permission_classes = [IsAuthenticated, IsSuperAdmin]
@@ -302,7 +303,7 @@ class FiscalProfileViewSet(viewsets.ModelViewSet):
     ordering = ['legal_name']
 
 
-class ProductCatalogViewSet(viewsets.ModelViewSet):
+class ProductCatalogViewSet(PlatformOperationMixin, viewsets.ModelViewSet):
     queryset = ProductCatalog.objects.select_related('system_product')
     serializer_class = ProductCatalogSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
@@ -373,7 +374,7 @@ class ProductCatalogViewSet(viewsets.ModelViewSet):
         return Response(result)
 
 
-class ProductPriceViewSet(viewsets.ModelViewSet):
+class ProductPriceViewSet(PlatformOperationMixin, viewsets.ModelViewSet):
     queryset = ProductPrice.objects.select_related('product')
     serializer_class = ProductPriceSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
@@ -382,7 +383,7 @@ class ProductPriceViewSet(viewsets.ModelViewSet):
     ordering = ['product__name', 'amount']
 
 
-class ElectronicInvoiceViewSet(viewsets.ReadOnlyModelViewSet):
+class ElectronicInvoiceViewSet(PlatformOperationMixin, viewsets.ReadOnlyModelViewSet):
     queryset = ElectronicInvoice.objects.select_related(
         'organization', 'product', 'product_price', 'subscription', 'fiscal_profile'
     ).prefetch_related('lines')
@@ -677,7 +678,7 @@ class ElectronicInvoiceViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(ElectronicInvoiceDetailSerializer(note).data, status=201)
 
 
-class PaymentRecordViewSet(viewsets.ReadOnlyModelViewSet):
+class PaymentRecordViewSet(PlatformOperationMixin, viewsets.ReadOnlyModelViewSet):
     queryset = PaymentRecord.objects.select_related('organization', 'invoice')
     serializer_class = PaymentRecordSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
@@ -758,7 +759,7 @@ class PaymentRecordViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(PaymentRecordSerializer(payment).data)
 
 
-class RevenueSnapshotViewSet(viewsets.ReadOnlyModelViewSet):
+class RevenueSnapshotViewSet(PlatformOperationMixin, viewsets.ReadOnlyModelViewSet):
     queryset = RevenueSnapshot.objects.select_related('product', 'organization')
     serializer_class = RevenueSnapshotSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
@@ -767,7 +768,7 @@ class RevenueSnapshotViewSet(viewsets.ReadOnlyModelViewSet):
     ordering = ['-snapshot_date']
 
 
-class RecurringReportScheduleViewSet(viewsets.ModelViewSet):
+class RecurringReportScheduleViewSet(PlatformOperationMixin, viewsets.ModelViewSet):
     queryset = RecurringReportSchedule.objects.all()
     serializer_class = RecurringReportScheduleSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
@@ -803,7 +804,7 @@ class RecurringReportScheduleViewSet(viewsets.ModelViewSet):
         return Response(result)
 
 
-class SchedulerStatusView(APIView):
+class SchedulerStatusView(PlatformOperationMixin, APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
@@ -855,7 +856,7 @@ class SchedulerStatusView(APIView):
             'result_summary': last_log.result_summary if last_log else {},
         })
 
-class BillingChurnAnalyticsView(APIView):
+class BillingChurnAnalyticsView(PlatformOperationMixin, APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
@@ -916,7 +917,7 @@ class BillingChurnAnalyticsView(APIView):
         })
 
 
-class BillingReconciliationView(APIView):
+class BillingReconciliationView(PlatformOperationMixin, APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def get(self, request):
@@ -961,7 +962,7 @@ class BillingReconciliationView(APIView):
         return Response(PaymentRecordSerializer(payment).data, status=201)
 
 
-class ProductDashboardView(APIView):
+class ProductDashboardView(PlatformOperationMixin, APIView):
     """Per-product metrics: revenue, subscriptions, MRR/ARR, invoices."""
     permission_classes = [IsAuthenticated, IsAdmin]
 
@@ -1009,7 +1010,7 @@ class ProductDashboardView(APIView):
         return Response(ProductDashboardSerializer(result, many=True).data)
 
 
-class BillingAlertsView(APIView):
+class BillingAlertsView(PlatformOperationMixin, APIView):
     """Operational billing alerts: overdue, Hacienda, trials, scheduler errors."""
     permission_classes = [IsAuthenticated, IsAdmin]
 

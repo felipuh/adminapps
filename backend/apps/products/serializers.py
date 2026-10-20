@@ -2,7 +2,11 @@
 Serializers for Products - Admin Apps
 Control de módulos ISO
 """
+from apps.users.api_authorization import StrictInputMixin, reject_reparenting
+
 from rest_framework import serializers
+from apps.integration.authorization_contract import CATALOG
+from apps.organizations.models import Organization
 from .models import (
     ISOStandard,
     ModuleActivityLog,
@@ -13,7 +17,22 @@ from .models import (
 )
 
 
-class ProductSystemSerializer(serializers.ModelSerializer):
+def validate_entitlement_relations(instance, attrs):
+    reject_reparenting(instance, attrs, ('organization', 'product'))
+    organization = attrs.get('organization') or getattr(instance, 'organization', None)
+    product = attrs.get('product') or getattr(instance, 'product', None)
+    subscription = attrs.get('subscription', getattr(instance, 'subscription', None))
+    if subscription and (not organization or subscription.pk != organization.subscription_id):
+        raise serializers.ValidationError({'subscription': 'Suscripción ajena a la relación canónica del tenant.'})
+    if 'scopes' in attrs:
+        scopes = attrs['scopes']
+        catalog = CATALOG.get(getattr(product, 'code', None), ())
+        if (not isinstance(scopes, list) or any(not isinstance(s, str) or s not in catalog for s in scopes)
+                or len(set(scopes)) != len(scopes)):
+            raise serializers.ValidationError({'scopes': 'Scopes inválidos o ajenos al producto.'})
+
+
+class ProductSystemSerializer(StrictInputMixin, serializers.ModelSerializer):
     is_available = serializers.ReadOnlyField()
 
     class Meta:
@@ -38,7 +57,7 @@ class ProductSystemListSerializer(serializers.ModelSerializer):
         ]
 
 
-class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
+class OrganizationProductEntitlementSerializer(StrictInputMixin, serializers.ModelSerializer):
     organization_name = serializers.CharField(source='organization.name', read_only=True)
     organization_code = serializers.CharField(source='organization.code', read_only=True)
     product_code = serializers.CharField(source='product.code', read_only=True)
@@ -89,6 +108,7 @@ class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
         return plan.code if plan else None
 
     def validate(self, attrs):
+        validate_entitlement_relations(self.instance, attrs)
         organization = attrs.get('organization') or getattr(self.instance, 'organization', None)
         product = attrs.get('product') or getattr(self.instance, 'product', None)
         subscription = attrs.get('subscription')
@@ -110,7 +130,7 @@ class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class OrganizationProductEntitlementCreateSerializer(serializers.ModelSerializer):
+class OrganizationProductEntitlementCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
     class Meta:
         model = OrganizationProductEntitlement
         fields = [
@@ -119,6 +139,7 @@ class OrganizationProductEntitlementCreateSerializer(serializers.ModelSerializer
         ]
 
     def validate(self, attrs):
+        validate_entitlement_relations(self.instance, attrs)
         if OrganizationProductEntitlement.objects.filter(
             organization=attrs.get('organization'),
             product=attrs.get('product'),
@@ -161,13 +182,13 @@ class ProductEntitlementAuditLogSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class OrganizationProductEntitlementToggleSerializer(serializers.Serializer):
+class OrganizationProductEntitlementToggleSerializer(StrictInputMixin, serializers.Serializer):
     action = serializers.ChoiceField(choices=['enable', 'disable', 'trial'])
     reason = serializers.CharField(required=False, allow_blank=True)
     trial_days = serializers.IntegerField(required=False, default=14, min_value=1, max_value=365)
 
 
-class ISOStandardSerializer(serializers.ModelSerializer):
+class ISOStandardSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para estándares ISO"""
     is_available = serializers.ReadOnlyField()
     
@@ -193,7 +214,7 @@ class ISOStandardListSerializer(serializers.ModelSerializer):
         ]
 
 
-class OrganizationModuleSerializer(serializers.ModelSerializer):
+class OrganizationModuleSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para módulos asignados a organizaciones"""
     organization_name = serializers.CharField(source='organization.name', read_only=True)
     organization_code = serializers.CharField(source='organization.code', read_only=True)
@@ -211,10 +232,14 @@ class OrganizationModuleSerializer(serializers.ModelSerializer):
             'activated_by', 'activated_by_name', 'internal_notes',
             'created_at', 'updated_at',
         ]
-        read_only_fields = ['id', 'activated_at', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'activated_by', 'activated_at', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        reject_reparenting(self.instance, attrs, ('organization', 'iso_standard'))
+        return attrs
 
 
-class OrganizationModuleCreateSerializer(serializers.ModelSerializer):
+class OrganizationModuleCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
     """Serializer para asignar módulos a organizaciones"""
     
     class Meta:
@@ -233,7 +258,7 @@ class OrganizationModuleCreateSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class OrganizationModuleToggleSerializer(serializers.Serializer):
+class OrganizationModuleToggleSerializer(StrictInputMixin, serializers.Serializer):
     """Serializer para activar/desactivar módulos"""
     action = serializers.ChoiceField(choices=['enable', 'disable', 'trial'])
     reason = serializers.CharField(required=False, allow_blank=True)
@@ -265,3 +290,14 @@ class OrganizationModulesOverviewSerializer(serializers.Serializer):
     trial_modules = serializers.IntegerField()
     suspended_modules = serializers.IntegerField()
     modules = OrganizationModuleSerializer(many=True)
+
+
+class OrganizationModuleBulkSerializer(StrictInputMixin, serializers.Serializer):
+    organization_id = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all())
+    iso_standards = serializers.PrimaryKeyRelatedField(queryset=ISOStandard.objects.all(), many=True, allow_empty=False)
+    status = serializers.ChoiceField(choices=['active', 'trial', 'suspended', 'expired'], default='trial')
+
+    def validate_iso_standards(self, values):
+        if len({value.pk for value in values}) != len(values):
+            raise serializers.ValidationError('No se permiten módulos duplicados.')
+        return values

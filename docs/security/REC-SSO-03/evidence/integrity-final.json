@@ -1,0 +1,63 @@
+{
+  "scope": "tracked/untracked nonignored regular files and symlink targets; plus 40 REC-SSO-02 SHA256SUMS artifacts including ignored logs",
+  "repositories": {
+    "/home/felipe/proyectos/adminapps": {
+      "baseline_entries": 15575,
+      "unchanged_entries": 15575,
+      "changed_or_removed": [],
+      "unexpected_new": [],
+      "new_documentation_files": [
+        "docs/security/REC-SSO-03/APPROVAL_MATRIX.md",
+        "docs/security/REC-SSO-03/COMPATIBILITY.md",
+        "docs/security/REC-SSO-03/DECISIONS.md",
+        "docs/security/REC-SSO-03/DIFF_ASSESSMENT.md",
+        "docs/security/REC-SSO-03/EVIDENCE.md",
+        "docs/security/REC-SSO-03/IMPLEMENTATION_PLAN.md",
+        "docs/security/REC-SSO-03/REPORT.md",
+        "docs/security/REC-SSO-03/evidence/antecedent-verification.json",
+        "docs/security/REC-SSO-03/evidence/baseline.json",
+        "docs/security/REC-SSO-03/evidence/document-checks.json",
+        "docs/security/REC-SSO-03/evidence/proposals-review.json",
+        "docs/security/REC-SSO-03/evidence/source-manifest.json"
+      ],
+      "head_same": true,
+      "branch_same": true,
+      "index_diff_same": true,
+      "tracked_diff_same": true,
+      "status_final": " M backend/apps/integration/sso_views.py\n M backend/config/settings.py\n?? backend/apps/financial/__init__.py\n?? backend/apps/financial/apps.py\n?? backend/apps/financial/authorization.py\n?? backend/apps/financial/capabilities.py\n?? backend/apps/financial/executor.py\n?? backend/apps/financial/issuer.py\n?? backend/apps/financial/migrations/0001_financial_s1_foundation.py\n?? backend/apps/financial/migrations/0002_postgresql_security.py\n?? backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py\n?? backend/apps/financial/migrations/0004_s3_admission_controls.py\n?? backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py\n?? backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py\n?? backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py\n?? backend/apps/financial/migrations/__init__.py\n?? backend/apps/financial/models.py\n?? backend/apps/financial/rbac.py\n?? backend/apps/financial/services.py\n?? backend/apps/financial/tests.py\n?? backend/scripts/rec_sso_02_2fa_regression.py\n?? backend/scripts/rec_sso_02_checks.py\n?? backend/scripts/rec_sso_02_offline.py\n?? backend/scripts/s3_isolation_host_lab.sh\n?? backend/scripts/tests/test_s3_capability_offline.py\n?? backend/scripts/tests/test_s3_isolation_host_lab_validation.sh\n?? backend/scripts/verify_financial_s1_postgres.sh\n?? backend/scripts/verify_financial_s3_postgres.sh\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_AUTHORITY_SECURITY_AMENDMENT_02_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S1_IMPLEMENTATION_REPORT_2026-10-08.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S2_IMPLEMENTATION_REPORT_2026-10-08.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_ARCHITECTURE_DECISION_RECORD_DRAFT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_ARCHITECTURE_GOVERNANCE_RECONCILIATION_REPORT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_AUTHORIZATION_BOUNDARY_RUNTIME_GATES_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_DECISION_02_A_EXECUTION_REPORT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_EXISTING_VM_ISOLATION_EXECUTION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_FINAL_VALIDATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HUMAN_APPROVAL_MATRIX_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HUMAN_ARCHITECTURE_ADJUDICATION_GATE_2026-10-12.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMPLEMENTATION_REPORT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMP_01_CONTRACT_FREEZE_HUMAN_DECISION_2026-10-12.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_ISOLATION_ADMINISTRATIVE_GATE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_NUM_C01_DOMAIN_POLICY_PROPOSAL_2026-10-12.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_OFFLINE_EVIDENCE_2026-10-09.json\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_PHASED_IMPLEMENTATION_PLAN_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_PROCESS_ISOLATION_PREFLIGHT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_EVIDENCE_2026-10-09.json\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SYSTEMCALLFILTER_VALIDATION_REMEDIATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_TRANSACTIONAL_SECURITY_EVIDENCE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_SECURITY_DECISION_02_A_2026-10-09.md\n?? docs/financial/ADMINAPPS_S3_IMP01_HUMAN_AUTHORITY_AND_DECISION_ACT_DRAFT_2026-10-12.md\n?? docs/security/REC-SSO-02/DECISIONS.md\n?? docs/security/REC-SSO-02/MIGRATION_READINESS.md\n?? docs/security/REC-SSO-02/REPORT.md\n?? docs/security/REC-SSO-02/SHA256SUMS\n?? docs/security/REC-SSO-02/evidence/REC-2FA-04-closure.json\n?? docs/security/REC-SSO-02/evidence/REC-SSO-01/REPORT.md\n?? docs/security/REC-SSO-02/evidence/REC-SSO-01/integrity-result.json\n?? docs/security/REC-SSO-02/evidence/REC-SSO-01/model-schema-comparison.json\n?? docs/security/REC-SSO-02/evidence/REC-SSO-01/offline-results.json\n?? docs/security/REC-SSO-02/evidence/antecedent-hashes.json\n?? docs/security/REC-SSO-02/evidence/applied-local.patch\n?? docs/security/REC-SSO-02/evidence/baseline-files.json\n?? docs/security/REC-SSO-02/evidence/baseline-git.json\n?? docs/security/REC-SSO-02/evidence/consumer-sources.json\n?? docs/security/REC-SSO-02/evidence/git-final.json\n?? docs/security/REC-SSO-02/evidence/integrity-attempt1.json\n?? docs/security/REC-SSO-02/evidence/integrity-final.json\n?? docs/security/REC-SSO-02/evidence/integrity-harness-correction.json\n?? docs/security/REC-SSO-02/evidence/local-after.json\n?? docs/security/REC-SSO-02/evidence/migration-graph.json\n?? docs/security/REC-SSO-02/evidence/proposal-checks.json\n?? docs/security/REC-SSO-02/evidence/source-manifest.json\n?? docs/security/REC-SSO-02/evidence/tests-after.json\n?? docs/security/REC-SSO-02/evidence/tests-before.json\n?? docs/security/REC-SSO-02/proposals/A-legacy-deny-2fa.patch\n?? docs/security/REC-SSO-02/proposals/B-reject-stale-role.patch\n?? docs/security/REC-SSO-02/proposals/C-register-client-audience.patch\n?? docs/security/REC-SSO-02/proposals/D-role-product-scopes.patch\n?? docs/security/REC-SSO-02/proposals/E-trial-subscription-model.patch\n?? docs/security/REC-SSO-02/proposals/E-trial-subscription-serializers.patch\n?? docs/security/REC-SSO-02/proposals/F-entitlement-start.patch\n?? docs/security/REC-SSO-02/proposals/G-subscription-binding-contract.patch\n?? docs/security/REC-SSO-02/proposals/H-integration-key-scope-contract.patch\n?? docs/security/REC-SSO-02/proposals/manifest.json\n?? docs/security/REC-SSO-03/APPROVAL_MATRIX.md\n?? docs/security/REC-SSO-03/COMPATIBILITY.md\n?? docs/security/REC-SSO-03/DECISIONS.md\n?? docs/security/REC-SSO-03/DIFF_ASSESSMENT.md\n?? docs/security/REC-SSO-03/EVIDENCE.md\n?? docs/security/REC-SSO-03/IMPLEMENTATION_PLAN.md\n?? docs/security/REC-SSO-03/REPORT.md\n?? docs/security/REC-SSO-03/evidence/antecedent-verification.json\n?? docs/security/REC-SSO-03/evidence/baseline.json\n?? docs/security/REC-SSO-03/evidence/document-checks.json\n?? docs/security/REC-SSO-03/evidence/proposals-review.json\n?? docs/security/REC-SSO-03/evidence/source-manifest.json\n",
+      "pass": true
+    },
+    "/home/felipe/proyectos/isosmart": {
+      "baseline_entries": 15053,
+      "unchanged_entries": 15053,
+      "changed_or_removed": [],
+      "unexpected_new": [],
+      "new_documentation_files": [],
+      "head_same": true,
+      "branch_same": true,
+      "index_diff_same": true,
+      "tracked_diff_same": true,
+      "status_final": " M backend/backend/settings.py\n M backend/foundation/ai_usage.py\n M backend/foundation/ai_usage_delivery.py\n M backend/foundation/eventing.py\n M backend/foundation/management/commands/run_ai_usage_delivery.py\n M backend/foundation/models.py\n M backend/foundation/tenant_context.py\n M backend/foundation/test_ai_usage.py\n M backend/foundation/test_source_artifact_postgres_integration.py\n M backend/foundation/value_discovery.py\n?? backend/foundation/ai_financial_guardrails.py\n?? backend/foundation/ai_financial_guardrails_postgres_harness.py\n?? backend/foundation/ai_usage_cross_product_e2e.py\n?? backend/foundation/migrations/0041_ai_usage_retry_exhausted_recovery.py\n?? backend/foundation/migrations/0042_ai_financial_guardrails.py\n?? backend/foundation/test_ai_financial_guardrails.py\n?? docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_AMENDMENT_01_DECISION_RECORD_2026-10-08.md\n?? docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_CONTRACT_V1_1_2026-10-08.md\n?? docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_CONTRACT_V1_2026-10-08.md\n?? docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_IMPLEMENTATION_READINESS_2026-10-08.md\n?? docs/transformation/AI_FINANCIAL_GUARDRAILS_IMPLEMENTATION_REPORT_2026-10-08.md\n?? docs/transformation/AI_FINANCIAL_GUARDRAILS_POSTGRESQL_VALIDATION_REPORT_2026-10-08.md\n?? docs/transformation/AI_METERING_BASELINE_ACCEPTANCE_AND_REAL_OPENAI_PILOT_READINESS_2026-10-08.md\n",
+      "pass": true
+    },
+    "/home/felipe/proyectos/ISO_Smart_MedSupplier": {
+      "baseline_entries": 14992,
+      "unchanged_entries": 14992,
+      "changed_or_removed": [],
+      "unexpected_new": [],
+      "new_documentation_files": [],
+      "head_same": true,
+      "branch_same": true,
+      "index_diff_same": true,
+      "tracked_diff_same": true,
+      "status_final": "",
+      "pass": true
+    }
+  },
+  "antecedent_files": 40,
+  "antecedent_mismatches": [],
+  "pass": true,
+  "production_edits": 0,
+  "patches_applied": 0,
+  "new_tests_executed": 0
+}

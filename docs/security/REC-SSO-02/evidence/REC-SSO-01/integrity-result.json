@@ -1,0 +1,14 @@
+{
+  "files_checked": 15536,
+  "changed_or_missing": [],
+  "git_baseline_identical": true,
+  "diff_check_exit_code": 0,
+  "head": "b144b2505659ad39f756b9bc4530a7f24fe8c3ad",
+  "not_hashed_directory_symlinks": [
+    "backend/.venv/lib64",
+    "backend/venv_admin/lib64"
+  ],
+  "added_regular_files": [],
+  "note": "Baseline hashes included regular files only. The two lib64 entries are directory symlinks excluded by is_file(), not demonstrated additions. Git status/diff/HEAD are identical.",
+  "source_manifest_unchanged": true
+}

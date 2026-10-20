@@ -1,0 +1,11 @@
+--- a/backend/apps/products/models.py
++++ b/backend/apps/products/models.py
+@@ -149,8 +149,6 @@
+     @property
+     def billing_allows_access(self):
+         if not self.product.billing_enabled:
+-            return True
+-        if self.status == 'trial':
+             return True
+         subscription = self.effective_subscription
+         if not subscription:

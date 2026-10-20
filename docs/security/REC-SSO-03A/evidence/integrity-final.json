@@ -1,0 +1,405 @@
+{
+  "result": "PASS",
+  "baseline_entries": 45634,
+  "unchanged_entries": 45633,
+  "changed_entries": [
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03/APPROVAL_MATRIX.md",
+      "before": {
+        "sha256": "25c0273981dcaa8e221a7d64a223b433889eca87bb399e329085f7bec10ff1b5"
+      },
+      "after": {
+        "sha256": "53dfeeba4714d9b33f8cee85ee14795bea2f7a5e2fc1e4a12446fcd9e4925414"
+      }
+    }
+  ],
+  "new_entries_at_check": [
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/COMPATIBILITY.md"
+    },
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/DIFF_A_REVISED_PROPOSAL.md"
+    },
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/IMPLEMENTATION_AND_ACCEPTANCE.md"
+    },
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/REPORT.md"
+    },
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/evidence/APPROVAL_MATRIX.before.md"
+    },
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/evidence/antecedents.json"
+    },
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/evidence/baseline.json"
+    },
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/evidence/document-checks.json"
+    },
+    {
+      "repository": "adminapps",
+      "file": "docs/security/REC-SSO-03A/evidence/inspected-sources.json"
+    }
+  ],
+  "allowed_new_evidence_after_check": [
+    "docs/security/REC-SSO-03A/evidence/integrity-final.json",
+    "docs/security/REC-SSO-03A/evidence/document-checks-initial.json",
+    "docs/security/REC-SSO-03A/SHA256SUMS"
+  ],
+  "repository_checks": [
+    {
+      "repository": "adminapps",
+      "head_unchanged": true,
+      "branch_unchanged": true,
+      "index_unchanged": true,
+      "tracked_diff_unchanged": true
+    },
+    {
+      "repository": "isosmart",
+      "head_unchanged": true,
+      "branch_unchanged": true,
+      "index_unchanged": true,
+      "tracked_diff_unchanged": true
+    },
+    {
+      "repository": "ISO_Smart_MedSupplier",
+      "head_unchanged": true,
+      "branch_unchanged": true,
+      "index_unchanged": true,
+      "tracked_diff_unchanged": true
+    }
+  ],
+  "approval_append_only": true,
+  "historical_seals": [
+    {
+      "campaign": "REC-SSO-02",
+      "file": "DECISIONS.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/DECISIONS.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "MIGRATION_READINESS.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/MIGRATION_READINESS.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "REPORT.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/REPORT.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/2fa-regression.log",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/2fa-regression.log",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-2FA-04-closure.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/REC-2FA-04-closure.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-SSO-01/REPORT.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/REC-SSO-01/REPORT.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-SSO-01/integrity-result.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/REC-SSO-01/integrity-result.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-SSO-01/model-schema-comparison.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/REC-SSO-01/model-schema-comparison.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-SSO-01/offline-results.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/REC-SSO-01/offline-results.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/antecedent-hashes.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/antecedent-hashes.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/applied-local.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/applied-local.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/baseline-files.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/baseline-files.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/baseline-git.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/baseline-git.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/consumer-sources.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/consumer-sources.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/diff-check.log",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/diff-check.log",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/git-final.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/git-final.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/harness-bootstrap-error.log",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/harness-bootstrap-error.log",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/integrity-attempt1.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/integrity-attempt1.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/integrity-final.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/integrity-final.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/integrity-harness-correction.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/integrity-harness-correction.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/local-after.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/local-after.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/local-after.log",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/local-after.log",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/migration-graph.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/migration-graph.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/offline-checks.log",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/offline-checks.log",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/proposal-checks.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/proposal-checks.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/source-manifest.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/source-manifest.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/tests-after.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/tests-after.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/tests-after.log",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/tests-after.log",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/tests-before.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/tests-before.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/tests-before.log",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/evidence/tests-before.log",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/A-legacy-deny-2fa.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/A-legacy-deny-2fa.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/B-reject-stale-role.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/B-reject-stale-role.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/C-register-client-audience.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/C-register-client-audience.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/D-role-product-scopes.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/D-role-product-scopes.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/E-trial-subscription-model.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/E-trial-subscription-model.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/E-trial-subscription-serializers.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/E-trial-subscription-serializers.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/F-entitlement-start.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/F-entitlement-start.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/G-subscription-binding-contract.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/G-subscription-binding-contract.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/H-integration-key-scope-contract.patch",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/H-integration-key-scope-contract.patch",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/manifest.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-02/proposals/manifest.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "APPROVAL_MATRIX.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-03A/evidence/APPROVAL_MATRIX.before.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "COMPATIBILITY.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/COMPATIBILITY.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "DECISIONS.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/DECISIONS.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "DIFF_ASSESSMENT.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/DIFF_ASSESSMENT.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "EVIDENCE.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/EVIDENCE.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "IMPLEMENTATION_PLAN.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/IMPLEMENTATION_PLAN.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "REPORT.md",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/REPORT.md",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/antecedent-verification.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/evidence/antecedent-verification.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/baseline.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/evidence/baseline.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/document-checks.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/evidence/document-checks.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/integrity-final.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/evidence/integrity-final.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/proposals-review.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/evidence/proposals-review.json",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/source-manifest.json",
+      "checked_file": "adminapps/docs/security/REC-SSO-03/evidence/source-manifest.json",
+      "matches": true
+    }
+  ],
+  "note": "Historical REC-SSO-03 approval hash verified against preserved before copy; other historical sealed artifacts checked in place. Final document check and successor seal are finalized after this scan. Ignored files outside historical seals not covered."
+}

@@ -1,0 +1,47 @@
+--- a/backend/apps/integration/sso_views.py
++++ b/backend/apps/integration/sso_views.py
+@@ -107,6 +107,18 @@
+     }
+ 
+ 
++def _approved_scope(membership, client_id, products):
++    # DRAFT D: empty policy grants no tenant scopes. Values are not approved.
++    policies = getattr(settings, "SMART3AI_SSO_SCOPE_POLICIES", {})
++    policy = policies.get(client_id, {})
++    role_scopes = set(policy.get("roles", {}).get(membership.role, []))
++    product_scopes = set()
++    for product in products:
++        if product.get("code") == policy.get("product") and product.get("access_allowed"):
++            product_scopes.update(product.get("scopes", []))
++    return " ".join(["openid", "profile", "email"] + sorted(role_scopes & product_scopes))
++
++
+ def _build_token_pair_unchecked(
+     user,
+     membership,
+@@ -118,6 +130,7 @@
+     issuer = getattr(settings, "SMART3AI_SSO_ISSUER", "https://sso.smart3ai.local")
+     product_claims = _build_product_claims(membership.organization.id)
+ 
++    scope = _approved_scope(membership, client_id, product_claims["product_entitlements"])
+     refresh = RefreshToken.for_user(user)
+     refresh["iss"] = issuer
+     refresh["aud"] = audience
+@@ -129,7 +142,7 @@
+     refresh["organization_name"] = membership.organization.name
+     refresh["role"] = membership.role
+     refresh["memberships"] = _serialize_memberships(memberships)
+-    refresh["scope"] = "openid profile email tenant:read tenant:write"
++    refresh["scope"] = scope
+     refresh["allowed_products"] = product_claims["allowed_products"]
+     refresh["product_entitlements"] = product_claims["product_entitlements"]
+ 
+@@ -144,7 +157,7 @@
+     access["organization_name"] = membership.organization.name
+     access["role"] = membership.role
+     access["memberships"] = _serialize_memberships(memberships)
+-    access["scope"] = "openid profile email tenant:read tenant:write"
++    access["scope"] = scope
+     access["allowed_products"] = product_claims["allowed_products"]
+     access["product_entitlements"] = product_claims["product_entitlements"]
+ 

@@ -1,0 +1,20 @@
+suite,methods_executed,PASS,FAIL,ERROR,SKIP,handler,effects,persistence
+p0r,34,34,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+p0r-sessions,6,6,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+api-p0,50,50,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+historical-api-admin,30,29,0,1,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+admin-d,57,57,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+admin-b,43,43,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+admin-ch,18,2,4,12,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+admin-a,30,7,20,3,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+admin-mfa,21,21,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+iso-d,361,361,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+iso-d_session,36,36,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+iso-b,35,35,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+iso-ch,28,17,0,11,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+iso-decision_a,20,9,0,11,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+med-d,533,533,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+med-d_session,36,36,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+med-b,35,35,0,0,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+med-ch,28,17,0,11,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED
+med-decision_a,20,9,0,11,0,real code; scope per method,simulated ORM/services only,NOT_EVIDENCED

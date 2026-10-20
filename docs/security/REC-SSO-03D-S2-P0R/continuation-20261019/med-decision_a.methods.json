@@ -1,0 +1,172 @@
+{
+  "runners": [
+    {
+      "tests": 20,
+      "failures": 0,
+      "errors": 11,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "__main__.ConsumerTests.test_challenge_is_not_session",
+      "method": "test_challenge_is_not_session",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 77,
+      "qualname": "ConsumerTests.test_challenge_is_not_session",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_complete_central_login",
+      "method": "test_complete_central_login",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 72,
+      "qualname": "ConsumerTests.test_complete_central_login",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_cross_tenant_binding_rejected",
+      "method": "test_cross_tenant_binding_rejected",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 160,
+      "qualname": "ConsumerTests.test_cross_tenant_binding_rejected",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_current_session_live_revocation_and_role",
+      "method": "test_current_session_live_revocation_and_role",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 176,
+      "qualname": "ConsumerTests.test_current_session_live_revocation_and_role",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_direct_backend_stops_local_chain",
+      "method": "test_direct_backend_stops_local_chain",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 137,
+      "qualname": "ConsumerTests.test_direct_backend_stops_local_chain",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_failed_binding_mints_no_local_token",
+      "method": "test_failed_binding_mints_no_local_token",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 190,
+      "qualname": "ConsumerTests.test_failed_binding_mints_no_local_token",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_invalid_receiver_identity_and_product",
+      "method": "test_invalid_receiver_identity_and_product",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 123,
+      "qualname": "ConsumerTests.test_invalid_receiver_identity_and_product",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_local_password_and_flags_never_rescue",
+      "method": "test_local_password_and_flags_never_rescue",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 98,
+      "qualname": "ConsumerTests.test_local_password_and_flags_never_rescue",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_local_password_discriminant",
+      "method": "test_local_password_discriminant",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 226,
+      "qualname": "ConsumerTests.test_local_password_discriminant",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_malformed_and_contradictory_login",
+      "method": "test_malformed_and_contradictory_login",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 115,
+      "qualname": "ConsumerTests.test_malformed_and_contradictory_login",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_missing_profile_or_schema_fails_sanitized",
+      "method": "test_missing_profile_or_schema_fails_sanitized",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 209,
+      "qualname": "ConsumerTests.test_missing_profile_or_schema_fails_sanitized",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_no_configuration_no_default_receiver",
+      "method": "test_no_configuration_no_default_receiver",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 132,
+      "qualname": "ConsumerTests.test_no_configuration_no_default_receiver",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_no_email_takeover_without_subject_binding",
+      "method": "test_no_email_takeover_without_subject_binding",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 169,
+      "qualname": "ConsumerTests.test_no_email_takeover_without_subject_binding",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_old_access_session_rejected",
+      "method": "test_old_access_session_rejected",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 141,
+      "qualname": "ConsumerTests.test_old_access_session_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_old_refresh_never_issues_access",
+      "method": "test_old_refresh_never_issues_access",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 147,
+      "qualname": "ConsumerTests.test_old_refresh_never_issues_access",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_owner_policy_cannot_be_bypassed",
+      "method": "test_owner_policy_cannot_be_bypassed",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 218,
+      "qualname": "ConsumerTests.test_owner_policy_cannot_be_bypassed",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_projection_rejects_email_and_slug_collision",
+      "method": "test_projection_rejects_email_and_slug_collision",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 195,
+      "qualname": "ConsumerTests.test_projection_rejects_email_and_slug_collision",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_refresh_bound_by_central_expiry",
+      "method": "test_refresh_bound_by_central_expiry",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 164,
+      "qualname": "ConsumerTests.test_refresh_bound_by_central_expiry",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_transport_and_json_errors_are_sanitized",
+      "method": "test_transport_and_json_errors_are_sanitized",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 108,
+      "qualname": "ConsumerTests.test_transport_and_json_errors_are_sanitized",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerTests.test_verify_totp_or_backup_through_central",
+      "method": "test_verify_totp_or_backup_through_central",
+      "source": "integration/tests_decision_a_offline.py",
+      "line": 90,
+      "qualname": "ConsumerTests.test_verify_totp_or_backup_through_central",
+      "status": "ERROR"
+    }
+  ]
+}

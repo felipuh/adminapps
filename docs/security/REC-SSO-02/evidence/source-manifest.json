@@ -1,0 +1,12 @@
+{
+  "backend/apps/integration/sso_views.py": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+  "backend/scripts/rec_sso_02_offline.py": "caf4c81e54e4452f161b4f9bfafadbdec28f223c83c7c3d263686237ed9c24c7",
+  "backend/scripts/rec_sso_02_checks.py": "41cc9e8414e41826d3d25e7494e8dd7659ec9be2e6407a6b4c1bec90c2ba73c8",
+  "backend/scripts/rec_sso_02_2fa_regression.py": "0a5acfedf3a5c04a4c5dadf08e0d95b8c79ca0428bf5a8b6349dd6baadf06119",
+  "backend/apps/users/migrations/0004_transactional_2fa.py": "bfac6174b4858ea59aeacf602796e9925496a4da1bd37f53909841e4278677fe",
+  "backend/apps/integration/migrations/0006_integration_api_key_lifecycle.py": "454bba94025a46467d9ea169bae7ef5415e6601391c03a1b36cad1d85e8b309b",
+  "backend/apps/users/tests_2fa_contract.py": "33fc6c312dbc2f33e7557f84bed664049e55881af17a09f6c0535c22c421d4c2",
+  "backend/apps/users/two_factor_service.py": "c7b80c3ff34ddb99597d09ec7f54ccad9e15743c9a8ccc8b985b8ecfbf9ca971",
+  "docs/PRODUCT_NEUTRAL_ADMINAPPS_CONTRACT.md": "69bba978d4cbf02652b175289e845bb159cc1cbfe3959503abce3c4865479da2",
+  "docs/ADMINAPPS_SAAS_PRODUCT_OPERATIONS.md": "814f920597200f986e1fa51e562cc6d5c2108ebeb41e6b9c44eccc7b32673db4"
+}

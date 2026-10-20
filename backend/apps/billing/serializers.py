@@ -1,3 +1,4 @@
+from apps.users.api_authorization import StrictInputMixin, reject_reparenting
 from django.conf import settings
 from rest_framework import serializers
 
@@ -38,7 +39,7 @@ def _is_billing_exempt_owner_org(organization):
     return False
 
 
-class IssueInvoiceSerializer(serializers.Serializer):
+class IssueInvoiceSerializer(StrictInputMixin, serializers.Serializer):
     fiscal_profile = serializers.PrimaryKeyRelatedField(queryset=FiscalProfile.objects.filter(is_active=True))
     organization = serializers.PrimaryKeyRelatedField(queryset=ElectronicInvoice._meta.get_field('organization').remote_field.model.objects.all())
     product = serializers.PrimaryKeyRelatedField(queryset=ProductCatalog.objects.filter(is_active=True))
@@ -64,7 +65,7 @@ class IssueInvoiceSerializer(serializers.Serializer):
                 'product_price': 'El precio seleccionado no pertenece al producto indicado.'
             })
 
-        if subscription and organization.subscription_id and subscription.id != organization.subscription_id:
+        if subscription and subscription.id != organization.subscription_id:
             raise serializers.ValidationError({
                 'subscription': 'La suscripcion debe coincidir con la suscripcion activa de la organizacion.'
             })
@@ -73,7 +74,7 @@ class IssueInvoiceSerializer(serializers.Serializer):
         return attrs
 
 
-class IssueSubscriptionInvoiceSerializer(serializers.Serializer):
+class IssueSubscriptionInvoiceSerializer(StrictInputMixin, serializers.Serializer):
     fiscal_profile = serializers.PrimaryKeyRelatedField(queryset=FiscalProfile.objects.filter(is_active=True))
     organization = serializers.PrimaryKeyRelatedField(queryset=ElectronicInvoice._meta.get_field('organization').remote_field.model.objects.all())
     product = serializers.PrimaryKeyRelatedField(queryset=ProductCatalog.objects.filter(is_active=True))
@@ -106,7 +107,7 @@ class IssueSubscriptionInvoiceSerializer(serializers.Serializer):
         return attrs
 
 
-class RunSubscriptionBillingCycleSerializer(serializers.Serializer):
+class RunSubscriptionBillingCycleSerializer(StrictInputMixin, serializers.Serializer):
     fiscal_profile = serializers.PrimaryKeyRelatedField(queryset=FiscalProfile.objects.filter(is_active=True))
     organization = serializers.PrimaryKeyRelatedField(queryset=ElectronicInvoice._meta.get_field('organization').remote_field.model.objects.all())
     product = serializers.PrimaryKeyRelatedField(queryset=ProductCatalog.objects.filter(is_active=True))
@@ -129,7 +130,7 @@ class RunSubscriptionBillingCycleSerializer(serializers.Serializer):
         return attrs
 
 
-class RunBatchBillingCycleSerializer(serializers.Serializer):
+class RunBatchBillingCycleSerializer(StrictInputMixin, serializers.Serializer):
     fiscal_profile = serializers.PrimaryKeyRelatedField(queryset=FiscalProfile.objects.filter(is_active=True))
     product = serializers.PrimaryKeyRelatedField(queryset=ProductCatalog.objects.filter(is_active=True))
     product_price = serializers.PrimaryKeyRelatedField(
@@ -152,23 +153,23 @@ class RunBatchBillingCycleSerializer(serializers.Serializer):
         return attrs
 
 
-class HaciendaStatusUpdateSerializer(serializers.Serializer):
+class HaciendaStatusUpdateSerializer(StrictInputMixin, serializers.Serializer):
     hacienda_status = serializers.ChoiceField(choices=['processing', 'accepted', 'rejected', 'error'])
     hacienda_message = serializers.CharField(required=False, allow_blank=True)
     hacienda_track_id = serializers.CharField(required=False, allow_blank=True)
 
 
-class CreditNoteSerializer(serializers.Serializer):
+class CreditNoteSerializer(StrictInputMixin, serializers.Serializer):
     reason = serializers.CharField(max_length=255)
 
 
-class RecordPaymentSerializer(serializers.Serializer):
+class RecordPaymentSerializer(StrictInputMixin, serializers.Serializer):
     method = serializers.ChoiceField(choices=['sinpe', 'bank_transfer', 'card', 'cash', 'check', 'deposit', 'other'])
     reference = serializers.CharField(required=False, allow_blank=True)
     paid_at = serializers.DateTimeField(required=False, allow_null=True)
 
 
-class FiscalProfileSerializer(serializers.ModelSerializer):
+class FiscalProfileSerializer(StrictInputMixin, serializers.ModelSerializer):
     class Meta:
         model = FiscalProfile
         fields = [
@@ -182,7 +183,7 @@ class FiscalProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
-class ProductCatalogSerializer(serializers.ModelSerializer):
+class ProductCatalogSerializer(StrictInputMixin, serializers.ModelSerializer):
     system_product_code = serializers.CharField(source='system_product.code', read_only=True, default=None)
     system_product_name = serializers.CharField(source='system_product.name', read_only=True, default=None)
 
@@ -196,7 +197,7 @@ class ProductCatalogSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
-class ProductPriceSerializer(serializers.ModelSerializer):
+class ProductPriceSerializer(StrictInputMixin, serializers.ModelSerializer):
     product_name = serializers.CharField(source='product.name', read_only=True)
 
     class Meta:
@@ -207,6 +208,10 @@ class ProductPriceSerializer(serializers.ModelSerializer):
             'valid_from', 'valid_until', 'metadata', 'created_at', 'updated_at',
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        reject_reparenting(self.instance, attrs, ('product',))
+        return attrs
 
     def validate_cabys_code(self, value):
         if value and (not value.isdigit() or len(value) != 13):
@@ -320,7 +325,7 @@ class ReconciliationSummarySerializer(serializers.Serializer):
     payment_methods_amount = serializers.DictField(child=serializers.CharField(), required=False)
 
 
-class CreatePendingPaymentSerializer(serializers.Serializer):
+class CreatePendingPaymentSerializer(StrictInputMixin, serializers.Serializer):
     invoice = serializers.UUIDField()
     method = serializers.ChoiceField(choices=['sinpe', 'bank_transfer', 'card', 'cash', 'check', 'deposit', 'other'])
     reference = serializers.CharField(max_length=255, required=False, default='')
@@ -411,7 +416,7 @@ class ProductDashboardSerializer(serializers.Serializer):
     arr = serializers.DecimalField(max_digits=14, decimal_places=2)
 
 
-class RecurringReportScheduleSerializer(serializers.ModelSerializer):
+class RecurringReportScheduleSerializer(StrictInputMixin, serializers.ModelSerializer):
     class Meta:
         model = RecurringReportSchedule
         fields = [

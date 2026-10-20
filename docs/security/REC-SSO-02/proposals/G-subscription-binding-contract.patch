@@ -1,0 +1,18 @@
+--- /dev/null
++++ b/docs/security/contracts/G-proposed.md
+@@ -0,0 +1,15 @@
++# DRAFT G — subscription ownership; NOT APPROVED
++
++Proposed default: a subscription has an explicit owning organization. Cross-tenant
++sharing is denied unless an approved billing-account relation authorizes each
++beneficiary. Neither organization name nor plan ID proves ownership.
++
++Current Organization.subscription is a non-unique FK; Subscription has no owner
++FK. Before implementation, choose exclusive ownership versus explicit shared
++billing. Inventory all references in both Organization and Entitlement, preserve
++historical invoices, and adjudicate conflicting links. No automatic reassignment.
++
++Acceptance: create, partial update, toggles, admin and runtime access all enforce
++the same relationship; unbound/foreign subscriptions deny with a versioned reason;
++sharing and reassignment require auditable authority. Schema/backfill/rollback
++and consumer acceptance are separate approvals. No migration is supplied here.

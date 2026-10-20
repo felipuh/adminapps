@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'apps.billing',
     'apps.api',
     'apps.integration',
+    'apps.financial',
     'django_apscheduler',
 ]
 
@@ -135,7 +136,13 @@ DATABASES = {
     }
 }
 
-if 'test' in sys.argv or os.environ.get('USE_SQLITE_FOR_TESTS', '').lower() == 'true':
+# SQLite remains the default for the broad unit suite.  The explicitly named
+# disposable financial PostgreSQL verifier opts in to the real backend so that
+# row-locking and serializable tests cannot silently run on SQLite.
+if (
+    os.environ.get('USE_SQLITE_FOR_TESTS', '').lower() == 'true'
+    or ('test' in sys.argv and os.environ.get('USE_POSTGRES_FOR_TESTS', '').lower() != 'true')
+):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'test_default.sqlite3',

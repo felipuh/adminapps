@@ -1,0 +1,170 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Decision A consumer authentication",
+    "version": "decision-a-v1"
+  },
+  "paths": {
+    "/api/auth/login/": {
+      "post": {
+        "summary": "Start or complete central authentication",
+        "description": "ISO Smart requires CSRF and returns HttpOnly cookies. MedSupplier returns bearer access/refresh. Challenge never grants a session. No local password fallback.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "email",
+                      "password"
+                    ],
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      "password": {
+                        "type": "string",
+                        "writeOnly": true
+                      },
+                      "organization_id": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "challenge_token",
+                      "otp_code"
+                    ],
+                    "properties": {
+                      "challenge_token": {
+                        "type": "string",
+                        "writeOnly": true
+                      },
+                      "otp_code": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "description": "TOTP or backup code; only AdminApps verifies it"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pending central challenge or completed product session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "requires_2fa",
+                        "challenge_token",
+                        "challenge_expires_in"
+                      ],
+                      "properties": {
+                        "requires_2fa": {
+                          "type": "boolean",
+                          "enum": [
+                            true
+                          ]
+                        },
+                        "challenge_token": {
+                          "type": "string"
+                        },
+                        "challenge_expires_in": {
+                          "type": "integer"
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "requires_2fa",
+                        "user",
+                        "profile",
+                        "organizations"
+                      ],
+                      "properties": {
+                        "requires_2fa": {
+                          "type": "boolean",
+                          "enum": [
+                            false
+                          ]
+                        },
+                        "user": {
+                          "type": "object"
+                        },
+                        "profile": {
+                          "type": "object"
+                        },
+                        "organizations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        },
+                        "access": {
+                          "type": "string",
+                          "description": "MedSupplier only"
+                        },
+                        "refresh": {
+                          "type": "string",
+                          "description": "MedSupplier only"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Central authentication, receiver, tenant, product or projection rejected"
+          },
+          "403": {
+            "description": "ISO Smart CSRF validation rejected"
+          },
+          "503": {
+            "description": "Central authority, configuration or schema unavailable; sanitized and terminal"
+          }
+        }
+      }
+    },
+    "/api/auth/refresh/": {
+      "post": {
+        "summary": "Revalidate and renew the bound local session",
+        "description": "ISO requires refresh cookie and CSRF; MedSupplier requires JSON refresh. Revalidates live authority, subject, tenant, product and role. Cannot exceed central access expiry. Old sessions are rejected.",
+        "responses": {
+          "200": {
+            "description": "Session renewed within central lifetime"
+          },
+          "401": {
+            "description": "Reauthentication required"
+          },
+          "403": {
+            "description": "CSRF rejected"
+          },
+          "503": {
+            "description": "Authority unavailable"
+          }
+        }
+      }
+    }
+  }
+}

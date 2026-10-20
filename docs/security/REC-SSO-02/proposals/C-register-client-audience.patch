@@ -1,0 +1,59 @@
+--- a/backend/apps/integration/sso_views.py
++++ b/backend/apps/integration/sso_views.py
+@@ -167,6 +167,24 @@
+         raise APIException('Unable to complete authentication') from None
+ 
+ 
++def _registered_sso_context(client_id, audience):
++    # DRAFT C: registration values require an approved per-environment inventory.
++    clients = getattr(settings, "SMART3AI_SSO_CLIENTS", {})
++    if not isinstance(clients, dict) or not isinstance(client_id, str):
++        return False
++    registration = clients.get(client_id, {})
++    if not isinstance(registration, dict):
++        return False
++    allowed = registration.get("audiences", [])
++    requested = [audience] if isinstance(audience, str) else audience
++    return bool(
++        isinstance(allowed, list) and allowed
++        and all(isinstance(value, str) and value for value in allowed)
++        and isinstance(requested, list) and requested
++        and all(isinstance(value, str) and value in allowed for value in requested)
++    )
++
++
+ def _auth_user(request, email: str, password: str):
+     user = authenticate(request, email=email, password=password)
+     if not user:
+@@ -220,6 +238,10 @@
+     else:
+         audience = ["smart3ai-portfolio"]
+ 
++    if not _registered_sso_context(client_id, audience):
++        return JsonResponse({"error": "Unregistered SSO client/audience",
++                             "code": "invalid_client"}, status=400)
++
+     if not email or not password:
+         return JsonResponse({
+             "error": "Email y contraseña son requeridos",
+@@ -340,6 +362,10 @@
+     client_id = str(challenge_data.get("client_id") or "smart3ai-portfolio")
+     audience = challenge_data.get("audience") or ["smart3ai-portfolio"]
+ 
++    if not _registered_sso_context(client_id, audience):
++        return JsonResponse({"error": "Unregistered SSO client/audience",
++                             "code": "invalid_client"}, status=400)
++
+     try:
+         user = User.objects.get(id=user_id, is_active=True)
+     except User.DoesNotExist:
+@@ -438,6 +464,9 @@
+     # authorization policy.
+     issuer = getattr(settings, "SMART3AI_SSO_ISSUER", "https://sso.smart3ai.local")
+     if not issuer or parsed.get("iss") != issuer:
++        return JsonResponse({"active": False}, status=200)
++
++    if not _registered_sso_context(parsed.get("client_id"), parsed.get("aud")):
+         return JsonResponse({"active": False}, status=200)
+ 
+     organization_id = str(parsed.get("organization_id") or "")

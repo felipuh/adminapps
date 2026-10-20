@@ -1,0 +1,281 @@
+[
+  {
+    "repo": "adminapps",
+    "suite": "p0r",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/p0r.methods.json",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py",
+      "apps.api.test_p0r"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "adminapps",
+    "suite": "p0r-sessions",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/p0r-sessions.methods.json",
+      "backend/scripts/rec_sso_03d_p0r_sessions_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "adminapps",
+    "suite": "api-p0",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/api-p0.methods.json",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "adminapps",
+    "suite": "historical-api-admin",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/historical-api-admin.methods.json",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py",
+      "apps.users.test_authorization",
+      "apps.users.test_admin_authorization",
+      "apps.organizations.test_authorization",
+      "apps.subscriptions.test_authorization",
+      "apps.api.tests_security_guardrails"
+    ],
+    "exit": 1
+  },
+  {
+    "repo": "adminapps",
+    "suite": "admin-d",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/admin-d.methods.json",
+      "backend/scripts/rec_sso_03d_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "adminapps",
+    "suite": "admin-b",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/admin-b.methods.json",
+      "backend/scripts/rec_sso_03b_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "adminapps",
+    "suite": "admin-ch",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/admin-ch.methods.json",
+      "backend/scripts/rec_sso_03b_ch_offline.py"
+    ],
+    "exit": 1
+  },
+  {
+    "repo": "adminapps",
+    "suite": "admin-a",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/admin-a.methods.json",
+      "backend/scripts/rec_sso_03a_offline.py"
+    ],
+    "exit": 1
+  },
+  {
+    "repo": "adminapps",
+    "suite": "admin-mfa",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/admin-mfa.methods.json",
+      "backend/scripts/rec_sso_02_2fa_regression.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "isosmart",
+    "suite": "iso-d",
+    "cwd": "/home/felipe/proyectos/isosmart/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/iso-d.methods.json",
+      "integration/tests_d_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "isosmart",
+    "suite": "iso-d_session",
+    "cwd": "/home/felipe/proyectos/isosmart/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/iso-d_session.methods.json",
+      "integration/tests_d_session_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "isosmart",
+    "suite": "iso-b",
+    "cwd": "/home/felipe/proyectos/isosmart/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/iso-b.methods.json",
+      "integration/tests_b_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "isosmart",
+    "suite": "iso-ch",
+    "cwd": "/home/felipe/proyectos/isosmart/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/iso-ch.methods.json",
+      "integration/tests_ch_offline.py"
+    ],
+    "exit": 1
+  },
+  {
+    "repo": "isosmart",
+    "suite": "iso-decision_a",
+    "cwd": "/home/felipe/proyectos/isosmart/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/iso-decision_a.methods.json",
+      "integration/tests_decision_a_offline.py"
+    ],
+    "exit": 1
+  },
+  {
+    "repo": "ISO_Smart_MedSupplier",
+    "suite": "med-d",
+    "cwd": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/med-d.methods.json",
+      "integration/tests_d_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "ISO_Smart_MedSupplier",
+    "suite": "med-d_session",
+    "cwd": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/med-d_session.methods.json",
+      "integration/tests_d_session_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "ISO_Smart_MedSupplier",
+    "suite": "med-b",
+    "cwd": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/med-b.methods.json",
+      "integration/tests_b_offline.py"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "ISO_Smart_MedSupplier",
+    "suite": "med-ch",
+    "cwd": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/med-ch.methods.json",
+      "integration/tests_ch_offline.py"
+    ],
+    "exit": 1
+  },
+  {
+    "repo": "ISO_Smart_MedSupplier",
+    "suite": "med-decision_a",
+    "cwd": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/med-decision_a.methods.json",
+      "integration/tests_decision_a_offline.py"
+    ],
+    "exit": 1
+  },
+  {
+    "repo": "adminapps",
+    "suite": "continuation",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-continuation-20261019/continuation.methods.json",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py",
+      "apps.api.test_p0r_continuation"
+    ],
+    "exit": 0
+  },
+  {
+    "repo": "adminapps",
+    "suite": "system-check",
+    "cwd": "/home/felipe/proyectos/adminapps",
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py",
+      "--check"
+    ],
+    "exit": 0
+  }
+]

@@ -1,0 +1,9 @@
+state,owner,verifier,revocation,evidence
+AdminApps UserSession,AdminApps local registry,UserSession list/revoke only,own user + authenticated JTI exclusion,PASS_OFFLINE registry; JWT revocation FAIL
+AdminApps access JWT,AdminApps SimpleJWT,JWTAuthentication + human permissions,signature/expiry/live user; no UserSession binding,local session revocation NOT_EVIDENCED
+AdminApps refresh JWT,AdminApps blacklist,SimpleJWT refresh,logout owner + signature/type + blacklist,PASS_OFFLINE; no access invalidation
+Django session cookie,AdminApps Django session backend,SessionAuthentication,not invalidated by REST logout,NOT_EVIDENCED
+SSOSession,AdminApps central,B lifecycle/introspection under fence,logout/rotate/admin/owned revocation,PASS_OFFLINE; PostgreSQL NOT_EVIDENCED
+SSOSecurityFence + outbox,AdminApps central,B services and prepared authority triggers,monotonic generation/authority_epoch,PostgreSQL NOT_EVIDENCED
+Consumer LOCAL JWT/cookies,ISO Smart or MedSupplier,C/H/B live central proof; D functional scopes,central rejection removes authority; transport local,PASS_OFFLINE successor suites; E2E NOT_EVIDENCED
+IntegrationAPIKey + grant,AdminApps central,hash verification + exact credential_id grant,active row and explicit operations/tenants/products,PASS_OFFLINE synthetic values; provisioning external

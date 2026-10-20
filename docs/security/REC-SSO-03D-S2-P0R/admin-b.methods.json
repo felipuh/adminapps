@@ -1,0 +1,356 @@
+{
+  "runners": [
+    {
+      "tests": 43,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "__main__.LifecycleTests.test_aba_revocation_cannot_be_undone_by_role_restore",
+      "method": "test_aba_revocation_cannot_be_undone_by_role_restore",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 195,
+      "qualname": "LifecycleTests.test_aba_revocation_cannot_be_undone_by_role_restore",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_admin_revocation_requires_live_superuser",
+      "method": "test_admin_revocation_requires_live_superuser",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 257,
+      "qualname": "LifecycleTests.test_admin_revocation_requires_live_superuser",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_api_key_real_hash_lifecycle",
+      "method": "test_api_key_real_hash_lifecycle",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 228,
+      "qualname": "CHTests.test_api_key_real_hash_lifecycle",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_authentication_authority_change_fails_before_issue",
+      "method": "test_authentication_authority_change_fails_before_issue",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 202,
+      "qualname": "LifecycleTests.test_authentication_authority_change_fails_before_issue",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_challenge_binding_before_irreversible_consume",
+      "method": "test_challenge_binding_before_irreversible_consume",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 123,
+      "qualname": "LifecycleTests.test_challenge_binding_before_irreversible_consume",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_claim_matrix",
+      "method": "test_claim_matrix",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 135,
+      "qualname": "CHTests.test_claim_matrix",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_coordinated_cross_product_consumers",
+      "method": "test_coordinated_cross_product_consumers",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 253,
+      "qualname": "CHTests.test_coordinated_cross_product_consumers",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_credential_change_between_resolution_and_use_denied",
+      "method": "test_credential_change_between_resolution_and_use_denied",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 300,
+      "qualname": "LifecycleTests.test_credential_change_between_resolution_and_use_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_deleted_identity_and_membership_denied",
+      "method": "test_deleted_identity_and_membership_denied",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 275,
+      "qualname": "LifecycleTests.test_deleted_identity_and_membership_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_expired_record_rejected_even_signed_token",
+      "method": "test_expired_record_rejected_even_signed_token",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 216,
+      "qualname": "LifecycleTests.test_expired_record_rejected_even_signed_token",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_generation_authority_session_and_time_binding",
+      "method": "test_generation_authority_session_and_time_binding",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 152,
+      "qualname": "LifecycleTests.test_generation_authority_session_and_time_binding",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_impersonation_both_directions",
+      "method": "test_impersonation_both_directions",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 92,
+      "qualname": "CHTests.test_impersonation_both_directions",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_locked_and_expired_temporary_password_denied",
+      "method": "test_locked_and_expired_temporary_password_denied",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 280,
+      "qualname": "LifecycleTests.test_locked_and_expired_temporary_password_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_login_mfa_challenge_mints_no_session",
+      "method": "test_login_mfa_challenge_mints_no_session",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 286,
+      "qualname": "LifecycleTests.test_login_mfa_challenge_mints_no_session",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_login_real_emission_and_tenant",
+      "method": "test_login_real_emission_and_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 185,
+      "qualname": "CHTests.test_login_real_emission_and_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_login_response_does_not_disclose_other_tenants",
+      "method": "test_login_response_does_not_disclose_other_tenants",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 113,
+      "qualname": "LifecycleTests.test_login_response_does_not_disclose_other_tenants",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_logout_and_rotation_race_has_no_resurrection",
+      "method": "test_logout_and_rotation_race_has_no_resurrection",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 266,
+      "qualname": "LifecycleTests.test_logout_and_rotation_race_has_no_resurrection",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_logout_idempotent_and_old_signed_proof_denied",
+      "method": "test_logout_idempotent_and_old_signed_proof_denied",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 146,
+      "qualname": "LifecycleTests.test_logout_idempotent_and_old_signed_proof_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_mfa_disabled_and_missing_configuration_denied",
+      "method": "test_mfa_disabled_and_missing_configuration_denied",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 294,
+      "qualname": "LifecycleTests.test_mfa_disabled_and_missing_configuration_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_mfa_live_generation",
+      "method": "test_mfa_live_generation",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 106,
+      "qualname": "LifecycleTests.test_mfa_live_generation",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_mfa_policy_change_revokes_all_and_invalidates_pending_auth",
+      "method": "test_mfa_policy_change_revokes_all_and_invalidates_pending_auth",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 309,
+      "qualname": "LifecycleTests.test_mfa_policy_change_revokes_all_and_invalidates_pending_auth",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_missing_contract_fields_and_credentials",
+      "method": "test_missing_contract_fields_and_credentials",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 101,
+      "qualname": "CHTests.test_missing_contract_fields_and_credentials",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_outbox_contains_no_credentials_and_duplicate_is_idempotent",
+      "method": "test_outbox_contains_no_credentials_and_duplicate_is_idempotent",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 224,
+      "qualname": "LifecycleTests.test_outbox_contains_no_credentials_and_duplicate_is_idempotent",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_outbox_delivery_retry_duplicate_and_late_events",
+      "method": "test_outbox_delivery_retry_duplicate_and_late_events",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 229,
+      "qualname": "LifecycleTests.test_outbox_delivery_retry_duplicate_and_late_events",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_postgres_boundary_and_disabled_activation_fail_closed",
+      "method": "test_postgres_boundary_and_disabled_activation_fail_closed",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 251,
+      "qualname": "LifecycleTests.test_postgres_boundary_and_disabled_activation_fail_closed",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_product_revocation_reloaded",
+      "method": "test_product_revocation_reloaded",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 220,
+      "qualname": "LifecycleTests.test_product_revocation_reloaded",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_registry_rejects_unapproved_crypto",
+      "method": "test_registry_rejects_unapproved_crypto",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 170,
+      "qualname": "CHTests.test_registry_rejects_unapproved_crypto",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_rotation_after_logout_never_restores",
+      "method": "test_rotation_after_logout_never_restores",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 175,
+      "qualname": "LifecycleTests.test_rotation_after_logout_never_restores",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_rotation_signing_error_rolls_back_logic",
+      "method": "test_rotation_signing_error_rolls_back_logic",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 180,
+      "qualname": "LifecycleTests.test_rotation_signing_error_rolls_back_logic",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_rotation_single_use_and_no_extension",
+      "method": "test_rotation_single_use_and_no_extension",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 164,
+      "qualname": "LifecycleTests.test_rotation_single_use_and_no_extension",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_schema_state_matches_models_without_database",
+      "method": "test_schema_state_matches_models_without_database",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 242,
+      "qualname": "CHTests.test_schema_state_matches_models_without_database",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_serialized_concurrent_rotation_logic",
+      "method": "test_serialized_concurrent_rotation_logic",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 188,
+      "qualname": "LifecycleTests.test_serialized_concurrent_rotation_logic",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_session_model_security_constraints_and_global_scope",
+      "method": "test_session_model_security_constraints_and_global_scope",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 316,
+      "qualname": "LifecycleTests.test_session_model_security_constraints_and_global_scope",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_signature_algorithm_and_kid",
+      "method": "test_signature_algorithm_and_kid",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 145,
+      "qualname": "CHTests.test_signature_algorithm_and_kid",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_signed_legacy_ch_proof_without_session_denied",
+      "method": "test_signed_legacy_ch_proof_without_session_denied",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 159,
+      "qualname": "LifecycleTests.test_signed_legacy_ch_proof_without_session_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_sql_fence_watches_bulk_authority_and_no_telemetry",
+      "method": "test_sql_fence_watches_bulk_authority_and_no_telemetry",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 324,
+      "qualname": "LifecycleTests.test_sql_fence_watches_bulk_authority_and_no_telemetry",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_tenant_user_membership_revocation",
+      "method": "test_tenant_user_membership_revocation",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 99,
+      "qualname": "LifecycleTests.test_tenant_user_membership_revocation",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_unconfigured_or_database_down_sanitized",
+      "method": "test_unconfigured_or_database_down_sanitized",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 159,
+      "qualname": "CHTests.test_unconfigured_or_database_down_sanitized",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_unknown_disabled_revoked_clients",
+      "method": "test_unknown_disabled_revoked_clients",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 90,
+      "qualname": "LifecycleTests.test_unknown_disabled_revoked_clients",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_unreadable_session_fails_closed_sanitized",
+      "method": "test_unreadable_session_fails_closed_sanitized",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 210,
+      "qualname": "LifecycleTests.test_unreadable_session_fails_closed_sanitized",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_valid_contract_least_privilege",
+      "method": "test_valid_contract_least_privilege",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 82,
+      "qualname": "CHTests.test_valid_contract_least_privilege",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_verify_valid_and_postconsume_failure_no_restoration",
+      "method": "test_verify_valid_and_postconsume_failure_no_restoration",
+      "source": "backend/scripts/rec_sso_03b_offline.py",
+      "line": 133,
+      "qualname": "LifecycleTests.test_verify_valid_and_postconsume_failure_no_restoration",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.LifecycleTests.test_wrong_credential_binding",
+      "method": "test_wrong_credential_binding",
+      "source": "/home/felipe/proyectos/adminapps/backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 110,
+      "qualname": "CHTests.test_wrong_credential_binding",
+      "status": "PASS"
+    }
+  ]
+}

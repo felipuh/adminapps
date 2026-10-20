@@ -1,0 +1,20 @@
+--- a/backend/apps/products/serializers.py
++++ b/backend/apps/products/serializers.py
+@@ -98,7 +98,7 @@
+         status = attrs.get('status', getattr(self.instance, 'status', None))
+         enabled = attrs.get('enabled', getattr(self.instance, 'enabled', True))
+ 
+-        if product and product.billing_enabled and enabled and status == 'active':
++        if product and product.billing_enabled and enabled and status in {'active', 'trial'}:
+             if not subscription:
+                 raise serializers.ValidationError({
+                     'subscription': 'Un producto con billing activo requiere suscripcion efectiva para activarse.'
+@@ -131,7 +131,7 @@
+         subscription = attrs.get('subscription') or getattr(organization, 'subscription', None)
+         status = attrs.get('status', 'trial')
+         enabled = attrs.get('enabled', True)
+-        if product and product.billing_enabled and enabled and status == 'active':
++        if product and product.billing_enabled and enabled and status in {'active', 'trial'}:
+             if not subscription:
+                 raise serializers.ValidationError({
+                     'subscription': 'Un producto con billing activo requiere suscripcion efectiva para activarse.'

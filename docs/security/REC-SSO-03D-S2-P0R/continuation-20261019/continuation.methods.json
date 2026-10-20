@@ -1,0 +1,108 @@
+{
+  "runners": [
+    {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "apps.api.test_p0r_continuation.ConsumerDenialContinuationTests.test_all_client_errors_deny_even_with_positive_or_nonobject_payload",
+      "method": "test_all_client_errors_deny_even_with_positive_or_nonobject_payload",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 47,
+      "qualname": "ConsumerDenialContinuationTests.test_all_client_errors_deny_even_with_positive_or_nonobject_payload",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.ConsumerDenialContinuationTests.test_disabled_tenant_404_never_restores_local_authority_in_either_adapter",
+      "method": "test_disabled_tenant_404_never_restores_local_authority_in_either_adapter",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 27,
+      "qualname": "ConsumerDenialContinuationTests.test_disabled_tenant_404_never_restores_local_authority_in_either_adapter",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.ConsumerDenialContinuationTests.test_server_errors_with_allow_payload_never_grant_production_access",
+      "method": "test_server_errors_with_allow_payload_never_grant_production_access",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 61,
+      "qualname": "ConsumerDenialContinuationTests.test_server_errors_with_allow_payload_never_grant_production_access",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.InvoiceFunctionalContinuationTests.test_cancelled_refunded_draft_and_unknown_invoices_cannot_be_paid",
+      "method": "test_cancelled_refunded_draft_and_unknown_invoices_cannot_be_paid",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 116,
+      "qualname": "InvoiceFunctionalContinuationTests.test_cancelled_refunded_draft_and_unknown_invoices_cannot_be_paid",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.InvoiceFunctionalContinuationTests.test_paid_conflicting_reference_denied_without_overwriting_payment",
+      "method": "test_paid_conflicting_reference_denied_without_overwriting_payment",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 138,
+      "qualname": "InvoiceFunctionalContinuationTests.test_paid_conflicting_reference_denied_without_overwriting_payment",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.InvoiceFunctionalContinuationTests.test_paid_replay_preserves_reference_timestamp_and_revoked_subscription",
+      "method": "test_paid_replay_preserves_reference_timestamp_and_revoked_subscription",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 125,
+      "qualname": "InvoiceFunctionalContinuationTests.test_paid_replay_preserves_reference_timestamp_and_revoked_subscription",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.InvoiceFunctionalContinuationTests.test_payment_denies_unprivileged_inactive_and_technical_principals_before_handler",
+      "method": "test_payment_denies_unprivileged_inactive_and_technical_principals_before_handler",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 147,
+      "qualname": "InvoiceFunctionalContinuationTests.test_payment_denies_unprivileged_inactive_and_technical_principals_before_handler",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.InvoiceFunctionalContinuationTests.test_payment_rejects_elevation_and_foreign_relation_fields",
+      "method": "test_payment_rejects_elevation_and_foreign_relation_fields",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 156,
+      "qualname": "InvoiceFunctionalContinuationTests.test_payment_rejects_elevation_and_foreign_relation_fields",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.InvoiceFunctionalContinuationTests.test_pending_and_overdue_payments_execute_real_effects_and_preserve_other_tenant",
+      "method": "test_pending_and_overdue_payments_execute_real_effects_and_preserve_other_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 90,
+      "qualname": "InvoiceFunctionalContinuationTests.test_pending_and_overdue_payments_execute_real_effects_and_preserve_other_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.InvoiceFunctionalContinuationTests.test_reference_payload_validation_prevents_any_business_effect",
+      "method": "test_reference_payload_validation_prevents_any_business_effect",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 105,
+      "qualname": "InvoiceFunctionalContinuationTests.test_reference_payload_validation_prevents_any_business_effect",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.LocalRegistryTokenContinuationTests.test_real_bearer_uses_authenticated_jti_and_owns_registry_filter",
+      "method": "test_real_bearer_uses_authenticated_jti_and_owns_registry_filter",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 168,
+      "qualname": "LocalRegistryTokenContinuationTests.test_real_bearer_uses_authenticated_jti_and_owns_registry_filter",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r_continuation.LocalRegistryTokenContinuationTests.test_signed_bearer_cannot_keep_arbitrary_other_jti",
+      "method": "test_signed_bearer_cannot_keep_arbitrary_other_jti",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r_continuation.py",
+      "line": 179,
+      "qualname": "LocalRegistryTokenContinuationTests.test_signed_bearer_cannot_keep_arbitrary_other_jti",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "inherited_entries": 774,
+  "current_entries": 778,
+  "removed": [],
+  "added": [
+    [
+      "api/auth/^users/revoke_sso_sessions\\.(?P<format>[a-z0-9]+)/?$",
+      "OPTIONS",
+      "apps.users.views.UserViewSet",
+      "metadata"
+    ],
+    [
+      "api/auth/^users/revoke_sso_sessions/$",
+      "OPTIONS",
+      "apps.users.views.UserViewSet",
+      "metadata"
+    ],
+    [
+      "api/auth/^users/revoke_sso_sessions/$",
+      "POST",
+      "apps.users.views.UserViewSet",
+      "revoke_sso_sessions"
+    ],
+    [
+      "api/auth/^users/revoke_sso_sessions\\.(?P<format>[a-z0-9]+)/?$",
+      "POST",
+      "apps.users.views.UserViewSet",
+      "revoke_sso_sessions"
+    ]
+  ]
+}

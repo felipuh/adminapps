@@ -1,0 +1,284 @@
+{
+  "runners": [
+    {
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "apps.api.test_p0r.ConsumerGrantCompatibilityTests.test_authenticated_credential_cannot_borrow_grant_or_ssoclient",
+      "method": "test_authenticated_credential_cannot_borrow_grant_or_ssoclient",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 481,
+      "qualname": "ConsumerGrantCompatibilityTests.test_authenticated_credential_cannot_borrow_grant_or_ssoclient",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.ConsumerGrantCompatibilityTests.test_both_adapters_all_seven_legacy_handlers_with_authenticated_credential",
+      "method": "test_both_adapters_all_seven_legacy_handlers_with_authenticated_credential",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 418,
+      "qualname": "ConsumerGrantCompatibilityTests.test_both_adapters_all_seven_legacy_handlers_with_authenticated_credential",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.ConsumerGrantCompatibilityTests.test_both_adapters_reject_revocation_grant_removal_and_product_tenant_escape",
+      "method": "test_both_adapters_reject_revocation_grant_removal_and_product_tenant_escape",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 444,
+      "qualname": "ConsumerGrantCompatibilityTests.test_both_adapters_reject_revocation_grant_removal_and_product_tenant_escape",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.ConsumerGrantCompatibilityTests.test_both_module_helpers_reject_authorization_denial_even_with_module_payload",
+      "method": "test_both_module_helpers_reject_authorization_denial_even_with_module_payload",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 474,
+      "qualname": "ConsumerGrantCompatibilityTests.test_both_module_helpers_reject_authorization_denial_even_with_module_payload",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_entitlement_billing_activation_and_unknown_scope_denied",
+      "method": "test_entitlement_billing_activation_and_unknown_scope_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 561,
+      "qualname": "FunctionalP0Tests.test_entitlement_billing_activation_and_unknown_scope_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_entitlement_restrictive_patch_real_serializer_and_audit",
+      "method": "test_entitlement_restrictive_patch_real_serializer_and_audit",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 544,
+      "qualname": "FunctionalP0Tests.test_entitlement_restrictive_patch_real_serializer_and_audit",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_invoice_payment_executes_subscription_activation",
+      "method": "test_invoice_payment_executes_subscription_activation",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 533,
+      "qualname": "FunctionalP0Tests.test_invoice_payment_executes_subscription_activation",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_membership_deactivation_then_foreign_reference_denied",
+      "method": "test_membership_deactivation_then_foreign_reference_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 575,
+      "qualname": "FunctionalP0Tests.test_membership_deactivation_then_foreign_reference_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_subscription_activation_and_cancellation_execute_model_effects",
+      "method": "test_subscription_activation_and_cancellation_execute_model_effects",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 520,
+      "qualname": "FunctionalP0Tests.test_subscription_activation_and_cancellation_execute_model_effects",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_subscription_change_plan_effect_and_missing_plan_deny",
+      "method": "test_subscription_change_plan_effect_and_missing_plan_deny",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 501,
+      "qualname": "FunctionalP0Tests.test_subscription_change_plan_effect_and_missing_plan_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_tenant_readiness_and_backoffice_denial_preserve_missing_permissions",
+      "method": "test_tenant_readiness_and_backoffice_denial_preserve_missing_permissions",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 622,
+      "qualname": "FunctionalP0Tests.test_tenant_readiness_and_backoffice_denial_preserve_missing_permissions",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_tenant_suspend_is_idempotent_and_emits_one_event",
+      "method": "test_tenant_suspend_is_idempotent_and_emits_one_event",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 609,
+      "qualname": "FunctionalP0Tests.test_tenant_suspend_is_idempotent_and_emits_one_event",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_user_disable_effect_and_self_disable_denied",
+      "method": "test_user_disable_effect_and_self_disable_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 587,
+      "qualname": "FunctionalP0Tests.test_user_disable_effect_and_self_disable_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.FunctionalP0Tests.test_user_password_change_real_serializer_hash_and_audit",
+      "method": "test_user_password_change_real_serializer_hash_and_audit",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 596,
+      "qualname": "FunctionalP0Tests.test_user_password_change_real_serializer_hash_and_audit",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.InvitationLifecycleTests.test_authority_removed_after_validation_is_denied_at_consumption",
+      "method": "test_authority_removed_after_validation_is_denied_at_consumption",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 226,
+      "qualname": "InvitationLifecycleTests.test_authority_removed_after_validation_is_denied_at_consumption",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.InvitationLifecycleTests.test_disabled_fence_and_replay_cannot_consume",
+      "method": "test_disabled_fence_and_replay_cannot_consume",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 262,
+      "qualname": "InvitationLifecycleTests.test_disabled_fence_and_replay_cannot_consume",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.InvitationLifecycleTests.test_invitee_cannot_supply_role_or_tenant",
+      "method": "test_invitee_cannot_supply_role_or_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 255,
+      "qualname": "InvitationLifecycleTests.test_invitee_cannot_supply_role_or_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.InvitationLifecycleTests.test_platform_inviter_lost_permission_or_staff_denied_on_consume",
+      "method": "test_platform_inviter_lost_permission_or_staff_denied_on_consume",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 245,
+      "qualname": "InvitationLifecycleTests.test_platform_inviter_lost_permission_or_staff_denied_on_consume",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.InvitationLifecycleTests.test_preview_revalidates_authority_without_consuming",
+      "method": "test_preview_revalidates_authority_without_consuming",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 273,
+      "qualname": "InvitationLifecycleTests.test_preview_revalidates_authority_without_consuming",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.InvitationLifecycleTests.test_registration_consumes_live_invitation_with_real_serializer",
+      "method": "test_registration_consumes_live_invitation_with_real_serializer",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 203,
+      "qualname": "InvitationLifecycleTests.test_registration_consumes_live_invitation_with_real_serializer",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.InvitationLifecycleTests.test_registration_dispatch_emits_signed_tokens_after_live_consumption",
+      "method": "test_registration_dispatch_emits_signed_tokens_after_live_consumption",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 214,
+      "qualname": "InvitationLifecycleTests.test_registration_dispatch_emits_signed_tokens_after_live_consumption",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.ServiceGrantTests.test_modules_exclude_foreign_products_and_unmapped_owner_exemptions",
+      "method": "test_modules_exclude_foreign_products_and_unmapped_owner_exemptions",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 307,
+      "qualname": "ServiceGrantTests.test_modules_exclude_foreign_products_and_unmapped_owner_exemptions",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.ServiceGrantTests.test_revoked_timestamp_unsaved_or_wrong_format_principal_denied",
+      "method": "test_revoked_timestamp_unsaved_or_wrong_format_principal_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 301,
+      "qualname": "ServiceGrantTests.test_revoked_timestamp_unsaved_or_wrong_format_principal_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.ServiceGrantTests.test_unknown_or_incomplete_grant_denies_all_operations",
+      "method": "test_unknown_or_incomplete_grant_denies_all_operations",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 290,
+      "qualname": "ServiceGrantTests.test_unknown_or_incomplete_grant_denies_all_operations",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.ServiceGrantTests.test_users_and_lookup_return_only_granted_tenant_memberships",
+      "method": "test_users_and_lookup_return_only_granted_tenant_memberships",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 320,
+      "qualname": "ServiceGrantTests.test_users_and_lookup_return_only_granted_tenant_memberships",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_central_revocation_dispatch_real_uuid_serializer_and_scope",
+      "method": "test_central_revocation_dispatch_real_uuid_serializer_and_scope",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 59,
+      "qualname": "SessionAPITests.test_central_revocation_dispatch_real_uuid_serializer_and_scope",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_central_revocation_invalid_fields_denied_before_service",
+      "method": "test_central_revocation_invalid_fields_denied_before_service",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 74,
+      "qualname": "SessionAPITests.test_central_revocation_invalid_fields_denied_before_service",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_central_revocation_nonhuman_inactive_anonymous_denied",
+      "method": "test_central_revocation_nonhuman_inactive_anonymous_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 82,
+      "qualname": "SessionAPITests.test_central_revocation_nonhuman_inactive_anonymous_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_central_revocation_persistence_failure_returns_no_success",
+      "method": "test_central_revocation_persistence_failure_returns_no_success",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 92,
+      "qualname": "SessionAPITests.test_central_revocation_persistence_failure_returns_no_success",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_central_revoke_all_does_not_preserve_request_ids",
+      "method": "test_central_revoke_all_does_not_preserve_request_ids",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 67,
+      "qualname": "SessionAPITests.test_central_revoke_all_does_not_preserve_request_ids",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_local_registry_revocation_reports_its_limit_and_keeps_owner_filter",
+      "method": "test_local_registry_revocation_reports_its_limit_and_keeps_owner_filter",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 33,
+      "qualname": "SessionAPITests.test_local_registry_revocation_reports_its_limit_and_keeps_owner_filter",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_logout_audit_failure_does_not_restore_blacklisted_refresh",
+      "method": "test_logout_audit_failure_does_not_restore_blacklisted_refresh",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 134,
+      "qualname": "SessionAPITests.test_logout_audit_failure_does_not_restore_blacklisted_refresh",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_logout_real_signed_refresh_idempotent_and_foreign_denied",
+      "method": "test_logout_real_signed_refresh_idempotent_and_foreign_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 99,
+      "qualname": "SessionAPITests.test_logout_real_signed_refresh_idempotent_and_foreign_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_p0r.SessionAPITests.test_logout_rejects_signed_access_and_tampered_refresh",
+      "method": "test_logout_rejects_signed_access_and_tampered_refresh",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_p0r.py",
+      "line": 122,
+      "qualname": "SessionAPITests.test_logout_rejects_signed_access_and_tampered_refresh",
+      "status": "PASS"
+    }
+  ]
+}

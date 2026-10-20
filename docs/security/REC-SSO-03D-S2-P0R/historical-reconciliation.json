@@ -1,0 +1,87 @@
+{
+  "admin-a.methods.json": {
+    "before": {
+      "FAIL": 20,
+      "PASS": 7,
+      "ERROR": 3
+    },
+    "after": {
+      "FAIL": 20,
+      "PASS": 7,
+      "ERROR": 3
+    },
+    "changed": {}
+  },
+  "admin-ch.methods.json": {
+    "before": {
+      "PASS": 2,
+      "FAIL": 4,
+      "ERROR": 12
+    },
+    "after": {
+      "PASS": 2,
+      "FAIL": 4,
+      "ERROR": 12
+    },
+    "changed": {}
+  },
+  "iso-ch.methods.json": {
+    "before": {
+      "PASS": 17,
+      "ERROR": 11
+    },
+    "after": {
+      "PASS": 17,
+      "ERROR": 11
+    },
+    "changed": {}
+  },
+  "med-ch.methods.json": {
+    "before": {
+      "PASS": 17,
+      "ERROR": 11
+    },
+    "after": {
+      "PASS": 17,
+      "ERROR": 11
+    },
+    "changed": {}
+  },
+  "iso-decision_a.methods.json": {
+    "before": {
+      "ERROR": 11,
+      "PASS": 9
+    },
+    "after": {
+      "ERROR": 11,
+      "PASS": 9
+    },
+    "changed": {}
+  },
+  "med-decision_a.methods.json": {
+    "before": {
+      "ERROR": 11,
+      "PASS": 9
+    },
+    "after": {
+      "ERROR": 11,
+      "PASS": 9
+    },
+    "changed": {}
+  },
+  "historical-api-admin.methods.json": {
+    "before": {
+      "PASS": 30
+    },
+    "after": {
+      "PASS": 29,
+      "ERROR": 1
+    },
+    "changed": {
+      "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_registration_consumes_valid_invitation_with_expected_effects_offline": {
+        "before": "PASS",
+        "after": "ERROR"
+      }
+    }
+  }
+}

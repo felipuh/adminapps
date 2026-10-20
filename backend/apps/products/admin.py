@@ -1,4 +1,8 @@
 from django.contrib import admin
+from apps.users.admin_authorization import (
+    ReadOnlyAdminMixin,
+    RoleRestrictedAdminMixin,
+)
 from .models import (
     ISOStandard,
     ModuleActivityLog,
@@ -10,7 +14,9 @@ from .models import (
 
 
 @admin.register(ProductSystem)
-class ProductSystemAdmin(admin.ModelAdmin):
+class ProductSystemAdmin(RoleRestrictedAdminMixin, admin.ModelAdmin):
+    required_role = 'is_superadmin'
+
     list_display = ['code', 'name', 'slug', 'product_type', 'status', 'billing_enabled']
     list_filter = ['product_type', 'status', 'billing_enabled']
     search_fields = ['code', 'name', 'slug']
@@ -18,7 +24,9 @@ class ProductSystemAdmin(admin.ModelAdmin):
 
 
 @admin.register(OrganizationProductEntitlement)
-class OrganizationProductEntitlementAdmin(admin.ModelAdmin):
+class OrganizationProductEntitlementAdmin(RoleRestrictedAdminMixin, admin.ModelAdmin):
+    required_role = 'is_admin'
+
     list_display = [
         'organization', 'product', 'status', 'enabled', 'access_allowed',
         'starts_at', 'ends_at',
@@ -30,7 +38,7 @@ class OrganizationProductEntitlementAdmin(admin.ModelAdmin):
 
 
 @admin.register(ProductEntitlementAuditLog)
-class ProductEntitlementAuditLogAdmin(admin.ModelAdmin):
+class ProductEntitlementAuditLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = ['organization', 'product', 'action', 'actor', 'created_at']
     list_filter = ['action', 'product', 'created_at']
     search_fields = ['organization__name', 'organization__code', 'product__code', 'product__name']
@@ -42,7 +50,9 @@ class ProductEntitlementAuditLogAdmin(admin.ModelAdmin):
 
 
 @admin.register(ISOStandard)
-class ISOStandardAdmin(admin.ModelAdmin):
+class ISOStandardAdmin(RoleRestrictedAdminMixin, admin.ModelAdmin):
+    required_role = 'is_superadmin'
+
     list_display = ['code', 'name', 'version', 'status', 'is_base', 'monthly_price', 'display_order']
     list_filter = ['status', 'is_base']
     search_fields = ['code', 'name', 'full_name']
@@ -69,7 +79,9 @@ class ISOStandardAdmin(admin.ModelAdmin):
 
 
 @admin.register(OrganizationModule)
-class OrganizationModuleAdmin(admin.ModelAdmin):
+class OrganizationModuleAdmin(RoleRestrictedAdminMixin, admin.ModelAdmin):
+    required_role = 'is_admin'
+
     list_display = ['organization', 'iso_standard', 'status', 'is_enabled', 'activated_at', 'expires_at']
     list_filter = ['status', 'is_enabled', 'iso_standard']
     search_fields = ['organization__name', 'organization__code', 'iso_standard__code']
@@ -96,7 +108,7 @@ class OrganizationModuleAdmin(admin.ModelAdmin):
 
 
 @admin.register(ModuleActivityLog)
-class ModuleActivityLogAdmin(admin.ModelAdmin):
+class ModuleActivityLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     list_display = ['organization_module', 'action', 'performed_by', 'created_at']
     list_filter = ['action', 'created_at']
     search_fields = ['organization_module__organization__name', 'notes']

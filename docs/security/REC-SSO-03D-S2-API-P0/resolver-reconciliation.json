@@ -1,0 +1,11 @@
+{
+  "inherited_api_entries": 436,
+  "current_explicit_and_implicit_entries": 774,
+  "inherited_entries_matched": 436,
+  "removed": [],
+  "added_by_enumeration_only": {
+    "OPTIONS": 206,
+    "HEAD": 132
+  },
+  "same_route_set": true
+}

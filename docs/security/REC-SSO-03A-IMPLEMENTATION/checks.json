@@ -1,0 +1,46 @@
+{
+  "isosmart-contracts": {
+    "exit_code": 0,
+    "log": "isosmart-contracts.log"
+  },
+  "isosmart-frontend": {
+    "exit_code": 0,
+    "log": "isosmart-frontend.log"
+  },
+  "isosmart-eslint": {
+    "exit_code": 0,
+    "log": "isosmart-eslint.log"
+  },
+  "isosmart-build": {
+    "exit_code": 0,
+    "log": "isosmart-build.log"
+  },
+  "ISO_Smart_MedSupplier-contracts": {
+    "exit_code": 0,
+    "log": "ISO_Smart_MedSupplier-contracts.log"
+  },
+  "ISO_Smart_MedSupplier-frontend": {
+    "exit_code": 0,
+    "log": "ISO_Smart_MedSupplier-frontend.log"
+  },
+  "ISO_Smart_MedSupplier-eslint": {
+    "exit_code": 0,
+    "log": "ISO_Smart_MedSupplier-eslint.log"
+  },
+  "ISO_Smart_MedSupplier-build": {
+    "exit_code": 0,
+    "log": "ISO_Smart_MedSupplier-build.log"
+  },
+  "admin-contracts": {
+    "exit_code": 0,
+    "log": "admin-contracts.log"
+  },
+  "2fa-regression": {
+    "exit_code": 0,
+    "log": "2fa-regression.log"
+  },
+  "historical-unchanged": {
+    "exit_code": 1,
+    "log": "historical-unchanged.log"
+  }
+}

@@ -1,0 +1,348 @@
+{
+  "scope": "NEW_OFFLINE_CHECKS_ONLY_NOT_HISTORICAL_HOST_RUNTIME",
+  "date": "2026-10-09",
+  "timezone": "America/Costa_Rica",
+  "branch": "hardening/p0-p1-enterprise-readiness",
+  "head": "42f007d1fcd30743a28b0f1b998ab8c6ae93ba7c",
+  "preexisting_sha256": {
+    "backend/apps/financial/__init__.py": "36936a7b21a12b38c4e8e36e446d942dac9f3fbd596f9d8fd457016013dac376",
+    "backend/apps/financial/apps.py": "407daa7fdd10bb4f0c23f0e6e339713bfed97d9da059d6fe590683982df98d2d",
+    "backend/apps/financial/authorization.py": "53a314f4553842b919013e90580c0e499c010cffd91aa074ea2608e659bf13e5",
+    "backend/apps/financial/capabilities.py": "b389eb73799eb13ea8af0285dbf4d6f20a3b917fe58d7707da96fadfc24f44dd",
+    "backend/apps/financial/executor.py": "8b39ada47540612f5f5bcf8361bff7b6154847e2f62d897f29a813721eaf7e46",
+    "backend/apps/financial/issuer.py": "9d8c3535500cbeec299a2e7df2e6ecb3c69383e8e22a9accfa50b37ead785859",
+    "backend/apps/financial/migrations/0001_financial_s1_foundation.py": "5a89a52317ccc76e576d500b2b730e90c6150e1ab6b25164f743742f6ac2f5fc",
+    "backend/apps/financial/migrations/0002_postgresql_security.py": "362abb5ef1fa481f53e930bbeeafc541171582e83892973f5600e4fdc79d9967",
+    "backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py": "b56a6b57c11c96bc1cc2ee546ce65aa05588f3ba0e08f3afdafc14cb78466477",
+    "backend/apps/financial/migrations/0004_s3_admission_controls.py": "aa71f24899d1a44b8b8da0141f898d92d5e99d7f00edd2e98ffe09dff31bb92a",
+    "backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py": "d2c7dfc9ddd944bda90f7b5dce17b48646928e0ee51f9727f0f98152d476a384",
+    "backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py": "f99e34850afd4e375c72311138a2c98e629abd95fb9c0ee2c8a73aadf21efd58",
+    "backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py": "b098ed9d9e79dee94c5fce2d8542c93316a2d09dbec4065d1b4f79fa4602057f",
+    "backend/apps/financial/migrations/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/apps/financial/models.py": "898e485465ee836ccef735e5310d56c63eaf8ba1fbe3a26ce3ae576a9179a876",
+    "backend/apps/financial/rbac.py": "1e858a4c411259a36d7e47d70374e1b0594fe29af77cd4e4498aea88c11116d2",
+    "backend/apps/financial/services.py": "1a0b8491900b041ac9f088ffbd275d8b19212e1e960ce8c7343395ffb96d11d8",
+    "backend/apps/financial/tests.py": "dcfb23119739e851b306d790828b28cd7c3069e62fe5cc39ef9ea5ccb292e585",
+    "backend/scripts/s3_isolation_host_lab.sh": "4a50014a069289af60afacedc89b6d93468edbd3921c8c6d72c3e005d6c086a5",
+    "backend/scripts/tests/test_s3_isolation_host_lab_validation.sh": "7abcce0dbeb7ce8a4bcdb067e4fe4b92b6ccd9057d9c6f6b12231e0da35d3f26",
+    "backend/scripts/verify_financial_s1_postgres.sh": "8588a72b792ad7d93b0183a255ba10d6bf8e05d6eae4774fb3c8473dc4e1f852",
+    "backend/scripts/verify_financial_s3_postgres.sh": "48898a6380fffce07647be9a8f94644b0bc3f4d74541fb5a88d4c476834a6840",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_AUTHORITY_SECURITY_AMENDMENT_02_2026-10-09.md": "e03022a6ca4da9eeb9022b50972d30ff6628fa5a5ab9614ba3e21d6a5af9ef79",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S1_IMPLEMENTATION_REPORT_2026-10-08.md": "a316b93846ca3d59062011f5621134dbbc4a024ace17b225a0c1dfc30416ab88",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S2_IMPLEMENTATION_REPORT_2026-10-08.md": "c29ed6dca9ebb9eb778cf8ad605b8533eff61d097363e891d2876a6da041c0e6",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_DECISION_02_A_EXECUTION_REPORT_2026-10-09.md": "da5d01ba8f0e12c66ed068c868568bc4fa208871d478a017453562290e2eea2b",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_EXISTING_VM_ISOLATION_EXECUTION_2026-10-09.md": "2a6b7228dbfbed45a5a4712ccff7cf4ad486ad00a5999e530940eb21c56ed840",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_FINAL_VALIDATION_2026-10-09.md": "c26d6a24804986e110757ddbd16a6ad6b8358dae8bc0aa0810462126adb01be6",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMPLEMENTATION_REPORT_2026-10-09.md": "ad8a853363f5891e92dd993d845b9c6ddb8685de2998027008e210e617bb2fd2",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_ISOLATION_ADMINISTRATIVE_GATE_2026-10-09.md": "635fd2ffe4a6e8a1dadb83efc52f63bf5af8f91585f110ee5d7bd8660f549095",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_PROCESS_ISOLATION_PREFLIGHT_2026-10-09.md": "41909c040571d8a633a11fae1be8652cec58cbfcd339ef7c503051ce78857bf2",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SYSTEMCALLFILTER_VALIDATION_REMEDIATION_2026-10-09.md": "5ba1ae69baed48a33ef330411344fc1df0587ac714247b100e895eac02ce7e9c",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_TRANSACTIONAL_SECURITY_EVIDENCE_2026-10-09.md": "867ec4deb9adfb51854395f9b7486ddb1195faf8c3191696f819b67d282fd3a2",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_SECURITY_DECISION_02_A_2026-10-09.md": "66af713c74bd44db4f43965c4b7a17e1410c5f65b62f22d55065e47ee2a5d3a3",
+    "backend/config/settings.py": "408f1c5a3ddf03f7993897e29e661cb4962a8b17cc7b42c0d13db649148dde56",
+    "backend/scripts/bootstrap_smart3ai.sh": "f14d2f013d6b1bdf849236cea1adccaccf8e3612f302a90a7343ea6f30a0d7d4",
+    "backend/scripts/initial_data.py": "9da8bc9d21c383ed3cac89a29f5419a0207d3164bbcaf53ada1f8321786e24b6"
+  },
+  "checks": [
+    {
+      "command": [
+        "bash",
+        "-n",
+        "backend/scripts/s3_isolation_host_lab.sh",
+        "backend/scripts/tests/test_s3_isolation_host_lab_validation.sh",
+        "backend/scripts/verify_financial_s3_postgres.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "scope_note": "bash -n parses only the first script; individual checks below cover remaining files."
+    },
+    {
+      "command": [
+        "bash",
+        "backend/scripts/tests/test_s3_isolation_host_lab_validation.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS symbolic SystemCallFilter\nPASS expanded SystemCallFilter\nPASS empty SystemCallFilter\nPASS different SystemCallFilter\nPASS deny-list SystemCallFilter\nPASS duplicate expanded syscall\nPASS unavailable SystemCallFilter expansion evidence\nPASS well-formed selected systemctl response\nPASS empty systemctl response (query error)\nPASS malformed systemctl response\nPASS incomplete systemctl response\nPASS duplicate systemctl property\nPASS process identity and active seccomp evidence\nPASS nonexistent or exited PID has no status evidence\nPASS wrong process identity\nPASS seccomp inactive\nPASS missing seccomp filter count\nPASS process belongs to reported unit cgroup\nPASS process does not belong to reported unit cgroup\ntests_passed=19 tests_failed=0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "backend/.venv312/bin/python",
+        "-B",
+        "backend/scripts/tests/test_s3_capability_offline.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_algorithm_confusion_denied (__main__.Decision02AOfflineTests.test_algorithm_confusion_denied) ... ok\ntest_before_not_before_denied (__main__.Decision02AOfflineTests.test_before_not_before_denied) ... ok\ntest_excessive_signed_lifetime_denied (__main__.Decision02AOfflineTests.test_excessive_signed_lifetime_denied) ... ok\ntest_expected_identity_mismatch_denied (__main__.Decision02AOfflineTests.test_expected_identity_mismatch_denied) ... ok\ntest_expiry_boundary_denied (__main__.Decision02AOfflineTests.test_expiry_boundary_denied) ... ok\ntest_extra_claim_denied (__main__.Decision02AOfflineTests.test_extra_claim_denied) ... ok\ntest_last_valid_second_accepted (__main__.Decision02AOfflineTests.test_last_valid_second_accepted) ... ok\ntest_malformed_envelope_denied (__main__.Decision02AOfflineTests.test_malformed_envelope_denied) ... ok\ntest_malformed_timestamp_denied (__main__.Decision02AOfflineTests.test_malformed_timestamp_denied) ... ok\ntest_mint_lifetime_out_of_range_denied (__main__.Decision02AOfflineTests.test_mint_lifetime_out_of_range_denied) ... ok\ntest_missing_claim_denied (__main__.Decision02AOfflineTests.test_missing_claim_denied) ... ok\ntest_public_material_contains_only_32_byte_public_key (__main__.Decision02AOfflineTests.test_public_material_contains_only_32_byte_public_key) ... ok\ntest_signature_from_different_key_denied (__main__.Decision02AOfflineTests.test_signature_from_different_key_denied) ... ok\ntest_tenant_and_product_substitution_without_resigning_denied (__main__.Decision02AOfflineTests.test_tenant_and_product_substitution_without_resigning_denied) ... ok\ntest_unknown_or_removed_public_key_denied (__main__.Decision02AOfflineTests.test_unknown_or_removed_public_key_denied) ... ok\ntest_unknown_version_denied (__main__.Decision02AOfflineTests.test_unknown_version_denied) ... ok\ntest_valid_public_key_verification_and_invocation_binding (__main__.Decision02AOfflineTests.test_valid_public_key_verification_and_invocation_binding) ... ok\ntest_wrong_audience_even_with_valid_signature_denied (__main__.Decision02AOfflineTests.test_wrong_audience_even_with_valid_signature_denied) ... ok\ntest_wrong_issuer_denied (__main__.Decision02AOfflineTests.test_wrong_issuer_denied) ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 0.041s\n\nOK\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "backend/scripts/tests/test_s3_isolation_host_lab_validation.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "backend/scripts/verify_financial_s3_postgres.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "backend/.venv312/bin/python",
+        "-B",
+        "-c",
+        "import importlib.util,json,sys\nfrom pathlib import Path\nspec=importlib.util.spec_from_file_location(\"offline\",Path(\"backend/scripts/tests/test_s3_capability_offline.py\"))\nm=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)\nt=m.Decision02AOfflineTests();t.setUp()\nplain=json.dumps(t.claims,sort_keys=True,separators=(\",\",\":\"))\nvariants={\"noncanonical_whitespace\":json.dumps(t.claims,indent=2),\"duplicate_identical_claim\":plain[:-1]+',\"aud\":\"adminapps-financial-admission\"}'}\nfor label,payload in variants.items():\n try:\n  t.verify(m.encode(payload.encode())+\".\"+t.signature)\n  print(json.dumps({\"probe\":label,\"observed\":\"ACCEPTED\",\"proposed_strict_rejection_control\":\"FAIL\",\"authority\":\"Amendment 02 section 6.2 remains approval-pending\"}))\n except m.capabilities.CapabilityDenied as exc:\n  print(json.dumps({\"probe\":label,\"observed\":\"DENIED\",\"code\":exc.code}))\n"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"probe\": \"noncanonical_whitespace\", \"observed\": \"ACCEPTED\", \"proposed_strict_rejection_control\": \"FAIL\", \"authority\": \"Amendment 02 section 6.2 remains approval-pending\"}\n{\"probe\": \"duplicate_identical_claim\", \"observed\": \"ACCEPTED\", \"proposed_strict_rejection_control\": \"FAIL\", \"authority\": \"Amendment 02 section 6.2 remains approval-pending\"}\n",
+      "stderr": "",
+      "scope_note": "Diagnostic process exit 0 is not a security PASS; assess each observed result. No signature forgery demonstrated."
+    },
+    {
+      "check": "preexisting_source_integrity",
+      "files_checked": 37,
+      "changed": [],
+      "result": "PASS"
+    },
+    {
+      "check": "python_ast_parse_without_import_or_bytecode",
+      "files": [
+        "backend/apps/financial/__init__.py",
+        "backend/apps/financial/apps.py",
+        "backend/apps/financial/models.py",
+        "backend/apps/financial/tests.py",
+        "backend/apps/financial/authorization.py",
+        "backend/apps/financial/rbac.py",
+        "backend/apps/financial/services.py",
+        "backend/apps/financial/capabilities.py",
+        "backend/apps/financial/issuer.py",
+        "backend/apps/financial/executor.py",
+        "backend/apps/financial/migrations/__init__.py",
+        "backend/apps/financial/migrations/0001_financial_s1_foundation.py",
+        "backend/apps/financial/migrations/0002_postgresql_security.py",
+        "backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py",
+        "backend/apps/financial/migrations/0004_s3_admission_controls.py",
+        "backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py",
+        "backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py",
+        "backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py",
+        "backend/scripts/tests/test_s3_capability_offline.py"
+      ],
+      "result": "PASS"
+    },
+    {
+      "check": "local_markdown_link_targets",
+      "count": 27,
+      "missing": [],
+      "result": "PASS"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "interpretation": "git --no-index reports exit 1 for added-file differences; no --check diagnostics means no whitespace errors. Exit code retained, not rewritten."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "interpretation": "git --no-index reports exit 1 for added-file differences; no --check diagnostics means no whitespace errors. Exit code retained, not rewritten."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "interpretation": "git --no-index reports exit 1 for added-file differences; no --check diagnostics means no whitespace errors. Exit code retained, not rewritten."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "interpretation": "git --no-index reports exit 1 for added-file differences; no --check diagnostics means no whitespace errors. Exit code retained, not rewritten."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "interpretation": "git --no-index reports exit 1 for added-file differences; no --check diagnostics means no whitespace errors. Exit code retained, not rewritten."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "backend/scripts/tests/test_s3_capability_offline.py"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "interpretation": "git --no-index reports exit 1 for added-file differences; no --check diagnostics means no whitespace errors. Exit code retained, not rewritten."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_OFFLINE_EVIDENCE_2026-10-09.json"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "interpretation": "git --no-index reports exit 1 for added-file differences; no --check diagnostics means no whitespace errors. Exit code retained, not rewritten."
+    },
+    {
+      "check": "shellcheck_availability",
+      "available": false,
+      "result": "SKIP_NOT_INSTALLED"
+    },
+    {
+      "check": "explicit_new_file_whitespace_conflict_markers_final_newline",
+      "files_checked": 7,
+      "problems": [],
+      "result": "PASS"
+    },
+    {
+      "check": "git_branch_head_preserved",
+      "result": "PASS"
+    },
+    {
+      "check": "review_summary",
+      "result": "PASS",
+      "scope": "All seven new artifacts reviewed against sources; historical documents retained unchanged; runtime commands in specifications are explicitly gated; no keys or credentials in artifacts."
+    },
+    {
+      "command": [
+        "backend/.venv312/bin/python",
+        "-B",
+        "backend/scripts/tests/test_s3_capability_offline.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_algorithm_confusion_denied (__main__.Decision02AOfflineTests.test_algorithm_confusion_denied) ... ok\ntest_before_not_before_denied (__main__.Decision02AOfflineTests.test_before_not_before_denied) ... ok\ntest_excessive_signed_lifetime_denied (__main__.Decision02AOfflineTests.test_excessive_signed_lifetime_denied) ... ok\ntest_expected_identity_mismatch_denied (__main__.Decision02AOfflineTests.test_expected_identity_mismatch_denied) ... ok\ntest_expiry_boundary_denied (__main__.Decision02AOfflineTests.test_expiry_boundary_denied) ... ok\ntest_exported_public_key_verifies_signature (__main__.Decision02AOfflineTests.test_exported_public_key_verifies_signature) ... ok\ntest_extra_claim_denied (__main__.Decision02AOfflineTests.test_extra_claim_denied) ... ok\ntest_last_valid_second_accepted (__main__.Decision02AOfflineTests.test_last_valid_second_accepted) ... ok\ntest_malformed_envelope_denied (__main__.Decision02AOfflineTests.test_malformed_envelope_denied) ... ok\ntest_malformed_timestamp_denied (__main__.Decision02AOfflineTests.test_malformed_timestamp_denied) ... ok\ntest_mint_lifetime_out_of_range_denied (__main__.Decision02AOfflineTests.test_mint_lifetime_out_of_range_denied) ... ok\ntest_missing_claim_denied (__main__.Decision02AOfflineTests.test_missing_claim_denied) ... ok\ntest_signature_from_different_key_denied (__main__.Decision02AOfflineTests.test_signature_from_different_key_denied) ... ok\ntest_tenant_and_product_substitution_without_resigning_denied (__main__.Decision02AOfflineTests.test_tenant_and_product_substitution_without_resigning_denied) ... ok\ntest_unknown_or_removed_public_key_denied (__main__.Decision02AOfflineTests.test_unknown_or_removed_public_key_denied) ... ok\ntest_unknown_version_denied (__main__.Decision02AOfflineTests.test_unknown_version_denied) ... ok\ntest_valid_public_key_verification_and_invocation_binding (__main__.Decision02AOfflineTests.test_valid_public_key_verification_and_invocation_binding) ... ok\ntest_wrong_audience_even_with_valid_signature_denied (__main__.Decision02AOfflineTests.test_wrong_audience_even_with_valid_signature_denied) ... ok\ntest_wrong_issuer_denied (__main__.Decision02AOfflineTests.test_wrong_issuer_denied) ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 0.037s\n\nOK\n",
+      "scope_note": "Final test version verifies exported public bytes with an independent signature challenge."
+    },
+    {
+      "check": "final_preservation_and_test_ast_after_review",
+      "preexisting_files": 37,
+      "result": "PASS"
+    }
+  ],
+  "reference_sha256": {
+    "/home/felipe/.codex/attachments/a3bfc85a-846e-4a33-ba5b-a75143f75f42/Pasted text.txt": "3b2b408845796f4a4f7301c8085719d6bef5ebbb8d914373c4524d07ce0b8af1",
+    "/home/felipe/proyectos/isosmart/docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_CONTRACT_V1_1_2026-10-08.md": "2a68c54a1acaae55d5dbf7d249692d60ac6bd9bcaebce2d274f58997937d444f",
+    "/home/felipe/proyectos/isosmart/docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_AMENDMENT_01_DECISION_RECORD_2026-10-08.md": "677cb7006c04ce35b6127e589fb46b26bb44aae491509c4fe2b0a39fb0eeacf8",
+    "/home/felipe/proyectos/isosmart/docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_IMPLEMENTATION_READINESS_2026-10-08.md": "62ae466bd4482bb0c519d8a0bf0e198e02281084bcdadbed1aa698316e08d33d"
+  },
+  "deliverable_sha256": {
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md": "8b88cf2b23112ccfdf4df3ae94c468fc8de7e8de5182588b1557bb0b01ce853a",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md": "374acbaae96195bb4bba0589bee4be1e24d317d40769e4ed79a2d59a241e73ec",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md": "53b333dcfbcc9a8fbdd581993aec1b19ec6936ce91aea0c03bcabc8332cf443d",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md": "41ccc2a911f2fae1e533e3d73e430676561d9a5a0d87e5fad16964e185f9fc4d",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md": "b2fdaa59e3094891060b8126b3825a56ae6fef958c4dd022397a96bc604891a7",
+    "backend/scripts/tests/test_s3_capability_offline.py": "80569387baf0e1faa8bc3948f1f84c35336bdbdd5c42e1bbcec6841c00994e74"
+  },
+  "git_status_final": " M backend/config/settings.py\n?? backend/apps/financial/\n?? backend/scripts/s3_isolation_host_lab.sh\n?? backend/scripts/tests/\n?? backend/scripts/verify_financial_s1_postgres.sh\n?? backend/scripts/verify_financial_s3_postgres.sh\n?? docs/financial/\n",
+  "new_files": [
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md",
+    "backend/scripts/tests/test_s3_capability_offline.py",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_OFFLINE_EVIDENCE_2026-10-09.json"
+  ],
+  "runtime_not_executed": [
+    "host_lab_any_subcommand",
+    "PostgreSQL",
+    "IPC",
+    "sudo",
+    "systemd-run",
+    "Docker/Podman",
+    "migrations",
+    "service_changes",
+    "Git_commit_push_merge"
+  ],
+  "baseline_note": "37 preexisting files hashed before edits; existing modified settings and untracked financial work preserved. External references read-only; their hashes recorded for traceability.",
+  "final_branch": "hardening/p0-p1-enterprise-readiness",
+  "final_head": "42f007d1fcd30743a28b0f1b998ab8c6ae93ba7c"
+}

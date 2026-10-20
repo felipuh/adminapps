@@ -1,0 +1,60 @@
+{
+  "runners": [
+    {
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "__main__.P0RSessions.test_failure_after_success_does_not_reactivate_session",
+      "method": "test_failure_after_success_does_not_reactivate_session",
+      "source": "backend/scripts/rec_sso_03d_p0r_sessions_offline.py",
+      "line": 79,
+      "qualname": "P0RSessions.test_failure_after_success_does_not_reactivate_session",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.P0RSessions.test_foreign_or_unknown_sid_denied_without_mutation",
+      "method": "test_foreign_or_unknown_sid_denied_without_mutation",
+      "source": "backend/scripts/rec_sso_03d_p0r_sessions_offline.py",
+      "line": 41,
+      "qualname": "P0RSessions.test_foreign_or_unknown_sid_denied_without_mutation",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.P0RSessions.test_inactive_actor_cannot_revoke_or_restore_authority",
+      "method": "test_inactive_actor_cannot_revoke_or_restore_authority",
+      "source": "backend/scripts/rec_sso_03d_p0r_sessions_offline.py",
+      "line": 72,
+      "qualname": "P0RSessions.test_inactive_actor_cannot_revoke_or_restore_authority",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.P0RSessions.test_revoke_all_owns_filter_and_never_keeps_supplied_ids",
+      "method": "test_revoke_all_owns_filter_and_never_keeps_supplied_ids",
+      "source": "backend/scripts/rec_sso_03d_p0r_sessions_offline.py",
+      "line": 52,
+      "qualname": "P0RSessions.test_revoke_all_owns_filter_and_never_keeps_supplied_ids",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.P0RSessions.test_revoking_after_rotation_invalidates_all_generations",
+      "method": "test_revoking_after_rotation_invalidates_all_generations",
+      "source": "backend/scripts/rec_sso_03d_p0r_sessions_offline.py",
+      "line": 61,
+      "qualname": "P0RSessions.test_revoking_after_rotation_invalidates_all_generations",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.P0RSessions.test_single_owned_revocation_denies_introspection_and_rotation",
+      "method": "test_single_owned_revocation_denies_introspection_and_rotation",
+      "source": "backend/scripts/rec_sso_03d_p0r_sessions_offline.py",
+      "line": 31,
+      "qualname": "P0RSessions.test_single_owned_revocation_denies_introspection_and_rotation",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+--- a/backend/apps/integration/views.py
++++ b/backend/apps/integration/views.py
+@@ -555,6 +555,15 @@
+             'code': 'invalid_credentials'
+         }, status=401)
+     
++    # DRAFT A: requires coordinated consumer transition approval.
++    two_fa = getattr(user, 'two_factor_auth', None)
++    if two_fa and two_fa.is_enabled:
++        return JsonResponse({
++            'valid': False,
++            'error': 'Complete authentication through the SSO 2FA flow',
++            'code': 'second_factor_required',
++        }, status=403)
++
+     # Obtener organizaciones del usuario
+     memberships = UserOrganization.objects.filter(
+         user=user,

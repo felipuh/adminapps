@@ -1,0 +1,98 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "P0R continuation contract delta",
+    "version": "2026-10-19",
+    "description": "Local code only. No provisioning or migration activation."
+  },
+  "paths": {
+    "/api/subscriptions/invoices/{id}/mark_paid/": {
+      "post": {
+        "operationId": "markSubscriptionInvoicePaid",
+        "security": [
+          {
+            "LocalHumanBearer": []
+          }
+        ],
+        "description": "Existing platform/staff subscriptions.change_invoice permission. pending/overdue transition; paid replay has no side effects. Invalid states denied. Sequential offline verification only; concurrent/atomic writes NOT_EVIDENCED.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "payment_reference": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "nullable": false,
+                    "description": "Optional; blank accepted; whitespace preserved. DRF CharField also normalizes numeric input."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Paid, including same/omitted-reference replay without mutation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "paid"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload or invoice_state_denied for draft/cancelled/refunded/unknown"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Human/platform/role/model permission denied"
+          },
+          "404": {
+            "description": "Invoice not found"
+          },
+          "409": {
+            "description": "payment_reference_conflict on paid invoice"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "LocalHumanBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "x-consumer-http-contract": {
+    "4xx": "allowed=false, authorization_denied=true; no local fallback",
+    "5xx": "Discard authorization-shaped body; generic http_error; existing explicit test/demo transport policy remains, disabled in production"
+  },
+  "x-persistence-status": "NOT_EVIDENCED"
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "suite": "baseline-iso-ch",
+    "exit": 1,
+    "cmd": [
+      "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/baseline-iso-ch.methods.json",
+      "integration/tests_ch_offline.py"
+    ]
+  },
+  {
+    "suite": "baseline-iso-decision_a",
+    "exit": 1,
+    "cmd": [
+      "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/baseline-iso-decision_a.methods.json",
+      "integration/tests_decision_a_offline.py"
+    ]
+  }
+]

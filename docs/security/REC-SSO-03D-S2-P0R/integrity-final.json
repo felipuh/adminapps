@@ -1,0 +1,95 @@
+{
+  "adminapps": {
+    "head_before": "b144b2505659ad39f756b9bc4530a7f24fe8c3ad",
+    "head_after": "b144b2505659ad39f756b9bc4530a7f24fe8c3ad",
+    "head_unchanged": true,
+    "index_before": "183cd78b6013f56801465bf8aeb9dd31f746a5bd43389003fcf4383d1e584da3",
+    "index_after": "183cd78b6013f56801465bf8aeb9dd31f746a5bd43389003fcf4383d1e584da3",
+    "baseline_files_verified": 15697,
+    "changed_baseline_files": [
+      {
+        "path": "backend/apps/integration/api_authorization.py",
+        "before": "d1d1dc92f4ea84f5c6aabba0b32816129716ad80dc2bb6a74b5997490bb9c11e",
+        "after": "ecd2c99162d9ce291cc36d2ad9188af0cdd87f51229b26e0bacbff61e1b031a3"
+      },
+      {
+        "path": "backend/apps/integration/session_lifecycle.py",
+        "before": "ec967e7d120484be44b6e552d217efc3f178f9c4a2bf1b0a4c8ea431f7171c46",
+        "after": "a7d0043d972f8b0acb93827d290d6480efe0573ac944a0c9b57b1896fda4d3d6"
+      },
+      {
+        "path": "backend/apps/integration/views.py",
+        "before": "6b0b99a205bcae95c4cc5f65661807d0f12d9b746174a75f05ed77cdae75666b",
+        "after": "7478b7553abea28c7dea38753e2a23994e6ffc141a654f9d74c8081326cae9d9"
+      },
+      {
+        "path": "backend/apps/organizations/views.py",
+        "before": "5062abe7f04fd5bf2acd2e0b3ee789239ae90435de0b9b7d3eefaa28ac58e5f4",
+        "after": "3ca4503ed06e85e160e5f735c97cbda658102080f3c2bb91180d016742ad88e5"
+      },
+      {
+        "path": "backend/apps/users/api_authorization.py",
+        "before": "1bb3ee893db6e7b58ec04f56469179da92477dfe65f0a22630bde2c64d55f365",
+        "after": "b312abea26822e6bc9395a5269e0c4ea1a1c1509553ac5713ce30e28dd12c29a"
+      },
+      {
+        "path": "backend/apps/users/serializers.py",
+        "before": "71d8812af0eb78b9dbde640ea4436cc4a755a4928766e81ca99430617ee9254f",
+        "after": "c1366544d6113cc62a176a01027569f0a1684cfaf82588a870c3906f72585c69"
+      },
+      {
+        "path": "backend/apps/users/services.py",
+        "before": "a05c19d5e9e8996a9768874e79035f4270b80213498e8774f82a8139431e097e",
+        "after": "b6deea607d5ad105108b0fde286f4936a05bfb39654f65b7446e3af6be1f5045"
+      },
+      {
+        "path": "backend/apps/users/views.py",
+        "before": "c98c6c62b826741bfdedc942b38f3962be4ba87ed98d0b3b133305fcf5b8240f",
+        "after": "edaf1ba4702a1d873c6ffec202d89861334aaabbbe14187d24116edb84a46676"
+      }
+    ],
+    "deleted_baseline_files": [],
+    "added_code_files": [
+      "backend/apps/api/test_p0r.py",
+      "backend/apps/organizations/invitation_authority.py",
+      "backend/scripts/rec_sso_03d_p0r_sessions_offline.py"
+    ],
+    "status_after": " M backend/apps/api/views.py\n M backend/apps/billing/serializers.py\n M backend/apps/billing/views.py\n M backend/apps/integration/models.py\n M backend/apps/integration/sso_views.py\n M backend/apps/integration/urls.py\n M backend/apps/integration/views.py\n M backend/apps/organizations/admin.py\n M backend/apps/organizations/serializers.py\n M backend/apps/organizations/views.py\n M backend/apps/products/admin.py\n M backend/apps/products/serializers.py\n M backend/apps/products/views.py\n M backend/apps/subscriptions/admin.py\n M backend/apps/subscriptions/serializers.py\n M backend/apps/subscriptions/views.py\n M backend/apps/users/admin.py\n M backend/apps/users/serializers.py\n M backend/apps/users/services.py\n M backend/apps/users/views.py\n M backend/config/settings.py\n?? backend/apps/api/test_control_plane.py\n?? backend/apps/api/test_p0r.py\n?? backend/apps/financial/\n?? backend/apps/integration/api_authorization.py\n?? backend/apps/integration/authorization.py\n?? backend/apps/integration/authorization_contract.py\n?? backend/apps/integration/client_registry.py\n?? backend/apps/integration/migrations/0008_ssoclient.py\n?? backend/apps/integration/migrations/0009_ssorevocationoutbox_ssosecurityfence_ssosession_and_more.py\n?? backend/apps/integration/migrations/0010_sso_authority_fence.py\n?? backend/apps/integration/session_events.py\n?? backend/apps/integration/session_lifecycle.py\n?? backend/apps/integration/session_models.py\n?? backend/apps/integration/trust_jwt.py\n?? backend/apps/organizations/invitation_authority.py\n?? backend/apps/organizations/test_authorization.py\n?? backend/apps/subscriptions/test_authorization.py\n?? backend/apps/users/admin_authorization.py\n?? backend/apps/users/api_authorization.py\n?? backend/apps/users/platform_api_authorization.py\n?? backend/apps/users/test_admin_authorization.py\n?? backend/apps/users/test_authorization.py\n?? backend/scripts/rec_sso_02_2fa_regression.py\n?? backend/scripts/rec_sso_02_checks.py\n?? backend/scripts/rec_sso_02_offline.py\n?? backend/scripts/rec_sso_03a_offline.py\n?? backend/scripts/rec_sso_03b_ch_offline.py\n?? backend/scripts/rec_sso_03b_offline.py\n?? backend/scripts/rec_sso_03d_api_inventory.py\n?? backend/scripts/rec_sso_03d_api_p0_offline.py\n?? backend/scripts/rec_sso_03d_offline.py\n?? backend/scripts/rec_sso_03d_p0r_sessions_offline.py\n?? backend/scripts/s3_isolation_host_lab.sh\n?? backend/scripts/tests/\n?? backend/scripts/verify_financial_s1_postgres.sh\n?? backend/scripts/verify_financial_s3_postgres.sh\n?? docs/financial/\n?? docs/security/\n"
+  },
+  "isosmart": {
+    "head_before": "0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e",
+    "head_after": "0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e",
+    "head_unchanged": true,
+    "index_before": "e6def75069870dc31a434d379b14abe9cc7d3cfcdbaa111eb8616af4d435245d",
+    "index_after": "e6def75069870dc31a434d379b14abe9cc7d3cfcdbaa111eb8616af4d435245d",
+    "baseline_files_verified": 15075,
+    "changed_baseline_files": [
+      {
+        "path": "backend/integration/client.py",
+        "before": "9edceb9510fd70e1c2c5e7c1c7040a8c16d74a26f8c143abce62b976f4e6639a",
+        "after": "fef09aab43c34baafbd40b0aa3a9212ff912db463e09abdc7c4a439ef206bcce"
+      }
+    ],
+    "deleted_baseline_files": [],
+    "added_code_files": [],
+    "status_after": " M backend/authentication/cookie_auth.py\n M backend/authentication/cookies.py\n M backend/authentication/middleware.py\n M backend/authentication/serializers.py\n M backend/authentication/views.py\n M backend/backend/settings.py\n M backend/core/organization_scoping.py\n M backend/foundation/ai_usage.py\n M backend/foundation/ai_usage_delivery.py\n M backend/foundation/eventing.py\n M backend/foundation/management/commands/run_ai_usage_delivery.py\n M backend/foundation/models.py\n M backend/foundation/tenant_context.py\n M backend/foundation/test_ai_usage.py\n M backend/foundation/test_source_artifact_postgres_integration.py\n M backend/foundation/value_discovery.py\n M backend/integration/backends.py\n M backend/integration/client.py\n M backend/integration/sso_auth.py\n M frontend/src/context/AuthContext.jsx\n M frontend/src/pages/LoginPage.jsx\n M frontend/src/services/authService.js\n?? backend/foundation/ai_financial_guardrails.py\n?? backend/foundation/ai_financial_guardrails_postgres_harness.py\n?? backend/foundation/ai_usage_cross_product_e2e.py\n?? backend/foundation/migrations/0041_ai_usage_retry_exhausted_recovery.py\n?? backend/foundation/migrations/0042_ai_financial_guardrails.py\n?? backend/foundation/test_ai_financial_guardrails.py\n?? backend/integration/authorization.py\n?? backend/integration/authorization_contract.py\n?? backend/integration/central_auth.py\n?? backend/integration/local_tokens.py\n?? backend/integration/tests_b_offline.py\n?? backend/integration/tests_ch_offline.py\n?? backend/integration/tests_d_offline.py\n?? backend/integration/tests_d_session_offline.py\n?? backend/integration/tests_decision_a_offline.py\n?? backend/integration/trust_jwt.py\n?? docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_AMENDMENT_01_DECISION_RECORD_2026-10-08.md\n?? docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_CONTRACT_V1_1_2026-10-08.md\n?? docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_CONTRACT_V1_2026-10-08.md\n?? docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_IMPLEMENTATION_READINESS_2026-10-08.md\n?? docs/transformation/AI_FINANCIAL_GUARDRAILS_IMPLEMENTATION_REPORT_2026-10-08.md\n?? docs/transformation/AI_FINANCIAL_GUARDRAILS_POSTGRESQL_VALIDATION_REPORT_2026-10-08.md\n?? docs/transformation/AI_METERING_BASELINE_ACCEPTANCE_AND_REAL_OPENAI_PILOT_READINESS_2026-10-08.md\n?? docs/transformation/DECISION_A_AUTH.openapi.json\n?? docs/transformation/DECISION_A_AUTH_CONTRACT.md\n?? docs/transformation/REC-SSO-03D/\n?? docs/transformation/REC_SSO_03B_CH.openapi.json\n?? docs/transformation/REC_SSO_03B_CH_CONTRACT.md\n?? docs/transformation/REC_SSO_03B_DURABLE.openapi.json\n?? docs/transformation/REC_SSO_03B_DURABLE_CONTRACT.md\n?? docs/transformation/REC_SSO_03D_S2_P0R_SERVICE_GRANTS_2026-10-19.md\n?? frontend/scripts/\n"
+  },
+  "ISO_Smart_MedSupplier": {
+    "head_before": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f",
+    "head_after": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f",
+    "head_unchanged": true,
+    "index_before": "cfd4a1341fa59cb5c51acc3c7180121b27aafa392d8027d878f975792d455165",
+    "index_after": "cfd4a1341fa59cb5c51acc3c7180121b27aafa392d8027d878f975792d455165",
+    "baseline_files_verified": 15014,
+    "changed_baseline_files": [
+      {
+        "path": "backend/integration/client.py",
+        "before": "1341bd80b0442b0bf385530f17450afb666472b2f7dd90c49c37a6bd7e6eb31d",
+        "after": "985fcac1b569250a532a24387a8af879b89d5dbdd513b4d721a23c5d28dae321"
+      }
+    ],
+    "deleted_baseline_files": [],
+    "added_code_files": [],
+    "status_after": " M backend/authentication/middleware.py\n M backend/authentication/serializers.py\n M backend/authentication/views.py\n M backend/backend/settings.py\n M backend/core/organization_scoping.py\n M backend/integration/backends.py\n M backend/integration/client.py\n M backend/integration/sso_auth.py\n M backend/medsupplier/permissions.py\n M backend/medsupplier/views.py\n M frontend/src/context/AuthContext.jsx\n M frontend/src/pages/LoginPage.jsx\n M frontend/src/services/api.js\n M frontend/src/services/authService.js\n?? backend/integration/authorization.py\n?? backend/integration/authorization_contract.py\n?? backend/integration/central_auth.py\n?? backend/integration/local_tokens.py\n?? backend/integration/tests_b_offline.py\n?? backend/integration/tests_ch_offline.py\n?? backend/integration/tests_d_offline.py\n?? backend/integration/tests_d_session_offline.py\n?? backend/integration/tests_decision_a_offline.py\n?? backend/integration/trust_jwt.py\n?? docs/security/DECISION_A_AUTH.openapi.json\n?? docs/security/DECISION_A_AUTH_CONTRACT.md\n?? docs/security/REC-SSO-03D/\n?? docs/security/REC_SSO_03B_CH.openapi.json\n?? docs/security/REC_SSO_03B_CH_CONTRACT.md\n?? docs/security/REC_SSO_03B_DURABLE.openapi.json\n?? docs/security/REC_SSO_03B_DURABLE_CONTRACT.md\n?? docs/security/REC_SSO_03D_S2_P0R_SERVICE_GRANTS_2026-10-19.md\n?? frontend/scripts/test-decision-a-offline.mjs\n?? frontend/scripts/test-decision-b-offline.mjs\n"
+  }
+}

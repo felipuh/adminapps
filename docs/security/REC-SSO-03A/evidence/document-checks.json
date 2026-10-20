@@ -1,0 +1,116 @@
+{
+  "result": "PASS",
+  "local_links": [
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "../REC-SSO-03/REPORT.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "../REC-SSO-03/DECISIONS.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "../REC-SSO-03/APPROVAL_MATRIX.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "../REC-SSO-03/EVIDENCE.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "DIFF_A_REVISED_PROPOSAL.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "COMPATIBILITY.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "IMPLEMENTATION_AND_ACCEPTANCE.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "../REC-SSO-03/APPROVAL_MATRIX.md#rec-sso-03a--texto-exacto-para-adjudicaci\u00f3n-humana",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "evidence/APPROVAL_MATRIX.before.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "SHA256SUMS",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "evidence/baseline.json",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "evidence/antecedents.json",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "evidence/integrity-final.json",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/REPORT.md",
+      "target": "evidence/document-checks.json",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03A/DIFF_A_REVISED_PROPOSAL.md",
+      "target": "../REC-SSO-02/proposals/A-legacy-deny-2fa.patch",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03/APPROVAL_MATRIX.md",
+      "target": "../REC-SSO-03A/REPORT.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03/APPROVAL_MATRIX.md",
+      "target": "../REC-SSO-03A/DIFF_A_REVISED_PROPOSAL.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03/APPROVAL_MATRIX.md",
+      "target": "../REC-SSO-03A/COMPATIBILITY.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03/APPROVAL_MATRIX.md",
+      "target": "../REC-SSO-03A/IMPLEMENTATION_AND_ACCEPTANCE.md",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03/APPROVAL_MATRIX.md",
+      "target": "../REC-SSO-03A/SHA256SUMS",
+      "ok": true
+    },
+    {
+      "file": "adminapps/docs/security/REC-SSO-03/APPROVAL_MATRIX.md",
+      "target": "../REC-SSO-03A/evidence/APPROVAL_MATRIX.before.md",
+      "ok": true
+    }
+  ],
+  "whitespace_errors": [],
+  "approval_append_only": true,
+  "no_approved_state": true,
+  "application_tests": "NOT_EXECUTED",
+  "patches_applied": false,
+  "initial_scan": "document-checks-initial.json records forward links before final artifacts were generated; all final links checked here."
+}
