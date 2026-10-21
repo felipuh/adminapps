@@ -82,4 +82,10 @@ class RuntimeBoundaryMiddleware:
 
     def __call__(self, request):
         verify_connection()
+        from django.conf import settings
+        if settings.ADMINAPPS_RUNTIME_PROFILE == 'admin' and (
+            request.headers.get('Authorization') or request.headers.get('X-API-Key')
+        ):
+            from django.http import HttpResponseForbidden
+            return HttpResponseForbidden('Django Admin requiere una sesión humana por cookie.')
         return self.get_response(request)

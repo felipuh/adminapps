@@ -106,6 +106,9 @@ def main():
         if args.stage >= 'C':
             run([sys.executable, str(HERE / 'catalog.py')], 'catalog',
                 {'LAB04_PROFILE': 'control_plane', 'LAB04_ROLE': 'lab04_control_plane'})
+        if args.stage >= 'D':
+            run([sys.executable, str(HERE / 'admin_checks.py')], 'admin',
+                {'LAB04_PROFILE': 'admin', 'LAB04_ROLE': 'lab04_admin'})
         run([sys.executable, str(HERE / 'acceptance.py'), 'fixed'], 'acceptance')
         run(['pg_ctl', '-D', str(data), '-l', str(runtime / 'server.log'),
              '-m', 'fast', '-w', 'restart'], 'restart')

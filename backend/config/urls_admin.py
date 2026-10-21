@@ -1,5 +1,5 @@
 """Dedicated human Django Admin process."""
-from django.contrib import admin
+from apps.users.runtime_admin import site
 from django.urls import path
 
-urlpatterns = [path('admin/', admin.site.urls)]
+urlpatterns = [path('admin/', site.urls)]

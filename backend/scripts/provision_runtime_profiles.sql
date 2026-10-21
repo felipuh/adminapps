@@ -143,6 +143,15 @@ BEGIN
     EXECUTE format('GRANT SELECT, INSERT ON public.product_entitlement_audit_logs, public.module_activity_logs TO %I',runtime_name);
     EXECUTE format('GRANT SELECT ON public.invoices, public.payment_methods TO %I',runtime_name);
   END IF;
+  IF profile = 'admin' THEN
+    EXECUTE format('GRANT SELECT ON public.iso_standards, public.organization_modules, public.product_entitlement_audit_logs, public.module_activity_logs, public.invoices, public.payment_methods TO %I',runtime_name);
+    EXECUTE format('GRANT UPDATE ON public.organization_settings TO %I',runtime_name);
+    EXECUTE format('GRANT SELECT, INSERT ON public.django_admin_log TO %I',runtime_name);
+    -- Admin uses cookies and may revoke authority via user/membership changes.
+    -- It does not issue JWT/MFA authority or create users/invitations.
+    EXECUTE format('REVOKE INSERT ON public.users, public.user_sessions, public.user_organizations, public.sso_sessions FROM %I',runtime_name);
+    EXECUTE format('REVOKE INSERT, UPDATE ON public.two_factor_auth, public.two_factor_challenges, public.organization_invitations FROM %I',runtime_name);
+  END IF;
   -- Only sequences backing a table with legitimate runtime INSERT.
   FOR item IN SELECT c.relname,a.attname FROM pg_class c
       JOIN pg_attribute a ON a.attrelid=c.oid AND a.attnum>0 AND NOT a.attisdropped

@@ -1,0 +1,412 @@
+{
+  "result.json": {
+    "stage": "D",
+    "status": "PASS_POSTGRESQL_LAB",
+    "private_socket": true,
+    "tcp": false,
+    "financial_migrations": 0,
+    "principals": [
+      "lab04_iam",
+      "lab04_control_plane",
+      "lab04_admin",
+      "lab04_events"
+    ]
+  },
+  "cleanup.json": {
+    "owned_runtime_removed": true
+  },
+  "admin.json": [
+    {
+      "case": "root login",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "root index",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "users.user changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "users.userorganization changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "users.usersession changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "users.useractivitylog changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "organizations.organization changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "organizations.organizationsettings changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "organizations.organizationinvitation changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "organizations.organizationfeatureflag changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.productsystem changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.organizationproductentitlement changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.productentitlementauditlog changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.isostandard changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.organizationmodule changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.moduleactivitylog changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "subscriptions.plan changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "subscriptions.subscription changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "subscriptions.invoice changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "subscriptions.paymentmethod changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "platform login",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "platform index",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "tenant_admin login",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "tenant index",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "tenant users scoped",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "staff login",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "staff no admission",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "viewer login",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "viewer no admission",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "disabled login",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "disabled no admission",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "technical credential denied",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "bearer cannot substitute admin cookie",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "tenant foreign target hidden",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "platform protected target hidden",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "legitimate form",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "CSRF missing",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "legitimate user write",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "admin mutation and log rollback",
+      "status": "PASS",
+      "principal": "lab04_admin"
+    },
+    {
+      "case": "privilege payload rejected",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "delete retained",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "password bypass denied",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "higher membership authority denied",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "tenant settings form",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "tenant settings write",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "disabled existing cookie",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "revoked bearer plus valid cookie denied",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    }
+  ],
+  "functional-results.json": [
+    {
+      "test": "test_lab.Lab.test_02_durable_client_lifecycle",
+      "status": "PASS",
+      "seconds": 0.57
+    },
+    {
+      "test": "test_lab.Lab.test_03_two_refresh",
+      "status": "PASS",
+      "seconds": 0.239
+    },
+    {
+      "test": "test_lab.Lab.test_04_refresh_revoke_both_orders",
+      "status": "PASS",
+      "seconds": 0.526
+    },
+    {
+      "test": "test_lab.Lab.test_05_logout_rotation",
+      "status": "PASS",
+      "seconds": 0.464
+    },
+    {
+      "test": "test_lab.Lab.test_06_individual_and_global_revocation",
+      "status": "PASS",
+      "seconds": 0.744
+    },
+    {
+      "test": "test_lab.Lab.test_09_password_and_activity_all_write_paths",
+      "status": "PASS",
+      "seconds": 1.504
+    },
+    {
+      "test": "test_lab.Lab.test_10_trigger_guards",
+      "status": "PASS",
+      "seconds": 0.325
+    },
+    {
+      "test": "test_lab.Lab.test_12_rollback_local_central_outbox",
+      "status": "PASS",
+      "seconds": 0.298
+    },
+    {
+      "test": "test_lab.Lab.test_13_hash_upgrade",
+      "status": "PASS",
+      "seconds": 0.328
+    },
+    {
+      "test": "test_lab.Lab.test_14_reset_vs_hash_upgrade",
+      "status": "PASS",
+      "seconds": 0.405
+    },
+    {
+      "test": "test_lab.Lab.test_15_b_authority_separation",
+      "status": "PASS",
+      "seconds": 0.731
+    },
+    {
+      "test": "test_lab.Lab.test_18_legacy_foreign_and_cookie",
+      "status": "PASS",
+      "seconds": 0.236
+    },
+    {
+      "test": "test_extended.Extended.test_23_insert_failure_login_mfa",
+      "status": "PASS",
+      "seconds": 0.477
+    },
+    {
+      "test": "test_extended.Extended.test_24_backup_mfa",
+      "status": "PASS",
+      "seconds": 0.492
+    },
+    {
+      "test": "test_extended.Extended.test_25_b_and_human_concurrency",
+      "status": "PASS",
+      "seconds": 0.841
+    },
+    {
+      "test": "__main__.Added.test_mfa_totp_registration",
+      "status": "PASS",
+      "seconds": 0.724
+    },
+    {
+      "test": "__main__.Added.test_b_service_and_retention",
+      "status": "PASS",
+      "seconds": 0.525
+    }
+  ],
+  "acceptance-fixed.json": {
+    "phase": "fixed",
+    "before_revoke": 200,
+    "after_revoke": 401,
+    "delete_reinsert_sqlstate": "42501",
+    "after_attack_fresh_connection": 401,
+    "handler_delta_after_attack": 0,
+    "pids": [
+      20046,
+      20047
+    ],
+    "token_sha256": "8de4e2d768760080824990963d68b74bb1c2fdb539cfffa37df327c16ec83f28",
+    "sid": "7882e5c9-94b0-446b-ad2f-0a4c5614b2e1",
+    "refresh": "DENIED",
+    "lost_response_retry": 0
+  },
+  "acceptance-restart.json": {
+    "phase": "restart",
+    "access_http": 401,
+    "refresh": "DENIED",
+    "handler_delta": 0,
+    "pid": 20066,
+    "token_sha256": "8de4e2d768760080824990963d68b74bb1c2fdb539cfffa37df327c16ec83f28"
+  }
+}
