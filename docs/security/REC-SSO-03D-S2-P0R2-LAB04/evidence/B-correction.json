@@ -1,0 +1,318 @@
+{
+  "correction": "Restore require_human import after post-test import relocation; B original delivery superseded by correction.",
+  "results": {
+    "organizations.json": [
+      {
+        "case": "create tenant identity",
+        "http": 201,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "read organization",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "authorized rename",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "settings preferences",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "settings cross tenant",
+        "http": 404,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "settings platform field",
+        "http": 400,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "tenant quota held",
+        "http": 403,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "tenant trial held",
+        "http": 400,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "no physical deletion",
+        "http": 405,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "suspend",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "suspended membership",
+        "http": 403,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "reactivate existing contract",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "invite create",
+        "http": 201,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "invitation preview",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "invite foreign",
+        "http": 400,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "invite role escalation",
+        "http": 400,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "invitation reparent",
+        "http": 400,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "viewer cannot invite",
+        "http": 403,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "staff cannot invite",
+        "http": 403,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "technical credential rejected",
+        "http": 403,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "cancel create",
+        "http": 201,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "cancel",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "cancelled preview denied",
+        "http": 400,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "membership deactivation",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "membership reparent denied",
+        "http": 400,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "member physical deletion denied",
+        "http": 405,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "user physical deletion denied",
+        "http": 405,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "create membership",
+        "http": 201,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "audit and tenant event rollback",
+        "kind": "ALLOW",
+        "status": "PASS"
+      },
+      {
+        "case": "withdraw inviter membership",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      },
+      {
+        "case": "revoked invitation authority",
+        "http": 400,
+        "principal": "lab04_control_plane",
+        "kind": "DENY_AUTHORIZATION"
+      },
+      {
+        "case": "restore inviter membership",
+        "http": 200,
+        "principal": "lab04_control_plane",
+        "kind": "ALLOW"
+      }
+    ],
+    "invitation-consumption.json": {
+      "principal": "lab04_iam",
+      "register": 201,
+      "replay": 400,
+      "persisted_status": "accepted"
+    },
+    "functional-results.json": [
+      {
+        "test": "test_lab.Lab.test_02_durable_client_lifecycle",
+        "status": "PASS",
+        "seconds": 0.645
+      },
+      {
+        "test": "test_lab.Lab.test_03_two_refresh",
+        "status": "PASS",
+        "seconds": 0.27
+      },
+      {
+        "test": "test_lab.Lab.test_04_refresh_revoke_both_orders",
+        "status": "PASS",
+        "seconds": 0.568
+      },
+      {
+        "test": "test_lab.Lab.test_05_logout_rotation",
+        "status": "PASS",
+        "seconds": 0.521
+      },
+      {
+        "test": "test_lab.Lab.test_06_individual_and_global_revocation",
+        "status": "PASS",
+        "seconds": 0.801
+      },
+      {
+        "test": "test_lab.Lab.test_09_password_and_activity_all_write_paths",
+        "status": "PASS",
+        "seconds": 1.523
+      },
+      {
+        "test": "test_lab.Lab.test_10_trigger_guards",
+        "status": "PASS",
+        "seconds": 0.364
+      },
+      {
+        "test": "test_lab.Lab.test_12_rollback_local_central_outbox",
+        "status": "PASS",
+        "seconds": 0.341
+      },
+      {
+        "test": "test_lab.Lab.test_13_hash_upgrade",
+        "status": "PASS",
+        "seconds": 0.367
+      },
+      {
+        "test": "test_lab.Lab.test_14_reset_vs_hash_upgrade",
+        "status": "PASS",
+        "seconds": 0.455
+      },
+      {
+        "test": "test_lab.Lab.test_15_b_authority_separation",
+        "status": "PASS",
+        "seconds": 0.946
+      },
+      {
+        "test": "test_lab.Lab.test_18_legacy_foreign_and_cookie",
+        "status": "PASS",
+        "seconds": 0.271
+      },
+      {
+        "test": "test_extended.Extended.test_23_insert_failure_login_mfa",
+        "status": "PASS",
+        "seconds": 0.534
+      },
+      {
+        "test": "test_extended.Extended.test_24_backup_mfa",
+        "status": "PASS",
+        "seconds": 0.55
+      },
+      {
+        "test": "test_extended.Extended.test_25_b_and_human_concurrency",
+        "status": "PASS",
+        "seconds": 0.93
+      },
+      {
+        "test": "__main__.Added.test_mfa_totp_registration",
+        "status": "PASS",
+        "seconds": 0.766
+      },
+      {
+        "test": "__main__.Added.test_b_service_and_retention",
+        "status": "PASS",
+        "seconds": 0.428
+      }
+    ],
+    "acceptance-fixed.json": {
+      "phase": "fixed",
+      "before_revoke": 200,
+      "after_revoke": 401,
+      "delete_reinsert_sqlstate": "42501",
+      "after_attack_fresh_connection": 401,
+      "handler_delta_after_attack": 0,
+      "pids": [
+        8189,
+        8190
+      ],
+      "token_sha256": "6c4b2a11ae94da5622f49dd641e7eaea3bab5e3c4b602a7155bf97908b697131",
+      "sid": "ba5e2e87-f660-47c0-933f-a9c55a49692f",
+      "refresh": "DENIED",
+      "lost_response_retry": 0
+    },
+    "acceptance-restart.json": {
+      "phase": "restart",
+      "access_http": 401,
+      "refresh": "DENIED",
+      "handler_delta": 0,
+      "pid": 8206,
+      "token_sha256": "6c4b2a11ae94da5622f49dd641e7eaea3bab5e3c4b602a7155bf97908b697131"
+    },
+    "cleanup.json": {
+      "owned_runtime_removed": true
+    }
+  }
+}

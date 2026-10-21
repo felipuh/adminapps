@@ -1,12 +1,12 @@
 {
-  "development_commit": "2d0a6bbef80bfab4225cb44a8ee8a8a0d201415d",
-  "objective": "LAB04-B",
+  "development_commit": "8b09b7516ae7175dd9f9da44e8757d515048b49e",
+  "objective": "LAB04-B-correction",
   "files": {
     "backend/apps/organizations/serializers.py": "e466d7ab08748dd65df76214094c1aaa5213bbce47442d392c39acd3ff28ac1f",
     "backend/apps/organizations/views.py": "e38e6db38b6c8cab84946ac13084927460965b6400ff2c2d7d92286ee61af72f",
     "backend/apps/users/api_authorization.py": "73db3f83a93b10c8988a38c063fca55219a82f807f3bc3b80d42b7b6e5ed01f6",
     "backend/apps/users/runtime_policy.py": "a7490b57091e4ca2cdded9b4a1dc9abe052374b1efb9823068cf45b167dd2028",
-    "backend/apps/users/views.py": "7a923efa401fa1d19783de35b387b9ed9d443f69c1b6d67d176e017f08b972b9",
+    "backend/apps/users/views.py": "8ea8a571f2cf2faf5e710ac4b1962682b748803d9a1d88b025f7dcc5a17a66d7",
     "backend/config/runtime_profiles.py": "da2b438067852672fb193a406218a6360ad3d82bdd1a312d48e27f7dc5c6d4b1",
     "backend/config/urls_admin.py": "f4e7085b375ec1fe5c22a61f1c5000617a64b8429354078ac02ee7f1bcc95d85",
     "backend/config/urls_control_plane.py": "030c500ee75d91339912b17ef8ae45ae481cbe9b6afe6ffd541aeca59f606ada",
@@ -30,10 +30,11 @@
     "backend/scripts/provision_runtime_profiles.sql": "73de68cf0b2cf60c1715794854e89f3712f0f651ee32e087fccd4da06ef5c28f",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/ARCHITECTURE.md": "2e14bc71993bcfdf36fb4cc3a0357917c46231e513dd0aff40faf5edcf85863e",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/DELIVERY.md": "e33917018b7eaf5d344cafb7b5a463edd4c1542b5c2dd0a973fa41172148b5b5",
-    "docs/security/REC-SSO-03D-S2-P0R2-LAB04/GIT-LEDGER.json": "90b8fe6426b1b87272ce90e29594c5081e3836c517a079a15d627c84f6034405",
+    "docs/security/REC-SSO-03D-S2-P0R2-LAB04/GIT-LEDGER.json": "abcf4a57d9c8e0e9c982cb71ed2d83194dc136474e1c92c8389e5a19cccf9133",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/baseline.json": "ce3d2161c5f8f6fe7b79933eeda5d138fe2532286c24f44b877970f2747294f2",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/A-source-hashes.json": "5aa9ed366551852addb1ce8ebddc7ba65c3e3632c5985212a73765fa47658fc9",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/A.json": "7cfed730eba74f34965eb8860215dc5eae421589dc482b8b47026b05670b981d",
+    "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/B-correction.json": "a2351b6d952df9d5a54bd7404f26da9d5bab8fd7afe9d1df4b0aaffc2820e6aa",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/B.json": "ad576ca82fbe5220c8676f725f6556dde310d622d395de562b5e428d6a170a95"
   }
 }

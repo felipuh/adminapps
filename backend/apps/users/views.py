@@ -1,8 +1,8 @@
 """
 Views for Users - Admin Apps
 """
-from apps.users.api_authorization import ControlPlaneMixin
-from .runtime_policy import AuditedMutationMixin, require_human
+from apps.users.api_authorization import ControlPlaneMixin, require_human
+from .runtime_policy import AuditedMutationMixin
 
 from rest_framework import viewsets, status, filters, serializers
 from rest_framework.decorators import action

@@ -6,5 +6,12 @@
     "delivery_commit": "d00bd608d30c623143ae38836d226c7da2df067a",
     "remote_verified": "d00bd608d30c623143ae38836d226c7da2df067a",
     "delivery_branch": "lab04/reviewed-delivery-20261021"
+  },
+  {
+    "objective": "LAB04-B",
+    "development_commit": "2d0a6bbef80bfab4225cb44a8ee8a8a0d201415d",
+    "delivery_commit": "b3b11be06e6f94f227f2ad89816107405d940e9e",
+    "remote_verified": "b3b11be06e6f94f227f2ad89816107405d940e9e",
+    "status": "SUPERSEDED_BY_IMPORT_CORRECTION"
   }
 ]
