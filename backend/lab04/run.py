@@ -109,10 +109,20 @@ def main():
         if args.stage >= 'D':
             run([sys.executable, str(HERE / 'admin_checks.py')], 'admin',
                 {'LAB04_PROFILE': 'admin', 'LAB04_ROLE': 'lab04_admin'})
+        if args.stage == 'E':
+            run([sys.executable, str(HERE / 'provision_rejections.py')], 'provision-rejections')
+            run([sys.executable, str(HERE / 'seed_central.py')], 'seed-central', {'LAB04_MIGRATE': '1'})
+            run([sys.executable, str(HERE / 'central_business.py')], 'central-business',
+                {'LAB04_PROFILE': 'control_plane', 'LAB04_ROLE': 'lab04_control_plane'})
+            run([sys.executable, str(HERE / 'cross_process.py'), 'before'], 'cross-process-before',
+                {'LAB04_PROFILE': 'control_plane', 'LAB04_ROLE': 'lab04_control_plane'})
         run([sys.executable, str(HERE / 'acceptance.py'), 'fixed'], 'acceptance')
         run(['pg_ctl', '-D', str(data), '-l', str(runtime / 'server.log'),
              '-m', 'fast', '-w', 'restart'], 'restart')
         run([sys.executable, str(HERE / 'acceptance.py'), 'restart'], 'acceptance-restart')
+        if args.stage == 'E':
+            run([sys.executable, str(HERE / 'cross_process.py'), 'restart'], 'cross-process-restart',
+                {'LAB04_PROFILE': 'control_plane', 'LAB04_ROLE': 'lab04_control_plane'})
         run([sys.executable, str(HERE / 'functional.py')], 'functional')
         (root / 'result.json').write_text(json.dumps({
             'stage': args.stage, 'status': 'PASS_POSTGRESQL_LAB',

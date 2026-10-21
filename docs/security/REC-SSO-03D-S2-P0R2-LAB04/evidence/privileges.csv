@@ -1,0 +1,101 @@
+principal,table,effective_table_privileges
+lab04_iam,auth_group,SELECT
+lab04_iam,auth_group_permissions,SELECT
+lab04_iam,auth_permission,SELECT
+lab04_iam,django_content_type,SELECT
+lab04_iam,django_session,SELECT INSERT UPDATE DELETE
+lab04_iam,integration_api_keys,SELECT
+lab04_iam,integration_sso_clients,SELECT
+lab04_iam,integration_sso_clients_tenants,SELECT
+lab04_iam,organization_feature_flags,SELECT
+lab04_iam,organization_invitations,SELECT UPDATE
+lab04_iam,organization_product_entitlements,SELECT
+lab04_iam,organization_settings,SELECT
+lab04_iam,organizations,SELECT
+lab04_iam,plans,SELECT
+lab04_iam,product_systems,SELECT
+lab04_iam,sso_revocation_outbox,SELECT INSERT
+lab04_iam,sso_security_fence,SELECT
+lab04_iam,sso_sessions,SELECT INSERT UPDATE
+lab04_iam,subscriptions,SELECT
+lab04_iam,two_factor_auth,SELECT INSERT UPDATE
+lab04_iam,two_factor_auth_logs,SELECT INSERT
+lab04_iam,two_factor_challenges,SELECT INSERT UPDATE
+lab04_iam,user_activity_logs,SELECT INSERT
+lab04_iam,user_organizations,SELECT INSERT UPDATE
+lab04_iam,user_sessions,SELECT INSERT UPDATE
+lab04_iam,users,SELECT INSERT UPDATE
+lab04_iam,users_groups,SELECT
+lab04_iam,users_user_permissions,SELECT
+lab04_control_plane,auth_group,SELECT
+lab04_control_plane,auth_group_permissions,SELECT
+lab04_control_plane,auth_permission,SELECT
+lab04_control_plane,django_content_type,SELECT
+lab04_control_plane,django_session,SELECT INSERT UPDATE DELETE
+lab04_control_plane,integration_api_keys,SELECT
+lab04_control_plane,integration_sso_clients,SELECT
+lab04_control_plane,integration_sso_clients_tenants,SELECT
+lab04_control_plane,invoices,SELECT
+lab04_control_plane,iso_standards,SELECT INSERT UPDATE
+lab04_control_plane,module_activity_logs,SELECT INSERT
+lab04_control_plane,organization_feature_flags,SELECT
+lab04_control_plane,organization_invitations,SELECT INSERT UPDATE
+lab04_control_plane,organization_modules,SELECT INSERT UPDATE
+lab04_control_plane,organization_product_entitlements,SELECT INSERT UPDATE
+lab04_control_plane,organization_settings,SELECT INSERT UPDATE
+lab04_control_plane,organizations,SELECT INSERT UPDATE
+lab04_control_plane,payment_methods,SELECT
+lab04_control_plane,plans,SELECT INSERT UPDATE
+lab04_control_plane,product_entitlement_audit_logs,SELECT INSERT
+lab04_control_plane,product_systems,SELECT INSERT UPDATE
+lab04_control_plane,sso_revocation_outbox,SELECT INSERT
+lab04_control_plane,sso_security_fence,SELECT
+lab04_control_plane,sso_sessions,SELECT INSERT UPDATE
+lab04_control_plane,subscriptions,SELECT
+lab04_control_plane,tenant_integration_outbox,SELECT INSERT
+lab04_control_plane,two_factor_auth,SELECT INSERT UPDATE
+lab04_control_plane,two_factor_auth_logs,SELECT INSERT
+lab04_control_plane,two_factor_challenges,SELECT INSERT UPDATE
+lab04_control_plane,user_activity_logs,SELECT INSERT
+lab04_control_plane,user_organizations,SELECT INSERT UPDATE
+lab04_control_plane,user_sessions,SELECT INSERT UPDATE
+lab04_control_plane,users,SELECT INSERT UPDATE
+lab04_control_plane,users_groups,SELECT
+lab04_control_plane,users_user_permissions,SELECT
+lab04_admin,auth_group,SELECT
+lab04_admin,auth_group_permissions,SELECT
+lab04_admin,auth_permission,SELECT
+lab04_admin,django_admin_log,SELECT INSERT
+lab04_admin,django_content_type,SELECT
+lab04_admin,django_session,SELECT INSERT UPDATE DELETE
+lab04_admin,integration_api_keys,SELECT
+lab04_admin,integration_sso_clients,SELECT
+lab04_admin,integration_sso_clients_tenants,SELECT
+lab04_admin,invoices,SELECT
+lab04_admin,iso_standards,SELECT
+lab04_admin,module_activity_logs,SELECT
+lab04_admin,organization_feature_flags,SELECT
+lab04_admin,organization_invitations,SELECT
+lab04_admin,organization_modules,SELECT
+lab04_admin,organization_product_entitlements,SELECT
+lab04_admin,organization_settings,SELECT UPDATE
+lab04_admin,organizations,SELECT
+lab04_admin,payment_methods,SELECT
+lab04_admin,plans,SELECT
+lab04_admin,product_entitlement_audit_logs,SELECT
+lab04_admin,product_systems,SELECT
+lab04_admin,sso_revocation_outbox,SELECT INSERT
+lab04_admin,sso_security_fence,SELECT
+lab04_admin,sso_sessions,SELECT UPDATE
+lab04_admin,subscriptions,SELECT
+lab04_admin,two_factor_auth,SELECT
+lab04_admin,two_factor_auth_logs,SELECT INSERT
+lab04_admin,two_factor_challenges,SELECT
+lab04_admin,user_activity_logs,SELECT INSERT
+lab04_admin,user_organizations,SELECT UPDATE
+lab04_admin,user_sessions,SELECT UPDATE
+lab04_admin,users,SELECT UPDATE
+lab04_admin,users_groups,SELECT
+lab04_admin,users_user_permissions,SELECT
+lab04_events,sso_revocation_outbox,SELECT
+lab04_events,tenant_integration_outbox,SELECT

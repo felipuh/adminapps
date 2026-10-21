@@ -1,0 +1,1255 @@
+{
+  "result.json": {
+    "stage": "E",
+    "status": "PASS_POSTGRESQL_LAB",
+    "private_socket": true,
+    "tcp": false,
+    "financial_migrations": 0,
+    "principals": [
+      "lab04_iam",
+      "lab04_control_plane",
+      "lab04_admin",
+      "lab04_events"
+    ]
+  },
+  "cleanup.json": {
+    "owned_runtime_removed": true
+  },
+  "boundaries.json": [
+    {
+      "role": "lab04_iam",
+      "sql": "DELETE FROM user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "TRUNCATE user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "DELETE FROM sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "TRUNCATE sso_security_fence",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "DELETE FROM sso_revocation_outbox",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "ALTER TABLE user_sessions DISABLE TRIGGER ALL",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "CREATE TABLE public.lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "CREATE TEMP TABLE lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "SET ROLE lab04_maintenance",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "SET session_replication_role='replica'",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "UPDATE sso_security_fence SET enabled=true",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "SET ROLE lab04_control_plane",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "SET ROLE lab04_admin",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "SET ROLE lab04_events",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "DELETE FROM user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "TRUNCATE user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "DELETE FROM sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "TRUNCATE sso_security_fence",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "DELETE FROM sso_revocation_outbox",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "ALTER TABLE user_sessions DISABLE TRIGGER ALL",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "CREATE TABLE public.lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "CREATE TEMP TABLE lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "SET ROLE lab04_maintenance",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "SET session_replication_role='replica'",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "UPDATE sso_security_fence SET enabled=true",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "SET ROLE lab04_iam",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "SET ROLE lab04_admin",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "SET ROLE lab04_events",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "DELETE FROM user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "TRUNCATE user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "DELETE FROM sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "TRUNCATE sso_security_fence",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "DELETE FROM sso_revocation_outbox",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "ALTER TABLE user_sessions DISABLE TRIGGER ALL",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "CREATE TABLE public.lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "CREATE TEMP TABLE lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "SET ROLE lab04_maintenance",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "SET session_replication_role='replica'",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "UPDATE sso_security_fence SET enabled=true",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "SET ROLE lab04_iam",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "SET ROLE lab04_control_plane",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "SET ROLE lab04_events",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "DELETE FROM user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "TRUNCATE user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "DELETE FROM sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "TRUNCATE sso_security_fence",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "DELETE FROM sso_revocation_outbox",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "ALTER TABLE user_sessions DISABLE TRIGGER ALL",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "CREATE TABLE public.lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "CREATE TEMP TABLE lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "SET ROLE lab04_maintenance",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "SET session_replication_role='replica'",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "UPDATE sso_security_fence SET enabled=true",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "SET ROLE lab04_iam",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "SET ROLE lab04_control_plane",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "SET ROLE lab04_admin",
+      "sqlstate": "42501"
+    }
+  ],
+  "provision-rejections.json": [
+    {
+      "case": "membership",
+      "status": "DENY_SQL_POLICY"
+    },
+    {
+      "case": "incoming membership",
+      "status": "DENY_SQL_POLICY"
+    },
+    {
+      "case": "createdb",
+      "status": "DENY_SQL_POLICY"
+    }
+  ],
+  "central-business.json": [
+    {
+      "case": "tenant, Decision B, fence and both outboxes rollback",
+      "status": "PASS"
+    },
+    {
+      "case": "tenant suspension revokes B",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "human session remains separate",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "reactivate tenant",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "CP cannot resurrect central authority",
+      "sqlstate": "P0001",
+      "status": "PASS"
+    }
+  ],
+  "cross-process-before.json": {
+    "principal": "lab04_control_plane",
+    "access": 401,
+    "invitation": 401,
+    "handler_calls": 0,
+    "refresh": "DENIED",
+    "token_sha256": "143196680edae06d36eb71714e940714b2305bad87656af2f73924e25377ecc9"
+  },
+  "cross-process-restart.json": {
+    "principal": "lab04_control_plane",
+    "access": 401,
+    "invitation": 401,
+    "handler_calls": 0,
+    "refresh": "DENIED",
+    "token_sha256": "143196680edae06d36eb71714e940714b2305bad87656af2f73924e25377ecc9"
+  },
+  "admin.json": [
+    {
+      "case": "root login",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "root index",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "users.user changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "users.userorganization changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "users.usersession changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "users.useractivitylog changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "organizations.organization changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "organizations.organizationsettings changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "organizations.organizationinvitation changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "organizations.organizationfeatureflag changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.productsystem changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.organizationproductentitlement changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.productentitlementauditlog changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.isostandard changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.organizationmodule changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "products.moduleactivitylog changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "subscriptions.plan changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "subscriptions.subscription changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "subscriptions.invoice changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "subscriptions.paymentmethod changelist",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "platform login",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "platform index",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "tenant_admin login",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "tenant index",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "tenant users scoped",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "staff login",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "staff no admission",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "viewer login",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "viewer no admission",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "disabled login",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "disabled no admission",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "technical credential denied",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "bearer cannot substitute admin cookie",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "tenant foreign target hidden",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "platform protected target hidden",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "legitimate form",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "CSRF missing",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "legitimate user write",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "admin mutation and log rollback",
+      "status": "PASS",
+      "principal": "lab04_admin"
+    },
+    {
+      "case": "privilege payload rejected",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "delete retained",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "password bypass denied",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "higher membership authority denied",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "tenant settings form",
+      "http": 200,
+      "principal": "lab04_admin",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "tenant settings write",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "disabled existing cookie",
+      "http": 302,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    },
+    {
+      "case": "revoked bearer plus valid cookie denied",
+      "http": 403,
+      "principal": "lab04_admin",
+      "kind": "DENY_OR_REDIRECT"
+    }
+  ],
+  "catalog.json": [
+    {
+      "case": "inactive catalog plan",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "plan update",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "plan commercial pricing held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "plan quota held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "plan trial held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "plan activation held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "plan platform role insufficient",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "tenant cannot see inactive plan",
+      "http": 404,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "product create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "separate product",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "product metadata update",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "product identity immutable",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "product billing held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "unknown field rejected",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "viewer product catalog denied",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "platform catalog read",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "trial default held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "entitlement create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "foreign product scope",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "tenant reparent rejected",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "product reparent rejected",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "trial toggle held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "entitlement disable",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "entitlement enable explicit",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "tenant cannot control entitlements",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "entitlement audit",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "entitlement and audit rollback",
+      "status": "PASS",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "standard create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "module assignment",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "module disable",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "module trial held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "module foreign relation rejected",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "product deactivation",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invoice authorized read",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invoice write held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "subscription write held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "payment write held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    }
+  ],
+  "organizations.json": [
+    {
+      "case": "create tenant identity",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "read organization",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "authorized rename",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "settings preferences",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "settings cross tenant",
+      "http": 404,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "settings platform field",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "tenant quota held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "tenant trial held",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "no physical deletion",
+      "http": 405,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "suspend",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "suspended membership",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "reactivate existing contract",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invite create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invitation preview",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invite foreign",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "invite role escalation",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "invitation reparent",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "viewer cannot invite",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "staff cannot invite",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "technical credential rejected",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "cancel create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "cancel",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "cancelled preview denied",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "membership deactivation",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "membership reparent denied",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "member physical deletion denied",
+      "http": 405,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "user physical deletion denied",
+      "http": 405,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "create membership",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "audit and tenant event rollback",
+      "kind": "ALLOW",
+      "status": "PASS"
+    },
+    {
+      "case": "withdraw inviter membership",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "revoked invitation authority",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "restore inviter membership",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    }
+  ],
+  "invitation-consumption.json": {
+    "principal": "lab04_iam",
+    "register": 201,
+    "replay": 400,
+    "persisted_status": "accepted"
+  },
+  "functional-results.json": [
+    {
+      "test": "test_lab.Lab.test_02_durable_client_lifecycle",
+      "status": "PASS",
+      "seconds": 0.613
+    },
+    {
+      "test": "test_lab.Lab.test_03_two_refresh",
+      "status": "PASS",
+      "seconds": 0.279
+    },
+    {
+      "test": "test_lab.Lab.test_04_refresh_revoke_both_orders",
+      "status": "PASS",
+      "seconds": 0.583
+    },
+    {
+      "test": "test_lab.Lab.test_05_logout_rotation",
+      "status": "PASS",
+      "seconds": 0.5
+    },
+    {
+      "test": "test_lab.Lab.test_06_individual_and_global_revocation",
+      "status": "PASS",
+      "seconds": 0.977
+    },
+    {
+      "test": "test_lab.Lab.test_09_password_and_activity_all_write_paths",
+      "status": "PASS",
+      "seconds": 1.663
+    },
+    {
+      "test": "test_lab.Lab.test_10_trigger_guards",
+      "status": "PASS",
+      "seconds": 0.361
+    },
+    {
+      "test": "test_lab.Lab.test_12_rollback_local_central_outbox",
+      "status": "PASS",
+      "seconds": 0.346
+    },
+    {
+      "test": "test_lab.Lab.test_13_hash_upgrade",
+      "status": "PASS",
+      "seconds": 0.362
+    },
+    {
+      "test": "test_lab.Lab.test_14_reset_vs_hash_upgrade",
+      "status": "PASS",
+      "seconds": 0.473
+    },
+    {
+      "test": "test_lab.Lab.test_15_b_authority_separation",
+      "status": "PASS",
+      "seconds": 0.784
+    },
+    {
+      "test": "test_lab.Lab.test_18_legacy_foreign_and_cookie",
+      "status": "PASS",
+      "seconds": 0.277
+    },
+    {
+      "test": "test_extended.Extended.test_23_insert_failure_login_mfa",
+      "status": "PASS",
+      "seconds": 0.563
+    },
+    {
+      "test": "test_extended.Extended.test_24_backup_mfa",
+      "status": "PASS",
+      "seconds": 0.553
+    },
+    {
+      "test": "test_extended.Extended.test_25_b_and_human_concurrency",
+      "status": "PASS",
+      "seconds": 1.049
+    },
+    {
+      "test": "__main__.Added.test_mfa_totp_registration",
+      "status": "PASS",
+      "seconds": 0.87
+    },
+    {
+      "test": "__main__.Added.test_b_service_and_retention",
+      "status": "PASS",
+      "seconds": 0.395
+    }
+  ],
+  "acceptance-fixed.json": {
+    "phase": "fixed",
+    "before_revoke": 200,
+    "after_revoke": 401,
+    "delete_reinsert_sqlstate": "42501",
+    "after_attack_fresh_connection": 401,
+    "handler_delta_after_attack": 0,
+    "pids": [
+      21427,
+      21428
+    ],
+    "token_sha256": "7eb95fe15e05caabe4a71020fd71a08787859df0715496f0131a6d99456522c1",
+    "sid": "992519be-c56a-4bea-bc5a-4a5829007ac4",
+    "refresh": "DENIED",
+    "lost_response_retry": 0
+  },
+  "acceptance-restart.json": {
+    "phase": "restart",
+    "access_http": 401,
+    "refresh": "DENIED",
+    "handler_delta": 0,
+    "pid": 21447,
+    "token_sha256": "7eb95fe15e05caabe4a71020fd71a08787859df0715496f0131a6d99456522c1"
+  },
+  "process-iam.json": {
+    "profile": "iam",
+    "current_user": "lab04_iam",
+    "routes": [
+      [
+        "/admin/",
+        404
+      ],
+      [
+        "/api/products/systems/",
+        404
+      ],
+      [
+        "/api/auth/users/",
+        404
+      ]
+    ],
+    "connection_aliases": [
+      "default"
+    ]
+  },
+  "process-control_plane.json": {
+    "profile": "control_plane",
+    "current_user": "lab04_control_plane",
+    "routes": [
+      [
+        "/admin/",
+        404
+      ],
+      [
+        "/api/auth/login/",
+        404
+      ],
+      [
+        "/api/products/systems/",
+        403
+      ]
+    ],
+    "connection_aliases": [
+      "default"
+    ]
+  },
+  "process-admin.json": {
+    "profile": "admin",
+    "current_user": "lab04_admin",
+    "routes": [
+      [
+        "/api/auth/login/",
+        404
+      ],
+      [
+        "/api/products/systems/",
+        404
+      ],
+      [
+        "/admin/",
+        302
+      ]
+    ],
+    "connection_aliases": [
+      "default"
+    ]
+  },
+  "process-events.json": {
+    "profile": "events",
+    "current_user": "lab04_events",
+    "routes": [
+      [
+        "/admin/",
+        404
+      ],
+      [
+        "/api/auth/login/",
+        404
+      ]
+    ],
+    "connection_aliases": [
+      "default"
+    ]
+  }
+}

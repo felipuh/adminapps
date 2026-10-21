@@ -1,0 +1,69 @@
+{
+  "lab04-adminapps-integration-offline.log": {
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0
+  },
+  "lab04-adminapps-mfa-offline.log": {
+    "tests": 21,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0
+  },
+  "lab04-adminapps-human-offline.log": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0,
+    "baseline_authenticator": false
+  },
+  "lab04-adminapps-B-offline-root.log": {
+    "tests": 43,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0,
+    "scope": "offline simulated ORM/locking/rollback, NOT PostgreSQL concurrency or HTTP E2E"
+  },
+  "lab04-adminapps-D-offline-root.log": {
+    "tests": 57,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0
+  },
+  "lab04-isosmart-B.log": {
+    "tests": 35,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0,
+    "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+  },
+  "lab04-isosmart-D.log": {
+    "tests": 36,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0
+  },
+  "lab04-ISO_Smart_MedSupplier-B.log": {
+    "tests": 35,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0,
+    "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+  },
+  "lab04-ISO_Smart_MedSupplier-D.log": {
+    "tests": 36,
+    "failures": 0,
+    "errors": 0,
+    "database_attempts": 0,
+    "network_attempts": 0
+  }
+}
