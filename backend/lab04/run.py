@@ -97,6 +97,12 @@ def main():
         for profile in ('iam', 'control_plane', 'admin', 'events'):
             run([sys.executable, str(HERE / 'process_probe.py')], 'process-' + profile,
                 {'LAB04_PROFILE': profile, 'LAB04_ROLE': 'lab04_' + profile})
+        if args.stage >= 'B':
+            run([sys.executable, str(HERE / 'fixtures.py')], 'fixtures', {'LAB04_MIGRATE': '1'})
+            run([sys.executable, str(HERE / 'tokens.py')], 'tokens', {'LAB04_PROFILE': 'iam'})
+            run([sys.executable, str(HERE / 'organizations.py')], 'organizations',
+                {'LAB04_PROFILE': 'control_plane', 'LAB04_ROLE': 'lab04_control_plane'})
+            run([sys.executable, str(HERE / 'consume_invitation.py')], 'invitation-consumption', {'LAB04_PROFILE': 'iam'})
         run([sys.executable, str(HERE / 'acceptance.py'), 'fixed'], 'acceptance')
         run(['pg_ctl', '-D', str(data), '-l', str(runtime / 'server.log'),
              '-m', 'fast', '-w', 'restart'], 'restart')

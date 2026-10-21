@@ -136,6 +136,10 @@ BEGIN
   EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON public.django_session TO %I',runtime_name);
   END IF;
   -- Profile-specific business grants are deliberately explicit below.
+  IF profile = 'control_plane' THEN
+    EXECUTE format('GRANT SELECT, INSERT, UPDATE ON public.organizations, public.organization_settings, public.organization_invitations TO %I',runtime_name);
+    EXECUTE format('GRANT SELECT, INSERT ON public.tenant_integration_outbox TO %I',runtime_name);
+  END IF;
   -- Only sequences backing a table with legitimate runtime INSERT.
   FOR item IN SELECT c.relname,a.attname FROM pg_class c
       JOIN pg_attribute a ON a.attrelid=c.oid AND a.attnum>0 AND NOT a.attisdropped
