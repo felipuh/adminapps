@@ -1,0 +1,20 @@
+--- a/backend/apps/products/models.py
++++ b/backend/apps/products/models.py
+@@ -133,6 +133,8 @@
+             return False
+         if self.status not in {'active', 'trial'}:
+             return False
++        if self.starts_at and timezone.now() < self.starts_at:
++            return False
+         if self.ends_at and timezone.now() > self.ends_at:
+             return False
+         return True
+@@ -174,6 +176,8 @@
+             return 'entitlement_disabled'
+         if self.status not in {'active', 'trial'}:
+             return 'entitlement_inactive'
++        if self.starts_at and timezone.now() < self.starts_at:
++            return 'entitlement_not_started'
+         if self.ends_at and timezone.now() > self.ends_at:
+             return 'entitlement_expired'
+         if not self.product.is_available:

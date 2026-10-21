@@ -1,0 +1,267 @@
+[
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "docs/PRODUCT_NEUTRAL_ADMINAPPS_CONTRACT.md",
+    "sha256": "69bba978d4cbf02652b175289e845bb159cc1cbfe3959503abce3c4865479da2"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "docs/ADMINAPPS_SAAS_PRODUCT_OPERATIONS.md",
+    "sha256": "814f920597200f986e1fa51e562cc6d5c2108ebeb41e6b9c44eccc7b32673db4"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "docs/security/REC-SSO-02/REPORT.md",
+    "sha256": "c24dd956516ded79bc29d5b908f890a236ef415a7bfc67fa1b9e458cebf74ccb"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "docs/security/REC-SSO-02/DECISIONS.md",
+    "sha256": "54c76ccf51b727f5b610a01f88383e5f8f7bbdb0912fd9313cd541812f6f23a3"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "docs/security/REC-SSO-02/MIGRATION_READINESS.md",
+    "sha256": "76ddcecf0d185519081570947f831e7e4d4d9fc3aa6bf1dc78ec406ee3fabcac"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "docs/security/REC-SSO-02/evidence/tests-after.json",
+    "sha256": "ba0e3a7d278370572d8b304134aa6deac84557df2ec53bda504392d324edeb86"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "docs/security/REC-SSO-02/evidence/REC-2FA-04-closure.json",
+    "sha256": "de4ae7a97ec3f6636253a6e207e067f4f2a6c3f3d9e72cd721b360ea442cc6ce"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMP_01_CONTRACT_FREEZE_HUMAN_DECISION_2026-10-12.md",
+    "sha256": "d0c0c16bb7b15bcc5fe006c9751993b518999182c6d3cb926eeefbbbcb3a492f"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/integration/views.py",
+    "sha256": "333459137cbc21e7b5519b27c6c2fa8aa46275cdf6821075ffa83339087515dd"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/integration/sso_views.py",
+    "sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/integration/services.py",
+    "sha256": "afcb9bf36ff5a57f58db6459b22a6428dc7b41c114c5c6a968c34d1d7c386cb2"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/products/models.py",
+    "sha256": "ba4ec3e07de9740fb23e7e38b0117245014dc07ea379daa39f26764a9d946193"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/products/serializers.py",
+    "sha256": "0a866337d5e6103bae629d558bbdc88655d5bfbea1ae78716249ec845517fc3c"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/products/views.py",
+    "sha256": "ca3b3ca8a8b6f466223aa30d39e393613ba54dbbf97033840dd785f588cc7d69"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/organizations/models.py",
+    "sha256": "5bd225f9309974a42448784cebd9630b7848f992905e6da0f975177a843b17ab"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/subscriptions/models.py",
+    "sha256": "6baff9248a147840a45fedb5d9c5a340e947e17fcbb20f85325ba32061c3615e"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/users/models.py",
+    "sha256": "cea7f1ca875d3399d7f62c1e556651f0c913fc9482dba89833a300f2324f82cc"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/config/settings.py",
+    "sha256": "408f1c5a3ddf03f7993897e29e661cb4962a8b17cc7b42c0d13db649148dde56"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/users/urls.py",
+    "sha256": "1cd54e5fa6d02d8cd086dd56d719ca9070d8d11791392450e496834bce45bd3a"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/scripts/rec_sso_02_offline.py",
+    "sha256": "caf4c81e54e4452f161b4f9bfafadbdec28f223c83c7c3d263686237ed9c24c7"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/users/migrations/0004_transactional_2fa.py",
+    "sha256": "bfac6174b4858ea59aeacf602796e9925496a4da1bd37f53909841e4278677fe"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/integration/migrations/0006_integration_api_key_lifecycle.py",
+    "sha256": "454bba94025a46467d9ea169bae7ef5415e6601391c03a1b36cad1d85e8b309b"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "AGENTS.md",
+    "sha256": "fc475d23b2545b27305aee78dc394be47546a54a8be7db83f70533023763e82f"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "docs/transformation/ISO_SMART_AI_ADMINAPPS_CONTRACT.md",
+    "sha256": "482b8fb28a55e7ce57950f93745b83fd1b0be2e8bd477be54e3ac492d27812ab"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "docs/adr/0002-adminapps-control-plane-boundary.md",
+    "sha256": "b7acacdd6932a702804db73a72fe9208aac96a4c6f147402e22e8636a0c00178"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "docs/FRONTEND_AUTH_SECURITY.md",
+    "sha256": "3dca0799a06f84a90343297016d8348b4d59f93f48916e520c5dde47574e0dc3"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/integration/client.py",
+    "sha256": "9edceb9510fd70e1c2c5e7c1c7040a8c16d74a26f8c143abce62b976f4e6639a"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/integration/backends.py",
+    "sha256": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/integration/sso_auth.py",
+    "sha256": "7df0bac1cbdc90ca91e5dbcc7e0148a89cd20b583d8974a0365e4aea433b282e"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/integration/middleware.py",
+    "sha256": "4e4fd04c3e51f30db7776228a83e4bbb1a2aed48eb424b0d0e18a10e07a29fd5"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/backend/settings.py",
+    "sha256": "14255f0ac7051c535443dac1c255d1042a6de8772e8934089dee0d5cfd9b67bf"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/authentication/serializers.py",
+    "sha256": "0afed8538e75c6880ae582fc8be3dab899d502954dc4509ca523de79b1eaaa7e"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/authentication/views.py",
+    "sha256": "912b2ddd1920d8efb430f322bcd2d2671d2f9abe94735dddcf32c464f31bea15"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/authentication/permissions.py",
+    "sha256": "ece91e2bf3a81f90383da56ba5ed2692342b33833490184b539fdda9045a6743"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/authentication/backends.py",
+    "sha256": "536c9e2d905e40c0530a5a3dd2bae449359fb95ade2bc955db314348cef9470f"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/authentication/cookie_auth.py",
+    "sha256": "cdc9900e0f5096166b16d44e2c8591b80e871b688f00945114a7dfba6e5a3ce4"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/foundation/qms_organization.py",
+    "sha256": "14cff52084c237fd8b03d499a7bb50ef811e2674089a3879246cc3d42f13951e"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "frontend/src/services/authService.js",
+    "sha256": "84aa61087336c22418a265168ecddef7e62327ccdc03fbb384018b66544b6451"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "docs/internal/ADMINAPPS_MEDSUPPLIER_CONTRACT.md",
+    "sha256": "a58e4700375efabc5bd77220fac5e64e208db1d9dc583d1fe04b825d691d85e5"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "docs/validation/AdminApps_Integration_Decision.md",
+    "sha256": "9965f2f429586ff3e5ee7b9b63583785a3a1457e4705c732f62126a7f68c4f23"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "docs/security/Role_Permission_Matrix.md",
+    "sha256": "b07e6b51bf41fc76376a02461b6dc818cd0846b7001d975319ce636332f6e6e0"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/integration/client.py",
+    "sha256": "1341bd80b0442b0bf385530f17450afb666472b2f7dd90c49c37a6bd7e6eb31d"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/integration/backends.py",
+    "sha256": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/integration/sso_auth.py",
+    "sha256": "7df0bac1cbdc90ca91e5dbcc7e0148a89cd20b583d8974a0365e4aea433b282e"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/integration/middleware.py",
+    "sha256": "4e4fd04c3e51f30db7776228a83e4bbb1a2aed48eb424b0d0e18a10e07a29fd5"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/backend/settings.py",
+    "sha256": "ffe1253fa622e8d393ec51edda106d62e88c384c000a7b3cfbffad654c6998e0"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/authentication/serializers.py",
+    "sha256": "fcb2ae9de989cb780267f83cd79cc998d8d7df28ee354bedfe39e6dd5280b60e"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/authentication/views.py",
+    "sha256": "c9770171e199c80debfe7721acf840142ddb8a73f88490a4cbdbfd116a81ebde"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/medsupplier/permissions.py",
+    "sha256": "1c1855b46e5d6f26f6af26765fde77d43ef6e4c6705a0ad82e011738efb831be"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "backend/medsupplier/views.py",
+    "sha256": "966f67c16dced493b9912194c9f24c235a81d355c1e20653343844417b33c21b"
+  },
+  {
+    "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+    "file": "frontend/src/services/authService.js",
+    "sha256": "b87f058c7e14ec3d6b8748d37b8c39949d60ce6d93f9cc3b78b6bfd3569f6adc"
+  },
+  {
+    "repository": "/home/felipe/proyectos/isosmart",
+    "file": "backend/foundation/operational_bearer_identity.py",
+    "sha256": "a8b792e8f9eae8b8e10d7937236e5fe5085e23161966485cd0099d905dd34599"
+  },
+  {
+    "repository": "/home/felipe/proyectos/adminapps",
+    "file": "backend/apps/integration/models.py",
+    "sha256": "64d26271b6970261f58f6984af575bd90ab6054719cdb5d44696616d19bf2ec2"
+  }
+]

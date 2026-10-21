@@ -1,0 +1,9 @@
+suite,repository,tests,failures,errors,database_attempts,network_attempts,result,scope_limit
+AdminApps control-plane authorization,adminapps,19,0,0,0,0,PASS_OFFLINE,serializer policy/permission gates and mocked registration effects only
+AdminApps Django Admin authorization,adminapps,10,0,0,0,0,PASS_OFFLINE,role-aligned ModelAdmin permissions, tenant scoping, privilege-field guards, bulk-delete protections, and immutable audit/session records
+AdminApps Decision D successor,adminapps,57,0,0,0,0,PASS_OFFLINE,includes 43 inherited B methods and new unadjudicated-trial hold
+ISO Smart Decision D,isosmart,361,0,0,0,0,PASS_OFFLINE,offline ORM and request dispatch
+ISO Smart D session,isosmart,36,0,0,0,0,PASS_OFFLINE,offline session/signature flow
+MedSupplier Decision D,ISO_Smart_MedSupplier,533,0,0,0,0,PASS_OFFLINE,offline ORM and request dispatch
+MedSupplier D session,ISO_Smart_MedSupplier,36,0,0,0,0,PASS_OFFLINE,offline session/signature flow
+AdminApps REC-2FA-04,adminapps,21,0,0,0,0,PASS_OFFLINE,offline contract and issuance-gate regression

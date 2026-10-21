@@ -1,0 +1,57 @@
+[
+  {
+    "suite": "med-d",
+    "exit": 0,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/med-d.methods.json",
+      "integration/tests_d_offline.py"
+    ]
+  },
+  {
+    "suite": "med-d_session",
+    "exit": 0,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/med-d_session.methods.json",
+      "integration/tests_d_session_offline.py"
+    ]
+  },
+  {
+    "suite": "med-b",
+    "exit": 0,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/med-b.methods.json",
+      "integration/tests_b_offline.py"
+    ]
+  },
+  {
+    "suite": "med-ch",
+    "exit": 1,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/med-ch.methods.json",
+      "integration/tests_ch_offline.py"
+    ]
+  },
+  {
+    "suite": "med-decision_a",
+    "exit": 1,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/med-decision_a.methods.json",
+      "integration/tests_decision_a_offline.py"
+    ]
+  }
+]

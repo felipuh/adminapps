@@ -1,0 +1,1531 @@
+{
+  "scope": "STATIC_CONTRACT_ADJUDICATION_ONLY_NO_HOST_DB_IPC_RUNTIME",
+  "date": "2026-10-09",
+  "timezone": "America/Costa_Rica",
+  "baseline": {
+    "branch": "hardening/p0-p1-enterprise-readiness",
+    "head": "42f007d1fcd30743a28b0f1b998ab8c6ae93ba7c",
+    "status": " M backend/config/settings.py\n?? backend/apps/financial/__init__.py\n?? backend/apps/financial/apps.py\n?? backend/apps/financial/authorization.py\n?? backend/apps/financial/capabilities.py\n?? backend/apps/financial/executor.py\n?? backend/apps/financial/issuer.py\n?? backend/apps/financial/migrations/0001_financial_s1_foundation.py\n?? backend/apps/financial/migrations/0002_postgresql_security.py\n?? backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py\n?? backend/apps/financial/migrations/0004_s3_admission_controls.py\n?? backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py\n?? backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py\n?? backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py\n?? backend/apps/financial/migrations/__init__.py\n?? backend/apps/financial/models.py\n?? backend/apps/financial/rbac.py\n?? backend/apps/financial/services.py\n?? backend/apps/financial/tests.py\n?? backend/scripts/s3_isolation_host_lab.sh\n?? backend/scripts/tests/test_s3_capability_offline.py\n?? backend/scripts/tests/test_s3_isolation_host_lab_validation.sh\n?? backend/scripts/verify_financial_s1_postgres.sh\n?? backend/scripts/verify_financial_s3_postgres.sh\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_AUTHORITY_SECURITY_AMENDMENT_02_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S1_IMPLEMENTATION_REPORT_2026-10-08.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S2_IMPLEMENTATION_REPORT_2026-10-08.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_DECISION_02_A_EXECUTION_REPORT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_EXISTING_VM_ISOLATION_EXECUTION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_FINAL_VALIDATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMPLEMENTATION_REPORT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_ISOLATION_ADMINISTRATIVE_GATE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_OFFLINE_EVIDENCE_2026-10-09.json\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_PROCESS_ISOLATION_PREFLIGHT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SYSTEMCALLFILTER_VALIDATION_REMEDIATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_TRANSACTIONAL_SECURITY_EVIDENCE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_SECURITY_DECISION_02_A_2026-10-09.md\n",
+    "index_diff": ""
+  },
+  "historical_integrity": {
+    "preexisting_sha256": [
+      {
+        "path": "backend/apps/financial/__init__.py",
+        "expected_sha256": "36936a7b21a12b38c4e8e36e446d942dac9f3fbd596f9d8fd457016013dac376",
+        "observed_sha256": "36936a7b21a12b38c4e8e36e446d942dac9f3fbd596f9d8fd457016013dac376",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/apps.py",
+        "expected_sha256": "407daa7fdd10bb4f0c23f0e6e339713bfed97d9da059d6fe590683982df98d2d",
+        "observed_sha256": "407daa7fdd10bb4f0c23f0e6e339713bfed97d9da059d6fe590683982df98d2d",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/authorization.py",
+        "expected_sha256": "53a314f4553842b919013e90580c0e499c010cffd91aa074ea2608e659bf13e5",
+        "observed_sha256": "53a314f4553842b919013e90580c0e499c010cffd91aa074ea2608e659bf13e5",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/capabilities.py",
+        "expected_sha256": "b389eb73799eb13ea8af0285dbf4d6f20a3b917fe58d7707da96fadfc24f44dd",
+        "observed_sha256": "b389eb73799eb13ea8af0285dbf4d6f20a3b917fe58d7707da96fadfc24f44dd",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/executor.py",
+        "expected_sha256": "8b39ada47540612f5f5bcf8361bff7b6154847e2f62d897f29a813721eaf7e46",
+        "observed_sha256": "8b39ada47540612f5f5bcf8361bff7b6154847e2f62d897f29a813721eaf7e46",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/issuer.py",
+        "expected_sha256": "9d8c3535500cbeec299a2e7df2e6ecb3c69383e8e22a9accfa50b37ead785859",
+        "observed_sha256": "9d8c3535500cbeec299a2e7df2e6ecb3c69383e8e22a9accfa50b37ead785859",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/migrations/0001_financial_s1_foundation.py",
+        "expected_sha256": "5a89a52317ccc76e576d500b2b730e90c6150e1ab6b25164f743742f6ac2f5fc",
+        "observed_sha256": "5a89a52317ccc76e576d500b2b730e90c6150e1ab6b25164f743742f6ac2f5fc",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/migrations/0002_postgresql_security.py",
+        "expected_sha256": "362abb5ef1fa481f53e930bbeeafc541171582e83892973f5600e4fdc79d9967",
+        "observed_sha256": "362abb5ef1fa481f53e930bbeeafc541171582e83892973f5600e4fdc79d9967",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py",
+        "expected_sha256": "b56a6b57c11c96bc1cc2ee546ce65aa05588f3ba0e08f3afdafc14cb78466477",
+        "observed_sha256": "b56a6b57c11c96bc1cc2ee546ce65aa05588f3ba0e08f3afdafc14cb78466477",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/migrations/0004_s3_admission_controls.py",
+        "expected_sha256": "aa71f24899d1a44b8b8da0141f898d92d5e99d7f00edd2e98ffe09dff31bb92a",
+        "observed_sha256": "aa71f24899d1a44b8b8da0141f898d92d5e99d7f00edd2e98ffe09dff31bb92a",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py",
+        "expected_sha256": "d2c7dfc9ddd944bda90f7b5dce17b48646928e0ee51f9727f0f98152d476a384",
+        "observed_sha256": "d2c7dfc9ddd944bda90f7b5dce17b48646928e0ee51f9727f0f98152d476a384",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py",
+        "expected_sha256": "f99e34850afd4e375c72311138a2c98e629abd95fb9c0ee2c8a73aadf21efd58",
+        "observed_sha256": "f99e34850afd4e375c72311138a2c98e629abd95fb9c0ee2c8a73aadf21efd58",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py",
+        "expected_sha256": "b098ed9d9e79dee94c5fce2d8542c93316a2d09dbec4065d1b4f79fa4602057f",
+        "observed_sha256": "b098ed9d9e79dee94c5fce2d8542c93316a2d09dbec4065d1b4f79fa4602057f",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/migrations/__init__.py",
+        "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "observed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/models.py",
+        "expected_sha256": "898e485465ee836ccef735e5310d56c63eaf8ba1fbe3a26ce3ae576a9179a876",
+        "observed_sha256": "898e485465ee836ccef735e5310d56c63eaf8ba1fbe3a26ce3ae576a9179a876",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/rbac.py",
+        "expected_sha256": "1e858a4c411259a36d7e47d70374e1b0594fe29af77cd4e4498aea88c11116d2",
+        "observed_sha256": "1e858a4c411259a36d7e47d70374e1b0594fe29af77cd4e4498aea88c11116d2",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/services.py",
+        "expected_sha256": "1a0b8491900b041ac9f088ffbd275d8b19212e1e960ce8c7343395ffb96d11d8",
+        "observed_sha256": "1a0b8491900b041ac9f088ffbd275d8b19212e1e960ce8c7343395ffb96d11d8",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/apps/financial/tests.py",
+        "expected_sha256": "dcfb23119739e851b306d790828b28cd7c3069e62fe5cc39ef9ea5ccb292e585",
+        "observed_sha256": "dcfb23119739e851b306d790828b28cd7c3069e62fe5cc39ef9ea5ccb292e585",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/scripts/s3_isolation_host_lab.sh",
+        "expected_sha256": "4a50014a069289af60afacedc89b6d93468edbd3921c8c6d72c3e005d6c086a5",
+        "observed_sha256": "4a50014a069289af60afacedc89b6d93468edbd3921c8c6d72c3e005d6c086a5",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/scripts/tests/test_s3_isolation_host_lab_validation.sh",
+        "expected_sha256": "7abcce0dbeb7ce8a4bcdb067e4fe4b92b6ccd9057d9c6f6b12231e0da35d3f26",
+        "observed_sha256": "7abcce0dbeb7ce8a4bcdb067e4fe4b92b6ccd9057d9c6f6b12231e0da35d3f26",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/scripts/verify_financial_s1_postgres.sh",
+        "expected_sha256": "8588a72b792ad7d93b0183a255ba10d6bf8e05d6eae4774fb3c8473dc4e1f852",
+        "observed_sha256": "8588a72b792ad7d93b0183a255ba10d6bf8e05d6eae4774fb3c8473dc4e1f852",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/scripts/verify_financial_s3_postgres.sh",
+        "expected_sha256": "48898a6380fffce07647be9a8f94644b0bc3f4d74541fb5a88d4c476834a6840",
+        "observed_sha256": "48898a6380fffce07647be9a8f94644b0bc3f4d74541fb5a88d4c476834a6840",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_AUTHORITY_SECURITY_AMENDMENT_02_2026-10-09.md",
+        "expected_sha256": "e03022a6ca4da9eeb9022b50972d30ff6628fa5a5ab9614ba3e21d6a5af9ef79",
+        "observed_sha256": "e03022a6ca4da9eeb9022b50972d30ff6628fa5a5ab9614ba3e21d6a5af9ef79",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S1_IMPLEMENTATION_REPORT_2026-10-08.md",
+        "expected_sha256": "a316b93846ca3d59062011f5621134dbbc4a024ace17b225a0c1dfc30416ab88",
+        "observed_sha256": "a316b93846ca3d59062011f5621134dbbc4a024ace17b225a0c1dfc30416ab88",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S2_IMPLEMENTATION_REPORT_2026-10-08.md",
+        "expected_sha256": "c29ed6dca9ebb9eb778cf8ad605b8533eff61d097363e891d2876a6da041c0e6",
+        "observed_sha256": "c29ed6dca9ebb9eb778cf8ad605b8533eff61d097363e891d2876a6da041c0e6",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_DECISION_02_A_EXECUTION_REPORT_2026-10-09.md",
+        "expected_sha256": "da5d01ba8f0e12c66ed068c868568bc4fa208871d478a017453562290e2eea2b",
+        "observed_sha256": "da5d01ba8f0e12c66ed068c868568bc4fa208871d478a017453562290e2eea2b",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_EXISTING_VM_ISOLATION_EXECUTION_2026-10-09.md",
+        "expected_sha256": "2a6b7228dbfbed45a5a4712ccff7cf4ad486ad00a5999e530940eb21c56ed840",
+        "observed_sha256": "2a6b7228dbfbed45a5a4712ccff7cf4ad486ad00a5999e530940eb21c56ed840",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_FINAL_VALIDATION_2026-10-09.md",
+        "expected_sha256": "c26d6a24804986e110757ddbd16a6ad6b8358dae8bc0aa0810462126adb01be6",
+        "observed_sha256": "c26d6a24804986e110757ddbd16a6ad6b8358dae8bc0aa0810462126adb01be6",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMPLEMENTATION_REPORT_2026-10-09.md",
+        "expected_sha256": "ad8a853363f5891e92dd993d845b9c6ddb8685de2998027008e210e617bb2fd2",
+        "observed_sha256": "ad8a853363f5891e92dd993d845b9c6ddb8685de2998027008e210e617bb2fd2",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_ISOLATION_ADMINISTRATIVE_GATE_2026-10-09.md",
+        "expected_sha256": "635fd2ffe4a6e8a1dadb83efc52f63bf5af8f91585f110ee5d7bd8660f549095",
+        "observed_sha256": "635fd2ffe4a6e8a1dadb83efc52f63bf5af8f91585f110ee5d7bd8660f549095",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_PROCESS_ISOLATION_PREFLIGHT_2026-10-09.md",
+        "expected_sha256": "41909c040571d8a633a11fae1be8652cec58cbfcd339ef7c503051ce78857bf2",
+        "observed_sha256": "41909c040571d8a633a11fae1be8652cec58cbfcd339ef7c503051ce78857bf2",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SYSTEMCALLFILTER_VALIDATION_REMEDIATION_2026-10-09.md",
+        "expected_sha256": "5ba1ae69baed48a33ef330411344fc1df0587ac714247b100e895eac02ce7e9c",
+        "observed_sha256": "5ba1ae69baed48a33ef330411344fc1df0587ac714247b100e895eac02ce7e9c",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_TRANSACTIONAL_SECURITY_EVIDENCE_2026-10-09.md",
+        "expected_sha256": "867ec4deb9adfb51854395f9b7486ddb1195faf8c3191696f819b67d282fd3a2",
+        "observed_sha256": "867ec4deb9adfb51854395f9b7486ddb1195faf8c3191696f819b67d282fd3a2",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_SECURITY_DECISION_02_A_2026-10-09.md",
+        "expected_sha256": "66af713c74bd44db4f43965c4b7a17e1410c5f65b62f22d55065e47ee2a5d3a3",
+        "observed_sha256": "66af713c74bd44db4f43965c4b7a17e1410c5f65b62f22d55065e47ee2a5d3a3",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/config/settings.py",
+        "expected_sha256": "408f1c5a3ddf03f7993897e29e661cb4962a8b17cc7b42c0d13db649148dde56",
+        "observed_sha256": "408f1c5a3ddf03f7993897e29e661cb4962a8b17cc7b42c0d13db649148dde56",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/scripts/bootstrap_smart3ai.sh",
+        "expected_sha256": "f14d2f013d6b1bdf849236cea1adccaccf8e3612f302a90a7343ea6f30a0d7d4",
+        "observed_sha256": "f14d2f013d6b1bdf849236cea1adccaccf8e3612f302a90a7343ea6f30a0d7d4",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/scripts/initial_data.py",
+        "expected_sha256": "9da8bc9d21c383ed3cac89a29f5419a0207d3164bbcaf53ada1f8321786e24b6",
+        "observed_sha256": "9da8bc9d21c383ed3cac89a29f5419a0207d3164bbcaf53ada1f8321786e24b6",
+        "result": "MATCH"
+      }
+    ],
+    "deliverable_sha256": [
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md",
+        "expected_sha256": "8b88cf2b23112ccfdf4df3ae94c468fc8de7e8de5182588b1557bb0b01ce853a",
+        "observed_sha256": "8b88cf2b23112ccfdf4df3ae94c468fc8de7e8de5182588b1557bb0b01ce853a",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md",
+        "expected_sha256": "374acbaae96195bb4bba0589bee4be1e24d317d40769e4ed79a2d59a241e73ec",
+        "observed_sha256": "374acbaae96195bb4bba0589bee4be1e24d317d40769e4ed79a2d59a241e73ec",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md",
+        "expected_sha256": "53b333dcfbcc9a8fbdd581993aec1b19ec6936ce91aea0c03bcabc8332cf443d",
+        "observed_sha256": "53b333dcfbcc9a8fbdd581993aec1b19ec6936ce91aea0c03bcabc8332cf443d",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md",
+        "expected_sha256": "41ccc2a911f2fae1e533e3d73e430676561d9a5a0d87e5fad16964e185f9fc4d",
+        "observed_sha256": "41ccc2a911f2fae1e533e3d73e430676561d9a5a0d87e5fad16964e185f9fc4d",
+        "result": "MATCH"
+      },
+      {
+        "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md",
+        "expected_sha256": "b2fdaa59e3094891060b8126b3825a56ae6fef958c4dd022397a96bc604891a7",
+        "observed_sha256": "b2fdaa59e3094891060b8126b3825a56ae6fef958c4dd022397a96bc604891a7",
+        "result": "MATCH"
+      },
+      {
+        "path": "backend/scripts/tests/test_s3_capability_offline.py",
+        "expected_sha256": "80569387baf0e1faa8bc3948f1f84c35336bdbdd5c42e1bbcec6841c00994e74",
+        "observed_sha256": "80569387baf0e1faa8bc3948f1f84c35336bdbdd5c42e1bbcec6841c00994e74",
+        "result": "MATCH"
+      }
+    ],
+    "reference_sha256": [
+      {
+        "path": "/home/felipe/.codex/attachments/a3bfc85a-846e-4a33-ba5b-a75143f75f42/Pasted text.txt",
+        "expected_sha256": "3b2b408845796f4a4f7301c8085719d6bef5ebbb8d914373c4524d07ce0b8af1",
+        "observed_sha256": "3b2b408845796f4a4f7301c8085719d6bef5ebbb8d914373c4524d07ce0b8af1",
+        "result": "MATCH"
+      },
+      {
+        "path": "/home/felipe/proyectos/isosmart/docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_CONTRACT_V1_1_2026-10-08.md",
+        "expected_sha256": "2a68c54a1acaae55d5dbf7d249692d60ac6bd9bcaebce2d274f58997937d444f",
+        "observed_sha256": "2a68c54a1acaae55d5dbf7d249692d60ac6bd9bcaebce2d274f58997937d444f",
+        "result": "MATCH"
+      },
+      {
+        "path": "/home/felipe/proyectos/isosmart/docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_AMENDMENT_01_DECISION_RECORD_2026-10-08.md",
+        "expected_sha256": "677cb7006c04ce35b6127e589fb46b26bb44aae491509c4fe2b0a39fb0eeacf8",
+        "observed_sha256": "677cb7006c04ce35b6127e589fb46b26bb44aae491509c4fe2b0a39fb0eeacf8",
+        "result": "MATCH"
+      },
+      {
+        "path": "/home/felipe/proyectos/isosmart/docs/transformation/ADMINAPPS_AI_FINANCIAL_AUTHORITY_IMPLEMENTATION_READINESS_2026-10-08.md",
+        "expected_sha256": "62ae466bd4482bb0c519d8a0bf0e198e02281084bcdadbed1aa698316e08d33d",
+        "observed_sha256": "62ae466bd4482bb0c519d8a0bf0e198e02281084bcdadbed1aa698316e08d33d",
+        "result": "MATCH"
+      }
+    ]
+  },
+  "source_sha256": {
+    "backend/apps/financial/__init__.py": "36936a7b21a12b38c4e8e36e446d942dac9f3fbd596f9d8fd457016013dac376",
+    "backend/apps/financial/apps.py": "407daa7fdd10bb4f0c23f0e6e339713bfed97d9da059d6fe590683982df98d2d",
+    "backend/apps/financial/authorization.py": "53a314f4553842b919013e90580c0e499c010cffd91aa074ea2608e659bf13e5",
+    "backend/apps/financial/capabilities.py": "b389eb73799eb13ea8af0285dbf4d6f20a3b917fe58d7707da96fadfc24f44dd",
+    "backend/apps/financial/executor.py": "8b39ada47540612f5f5bcf8361bff7b6154847e2f62d897f29a813721eaf7e46",
+    "backend/apps/financial/issuer.py": "9d8c3535500cbeec299a2e7df2e6ecb3c69383e8e22a9accfa50b37ead785859",
+    "backend/apps/financial/migrations/0001_financial_s1_foundation.py": "5a89a52317ccc76e576d500b2b730e90c6150e1ab6b25164f743742f6ac2f5fc",
+    "backend/apps/financial/migrations/0002_postgresql_security.py": "362abb5ef1fa481f53e930bbeeafc541171582e83892973f5600e4fdc79d9967",
+    "backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py": "b56a6b57c11c96bc1cc2ee546ce65aa05588f3ba0e08f3afdafc14cb78466477",
+    "backend/apps/financial/migrations/0004_s3_admission_controls.py": "aa71f24899d1a44b8b8da0141f898d92d5e99d7f00edd2e98ffe09dff31bb92a",
+    "backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py": "d2c7dfc9ddd944bda90f7b5dce17b48646928e0ee51f9727f0f98152d476a384",
+    "backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py": "f99e34850afd4e375c72311138a2c98e629abd95fb9c0ee2c8a73aadf21efd58",
+    "backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py": "b098ed9d9e79dee94c5fce2d8542c93316a2d09dbec4065d1b4f79fa4602057f",
+    "backend/apps/financial/migrations/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/apps/financial/models.py": "898e485465ee836ccef735e5310d56c63eaf8ba1fbe3a26ce3ae576a9179a876",
+    "backend/apps/financial/rbac.py": "1e858a4c411259a36d7e47d70374e1b0594fe29af77cd4e4498aea88c11116d2",
+    "backend/apps/financial/services.py": "1a0b8491900b041ac9f088ffbd275d8b19212e1e960ce8c7343395ffb96d11d8",
+    "backend/apps/financial/tests.py": "dcfb23119739e851b306d790828b28cd7c3069e62fe5cc39ef9ea5ccb292e585",
+    "backend/scripts/tests/test_s3_capability_offline.py": "80569387baf0e1faa8bc3948f1f84c35336bdbdd5c42e1bbcec6841c00994e74",
+    "backend/scripts/s3_isolation_host_lab.sh": "4a50014a069289af60afacedc89b6d93468edbd3921c8c6d72c3e005d6c086a5",
+    "backend/scripts/tests/test_s3_isolation_host_lab_validation.sh": "7abcce0dbeb7ce8a4bcdb067e4fe4b92b6ccd9057d9c6f6b12231e0da35d3f26",
+    "backend/scripts/verify_financial_s1_postgres.sh": "8588a72b792ad7d93b0183a255ba10d6bf8e05d6eae4774fb3c8473dc4e1f852",
+    "backend/scripts/verify_financial_s3_postgres.sh": "48898a6380fffce07647be9a8f94644b0bc3f4d74541fb5a88d4c476834a6840",
+    "backend/apps/integration/services.py": "afcb9bf36ff5a57f58db6459b22a6428dc7b41c114c5c6a968c34d1d7c386cb2"
+  },
+  "checks": [
+    {
+      "check": "python_ast_no_imports",
+      "result": "PASS",
+      "files": [
+        "backend/apps/financial/__init__.py",
+        "backend/apps/financial/apps.py",
+        "backend/apps/financial/authorization.py",
+        "backend/apps/financial/capabilities.py",
+        "backend/apps/financial/executor.py",
+        "backend/apps/financial/issuer.py",
+        "backend/apps/financial/migrations/0001_financial_s1_foundation.py",
+        "backend/apps/financial/migrations/0002_postgresql_security.py",
+        "backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py",
+        "backend/apps/financial/migrations/0004_s3_admission_controls.py",
+        "backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py",
+        "backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py",
+        "backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py",
+        "backend/apps/financial/migrations/__init__.py",
+        "backend/apps/financial/models.py",
+        "backend/apps/financial/rbac.py",
+        "backend/apps/financial/services.py",
+        "backend/apps/financial/tests.py",
+        "backend/scripts/tests/test_s3_capability_offline.py"
+      ]
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "backend/scripts/s3_isolation_host_lab.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "scope": "Parse only; no source/dispatch"
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "backend/scripts/tests/test_s3_isolation_host_lab_validation.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "scope": "Parse only; no source/dispatch"
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "backend/scripts/verify_financial_s1_postgres.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "scope": "Parse only; no source/dispatch"
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "backend/scripts/verify_financial_s3_postgres.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS",
+      "scope": "Parse only; no source/dispatch"
+    },
+    {
+      "check": "stdlib_json_representation_diagnostic",
+      "result": "PASS_OBSERVATIONS_ONLY",
+      "scope": "7 pure JSON examples; no application imports, signer, signature verification or DB. Equal signing messages imply reuse of the original signature; actual verifier acceptance is historical only for whitespace/identical duplicate.",
+      "canonicalization_reproduced_from": "backend/apps/financial/capabilities.py::canonical_capability_bytes",
+      "cases": [
+        {
+          "name": "canonical",
+          "wire_utf8": "{\"alg\":\"Ed25519\",\"aud\":\"adminapps-financial-admission\",\"capability_id\":\"00000000-0000-0000-0000-000000000006\",\"environment\":\"controlled_test\",\"exp\":\"2026-10-09T12:01:00Z\",\"grant_id\":\"00000000-0000-0000-0000-000000000005\",\"grant_version\":1,\"iat\":\"2026-10-09T12:00:00Z\",\"iss\":\"synthetic-issuer\",\"jti\":\"00000000-0000-0000-0000-000000000004\",\"kid\":\"synthetic-key\",\"material_request_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"nbf\":\"2026-10-09T12:00:00Z\",\"operation\":\"admit_reserve\",\"organization_id\":\"00000000-0000-0000-0000-000000000002\",\"producer_registration_id\":\"00000000-0000-0000-0000-000000000001\",\"product_id\":\"00000000-0000-0000-0000-000000000003\",\"version\":1}",
+          "raw_equals_emitter": true,
+          "same_reserialized_signing_message": true,
+          "last_wins_aud": "adminapps-financial-admission",
+          "first_wins_aud": "adminapps-financial-admission",
+          "parser_semantic_disagreement": false,
+          "canonical_message_sha256": "03218ff31fb76f46fc09ba63f955d4c00b2ef1cf51cf8a058eb73b3ac0788dc5"
+        },
+        {
+          "name": "whitespace",
+          "wire_utf8": "{\n  \"alg\": \"Ed25519\",\n  \"aud\": \"adminapps-financial-admission\",\n  \"capability_id\": \"00000000-0000-0000-0000-000000000006\",\n  \"environment\": \"controlled_test\",\n  \"exp\": \"2026-10-09T12:01:00Z\",\n  \"grant_id\": \"00000000-0000-0000-0000-000000000005\",\n  \"grant_version\": 1,\n  \"iat\": \"2026-10-09T12:00:00Z\",\n  \"iss\": \"synthetic-issuer\",\n  \"jti\": \"00000000-0000-0000-0000-000000000004\",\n  \"kid\": \"synthetic-key\",\n  \"material_request_hash\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n  \"nbf\": \"2026-10-09T12:00:00Z\",\n  \"operation\": \"admit_reserve\",\n  \"organization_id\": \"00000000-0000-0000-0000-000000000002\",\n  \"product_id\": \"00000000-0000-0000-0000-000000000003\",\n  \"producer_registration_id\": \"00000000-0000-0000-0000-000000000001\",\n  \"version\": 1\n}",
+          "raw_equals_emitter": false,
+          "same_reserialized_signing_message": true,
+          "last_wins_aud": "adminapps-financial-admission",
+          "first_wins_aud": "adminapps-financial-admission",
+          "parser_semantic_disagreement": false,
+          "canonical_message_sha256": "03218ff31fb76f46fc09ba63f955d4c00b2ef1cf51cf8a058eb73b3ac0788dc5"
+        },
+        {
+          "name": "reordered",
+          "wire_utf8": "{\"version\":1,\"producer_registration_id\":\"00000000-0000-0000-0000-000000000001\",\"product_id\":\"00000000-0000-0000-0000-000000000003\",\"organization_id\":\"00000000-0000-0000-0000-000000000002\",\"operation\":\"admit_reserve\",\"nbf\":\"2026-10-09T12:00:00Z\",\"material_request_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"kid\":\"synthetic-key\",\"jti\":\"00000000-0000-0000-0000-000000000004\",\"iss\":\"synthetic-issuer\",\"iat\":\"2026-10-09T12:00:00Z\",\"grant_version\":1,\"grant_id\":\"00000000-0000-0000-0000-000000000005\",\"exp\":\"2026-10-09T12:01:00Z\",\"environment\":\"controlled_test\",\"capability_id\":\"00000000-0000-0000-0000-000000000006\",\"aud\":\"adminapps-financial-admission\",\"alg\":\"Ed25519\"}",
+          "raw_equals_emitter": false,
+          "same_reserialized_signing_message": true,
+          "last_wins_aud": "adminapps-financial-admission",
+          "first_wins_aud": "adminapps-financial-admission",
+          "parser_semantic_disagreement": false,
+          "canonical_message_sha256": "03218ff31fb76f46fc09ba63f955d4c00b2ef1cf51cf8a058eb73b3ac0788dc5"
+        },
+        {
+          "name": "duplicate_identical",
+          "wire_utf8": "{\"alg\":\"Ed25519\",\"aud\":\"adminapps-financial-admission\",\"capability_id\":\"00000000-0000-0000-0000-000000000006\",\"environment\":\"controlled_test\",\"exp\":\"2026-10-09T12:01:00Z\",\"grant_id\":\"00000000-0000-0000-0000-000000000005\",\"grant_version\":1,\"iat\":\"2026-10-09T12:00:00Z\",\"iss\":\"synthetic-issuer\",\"jti\":\"00000000-0000-0000-0000-000000000004\",\"kid\":\"synthetic-key\",\"material_request_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"nbf\":\"2026-10-09T12:00:00Z\",\"operation\":\"admit_reserve\",\"organization_id\":\"00000000-0000-0000-0000-000000000002\",\"producer_registration_id\":\"00000000-0000-0000-0000-000000000001\",\"product_id\":\"00000000-0000-0000-0000-000000000003\",\"version\":1,\"aud\":\"adminapps-financial-admission\"}",
+          "raw_equals_emitter": false,
+          "same_reserialized_signing_message": true,
+          "last_wins_aud": "adminapps-financial-admission",
+          "first_wins_aud": "adminapps-financial-admission",
+          "parser_semantic_disagreement": false,
+          "canonical_message_sha256": "03218ff31fb76f46fc09ba63f955d4c00b2ef1cf51cf8a058eb73b3ac0788dc5"
+        },
+        {
+          "name": "duplicate_conflict_first",
+          "wire_utf8": "{\"aud\":\"other\",\"alg\":\"Ed25519\",\"aud\":\"adminapps-financial-admission\",\"capability_id\":\"00000000-0000-0000-0000-000000000006\",\"environment\":\"controlled_test\",\"exp\":\"2026-10-09T12:01:00Z\",\"grant_id\":\"00000000-0000-0000-0000-000000000005\",\"grant_version\":1,\"iat\":\"2026-10-09T12:00:00Z\",\"iss\":\"synthetic-issuer\",\"jti\":\"00000000-0000-0000-0000-000000000004\",\"kid\":\"synthetic-key\",\"material_request_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"nbf\":\"2026-10-09T12:00:00Z\",\"operation\":\"admit_reserve\",\"organization_id\":\"00000000-0000-0000-0000-000000000002\",\"producer_registration_id\":\"00000000-0000-0000-0000-000000000001\",\"product_id\":\"00000000-0000-0000-0000-000000000003\",\"version\":1}",
+          "raw_equals_emitter": false,
+          "same_reserialized_signing_message": true,
+          "last_wins_aud": "adminapps-financial-admission",
+          "first_wins_aud": "other",
+          "parser_semantic_disagreement": true,
+          "canonical_message_sha256": "03218ff31fb76f46fc09ba63f955d4c00b2ef1cf51cf8a058eb73b3ac0788dc5"
+        },
+        {
+          "name": "duplicate_conflict_last",
+          "wire_utf8": "{\"alg\":\"Ed25519\",\"aud\":\"adminapps-financial-admission\",\"capability_id\":\"00000000-0000-0000-0000-000000000006\",\"environment\":\"controlled_test\",\"exp\":\"2026-10-09T12:01:00Z\",\"grant_id\":\"00000000-0000-0000-0000-000000000005\",\"grant_version\":1,\"iat\":\"2026-10-09T12:00:00Z\",\"iss\":\"synthetic-issuer\",\"jti\":\"00000000-0000-0000-0000-000000000004\",\"kid\":\"synthetic-key\",\"material_request_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"nbf\":\"2026-10-09T12:00:00Z\",\"operation\":\"admit_reserve\",\"organization_id\":\"00000000-0000-0000-0000-000000000002\",\"producer_registration_id\":\"00000000-0000-0000-0000-000000000001\",\"product_id\":\"00000000-0000-0000-0000-000000000003\",\"version\":1,\"aud\":\"other\"}",
+          "raw_equals_emitter": false,
+          "same_reserialized_signing_message": false,
+          "last_wins_aud": "other",
+          "first_wins_aud": "adminapps-financial-admission",
+          "parser_semantic_disagreement": true,
+          "canonical_message_sha256": "65f69bc6fefa595616402bae4cfd1327a4419aa06d11913e4478c8e08b0ee77e"
+        },
+        {
+          "name": "escaped_duplicate_first",
+          "wire_utf8": "{\"\\u0061ud\":\"other\",\"alg\":\"Ed25519\",\"aud\":\"adminapps-financial-admission\",\"capability_id\":\"00000000-0000-0000-0000-000000000006\",\"environment\":\"controlled_test\",\"exp\":\"2026-10-09T12:01:00Z\",\"grant_id\":\"00000000-0000-0000-0000-000000000005\",\"grant_version\":1,\"iat\":\"2026-10-09T12:00:00Z\",\"iss\":\"synthetic-issuer\",\"jti\":\"00000000-0000-0000-0000-000000000004\",\"kid\":\"synthetic-key\",\"material_request_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"nbf\":\"2026-10-09T12:00:00Z\",\"operation\":\"admit_reserve\",\"organization_id\":\"00000000-0000-0000-0000-000000000002\",\"producer_registration_id\":\"00000000-0000-0000-0000-000000000001\",\"product_id\":\"00000000-0000-0000-0000-000000000003\",\"version\":1}",
+          "raw_equals_emitter": false,
+          "same_reserialized_signing_message": true,
+          "last_wins_aud": "adminapps-financial-admission",
+          "first_wins_aud": "other",
+          "parser_semantic_disagreement": true,
+          "canonical_message_sha256": "03218ff31fb76f46fc09ba63f955d4c00b2ef1cf51cf8a058eb73b3ac0788dc5"
+        }
+      ]
+    },
+    {
+      "check": "preexisting_output_archive_roundtrip",
+      "result": "PASS",
+      "count": 50,
+      "original_execution_repeated": false,
+      "original_exit_codes_known": false
+    },
+    {
+      "check": "canonical_serializer_source_parameters",
+      "result": "PASS",
+      "observed": {
+        "sort_keys": true,
+        "separators": [
+          ",",
+          ":"
+        ],
+        "ensure_ascii": true,
+        "allow_nan": false
+      },
+      "scope": "AST source observation, not cryptographic execution"
+    },
+    {
+      "check": "claim_set_matches_diagnostic",
+      "result": "PASS",
+      "claim_count": 18
+    },
+    {
+      "check": "source_gap_observations",
+      "result": "PASS",
+      "observations": {
+        "ordinary_json_loads_no_duplicate_hook_in_verifier": true,
+        "verification_reserializes_claims": true,
+        "migration_0006_has_three_force_rls_and_no_explicit_owner": true,
+        "executor_no_explicit_serializable_or_atomic": true,
+        "issuer_no_explicit_atomic_or_select_for_update": true,
+        "executor_no_explicit_assertion_tenant_comparison": true,
+        "wrapper_no_signature_exp_nbf_parameters": true,
+        "verifier_uses_trust": true
+      },
+      "scope": "PASS means the reported source observation is accurate, NOT that a security control passes; negative text searches are bounded to the named source files."
+    },
+    {
+      "check": "local_markdown_links",
+      "result": "PASS",
+      "checked": 13,
+      "missing": [],
+      "evidence_link": "generated by this script; final validation performed after write"
+    },
+    {
+      "check": "all_baseline_file_bytes_preserved",
+      "result": "PASS",
+      "files_checked": 15519,
+      "differences": [],
+      "baseline_manifest_sha256": "e296d64d2cdc51d57be1b3c6518b7395f103eb0c4e99e610acf6da35c9a778c7",
+      "scope": "Tracked and untracked non-ignored regular files; no assertion about ignored files outside explicitly hashed sources."
+    },
+    {
+      "check": "only_governance_deliverables_added",
+      "result": "PASS",
+      "observed_new_paths": [
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_2026-10-09.md",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_EVIDENCE_2026-10-09.json"
+      ],
+      "expected_final_new_paths": [
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_2026-10-09.md",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_EVIDENCE_2026-10-09.json"
+      ]
+    },
+    {
+      "check": "branch_head_index_preserved",
+      "result": "PASS",
+      "branch": "hardening/p0-p1-enterprise-readiness",
+      "head": "42f007d1fcd30743a28b0f1b998ab8c6ae93ba7c",
+      "staged_diff": ""
+    },
+    {
+      "check": "seven_previous_package_files_preserved",
+      "result": "PASS",
+      "count": 7
+    },
+    {
+      "check": "historical_references_rechecked_at_end",
+      "result": "PASS",
+      "files_checked": 47
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--no-index",
+        "--check",
+        "/dev/null",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_2026-10-09.md"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "",
+      "result": "PASS"
+    },
+    {
+      "check": "final_json_format_links_whitespace",
+      "result": "PASS",
+      "scope": "json.loads roundtrip, final newline, no trailing whitespace/conflict markers, all local Markdown targets exist; git no-index check for JSON also performed after serialization"
+    },
+    {
+      "check": "final_changed_scope",
+      "result": "PASS",
+      "new_files": [
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_2026-10-09.md",
+        "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_EVIDENCE_2026-10-09.json"
+      ],
+      "modified_existing_files": []
+    }
+  ],
+  "recovered_preexisting_outputs": [
+    {
+      "source_path": "/tmp/adminapps_s3_usage.out",
+      "size_bytes": 349,
+      "sha256": "fe876cd7f0cae23f95f1f5cac96a36b032e235807c938e7cc06e06c9183d7990",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791581880420088928,
+      "mtime_local": "2026-10-09T15:38:00.420089-06:00",
+      "classification": "PRIOR_USAGE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "Usage: s3_isolation_host_lab.sh {preflight|setup|validate|cleanup}\n\npreflight is read-only.  setup creates only the declared synthetic accounts,\ndirectories, key and credential fixture.  validate performs DAC access checks\nand short-lived, hardened transient systemd identity probes.  cleanup removes\nonly resources recorded in this run's manifest.\n"
+    },
+    {
+      "source_path": "/tmp/s3-allowed-failure.err",
+      "size_bytes": 72,
+      "sha256": "dbd2e13cdc4ed4b2fba7b9f7061b1d3a1017917570fbf5804bbfe43169c45889",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502743572891,
+      "mtime_local": "2026-10-09T16:38:22.743573-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: expected allowed read failed (status 127): failed-runuser\n"
+    },
+    {
+      "source_path": "/tmp/s3-allowed-failure.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502712572332,
+      "mtime_local": "2026-10-09T16:38:22.712572-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-cleanup-final.err",
+      "size_bytes": 69,
+      "sha256": "3f7817ccf26168132138aedebb12fc32b05c8aec55766b5b2eaaa403ab7a5be1",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585674399667537,
+      "mtime_local": "2026-10-09T16:41:14.399668-06:00",
+      "classification": "PRIOR_UNPRIVILEGED_REFUSAL_NOT_SUCCESSFUL_HOST_RUN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: this operation must run as root from the reviewed copy\n"
+    },
+    {
+      "source_path": "/tmp/s3-cleanup-final.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585674384667267,
+      "mtime_local": "2026-10-09T16:41:14.384667-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-denied.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502539569213,
+      "mtime_local": "2026-10-09T16:38:22.539569-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-denied.out",
+      "size_bytes": 81,
+      "sha256": "c172a146b6f58ddd5f60c6ec36a49da317ca0f4a3ce115f4de0523eae5aa980a",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502643571088,
+      "mtime_local": "2026-10-09T16:38:22.643571-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "PASS denied (DAC denial; file, identity, and command positive controls verified)\n"
+    },
+    {
+      "source_path": "/tmp/s3-lab-cleanup.err",
+      "size_bytes": 69,
+      "sha256": "3f7817ccf26168132138aedebb12fc32b05c8aec55766b5b2eaaa403ab7a5be1",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583732169442649,
+      "mtime_local": "2026-10-09T16:08:52.169443-06:00",
+      "classification": "PRIOR_UNPRIVILEGED_REFUSAL_NOT_SUCCESSFUL_HOST_RUN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: this operation must run as root from the reviewed copy\n"
+    },
+    {
+      "source_path": "/tmp/s3-lab-cleanup.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583732156442412,
+      "mtime_local": "2026-10-09T16:08:52.156442-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-lab-dac-allowed.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583717486174642,
+      "mtime_local": "2026-10-09T16:08:37.486175-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-lab-dac-allowed.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583717486174642,
+      "mtime_local": "2026-10-09T16:08:37.486175-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-lab-dac-denied.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583717426173546,
+      "mtime_local": "2026-10-09T16:08:37.426173-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-lab-dac-denied.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583717426173546,
+      "mtime_local": "2026-10-09T16:08:37.426173-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-lab-interrupt.err",
+      "size_bytes": 132,
+      "sha256": "8d4b65731406054fb78836508917b7441a17367cac4760484c4756da632f3693",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583732180442850,
+      "mtime_local": "2026-10-09T16:08:52.180443-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "SETUP_INTERRUPTED manifest=/root/adminapps-s3-isolation-host-lab-2026-10-09.run-manifest.tsv; run reviewed cleanup after inspection\n"
+    },
+    {
+      "source_path": "/tmp/s3-lab-interrupt.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583732171442685,
+      "mtime_local": "2026-10-09T16:08:52.171443-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-lab-preflight.err",
+      "size_bytes": 69,
+      "sha256": "3f7817ccf26168132138aedebb12fc32b05c8aec55766b5b2eaaa403ab7a5be1",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583697299806176,
+      "mtime_local": "2026-10-09T16:08:17.299806-06:00",
+      "classification": "PRIOR_UNPRIVILEGED_REFUSAL_NOT_SUCCESSFUL_HOST_RUN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: this operation must run as root from the reviewed copy\n"
+    },
+    {
+      "source_path": "/tmp/s3-lab-preflight.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583697288805976,
+      "mtime_local": "2026-10-09T16:08:17.288806-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-lab-usage.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583697273805702,
+      "mtime_local": "2026-10-09T16:08:17.273806-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-lab-usage.out",
+      "size_bytes": 389,
+      "sha256": "68bc154ab95c2323e8366ff67018e0e5d9b7165b126bc42c6efc9037422b4c15",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791583697284805903,
+      "mtime_local": "2026-10-09T16:08:17.284806-06:00",
+      "classification": "PRIOR_USAGE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "Usage: s3_isolation_host_lab.sh {preflight|setup|validate|cleanup}\n\nAll operations require the root-owned, SHA-256-verified reviewed copy. preflight\nis read-only and returns non-zero on any lab-name collision. setup creates only\nthe declared synthetic resources. validate performs DAC and transient-systemd\nchecks only. cleanup removes only resources journaled in the root-owned manifest.\n"
+    },
+    {
+      "source_path": "/tmp/s3-manifest-integrity.err",
+      "size_bytes": 101,
+      "sha256": "740711af60ac6e1a75d038ce8d790c5c2b939cd6c167815795ba437304e7f3e1",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585514737789128,
+      "mtime_local": "2026-10-09T16:38:34.737789-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: manifest contains an unauthorized resource entry: file /not-an-authorized-lab-resource\n"
+    },
+    {
+      "source_path": "/tmp/s3-manifest-integrity.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585514653787613,
+      "mtime_local": "2026-10-09T16:38:34.653788-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-manifest-plan.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585435284356729,
+      "mtime_local": "2026-10-09T16:37:15.284357-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-manifest-plan.out",
+      "size_bytes": 17,
+      "sha256": "82c392cd06805dd5e8004ff33c632bc987282cbfd8737ccf7b52b811cf47867a",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585436868385293,
+      "mtime_local": "2026-10-09T16:37:16.868385-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "CLEANUP_COMPLETE\n"
+    },
+    {
+      "source_path": "/tmp/s3-missing.err",
+      "size_bytes": 105,
+      "sha256": "3a6524f3616fd1f8fb8a4c1518b9c6ceddf9f108c8abb3ad890970dfb84ae8d9",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502763573252,
+      "mtime_local": "2026-10-09T16:38:22.763573-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: cannot classify denied read; file is missing or unsafe: /definitely/missing/s3-lab-fixture\n"
+    },
+    {
+      "source_path": "/tmp/s3-missing.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502745572927,
+      "mtime_local": "2026-10-09T16:38:22.745573-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-positive.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502507568637,
+      "mtime_local": "2026-10-09T16:38:22.507569-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-positive.out",
+      "size_bytes": 33,
+      "sha256": "6ece8faeee647b8dfc86d317d8193b1aed5ce3b4f6f79e2d1f33c1335694d218",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502537569177,
+      "mtime_local": "2026-10-09T16:38:22.537569-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "PASS positive (positive control)\n"
+    },
+    {
+      "source_path": "/tmp/s3-preflight-final.err",
+      "size_bytes": 69,
+      "sha256": "3f7817ccf26168132138aedebb12fc32b05c8aec55766b5b2eaaa403ab7a5be1",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585674384667267,
+      "mtime_local": "2026-10-09T16:41:14.384667-06:00",
+      "classification": "PRIOR_UNPRIVILEGED_REFUSAL_NOT_SUCCESSFUL_HOST_RUN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: this operation must run as root from the reviewed copy\n"
+    },
+    {
+      "source_path": "/tmp/s3-preflight-final.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585674368666978,
+      "mtime_local": "2026-10-09T16:41:14.368667-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-recovery-created_directory.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585701019150357,
+      "mtime_local": "2026-10-09T16:41:41.019150-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-recovery-created_directory.out",
+      "size_bytes": 17,
+      "sha256": "82c392cd06805dd5e8004ff33c632bc987282cbfd8737ccf7b52b811cf47867a",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585702929185469,
+      "mtime_local": "2026-10-09T16:41:42.929185-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "CLEANUP_COMPLETE\n"
+    },
+    {
+      "source_path": "/tmp/s3-recovery-directory.err",
+      "size_bytes": 99,
+      "sha256": "2a1fa7e098a7b2ca988909c557c148d9018daee4003cb803854557fefe8fc8c3",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585470652994363,
+      "mtime_local": "2026-10-09T16:37:50.652994-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: planned-only directory exists; manual adjudication required: /tmp/tmp.wwzAFug5Gc/lab\n"
+    },
+    {
+      "source_path": "/tmp/s3-recovery-directory.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585468864962131,
+      "mtime_local": "2026-10-09T16:37:48.864962-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-recovery-executor_fixture.err",
+      "size_bytes": 131,
+      "sha256": "b45c44429dd48396de03a46f223474274debcfca021ff68e88574d2757dab47f",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585474930071466,
+      "mtime_local": "2026-10-09T16:37:54.930071-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: planned-only file exists; manual adjudication required: /tmp/tmp.VmUC9hrXFa/lab/executor/postgres-credential.fixture\n"
+    },
+    {
+      "source_path": "/tmp/s3-recovery-executor_fixture.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585474512063929,
+      "mtime_local": "2026-10-09T16:37:54.512064-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-recovery-ipc_group.err",
+      "size_bytes": 80,
+      "sha256": "d48ad643325d2df12430aa850559d1a78c982c23783cbfc9a0c7d914f2fdefe7",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585472165021622,
+      "mtime_local": "2026-10-09T16:37:52.165022-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: planned-only group exists; manual adjudication required: s3labipc\n"
+    },
+    {
+      "source_path": "/tmp/s3-recovery-ipc_group.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585470666994616,
+      "mtime_local": "2026-10-09T16:37:50.666995-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-recovery-issuer_key.err",
+      "size_bytes": 120,
+      "sha256": "f769fc865b06ec1f97adaa97fd49a1b6dee6adff49cafd0e9679c13c32fe5619",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585474494063604,
+      "mtime_local": "2026-10-09T16:37:54.494064-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: planned-only file exists; manual adjudication required: /tmp/tmp.478F6mtM4k/lab/issuer/issuer-ed25519.pem\n"
+    },
+    {
+      "source_path": "/tmp/s3-recovery-issuer_key.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585474134057116,
+      "mtime_local": "2026-10-09T16:37:54.134057-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-recovery-manifest_only.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585700602142690,
+      "mtime_local": "2026-10-09T16:41:40.602143-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-recovery-manifest_only.out",
+      "size_bytes": 17,
+      "sha256": "82c392cd06805dd5e8004ff33c632bc987282cbfd8737ccf7b52b811cf47867a",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585701007150136,
+      "mtime_local": "2026-10-09T16:41:41.007150-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "CLEANUP_COMPLETE\n"
+    },
+    {
+      "source_path": "/tmp/s3-recovery-membership.err",
+      "size_bytes": 99,
+      "sha256": "520c769d1b065beecd64663be310e6ca2e5c55ea3a44df8ad7ece91f59e6ab7a",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585474122056900,
+      "mtime_local": "2026-10-09T16:37:54.122057-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: planned-only IPC membership exists; manual adjudication required: s3runtime:s3labipc\n"
+    },
+    {
+      "source_path": "/tmp/s3-recovery-membership.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585473253041234,
+      "mtime_local": "2026-10-09T16:37:53.253041-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-recovery-user.err",
+      "size_bytes": 80,
+      "sha256": "2b18ea160ad19c710c4aff7210db58f14695441cb8b8c082996d619d91aa586b",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585473239040982,
+      "mtime_local": "2026-10-09T16:37:53.239041-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: planned-only user exists; manual adjudication required: s3runtime\n"
+    },
+    {
+      "source_path": "/tmp/s3-recovery-user.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585472181021910,
+      "mtime_local": "2026-10-09T16:37:52.181022-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3-runuser.err",
+      "size_bytes": 74,
+      "sha256": "b8c8d394f89adab0fea90831fd8bf772b8745bc932844cf140e030ec83f6cb3b",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502710572296,
+      "mtime_local": "2026-10-09T16:38:22.710572-06:00",
+      "classification": "UNATTRIBUTED_PRIOR_FIXTURE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "S3 lab error: command execution failed, not access denial: failed-runuser\n"
+    },
+    {
+      "source_path": "/tmp/s3-runuser.out",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791585502644571106,
+      "mtime_local": "2026-10-09T16:38:22.644571-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3_lab_regression.out",
+      "size_bytes": 748,
+      "sha256": "6b9c4f56f1d32e1cb3a346193fe57f6a3ab57c75ce50bdbd43521e08e3b2b8fe",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791588588053020761,
+      "mtime_local": "2026-10-09T17:29:48.053021-06:00",
+      "classification": "PRIOR_REGRESSION_OUTPUT_WITHOUT_EXECUTION_SHA_BINDING",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "PASS symbolic SystemCallFilter\nPASS expanded SystemCallFilter\nPASS empty SystemCallFilter\nPASS different SystemCallFilter\nPASS deny-list SystemCallFilter\nPASS duplicate expanded syscall\nPASS unavailable SystemCallFilter expansion evidence\nPASS well-formed selected systemctl response\nPASS empty systemctl response (query error)\nPASS malformed systemctl response\nPASS incomplete systemctl response\nPASS duplicate systemctl property\nPASS process identity and active seccomp evidence\nPASS nonexistent or exited PID has no status evidence\nPASS wrong process identity\nPASS seccomp inactive\nPASS missing seccomp filter count\nPASS process belongs to reported unit cgroup\nPASS process does not belong to reported unit cgroup\ntests_passed=19 tests_failed=0\n"
+    },
+    {
+      "source_path": "/tmp/s3_lab_usage.err",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791588569707687303,
+      "mtime_local": "2026-10-09T17:29:29.707687-06:00",
+      "classification": "EMPTY_NO_OUTCOME_PROVEN",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": ""
+    },
+    {
+      "source_path": "/tmp/s3_lab_usage.out",
+      "size_bytes": 389,
+      "sha256": "68bc154ab95c2323e8366ff67018e0e5d9b7165b126bc42c6efc9037422b4c15",
+      "uid": 1000,
+      "mode": "0o644",
+      "mtime_ns": 1791588569723687596,
+      "mtime_local": "2026-10-09T17:29:29.723688-06:00",
+      "classification": "PRIOR_USAGE_OUTPUT",
+      "original_exit_code": "NOT_PRESERVED",
+      "attribution": "Original command/run/host/SHA not bound by this file; metadata is not authenticated provenance. Content copied verbatim from a preexisting file, never reconstructed.",
+      "utf8_text": "Usage: s3_isolation_host_lab.sh {preflight|setup|validate|cleanup}\n\nAll operations require the root-owned, SHA-256-verified reviewed copy. preflight\nis read-only and returns non-zero on any lab-name collision. setup creates only\nthe declared synthetic resources. validate performs DAC and transient-systemd\nchecks only. cleanup removes only resources journaled in the root-owned manifest.\n"
+    }
+  ],
+  "source_locations": {
+    "backend/apps/financial/capabilities.py": [
+      {
+        "name": "CapabilityDenied",
+        "line": 24,
+        "end_line": 27
+      },
+      {
+        "name": "_b64encode",
+        "line": 30,
+        "end_line": 31
+      },
+      {
+        "name": "_b64decode",
+        "line": 34,
+        "end_line": 40
+      },
+      {
+        "name": "canonical_capability_bytes",
+        "line": 43,
+        "end_line": 47
+      },
+      {
+        "name": "_iso",
+        "line": 50,
+        "end_line": 51
+      },
+      {
+        "name": "_time",
+        "line": 54,
+        "end_line": 60
+      },
+      {
+        "name": "mint_capability",
+        "line": 70,
+        "end_line": 91
+      },
+      {
+        "name": "verify_capability",
+        "line": 94,
+        "end_line": 125
+      },
+      {
+        "name": "public_key_bytes",
+        "line": 128,
+        "end_line": 130
+      },
+      {
+        "name": "__init__",
+        "line": 25,
+        "end_line": 27
+      }
+    ],
+    "backend/apps/financial/executor.py": [
+      {
+        "name": "FinancialExecutor",
+        "line": 13,
+        "end_line": 65
+      },
+      {
+        "name": "__init__",
+        "line": 14,
+        "end_line": 17
+      },
+      {
+        "name": "admit_reserve",
+        "line": 19,
+        "end_line": 65
+      }
+    ],
+    "backend/apps/financial/issuer.py": [
+      {
+        "name": "_active_grant",
+        "line": 15,
+        "end_line": 26
+      },
+      {
+        "name": "issue_admission_capability",
+        "line": 29,
+        "end_line": 48
+      },
+      {
+        "name": "transition_producer_tenant_grant",
+        "line": 51,
+        "end_line": 68
+      }
+    ],
+    "backend/apps/financial/services.py": [
+      {
+        "name": "create_producer_registration",
+        "line": 26,
+        "end_line": 55
+      },
+      {
+        "name": "transition_producer_registration",
+        "line": 58,
+        "end_line": 76
+      },
+      {
+        "name": "FinancialAdmissionDenied",
+        "line": 81,
+        "end_line": 84
+      },
+      {
+        "name": "AdmissionResult",
+        "line": 88,
+        "end_line": 95
+      },
+      {
+        "name": "canonical_material_request_hash",
+        "line": 102,
+        "end_line": 122
+      },
+      {
+        "name": "_current_lifecycle_state",
+        "line": 125,
+        "end_line": 127
+      },
+      {
+        "name": "_result",
+        "line": 130,
+        "end_line": 136
+      },
+      {
+        "name": "_replay_or_conflict",
+        "line": 139,
+        "end_line": 148
+      },
+      {
+        "name": "_persist_denial",
+        "line": 151,
+        "end_line": 164
+      },
+      {
+        "name": "_effective_one",
+        "line": 167,
+        "end_line": 171
+      },
+      {
+        "name": "_reserve_amount",
+        "line": 174,
+        "end_line": 194
+      },
+      {
+        "name": "_applicable_scopes",
+        "line": 197,
+        "end_line": 206
+      },
+      {
+        "name": "_serialization_failure",
+        "line": 209,
+        "end_line": 216
+      },
+      {
+        "name": "admit_and_reserve",
+        "line": 219,
+        "end_line": 251
+      },
+      {
+        "name": "_admit_once",
+        "line": 254,
+        "end_line": 366
+      },
+      {
+        "name": "__init__",
+        "line": 82,
+        "end_line": 84
+      }
+    ]
+  },
+  "json_diagnostic_reproduction": "import json\ndef signing_message(claims):\n    return ('adminapps.financial.admission-capability.v1\\n' + json.dumps(\n        claims, sort_keys=True, separators=(',', ':'), ensure_ascii=True,\n        allow_nan=False)).encode('utf-8')\n# Load the seven wire_utf8 examples preserved in this evidence JSON.\ncases = next(c['cases'] for c in evidence['checks']\n             if c.get('check') == 'stdlib_json_representation_diagnostic')\noriginal = signing_message(json.loads(cases[0]['wire_utf8']))\nfor case in cases:\n    last = json.loads(case['wire_utf8'])\n    first = {}\n    for key, value in json.loads(case['wire_utf8'], object_pairs_hook=lambda p: p):\n        first.setdefault(key, value)\n    assert (signing_message(last) == original) == case['same_reserialized_signing_message']\n    assert (first != last) == case['parser_semantic_disagreement']\n",
+  "previous_package_files_sha256": {
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md": "8b88cf2b23112ccfdf4df3ae94c468fc8de7e8de5182588b1557bb0b01ce853a",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md": "374acbaae96195bb4bba0589bee4be1e24d317d40769e4ed79a2d59a241e73ec",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md": "53b333dcfbcc9a8fbdd581993aec1b19ec6936ce91aea0c03bcabc8332cf443d",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md": "41ccc2a911f2fae1e533e3d73e430676561d9a5a0d87e5fad16964e185f9fc4d",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md": "b2fdaa59e3094891060b8126b3825a56ae6fef958c4dd022397a96bc604891a7",
+    "backend/scripts/tests/test_s3_capability_offline.py": "80569387baf0e1faa8bc3948f1f84c35336bdbdd5c42e1bbcec6841c00994e74",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_OFFLINE_EVIDENCE_2026-10-09.json": "4bfdd21a0f1c677f3ac3f1ccb81cb6fb8731d73c78b7c11d959638aae2058e33"
+  },
+  "preserved_financial_scope_sha256": {
+    "backend/apps/financial/__init__.py": "36936a7b21a12b38c4e8e36e446d942dac9f3fbd596f9d8fd457016013dac376",
+    "backend/apps/financial/apps.py": "407daa7fdd10bb4f0c23f0e6e339713bfed97d9da059d6fe590683982df98d2d",
+    "backend/apps/financial/authorization.py": "53a314f4553842b919013e90580c0e499c010cffd91aa074ea2608e659bf13e5",
+    "backend/apps/financial/capabilities.py": "b389eb73799eb13ea8af0285dbf4d6f20a3b917fe58d7707da96fadfc24f44dd",
+    "backend/apps/financial/executor.py": "8b39ada47540612f5f5bcf8361bff7b6154847e2f62d897f29a813721eaf7e46",
+    "backend/apps/financial/issuer.py": "9d8c3535500cbeec299a2e7df2e6ecb3c69383e8e22a9accfa50b37ead785859",
+    "backend/apps/financial/migrations/0001_financial_s1_foundation.py": "5a89a52317ccc76e576d500b2b730e90c6150e1ab6b25164f743742f6ac2f5fc",
+    "backend/apps/financial/migrations/0002_postgresql_security.py": "362abb5ef1fa481f53e930bbeeafc541171582e83892973f5600e4fdc79d9967",
+    "backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py": "b56a6b57c11c96bc1cc2ee546ce65aa05588f3ba0e08f3afdafc14cb78466477",
+    "backend/apps/financial/migrations/0004_s3_admission_controls.py": "aa71f24899d1a44b8b8da0141f898d92d5e99d7f00edd2e98ffe09dff31bb92a",
+    "backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py": "d2c7dfc9ddd944bda90f7b5dce17b48646928e0ee51f9727f0f98152d476a384",
+    "backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py": "f99e34850afd4e375c72311138a2c98e629abd95fb9c0ee2c8a73aadf21efd58",
+    "backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py": "b098ed9d9e79dee94c5fce2d8542c93316a2d09dbec4065d1b4f79fa4602057f",
+    "backend/apps/financial/migrations/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend/apps/financial/models.py": "898e485465ee836ccef735e5310d56c63eaf8ba1fbe3a26ce3ae576a9179a876",
+    "backend/apps/financial/rbac.py": "1e858a4c411259a36d7e47d70374e1b0594fe29af77cd4e4498aea88c11116d2",
+    "backend/apps/financial/services.py": "1a0b8491900b041ac9f088ffbd275d8b19212e1e960ce8c7343395ffb96d11d8",
+    "backend/apps/financial/tests.py": "dcfb23119739e851b306d790828b28cd7c3069e62fe5cc39ef9ea5ccb292e585",
+    "backend/config/settings.py": "408f1c5a3ddf03f7993897e29e661cb4962a8b17cc7b42c0d13db649148dde56",
+    "backend/scripts/bootstrap_smart3ai.sh": "f14d2f013d6b1bdf849236cea1adccaccf8e3612f302a90a7343ea6f30a0d7d4",
+    "backend/scripts/initial_data.py": "9da8bc9d21c383ed3cac89a29f5419a0207d3164bbcaf53ada1f8321786e24b6",
+    "backend/scripts/s3_isolation_host_lab.sh": "4a50014a069289af60afacedc89b6d93468edbd3921c8c6d72c3e005d6c086a5",
+    "backend/scripts/tests/test_s3_capability_offline.py": "80569387baf0e1faa8bc3948f1f84c35336bdbdd5c42e1bbcec6841c00994e74",
+    "backend/scripts/tests/test_s3_isolation_host_lab_validation.sh": "7abcce0dbeb7ce8a4bcdb067e4fe4b92b6ccd9057d9c6f6b12231e0da35d3f26",
+    "backend/scripts/verify_financial_s1_postgres.sh": "8588a72b792ad7d93b0183a255ba10d6bf8e05d6eae4774fb3c8473dc4e1f852",
+    "backend/scripts/verify_financial_s3_postgres.sh": "48898a6380fffce07647be9a8f94644b0bc3f4d74541fb5a88d4c476834a6840",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_AUTHORITY_SECURITY_AMENDMENT_02_2026-10-09.md": "e03022a6ca4da9eeb9022b50972d30ff6628fa5a5ab9614ba3e21d6a5af9ef79",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S1_IMPLEMENTATION_REPORT_2026-10-08.md": "a316b93846ca3d59062011f5621134dbbc4a024ace17b225a0c1dfc30416ab88",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S2_IMPLEMENTATION_REPORT_2026-10-08.md": "c29ed6dca9ebb9eb778cf8ad605b8533eff61d097363e891d2876a6da041c0e6",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_DECISION_02_A_EXECUTION_REPORT_2026-10-09.md": "da5d01ba8f0e12c66ed068c868568bc4fa208871d478a017453562290e2eea2b",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_EXISTING_VM_ISOLATION_EXECUTION_2026-10-09.md": "2a6b7228dbfbed45a5a4712ccff7cf4ad486ad00a5999e530940eb21c56ed840",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_FINAL_VALIDATION_2026-10-09.md": "c26d6a24804986e110757ddbd16a6ad6b8358dae8bc0aa0810462126adb01be6",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md": "b2fdaa59e3094891060b8126b3825a56ae6fef958c4dd022397a96bc604891a7",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md": "8b88cf2b23112ccfdf4df3ae94c468fc8de7e8de5182588b1557bb0b01ce853a",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMPLEMENTATION_REPORT_2026-10-09.md": "ad8a853363f5891e92dd993d845b9c6ddb8685de2998027008e210e617bb2fd2",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md": "53b333dcfbcc9a8fbdd581993aec1b19ec6936ce91aea0c03bcabc8332cf443d",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_ISOLATION_ADMINISTRATIVE_GATE_2026-10-09.md": "635fd2ffe4a6e8a1dadb83efc52f63bf5af8f91585f110ee5d7bd8660f549095",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_OFFLINE_EVIDENCE_2026-10-09.json": "4bfdd21a0f1c677f3ac3f1ccb81cb6fb8731d73c78b7c11d959638aae2058e33",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md": "374acbaae96195bb4bba0589bee4be1e24d317d40769e4ed79a2d59a241e73ec",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_PROCESS_ISOLATION_PREFLIGHT_2026-10-09.md": "41909c040571d8a633a11fae1be8652cec58cbfcd339ef7c503051ce78857bf2",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md": "41ccc2a911f2fae1e533e3d73e430676561d9a5a0d87e5fad16964e185f9fc4d",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SYSTEMCALLFILTER_VALIDATION_REMEDIATION_2026-10-09.md": "5ba1ae69baed48a33ef330411344fc1df0587ac714247b100e895eac02ce7e9c",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_TRANSACTIONAL_SECURITY_EVIDENCE_2026-10-09.md": "867ec4deb9adfb51854395f9b7486ddb1195faf8c3191696f819b67d282fd3a2",
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_SECURITY_DECISION_02_A_2026-10-09.md": "66af713c74bd44db4f43965c4b7a17e1410c5f65b62f22d55065e47ee2a5d3a3"
+  },
+  "deliverable_sha256": {
+    "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_2026-10-09.md": "6d16f47e4d2ed6a742294a8ccd4c65399ddbb3f0271b22aab081b96a143a571a"
+  },
+  "self_hash_note": "This JSON is excluded from its own digest. Its SHA-256 is supplied externally in the final response; the Markdown digest is bound here.",
+  "runtime_not_executed": [
+    "host_lab_any_subcommand",
+    "historical_regression_suites",
+    "cryptographic_sign_or_verify",
+    "PostgreSQL_connection_or_runtime",
+    "IPC_runtime_or_endpoint",
+    "Django_setup_or_test",
+    "sudo",
+    "systemd-run",
+    "systemctl_or_journalctl",
+    "Docker_or_Podman",
+    "migrations",
+    "service_changes",
+    "credentials_changes",
+    "deployment",
+    "Git_stage_commit_push_merge"
+  ],
+  "recovery_search_scope": {
+    "searched": [
+      "docs/financial",
+      "docs and backend/scripts evidence filenames including ignored files",
+      "first-level /tmp S3 output candidates",
+      "the attachment already identified by prior OFF",
+      "git tracking/history for financial sources"
+    ],
+    "not_read": [
+      "/root",
+      "shell history",
+      "system journal",
+      "credentials or .env files"
+    ],
+    "missing_primary_host_success_transcript": "NOT_LOCATED_IN_SEARCH_SCOPE",
+    "globally_irrecoverable": "NOT_ESTABLISHED; original ended-process /proc cannot be re-read; backups/exports retention requires custodian evidence"
+  },
+  "static_reproduction_notes": {
+    "ast": "ast.parse(Path(path).read_text()) for each python_ast_no_imports file; never import project modules",
+    "hashes": "SHA-256 over original bytes, compare against the explicit expected_sha256 values and preserved scope",
+    "archive": "sha256(utf8_text.encode(\"utf-8\")) equals archived sha256; original filesystem mtime is provenance metadata, not authenticated execution time",
+    "source_checks": "Inspect the exact files/hashes and AST serializer parameters recorded above; grep absence alone is not proof about unseen deployments"
+  },
+  "validation_preliminary_run": {
+    "result": "HARNESS_SCOPE_COMPARISON_ERROR_CORRECTED",
+    "detail": "The first finalization compared git path names against a baseline of regular-file bytes, falsely classifying the preexisting directory symlinks backend/.venv/lib64 and backend/venv_admin/lib64 as new files. Comparison now consistently uses is_file() on both sides; no repository policy or source changed."
+  },
+  "git_status_final": " M backend/config/settings.py\n?? backend/apps/financial/__init__.py\n?? backend/apps/financial/apps.py\n?? backend/apps/financial/authorization.py\n?? backend/apps/financial/capabilities.py\n?? backend/apps/financial/executor.py\n?? backend/apps/financial/issuer.py\n?? backend/apps/financial/migrations/0001_financial_s1_foundation.py\n?? backend/apps/financial/migrations/0002_postgresql_security.py\n?? backend/apps/financial/migrations/0003_producer_identity_and_financial_rbac.py\n?? backend/apps/financial/migrations/0004_s3_admission_controls.py\n?? backend/apps/financial/migrations/0005_s3_runtime_admission_boundary.py\n?? backend/apps/financial/migrations/0006_decision_02_a_grants_and_ledger.py\n?? backend/apps/financial/migrations/0007_decision_02_a_executor_boundary.py\n?? backend/apps/financial/migrations/__init__.py\n?? backend/apps/financial/models.py\n?? backend/apps/financial/rbac.py\n?? backend/apps/financial/services.py\n?? backend/apps/financial/tests.py\n?? backend/scripts/s3_isolation_host_lab.sh\n?? backend/scripts/tests/test_s3_capability_offline.py\n?? backend/scripts/tests/test_s3_isolation_host_lab_validation.sh\n?? backend/scripts/verify_financial_s1_postgres.sh\n?? backend/scripts/verify_financial_s3_postgres.sh\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_AUTHORITY_SECURITY_AMENDMENT_02_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S1_IMPLEMENTATION_REPORT_2026-10-08.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S2_IMPLEMENTATION_REPORT_2026-10-08.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_DECISION_02_A_EXECUTION_REPORT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_EXISTING_VM_ISOLATION_EXECUTION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_FINAL_VALIDATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_GOVERNANCE_RECONCILIATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_HOST_LAB_CLOSURE_EVIDENCE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMPLEMENTATION_REPORT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IPC_ISOLATION_SPECIFICATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_ISOLATION_ADMINISTRATIVE_GATE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_OFFLINE_EVIDENCE_2026-10-09.json\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_POSTGRESQL_ISOLATION_SPECIFICATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_PROCESS_ISOLATION_PREFLIGHT_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SECURITY_CONTRACT_ADJUDICATION_EVIDENCE_2026-10-09.json\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SUCCESSOR_EXECUTION_PLAN_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_SYSTEMCALLFILTER_VALIDATION_REMEDIATION_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_S3_TRANSACTIONAL_SECURITY_EVIDENCE_2026-10-09.md\n?? docs/financial/ADMINAPPS_AI_FINANCIAL_SECURITY_DECISION_02_A_2026-10-09.md\n"
+}

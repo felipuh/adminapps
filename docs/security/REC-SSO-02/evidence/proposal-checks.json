@@ -1,0 +1,56 @@
+[
+  {
+    "patch": "A-legacy-deny-2fa.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  },
+  {
+    "patch": "B-reject-stale-role.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  },
+  {
+    "patch": "C-register-client-audience.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  },
+  {
+    "patch": "D-role-product-scopes.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  },
+  {
+    "patch": "E-trial-subscription-model.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  },
+  {
+    "patch": "E-trial-subscription-serializers.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  },
+  {
+    "patch": "F-entitlement-start.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  },
+  {
+    "patch": "G-subscription-binding-contract.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  },
+  {
+    "patch": "H-integration-key-scope-contract.patch",
+    "check_exit_code": 0,
+    "stderr": "",
+    "applied": false
+  }
+]

@@ -1,0 +1,156 @@
+{
+  "runners": [
+    {
+      "tests": 18,
+      "failures": 4,
+      "errors": 37,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "__main__.CHTests.test_api_key_real_hash_lifecycle",
+      "method": "test_api_key_real_hash_lifecycle",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 228,
+      "qualname": "CHTests.test_api_key_real_hash_lifecycle",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.CHTests.test_challenge_binding_before_irreversible_consume",
+      "method": "test_challenge_binding_before_irreversible_consume",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 208,
+      "qualname": "CHTests.test_challenge_binding_before_irreversible_consume",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CHTests.test_claim_matrix",
+      "method": "test_claim_matrix",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 135,
+      "qualname": "CHTests.test_claim_matrix",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_coordinated_cross_product_consumers",
+      "method": "test_coordinated_cross_product_consumers",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 253,
+      "qualname": "CHTests.test_coordinated_cross_product_consumers",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_impersonation_both_directions",
+      "method": "test_impersonation_both_directions",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 92,
+      "qualname": "CHTests.test_impersonation_both_directions",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_login_real_emission_and_tenant",
+      "method": "test_login_real_emission_and_tenant",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 185,
+      "qualname": "CHTests.test_login_real_emission_and_tenant",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CHTests.test_login_response_does_not_disclose_other_tenants",
+      "method": "test_login_response_does_not_disclose_other_tenants",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 194,
+      "qualname": "CHTests.test_login_response_does_not_disclose_other_tenants",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CHTests.test_mfa_live_generation",
+      "method": "test_mfa_live_generation",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 178,
+      "qualname": "CHTests.test_mfa_live_generation",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_missing_contract_fields_and_credentials",
+      "method": "test_missing_contract_fields_and_credentials",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 101,
+      "qualname": "CHTests.test_missing_contract_fields_and_credentials",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_registry_rejects_unapproved_crypto",
+      "method": "test_registry_rejects_unapproved_crypto",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 170,
+      "qualname": "CHTests.test_registry_rejects_unapproved_crypto",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_schema_state_matches_models_without_database",
+      "method": "test_schema_state_matches_models_without_database",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 242,
+      "qualname": "CHTests.test_schema_state_matches_models_without_database",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.CHTests.test_signature_algorithm_and_kid",
+      "method": "test_signature_algorithm_and_kid",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 145,
+      "qualname": "CHTests.test_signature_algorithm_and_kid",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_tenant_user_membership_revocation",
+      "method": "test_tenant_user_membership_revocation",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 124,
+      "qualname": "CHTests.test_tenant_user_membership_revocation",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_unconfigured_or_database_down_sanitized",
+      "method": "test_unconfigured_or_database_down_sanitized",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 159,
+      "qualname": "CHTests.test_unconfigured_or_database_down_sanitized",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_unknown_disabled_revoked_clients",
+      "method": "test_unknown_disabled_revoked_clients",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 114,
+      "qualname": "CHTests.test_unknown_disabled_revoked_clients",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_valid_contract_least_privilege",
+      "method": "test_valid_contract_least_privilege",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 82,
+      "qualname": "CHTests.test_valid_contract_least_privilege",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.CHTests.test_verify_valid_and_postconsume_failure_no_restoration",
+      "method": "test_verify_valid_and_postconsume_failure_no_restoration",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 217,
+      "qualname": "CHTests.test_verify_valid_and_postconsume_failure_no_restoration",
+      "status": "FAIL"
+    },
+    {
+      "id": "__main__.CHTests.test_wrong_credential_binding",
+      "method": "test_wrong_credential_binding",
+      "source": "backend/scripts/rec_sso_03b_ch_offline.py",
+      "line": 110,
+      "qualname": "CHTests.test_wrong_credential_binding",
+      "status": "ERROR"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "scope": "isolated unit characterization; not E2E",
+  "tests_run": 33,
+  "passed": 25,
+  "known_security_contract_failures": [
+    {
+      "test": "test_contract_trial_must_not_bypass_billing (__main__.ContractTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 106, in test_contract_trial_must_not_bypass_billing\n    self.assertFalse(e.access_allowed)\nAssertionError: True is not false\n"
+    },
+    {
+      "test": "test_future_start_must_not_grant_yet (__main__.ContractTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 110, in test_future_start_must_not_grant_yet\n    self.assertFalse(fixture(starts_at=timezone.now()+timedelta(days=1)).access_allowed)\nAssertionError: True is not false\n"
+    },
+    {
+      "test": "test_other_tenant_subscription_must_be_rejected (__main__.ContractTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 122, in test_other_tenant_subscription_must_be_rejected\n    self.assertFalse(e.access_allowed)\nAssertionError: True is not false\n"
+    },
+    {
+      "test": "test_introspection_database_error_must_be_handled (__main__.SSOTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 206, in test_introspection_database_error_must_be_handled\n    try: response=introspect(token)\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 76, in introspect\n    return post(sso.sso_introspect, {'token': str(token)}, key=True)\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 71, in post\n    return fn(rf.post('/', data=json.dumps(data), content_type='application/json',\n  File \"/home/felipe/proyectos/adminapps/backend/.venv/lib64/python3.9/site-packages/django/views/decorators/csrf.py\", line 56, in wrapper_view\n    return view_func(*args, **kwargs)\n  File \"/home/felipe/proyectos/adminapps/backend/.venv/lib64/python3.9/site-packages/django/views/decorators/http.py\", line 43, in inner\n    return func(request, *args, **kwargs)\n  File \"/home/felipe/proyectos/adminapps/backend/apps/integration/views.py\", line 159, in wrapper\n    return view_func(request, *args, **kwargs)\n  File \"/home/felipe/proyectos/adminapps/backend/apps/integration/sso_views.py\", line 434, in sso_introspect\n    \"products\": _serialize_product_entitlements(organization_id),\n  File \"/usr/lib64/python3.9/unittest/mock.py\", line 1092, in __call__\n    return self._mock_call(*args, **kwargs)\n  File \"/usr/lib64/python3.9/unittest/mock.py\", line 1096, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n  File \"/usr/lib64/python3.9/unittest/mock.py\", line 1151, in _execute_mock_call\n    raise effect\ndjango.db.utils.DatabaseError: synthetic-db-error\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 207, in test_introspection_database_error_must_be_handled\n    except DatabaseError:self.fail('DatabaseError escapes view')\nAssertionError: DatabaseError escapes view\n"
+    },
+    {
+      "test": "test_introspection_must_revalidate_membership (__main__.SSOTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 177, in test_introspection_must_revalidate_membership\n    self.assertFalse(json.loads(introspect(token).content)['active'])\nAssertionError: True is not false\n"
+    },
+    {
+      "test": "test_issuer_audience_must_be_enforced (__main__.SSOTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 165, in test_issuer_audience_must_be_enforced\n    with self.assertRaises(TokenError):AccessToken(str(token))\nAssertionError: TokenError not raised\n"
+    },
+    {
+      "test": "test_legacy_credentials_must_require_second_factor (__main__.SSOTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 236, in test_legacy_credentials_must_require_second_factor\n    self.assertFalse(json.loads(response.content).get('valid',False))\nAssertionError: True is not false\n"
+    },
+    {
+      "test": "test_token_without_tenant_must_be_inactive (__main__.SSOTests)",
+      "traceback": "Traceback (most recent call last):\n  File \"/tmp/adminapps-rec-sso-01-_fpvp5km/offline_tests.py\", line 169, in test_token_without_tenant_must_be_inactive\n    self.assertFalse(json.loads(introspect(AccessToken()).content)['active'])\nAssertionError: True is not false\n"
+    }
+  ],
+  "unexpected_failures": [],
+  "errors": [],
+  "unexpected_successes": [],
+  "database_connections": 0,
+  "network_connections": 0
+}

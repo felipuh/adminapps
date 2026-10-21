@@ -1,0 +1,107 @@
+[
+  {
+    "suite": "p0r",
+    "exit": 0,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/p0r.methods.json",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py",
+      "apps.api.test_p0r"
+    ]
+  },
+  {
+    "suite": "p0r-sessions",
+    "exit": 0,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/p0r-sessions.methods.json",
+      "backend/scripts/rec_sso_03d_p0r_sessions_offline.py"
+    ]
+  },
+  {
+    "suite": "api-p0",
+    "exit": 0,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/api-p0.methods.json",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py"
+    ]
+  },
+  {
+    "suite": "historical-api-admin",
+    "exit": 1,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/historical-api-admin.methods.json",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py",
+      "apps.users.test_authorization",
+      "apps.users.test_admin_authorization",
+      "apps.organizations.test_authorization",
+      "apps.subscriptions.test_authorization",
+      "apps.api.tests_security_guardrails"
+    ]
+  },
+  {
+    "suite": "admin-d",
+    "exit": 0,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/admin-d.methods.json",
+      "backend/scripts/rec_sso_03d_offline.py"
+    ]
+  },
+  {
+    "suite": "admin-b",
+    "exit": 0,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/admin-b.methods.json",
+      "backend/scripts/rec_sso_03b_offline.py"
+    ]
+  },
+  {
+    "suite": "admin-ch",
+    "exit": 1,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/admin-ch.methods.json",
+      "backend/scripts/rec_sso_03b_ch_offline.py"
+    ]
+  },
+  {
+    "suite": "admin-a",
+    "exit": 1,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/admin-a.methods.json",
+      "backend/scripts/rec_sso_03a_offline.py"
+    ]
+  },
+  {
+    "suite": "admin-mfa",
+    "exit": 0,
+    "cmd": [
+      "backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/admin-mfa.methods.json",
+      "backend/scripts/rec_sso_02_2fa_regression.py"
+    ]
+  }
+]

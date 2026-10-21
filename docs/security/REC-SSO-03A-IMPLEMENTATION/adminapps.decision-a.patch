@@ -1,0 +1,247 @@
+--- a/backend/apps/integration/views.py
++++ b/backend/apps/integration/views.py
+@@ -12,7 +12,7 @@
+ from django.utils.dateparse import parse_date, parse_datetime
+ from django.core.exceptions import ValidationError
+ from django.core.validators import validate_email
+-from django.db import IntegrityError, transaction
++from django.db import DatabaseError, IntegrityError, transaction
+ from django.db.models import Count
+ from functools import wraps
+ import json
+@@ -520,8 +520,20 @@
+     }, status=200 if entitlement.access_allowed else 403)
+ 
+ 
++def _credential_errors(view):
++    @wraps(view)
++    def wrapped(request, *args, **kwargs):
++        try:
++            return view(request, *args, **kwargs)
++        except DatabaseError:
++            return JsonResponse({'valid': False, 'code': 'authentication_unavailable',
++                                 'error': 'Unable to complete authentication'}, status=503)
++    return wrapped
++
++
+ @csrf_exempt
+ @require_http_methods(["POST"])
++@_credential_errors
+ @require_api_key
+ def validate_credentials(request):
+     """
+@@ -535,6 +547,9 @@
+             'code': 'invalid_json'
+         }, status=400)
+     
++    if not isinstance(data, dict):
++        return JsonResponse({'valid': False, 'code': 'invalid_json'}, status=400)
++
+     email = data.get('email')
+     password = data.get('password')
+     organization_id = data.get('organization_id')
+@@ -555,6 +570,14 @@
+             'code': 'invalid_credentials'
+         }, status=401)
+     
++    if not user.is_active:
++        return JsonResponse({'valid': False, 'code': 'invalid_credentials'}, status=401)
++    # Password verification precedes the MFA guard to avoid exposing enrollment.
++    factor = getattr(user, 'two_factor_auth', None)
++    if factor and factor.is_enabled:
++        return JsonResponse({'valid': False, 'code': 'second_factor_required',
++                             'error': 'Complete central SSO authentication'}, status=403)
++
+     # Obtener organizaciones del usuario
+     memberships = UserOrganization.objects.filter(
+         user=user,
+--- a/backend/apps/integration/sso_views.py
++++ b/backend/apps/integration/sso_views.py
+@@ -114,11 +114,17 @@
+     *,
+     audience: list[str],
+     client_id: str,
++    authentication_methods=None,
++    mfa_generation=None,
+ ):
+     issuer = getattr(settings, "SMART3AI_SSO_ISSUER", "https://sso.smart3ai.local")
+     product_claims = _build_product_claims(membership.organization.id)
+ 
+     refresh = RefreshToken.for_user(user)
++    refresh["auth_contract"] = "decision-a-v1"
++    refresh["amr"] = list(authentication_methods or [])
++    if mfa_generation is not None:
++        refresh["mfa_generation"] = str(mfa_generation)
+     refresh["iss"] = issuer
+     refresh["aud"] = audience
+     refresh["client_id"] = client_id
+@@ -289,6 +295,8 @@
+         memberships,
+         audience=audience,
+         client_id=client_id,
++        authentication_methods=["pwd", "otp"] if two_fa_enabled else ["pwd"],
++        mfa_generation=two_factor.decode_challenge(challenge_token, "sso").get("generation") if two_fa_enabled else None,
+     )
+ 
+     user.last_login_at = timezone.now()
+@@ -340,6 +348,13 @@
+     client_id = str(challenge_data.get("client_id") or "smart3ai-portfolio")
+     audience = challenge_data.get("audience") or ["smart3ai-portfolio"]
+ 
++    # New consumer adapters supply receiver context; reject mismatch before
++    # consuming the irreversible factor. Existing central UI retains its flow.
++    if ('client_id' in data and data['client_id'] != client_id) or (
++        'audience' in data and data['audience'] != audience
++    ):
++        return JsonResponse({'code': 'challenge_context_mismatch'}, status=403)
++
+     try:
+         user = User.objects.get(id=user_id, is_active=True)
+     except User.DoesNotExist:
+@@ -377,6 +392,8 @@
+         memberships,
+         audience=[str(item) for item in audience],
+         client_id=client_id,
++        authentication_methods=["pwd", "otp"],
++        mfa_generation=challenge_data.get("generation"),
+     )
+ 
+     user.last_login_at = timezone.now()
+@@ -385,6 +402,7 @@
+     user.save(update_fields=["last_login_at", "last_activity_at", "failed_login_attempts", "updated_at"])
+ 
+     return JsonResponse({
++        "requires_2fa": False,
+         "two_fa_bypassed": two_fa_bypassed,
+         "tokens": tokens,
+         "user": {
+@@ -462,7 +480,18 @@
+     ).exists():
+         return JsonResponse({"active": False}, status=200)
+ 
++    methods = parsed.get('amr')
++    if parsed.get('auth_contract') != 'decision-a-v1' or not isinstance(methods, list) or 'pwd' not in methods:
++        return JsonResponse({'active': False}, status=200)
++    factor = getattr(user, 'two_factor_auth', None)
++    if 'otp' in methods and (not factor or not factor.is_enabled or parsed.get('mfa_generation') != str(factor.generation)):
++        return JsonResponse({'active': False}, status=200)
++    if factor and factor.is_enabled and 'otp' not in methods:
++        return JsonResponse({'active': False}, status=200)
++
+     return JsonResponse({
++        "auth_contract": parsed.get('auth_contract'),
++        "amr": methods,
+         "active": True,
+         "sub": user_id,
+         "email": parsed.get("email"),
+--- /dev/null
++++ b/backend/scripts/rec_sso_03a_offline.py
+@@ -0,0 +1,108 @@
++"""Successor Decision A contracts, without changing historical probes."""
++import importlib.util
++import json
++from pathlib import Path
++import sys
++from types import SimpleNamespace as NS
++import unittest
++from unittest.mock import patch,PropertyMock
++
++ROOT=Path.cwd()
++spec=importlib.util.spec_from_file_location('historical',ROOT/'backend/scripts/rec_sso_02_offline.py')
++h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
++sso=h.sso;views=h.views
++GEN='dddddddd-dddd-4ddd-8ddd-dddddddddddd'
++
++class CurrentFixture(h.Fixture):
++    def setUp(self):
++        super().setUp()
++        self.user._state.fields_cache['two_factor_auth']=None
++    def token(self,**claims):
++        data={'auth_contract':'decision-a-v1','amr':['pwd']}
++        data.update(claims)
++        result=h.AccessToken(super().token())
++        for key,value in data.items():
++            if value is None: result.payload.pop(key,None)
++            else: result[key]=value
++        return str(result)
++    def issue(self,role='viewer',products=None):
++        self.member.role=role;self.products.return_value=products or []
++        with patch.object(sso.two_factor,'require_commit_boundary'),patch.object(sso.RefreshToken,'for_user',return_value=h.RefreshToken()):
++            return sso._build_token_pair(self.user,self.member,[self.member],audience=['isosmart'],client_id='isosmart',authentication_methods=['pwd'])
++
++class CurrentLocal(h.LocalFixTests,CurrentFixture):
++    def test_valid_response_contract(self):
++        response,body=self.introspect()
++        self.assertEqual(response.status_code,200)
++        self.assertTrue(body['active'])
++        self.assertEqual(body['sub'],str(h.USER))
++        self.assertEqual(body['organization_id'],str(h.ORG))
++        self.assertEqual(body['auth_contract'],'decision-a-v1')
++        self.assertEqual(body['amr'],['pwd'])
++        self.assertEqual(set(body),{'active','sub','email','full_name','role','organization_id',
++            'organization_name','organization_code','memberships','products','client_id','aud','iss','exp','iat',
++            'auth_contract','amr'})
++        self.products.assert_called_once_with(str(h.ORG))
++
++class DecisionATests(CurrentFixture):
++    def legacy(self,authenticated=True):
++        with patch.object(views,'authenticate',return_value=self.user if authenticated else None):
++            return self.post(views.validate_credentials,{'email':self.user.email,'password':'synthetic'})
++    def test_legacy_mfa_denied(self):
++        self.user._state.fields_cache['two_factor_auth']=NS(is_enabled=True,generation=GEN)
++        response=self.legacy()
++        self.assertEqual(response.status_code,403)
++        self.assertEqual(json.loads(response.content)['code'],'second_factor_required')
++    def test_legacy_no_mfa_succeeds(self):
++        response=self.legacy()
++        self.assertEqual(response.status_code,200)
++        self.assertIs(json.loads(response.content)['valid'],True)
++    def test_legacy_wrong_password_does_not_disclose_mfa(self):
++        self.user._state.fields_cache['two_factor_auth']=NS(is_enabled=True,generation=GEN)
++        response=self.legacy(False)
++        self.assertEqual(response.status_code,401)
++        self.assertEqual(json.loads(response.content)['code'],'invalid_credentials')
++    def test_legacy_mfa_lookup_and_key_db_fail_closed(self):
++        with patch.object(views.User,'two_factor_auth',new_callable=PropertyMock,side_effect=h.DatabaseError('private-secret')):
++            response=self.legacy()
++            self.assertEqual(response.status_code,503)
++            self.assertNotIn('private-secret',response.content.decode())
++        self.auth.side_effect=h.DatabaseError('private-key')
++        response=self.legacy()
++        self.assertEqual(response.status_code,503)
++        self.assertNotIn('private-key',response.content.decode())
++    def test_old_token_requires_new_auth(self):
++        self.assert_inactive(self.token(auth_contract=None))
++    def test_mfa_enrollment_invalidates_password_only_proof(self):
++        self.user._state.fields_cache['two_factor_auth']=NS(is_enabled=True,generation=GEN)
++        self.assert_inactive(self.token())
++    def test_valid_mfa_proof(self):
++        self.user._state.fields_cache['two_factor_auth']=NS(is_enabled=True,generation=GEN)
++        r,body=self.introspect(self.token(amr=['pwd','otp'],mfa_generation=GEN))
++        self.assertTrue(body['active'])
++        self.assertEqual(body['amr'],['pwd','otp'])
++    def test_reset_disabled_or_foreign_generation_denied(self):
++        for enabled,generation in ((False,GEN),(True,'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee')):
++            self.user._state.fields_cache['two_factor_auth']=NS(is_enabled=enabled,generation=generation)
++            self.assert_inactive(self.token(amr=['pwd','otp'],mfa_generation=GEN))
++    def test_verify_foreign_context_does_not_consume(self):
++        decoded={'user_id':str(h.USER),'organization_id':str(h.ORG),'client_id':'isosmart','audience':['isosmart'],'generation':GEN}
++        with patch.object(sso.two_factor,'decode_challenge',return_value=decoded),patch.object(sso.two_factor,'consume_challenge') as consume,patch.object(sso,'_build_token_pair') as mint:
++            for change in ({'client_id':'medsupplier'},{'audience':['medsupplier']}):
++                response=self.post(sso.sso_login_verify_2fa,dict({'challenge_token':'synthetic','otp_code':'123456'},**change))
++                self.assertEqual(response.status_code,403)
++            consume.assert_not_called();mint.assert_not_called()
++    def test_verify_complete_contract_and_generation(self):
++        decoded={'user_id':str(h.USER),'organization_id':str(h.ORG),'client_id':'isosmart','audience':['isosmart'],'generation':GEN}
++        with patch.object(self.user,'save'),patch.object(sso.two_factor,'decode_challenge',return_value=decoded),patch.object(sso.two_factor,'consume_challenge',return_value=(self.user,'totp')),patch.object(sso,'_build_token_pair',return_value={'access_token':'synthetic'}) as mint:
++            response=self.post(sso.sso_login_verify_2fa,{'challenge_token':'synthetic','otp_code':'123456','client_id':'isosmart','audience':['isosmart']})
++            self.assertEqual(response.status_code,200)
++            self.assertIs(json.loads(response.content)['requires_2fa'],False)
++            self.assertEqual(mint.call_args.kwargs['mfa_generation'],GEN)
++            self.assertEqual(mint.call_args.kwargs['authentication_methods'],['pwd','otp'])
++
++if __name__=='__main__':
++    suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(x) for x in (CurrentLocal,DecisionATests)])
++    result=unittest.TextTestRunner(verbosity=2).run(suite)
++    summary={'tests':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'db_attempts':h.DB_GUARD.call_count,'network_attempts':sum(x.call_count for x in h.NETWORK_GUARDS),'scope':'offline successor contract; NOT E2E'}
++    print(json.dumps(summary));sys.exit(not result.wasSuccessful() or summary['db_attempts'] or summary['network_attempts'])

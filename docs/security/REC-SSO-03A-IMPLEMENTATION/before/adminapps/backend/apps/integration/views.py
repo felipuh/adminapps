@@ -1,0 +1,886 @@
+"""
+Vistas de Integración para Admin Apps
+Proporciona endpoints para que servicios externos (como ISO Smart) 
+puedan consultar información de Admin Apps
+"""
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, get_user_model
+from django.conf import settings
+from django.utils import timezone
+from django.utils.dateparse import parse_date, parse_datetime
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.db import IntegrityError, transaction
+from django.db.models import Count
+from functools import wraps
+import json
+import uuid
+
+from apps.organizations.models import Organization
+from apps.products.models import OrganizationProductEntitlement, ProductEntitlementAuditLog, ProductSystem
+from apps.users.models import UserOrganization
+from .models import AIUsageProjection, DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
+from .services import authenticate_integration_api_key
+
+User = get_user_model()
+
+MODULE_CODE_MAP = {
+    'sca': {'code': 'SCA', 'name': 'SCA'},
+    'sie': {'code': 'SIE', 'name': 'SIE'},
+    'asb': {'code': 'ASB', 'name': 'ASB'},
+    'spm': {'code': 'SPM', 'name': 'SPM'},
+    'documents': {'code': 'DOC', 'name': 'Documentos'},
+    'risks': {'code': 'RISK', 'name': 'Riesgos'},
+    'objectives': {'code': 'OBJ', 'name': 'Objetivos'},
+    'medsupplier': {'code': 'MEDSUPPLIER', 'name': 'ISO Smart MedSupplier'},
+}
+
+
+def _subscription_payload(subscription):
+    if not subscription:
+        return {
+            'status': 'not_configured',
+            'is_active': False,
+            'billing_status': 'not_configured',
+        }
+    return {
+        'id': str(subscription.id),
+        'status': subscription.status,
+        'is_active': subscription.is_active,
+        'billing_status': subscription.status,
+        'current_period_end': subscription.current_period_end.isoformat() if subscription.current_period_end else None,
+        'next_billing_date': subscription.next_billing_date.isoformat() if subscription.next_billing_date else None,
+    }
+
+
+def _entitlement_payload(entitlement):
+    subscription = entitlement.effective_subscription
+    plan = entitlement.effective_plan
+    return {
+        'id': str(entitlement.id),
+        'code': entitlement.product.code,
+        'name': entitlement.product.name,
+        'slug': entitlement.product.slug,
+        'billing_enabled': entitlement.product.billing_enabled,
+        'enabled': entitlement.enabled,
+        'status': entitlement.status,
+        'is_active': entitlement.is_active,
+        'access_allowed': entitlement.access_allowed,
+        'access_denial_reason': entitlement.access_denial_reason,
+        'starts_at': entitlement.starts_at.isoformat() if entitlement.starts_at else None,
+        'ends_at': entitlement.ends_at.isoformat() if entitlement.ends_at else None,
+        'suspended_at': entitlement.suspended_at.isoformat() if entitlement.suspended_at else None,
+        'modules_enabled': entitlement.modules_enabled,
+        'scopes': entitlement.scopes,
+        'plan': {
+            'id': str(plan.id),
+            'code': plan.code,
+            'name': plan.name,
+            'billing_cycle': plan.billing_cycle,
+        } if plan else None,
+        'billing_status': _subscription_payload(subscription)['billing_status'],
+        'subscription': _subscription_payload(subscription),
+    }
+
+
+def _active_product_entitlements(org):
+    return (
+        OrganizationProductEntitlement.objects
+        .filter(organization=org, enabled=True, product__status__in=['active', 'beta'])
+        .select_related('organization', 'product', 'product__default_plan', 'subscription', 'subscription__plan', 'plan')
+    )
+
+
+def _product_system_aliases():
+    aliases = {'medsupplier', 'iso_smart', 'iso-smart', 'isosmart'}
+    for product in ProductSystem.objects.all().only('code', 'slug'):
+        for value in (product.code, product.slug):
+            normalized = str(value or '').strip().lower()
+            if normalized:
+                aliases.add(normalized)
+                aliases.add(normalized.replace('-', '_'))
+                aliases.add(normalized.replace('_', '-'))
+    return aliases
+
+
+def _truthy_query_param(value):
+    return str(value or '').strip().lower() in {'1', 'true', 'yes', 'y', 'on'}
+
+
+def _audit_product_access_validation(request, *, organization, product, entitlement=None, allowed=False, reason=''):
+    ProductEntitlementAuditLog.objects.create(
+        entitlement=entitlement,
+        organization=organization,
+        product=product,
+        action='validated',
+        previous_state={},
+        new_state={
+            'allowed': allowed,
+            'reason': reason,
+            'entitlement_id': str(entitlement.id) if entitlement else None,
+        },
+        metadata={
+            'integration_service': getattr(request, 'integration_service', None),
+            'path': request.path,
+        },
+    )
+
+
+def require_api_key(view_func):
+    """
+    Decorator para requerir API Key en las peticiones
+    """
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        api_key = request.headers.get('X-API-Key')
+        
+        if not api_key:
+            return JsonResponse({
+                'error': 'API Key requerida',
+                'code': 'missing_api_key'
+            }, status=401)
+        
+        credential = authenticate_integration_api_key(api_key)
+        if credential is None:
+            return JsonResponse({
+                'error': 'API Key inválida',
+                'code': 'invalid_api_key'
+            }, status=401)
+
+        service_name = credential.name if isinstance(credential, IntegrationAPIKey) else credential
+        request.integration_service = service_name
+        if isinstance(credential, IntegrationAPIKey):
+            credential.last_used_at = timezone.now()
+            credential.last_used_service = service_name[:100]
+            credential.save(update_fields=['last_used_at', 'last_used_service', 'updated_at'])
+        
+        return view_func(request, *args, **kwargs)
+    
+    return wrapper
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def health_check(request):
+    """
+    Health check endpoint
+    """
+    return JsonResponse({
+        'status': 'ok',
+        'service': 'Admin Apps Integration',
+        'version': '1.0'
+    })
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@require_api_key
+def ingest_ai_usage(request):
+    """Accept a replay-safe, secret-free ISO Smart usage event.
+
+    This endpoint is intentionally an internal contract.  Deployment/configuration
+    of a delivery client remains a separate operational authorization.
+    """
+    allowed_producers = {
+        str(value).strip().lower()
+        for value in getattr(settings, 'AI_USAGE_INGESTION_SERVICES', ('isosmart', 'isosmart-usage'))
+        if str(value).strip()
+    }
+    if str(getattr(request, 'integration_service', '')).strip().lower() not in allowed_producers:
+        return JsonResponse({'error': 'service is not authorized to ingest AI usage', 'code': 'unauthorized_ai_usage_producer'}, status=403)
+    try:
+        payload = json.loads(request.body.decode('utf-8'))
+        required = ('usage_event_id', 'usage_record_id', 'adminapps_tenant_id', 'execution_id', 'correlation_id',
+                    'product_identifier', 'agent_name', 'capability_name', 'provider', 'model_identifier',
+                    'attempted_at', 'attempt_status', 'usage_status', 'cost_status')
+        if not isinstance(payload, dict) or any(not payload.get(key) for key in required):
+            raise ValueError('missing required AI usage fields')
+        organization = Organization.objects.get(id=uuid.UUID(str(payload['adminapps_tenant_id'])))
+        attempted_at = parse_datetime(str(payload['attempted_at']))
+        if attempted_at is None:
+            raise ValueError('attempted_at must be ISO-8601 datetime')
+        numeric = {}
+        for key in ('input_tokens', 'output_tokens', 'total_tokens'):
+            value = payload.get(key)
+            if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 0):
+                raise ValueError(f'{key} must be a nonnegative integer or null')
+            numeric[key] = value
+        if all(numeric[key] is not None for key in numeric) and numeric['total_tokens'] != numeric['input_tokens'] + numeric['output_tokens']:
+            raise ValueError('total_tokens must equal input_tokens plus output_tokens')
+        cost = payload.get('estimated_provider_cost')
+        if cost is not None:
+            from decimal import Decimal, InvalidOperation
+            try:
+                cost = Decimal(str(cost))
+            except InvalidOperation as exc:
+                raise ValueError('estimated_provider_cost must be decimal') from exc
+            if cost < 0:
+                raise ValueError('estimated_provider_cost cannot be negative')
+        if payload['cost_status'] == 'estimated' and (cost is None or not payload.get('currency')):
+            raise ValueError('estimated usage requires a currency and known cost')
+        if payload['cost_status'] == 'unpriced' and cost is not None:
+            raise ValueError('unpriced usage cannot carry a known cost')
+        defaults = {
+            'usage_record_id': uuid.UUID(str(payload['usage_record_id'])), 'organization': organization,
+            'product_identifier': payload['product_identifier'], 'agent_name': payload['agent_name'],
+            'capability_name': payload['capability_name'], 'execution_id': uuid.UUID(str(payload['execution_id'])),
+            'correlation_id': uuid.UUID(str(payload['correlation_id'])), 'provider': payload['provider'],
+            'model_identifier': payload['model_identifier'], 'attempted_at': attempted_at, 'attempt_status': payload['attempt_status'],
+            'usage_status': payload['usage_status'], 'cost_status': payload['cost_status'],
+            'estimated_provider_cost': cost, 'currency': payload.get('currency'), **numeric,
+        }
+        with transaction.atomic():
+            event_id = uuid.UUID(str(payload['usage_event_id']))
+            projection = AIUsageProjection.objects.select_for_update().filter(
+                source='iso-smart', usage_event_id=event_id,
+            ).first()
+            if projection is not None:
+                conflicting = any(getattr(projection, field) != value for field, value in defaults.items())
+                if conflicting:
+                    return JsonResponse({'error': 'usage event identity conflict', 'code': 'usage_event_conflict'}, status=409)
+                return JsonResponse({'id': str(projection.id), 'replay': True}, status=200)
+            if AIUsageProjection.objects.select_for_update().filter(
+                source='iso-smart', usage_record_id=defaults['usage_record_id'],
+            ).exists():
+                return JsonResponse({'error': 'usage record identity conflict', 'code': 'usage_record_conflict'}, status=409)
+            projection = AIUsageProjection.objects.create(
+                source='iso-smart', usage_event_id=event_id, **defaults,
+            )
+        return JsonResponse({'id': str(projection.id), 'replay': False}, status=201)
+    except Organization.DoesNotExist:
+        return JsonResponse({'error': 'authoritative tenant not found', 'code': 'tenant_not_found'}, status=404)
+    except (ValueError, TypeError, json.JSONDecodeError, IntegrityError):
+        return JsonResponse({'error': 'invalid AI usage payload', 'code': 'invalid_ai_usage_payload'}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def list_organizations(request):
+    """
+    Lista todas las organizaciones activas
+    """
+    organizations = Organization.objects.filter(status='active')
+    
+    data = {
+        'organizations': [
+            {
+                'id': str(org.id),
+                'name': org.name,
+                'code': org.code,
+                'slug': org.code.lower(),
+                'status': org.status,
+                'is_active': org.is_active,
+                'created_at': org.created_at.isoformat(),
+            }
+            for org in organizations
+        ]
+    }
+    
+    return JsonResponse(data)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def get_organization(request, org_id):
+    """
+    Obtiene detalle de una organización
+    """
+    try:
+        org = Organization.objects.get(id=org_id, status='active')
+    except Organization.DoesNotExist:
+        return JsonResponse({
+            'error': 'Organización no encontrada',
+            'code': 'organization_not_found'
+        }, status=404)
+    
+    data = {
+        'id': str(org.id),
+        'name': org.name,
+        'code': org.code,
+        'slug': org.code.lower(),
+        'status': org.status,
+        'is_active': org.is_active,
+        'created_at': org.created_at.isoformat(),
+    }
+    
+    return JsonResponse(data)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def get_organization_users(request, org_id):
+    """
+    Obtiene usuarios de una organización
+    """
+    try:
+        org = Organization.objects.get(id=org_id, status='active')
+    except Organization.DoesNotExist:
+        return JsonResponse({
+            'error': 'Organización no encontrada',
+            'code': 'organization_not_found'
+        }, status=404)
+    
+    members = UserOrganization.objects.filter(
+        organization=org,
+        is_active=True
+    ).select_related('user')
+    
+    data = {
+        'organization_id': org.id,
+        'organization_name': org.name,
+        'users': [
+            {
+                'id': member.user.id,
+                'email': member.user.email,
+                'first_name': member.user.first_name,
+                'last_name': member.user.last_name,
+                'role': member.role,
+                'is_active': member.is_active,
+            }
+            for member in members
+        ]
+    }
+    
+    return JsonResponse(data)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def get_organization_modules(request, org_id):
+    """
+    Obtiene módulos habilitados para una organización
+    """
+    try:
+        org = Organization.objects.get(id=org_id, status='active')
+    except Organization.DoesNotExist:
+        return JsonResponse({
+            'error': 'Organización no encontrada',
+            'code': 'organization_not_found'
+        }, status=404)
+    
+    owner_org_name = getattr(settings, 'BILLING_OWNER_ORG_NAME', 'Smart3AI')
+    owner_org_code = getattr(settings, 'BILLING_OWNER_ORG_CODE', '')
+    owner_org_id = getattr(settings, 'BILLING_OWNER_ORG_ID', '')
+    metadata = org.metadata or {}
+    is_owner_exempt = (
+        bool(metadata.get('billing_exempt') or metadata.get('owner_organization'))
+        or (owner_org_name and org.name.lower() == owner_org_name.lower())
+        or (owner_org_code and org.code.lower() == owner_org_code.lower())
+        or (owner_org_id and str(org.id) == str(owner_org_id))
+    )
+
+    modules = list(MODULE_CODE_MAP.values()) if is_owner_exempt else []
+
+    product_entitlements = list(_active_product_entitlements(org))
+    for entitlement in product_entitlements:
+        if entitlement.access_allowed:
+            modules.append({
+                'code': entitlement.product.code,
+                'name': entitlement.product.name,
+                'enabled': entitlement.enabled,
+                'status': entitlement.status,
+                'source': 'product_entitlement',
+                'billing_status': _subscription_payload(entitlement.subscription or org.subscription)['billing_status'],
+            })
+
+    product_aliases = _product_system_aliases()
+    subscription = org.subscription
+    if not is_owner_exempt and subscription and subscription.is_active:
+        plan_modules = subscription.plan.modules_included
+        if isinstance(plan_modules, list):
+            for module in plan_modules:
+                if isinstance(module, str):
+                    normalized = module.strip().lower()
+                    if normalized in product_aliases:
+                        continue
+                    mapped = MODULE_CODE_MAP.get(normalized)
+                    if mapped:
+                        modules.append(mapped)
+                    else:
+                        modules.append({'code': normalized.upper(), 'name': module})
+                elif isinstance(module, dict) and 'code' in module:
+                    normalized = str(module.get('code') or '').strip().lower()
+                    if normalized in product_aliases:
+                        continue
+                    modules.append(module)
+    
+    # Eliminar duplicados por código
+    unique_modules = list({m['code']: m for m in modules if isinstance(m, dict)}.values())
+    
+    data = {
+        'organization_id': str(org.id),
+        'organization_name': org.name,
+        'modules': unique_modules
+    }
+    
+    return JsonResponse(data)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def get_organization_products(request, org_id):
+    """Lista productos/sistemas habilitados para una organizacion."""
+    try:
+        org = Organization.objects.get(id=org_id, status='active')
+    except Organization.DoesNotExist:
+        return JsonResponse({
+            'error': 'Organización no encontrada',
+            'code': 'organization_not_found'
+        }, status=404)
+
+    entitlements = [_entitlement_payload(item) for item in _active_product_entitlements(org)]
+    return JsonResponse({
+        'organization_id': str(org.id),
+        'organization_name': org.name,
+        'products': entitlements,
+    })
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def validate_organization_product_access(request, org_id, product_code):
+    """Valida acceso producto-neutral de una organizacion."""
+    try:
+        org = Organization.objects.get(id=org_id, status='active')
+    except Organization.DoesNotExist:
+        return JsonResponse({
+            'allowed': False,
+            'error': 'Organización no encontrada',
+            'code': 'organization_not_found'
+        }, status=404)
+
+    normalized_product_code = product_code.upper()
+    product = ProductSystem.objects.filter(code=normalized_product_code).first()
+    if not product:
+        return JsonResponse({
+            'allowed': False,
+            'organization_id': str(org.id),
+            'organization_status': org.status,
+            'product_code': normalized_product_code,
+            'reason': 'product_not_found',
+            'product': None,
+        }, status=404)
+
+    entitlement = (
+        OrganizationProductEntitlement.objects
+        .filter(organization=org, product=product)
+        .select_related('organization', 'product', 'product__default_plan', 'plan', 'subscription', 'subscription__plan')
+        .first()
+    )
+    if not entitlement:
+        _audit_product_access_validation(
+            request,
+            organization=org,
+            product=product,
+            entitlement=None,
+            allowed=False,
+            reason='product_not_enabled',
+        )
+        return JsonResponse({
+            'allowed': False,
+            'organization_id': str(org.id),
+            'organization_status': org.status,
+            'product_code': normalized_product_code,
+            'reason': 'product_not_enabled',
+            'product': {
+                'id': str(product.id),
+                'code': product.code,
+                'name': product.name,
+                'slug': product.slug,
+                'status': product.status,
+                'billing_enabled': product.billing_enabled,
+            },
+        }, status=403)
+
+    payload = _entitlement_payload(entitlement)
+    if not entitlement.access_allowed or _truthy_query_param(request.GET.get('audit')):
+        _audit_product_access_validation(
+            request,
+            organization=org,
+            product=product,
+            entitlement=entitlement,
+            allowed=entitlement.access_allowed,
+            reason=entitlement.access_denial_reason,
+        )
+    return JsonResponse({
+        'allowed': entitlement.access_allowed,
+        'organization_id': str(org.id),
+        'organization_status': org.status,
+        'product': payload,
+        'reason': entitlement.access_denial_reason,
+    }, status=200 if entitlement.access_allowed else 403)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@require_api_key
+def validate_credentials(request):
+    """
+    Valida credenciales de un usuario
+    """
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'error': 'JSON inválido',
+            'code': 'invalid_json'
+        }, status=400)
+    
+    email = data.get('email')
+    password = data.get('password')
+    organization_id = data.get('organization_id')
+    
+    if not email or not password:
+        return JsonResponse({
+            'error': 'Email y contraseña requeridos',
+            'code': 'missing_credentials'
+        }, status=400)
+    
+    # Autenticar usuario
+    user = authenticate(request, username=email, password=password)
+    
+    if not user:
+        return JsonResponse({
+            'valid': False,
+            'error': 'Credenciales inválidas',
+            'code': 'invalid_credentials'
+        }, status=401)
+    
+    # Obtener organizaciones del usuario
+    memberships = UserOrganization.objects.filter(
+        user=user,
+        is_active=True,
+        organization__status='active'
+    ).select_related('organization')
+    
+    if not memberships.exists():
+        return JsonResponse({
+            'valid': False,
+            'error': 'Usuario no pertenece a ninguna organización',
+            'code': 'no_organization'
+        }, status=403)
+    
+    # Si se especificó una organización, verificar que el usuario pertenezca a ella
+    if organization_id:
+        membership = memberships.filter(organization_id=organization_id).first()
+        if not membership:
+            return JsonResponse({
+                'valid': False,
+                'error': 'Usuario no pertenece a esta organización',
+                'code': 'not_member'
+            }, status=403)
+    else:
+        # Usar la primera organización
+        membership = memberships.first()
+    
+    # Construir respuesta
+    response_data = {
+        'valid': True,
+        'user': {
+            'id': user.id,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'is_active': user.is_active,
+        },
+        'organizations': [
+            {
+                'id': m.organization.id,
+                'name': m.organization.name,
+                'code': m.organization.code,
+                'role': m.role,
+            }
+            for m in memberships
+        ],
+        'current_organization': {
+            'id': membership.organization.id,
+            'name': membership.organization.name,
+            'code': membership.organization.code,
+        },
+        'current_role': membership.role,
+    }
+    
+    return JsonResponse(response_data)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@require_api_key
+def get_user_by_id(request):
+    """
+    Obtiene información de un usuario por ID
+    """
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'error': 'JSON inválido',
+            'code': 'invalid_json'
+        }, status=400)
+    
+    user_id = data.get('user_id')
+    organization_id = data.get('organization_id')
+    
+    if not user_id:
+        return JsonResponse({
+            'error': 'user_id requerido',
+            'code': 'missing_user_id'
+        }, status=400)
+    
+    try:
+        user = User.objects.get(id=user_id, is_active=True)
+    except User.DoesNotExist:
+        return JsonResponse({
+            'error': 'Usuario no encontrado',
+            'code': 'user_not_found'
+        }, status=404)
+    
+    # Obtener organizaciones del usuario
+    memberships = UserOrganization.objects.filter(
+        user=user,
+        is_active=True,
+        organization__status='active'
+    ).select_related('organization')
+    
+    # Si se especificó organización, filtrar por ella
+    if organization_id:
+        memberships = memberships.filter(organization_id=organization_id)
+    
+    response_data = {
+        'id': user.id,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'is_active': user.is_active,
+        'organizations': [
+            {
+                'id': m.organization.id,
+                'name': m.organization.name,
+                'code': m.organization.code,
+                'role': m.role,
+            }
+            for m in memberships
+        ]
+    }
+    
+    return JsonResponse(response_data)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@require_api_key
+def ingest_landing_analytics(request):
+    """Ingesta de eventos de analítica del landing de Smart3AI."""
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'error': 'JSON inválido',
+            'code': 'invalid_json'
+        }, status=400)
+
+    events = data.get('events')
+    campaign = str(data.get('campaign') or '').strip()[:120]
+
+    if not isinstance(events, list):
+        single_event = data.get('event')
+        if isinstance(single_event, dict):
+            events = [single_event]
+        else:
+            return JsonResponse({
+                'error': 'Se requiere "events" (array) o "event" (objeto)',
+                'code': 'missing_events'
+            }, status=400)
+
+    created = 0
+    rejected = 0
+
+    for raw in events:
+        if not isinstance(raw, dict):
+            rejected += 1
+            continue
+
+        event_name = str(raw.get('eventName') or raw.get('event_name') or '').strip()
+        if not event_name:
+            rejected += 1
+            continue
+
+        raw_ts = raw.get('ts') or raw.get('timestamp')
+        occurred_at = parse_datetime(str(raw_ts)) if raw_ts else None
+        if occurred_at is None:
+            occurred_at = timezone.now()
+        elif timezone.is_naive(occurred_at):
+            occurred_at = timezone.make_aware(occurred_at, timezone.get_current_timezone())
+
+        LandingAnalyticsEvent.objects.create(
+            event_name=event_name[:80],
+            event_date=timezone.localtime(occurred_at).date(),
+            occurred_at=occurred_at,
+            campaign=campaign,
+            variant=str(raw.get('experiment') or raw.get('variant') or '').strip().upper()[:8],
+            persona=str(raw.get('persona') or '').strip()[:32],
+            intent=str(raw.get('intent') or '').strip()[:24],
+            location=str(raw.get('location') or '').strip()[:80],
+            session_id=str(raw.get('sessionId') or raw.get('session_id') or '').strip()[:120],
+            page_path=str(raw.get('pagePath') or raw.get('page_path') or '').strip()[:255],
+            page_url=str(raw.get('pageUrl') or raw.get('page_url') or '').strip(),
+            href=str(raw.get('href') or '').strip(),
+            referrer=str(raw.get('referrer') or '').strip(),
+            source_service=str(getattr(request, 'integration_service', '') or '')[:64],
+            payload=raw,
+        )
+        created += 1
+
+    return JsonResponse({
+        'ok': True,
+        'created': created,
+        'rejected': rejected,
+        'campaign': campaign or 'direct',
+        'received_at': timezone.now().isoformat(),
+    }, status=201)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@require_api_key
+def create_demo_request(request):
+    """Create an idempotent pre-tenant demo request from the landing proxy."""
+    if getattr(request, 'integration_service', '') not in {'landing_demo', 'landing_analytics'}:
+        return JsonResponse({
+            'error': 'Servicio de integración no autorizado',
+            'code': 'service_not_allowed',
+        }, status=403)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido', 'code': 'invalid_json'}, status=400)
+
+    if str(data.get('website') or '').strip():
+        return JsonResponse({'ok': True, 'accepted': True}, status=201)
+
+    full_name = str(data.get('name') or '').strip()
+    work_email = str(data.get('email') or '').strip().lower()
+    organization_name = str(data.get('organization') or '').strip()
+    product_code = str(data.get('product') or '').strip().upper()
+    priority = str(data.get('priority') or '').strip()
+    consent_given = data.get('consent') is True
+
+    errors = {}
+    if len(full_name) < 2 or len(full_name) > 160:
+        errors['name'] = 'Indica un nombre válido.'
+    try:
+        validate_email(work_email)
+    except ValidationError:
+        errors['email'] = 'Indica un correo válido.'
+    if len(organization_name) < 2 or len(organization_name) > 200:
+        errors['organization'] = 'Indica una organización válida.'
+    if product_code not in {'ISO_SMART', 'MEDSUPPLIER'}:
+        errors['product'] = 'Producto no reconocido.'
+    valid_priorities = {choice[0] for choice in DemoRequest.PRIORITY_CHOICES}
+    if priority not in valid_priorities:
+        errors['priority'] = 'Prioridad no reconocida.'
+    if not consent_given:
+        errors['consent'] = 'El consentimiento es obligatorio.'
+
+    try:
+        external_id = uuid.UUID(str(data.get('request_id') or ''))
+    except (ValueError, TypeError, AttributeError):
+        errors['request_id'] = 'Identificador de solicitud inválido.'
+
+    if errors:
+        return JsonResponse({'error': 'Solicitud inválida', 'code': 'validation_error', 'fields': errors}, status=400)
+
+    with transaction.atomic():
+        demo_request, created = DemoRequest.objects.get_or_create(
+            external_id=external_id,
+            defaults={
+                'full_name': full_name,
+                'work_email': work_email,
+                'organization_name': organization_name,
+                'product_code': product_code,
+                'priority': priority,
+                'source': str(data.get('source') or 'landing').strip()[:80],
+                'campaign': str(data.get('campaign') or '').strip()[:120],
+                'page_url': str(data.get('page_url') or '').strip()[:500],
+                'consent_given': True,
+                'consented_at': timezone.now(),
+                'source_service': str(request.integration_service)[:100],
+            },
+        )
+
+    return JsonResponse({
+        'ok': True,
+        'created': created,
+        'request_id': str(demo_request.external_id),
+        'status': demo_request.status,
+    }, status=201 if created else 200)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+@require_api_key
+def landing_analytics_summary(request):
+    """Resumen agregado por fecha, campaña y variante."""
+    campaign = str(request.GET.get('campaign') or '').strip()
+    from_date = parse_date(str(request.GET.get('from') or '').strip())
+    to_date = parse_date(str(request.GET.get('to') or '').strip())
+
+    queryset = LandingAnalyticsEvent.objects.all()
+    if campaign:
+        queryset = queryset.filter(campaign=campaign)
+    if from_date:
+        queryset = queryset.filter(event_date__gte=from_date)
+    if to_date:
+        queryset = queryset.filter(event_date__lte=to_date)
+
+    total_events = queryset.count()
+    cta_events = queryset.filter(event_name='cta_click')
+
+    by_variant = []
+    for item in queryset.values('variant').annotate(total=Count('id')).order_by('variant'):
+        variant_key = item['variant'] or 'N/A'
+        total = item['total']
+        cta_total = cta_events.filter(variant=item['variant']).count()
+        cta_rate = round((cta_total / total) * 100, 2) if total else 0
+        by_variant.append({
+            'variant': variant_key,
+            'events': total,
+            'cta_clicks': cta_total,
+            'cta_rate_percent': cta_rate,
+        })
+
+    by_day = list(
+        queryset.values('event_date', 'campaign', 'variant')
+        .annotate(total=Count('id'))
+        .order_by('-event_date', 'campaign', 'variant')
+    )
+
+    winner = None
+    sortable = [item for item in by_variant if item['variant'] in {'A', 'B'}]
+    if sortable:
+        winner = sorted(sortable, key=lambda row: (row['cta_rate_percent'], row['cta_clicks']), reverse=True)[0]['variant']
+
+    return JsonResponse({
+        'campaign': campaign,
+        'filters': {
+            'from': from_date.isoformat() if from_date else None,
+            'to': to_date.isoformat() if to_date else None,
+        },
+        'totals': {
+            'events': total_events,
+            'cta_clicks': cta_events.count(),
+        },
+        'winner_variant': winner,
+        'by_variant': by_variant,
+        'by_day': by_day,
+    })

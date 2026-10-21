@@ -1,0 +1,101 @@
+[
+  {
+    "proposal": "A-legacy-deny-2fa.patch",
+    "sha256": "357d07c77f8c19036bb7f07e83ddee4ae388210704532cf050bc9d043c78a418",
+    "target": "backend/apps/integration/views.py",
+    "target_sha256": "333459137cbc21e7b5519b27c6c2fa8aa46275cdf6821075ffa83339087515dd",
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  },
+  {
+    "proposal": "B-reject-stale-role.patch",
+    "sha256": "883942ffc0588c4c7c4b1f4ea2db86f374cd5b20df625b79e57bd9300583500d",
+    "target": "backend/apps/integration/sso_views.py",
+    "target_sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  },
+  {
+    "proposal": "C-register-client-audience.patch",
+    "sha256": "d542bccf0fb7fc3b51be95322a99d884a8959464e6a5cc29bdf69c8f5d09cd0b",
+    "target": "backend/apps/integration/sso_views.py",
+    "target_sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  },
+  {
+    "proposal": "D-role-product-scopes.patch",
+    "sha256": "8c9e7821840ff003ca49734570acda798661e70c3f68c6f387deaaeec9026652",
+    "target": "backend/apps/integration/sso_views.py",
+    "target_sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  },
+  {
+    "proposal": "E-trial-subscription-model.patch",
+    "sha256": "a8cfa3f52d23f29b70aefe9b64c0ff41e7f2841914219eaeca4f2502a6b9aa5e",
+    "target": "backend/apps/products/models.py",
+    "target_sha256": "ba4ec3e07de9740fb23e7e38b0117245014dc07ea379daa39f26764a9d946193",
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  },
+  {
+    "proposal": "E-trial-subscription-serializers.patch",
+    "sha256": "a81911164443aa8c3ed6b8673edfab7f4151070e638f1dcbedadc08b5703d60f",
+    "target": "backend/apps/products/serializers.py",
+    "target_sha256": "0a866337d5e6103bae629d558bbdc88655d5bfbea1ae78716249ec845517fc3c",
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  },
+  {
+    "proposal": "F-entitlement-start.patch",
+    "sha256": "2c38106bb1b5344d2f4f666bf1c751c363b0678356612e5ecabd393c7bab8ec1",
+    "target": "backend/apps/products/models.py",
+    "target_sha256": "ba4ec3e07de9740fb23e7e38b0117245014dc07ea379daa39f26764a9d946193",
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  },
+  {
+    "proposal": "G-subscription-binding-contract.patch",
+    "sha256": "70ecd6de5ce20e8ef6861c53f29853dbddf93e2481911614de139b6c29b73388",
+    "target": "docs/security/contracts/G-proposed.md",
+    "target_sha256": null,
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  },
+  {
+    "proposal": "H-integration-key-scope-contract.patch",
+    "sha256": "027e7b958cdba97d462041abc0e00cdf5168eab55b68eadc19f0c02a84deb255",
+    "target": "docs/security/contracts/H-proposed.md",
+    "target_sha256": null,
+    "target_matches_rec_sso_02": true,
+    "check_exit": 0,
+    "check_output": "",
+    "applied": false,
+    "runtime": "NOT_EXECUTED"
+  }
+]

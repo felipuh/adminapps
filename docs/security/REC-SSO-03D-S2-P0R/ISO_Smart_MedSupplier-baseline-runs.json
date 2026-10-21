@@ -1,0 +1,24 @@
+[
+  {
+    "suite": "baseline-med-ch",
+    "exit": 1,
+    "cmd": [
+      "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/baseline-med-ch.methods.json",
+      "integration/tests_ch_offline.py"
+    ]
+  },
+  {
+    "suite": "baseline-med-decision_a",
+    "exit": 1,
+    "cmd": [
+      "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/.venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/baseline-med-decision_a.methods.json",
+      "integration/tests_decision_a_offline.py"
+    ]
+  }
+]

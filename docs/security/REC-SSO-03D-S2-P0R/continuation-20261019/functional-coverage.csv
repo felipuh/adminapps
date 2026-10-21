@@ -1,0 +1,5 @@
+operation,test_class,handler,effects,persistence
+Invoice.mark_paid,InvoiceFunctionalContinuationTests,real dispatch/gate/MarkInvoicePaidSerializer,pending/overdue paid and subscription activation; retry preserves evidence; invalid state/reference denied,NOT_EVIDENCED
+User.revoke_sessions,LocalRegistryTokenContinuationTests,real signed bearer/dispatch,owner filter/current authenticated JTI; foreign keep-ID denied; NO local JWT invalidation,NOT_EVIDENCED
+consumer tenant suspension,ConsumerDenialContinuationTests,both actual adapters + credential hash + central organization/users/modules handlers,central 404 denies; zero local fallback calls,NOT_EVIDENCED
+consumer HTTP errors,ConsumerDenialContinuationTests,both actual adapters; synthetic HTTP responses,all 4xx denied; 5xx bodies never grant production access,NOT_EVIDENCED

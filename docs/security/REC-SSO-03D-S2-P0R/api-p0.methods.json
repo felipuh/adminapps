@@ -1,0 +1,412 @@
+{
+  "runners": [
+    {
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_action_payload_cannot_assign_tenant_or_privileges",
+      "method": "test_action_payload_cannot_assign_tenant_or_privileges",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 146,
+      "qualname": "ControlPlaneTests.test_action_payload_cannot_assign_tenant_or_privileges",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_catalog_crud_allow_real_serializers_and_effects",
+      "method": "test_catalog_crud_allow_real_serializers_and_effects",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 316,
+      "qualname": "ControlPlaneTests.test_catalog_crud_allow_real_serializers_and_effects",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_entitlement_relations_and_exact_product_scopes",
+      "method": "test_entitlement_relations_and_exact_product_scopes",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 294,
+      "qualname": "ControlPlaneTests.test_entitlement_relations_and_exact_product_scopes",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_entitlement_toggle_allow_audit_and_org_admin_denied",
+      "method": "test_entitlement_toggle_allow_audit_and_org_admin_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 359,
+      "qualname": "ControlPlaneTests.test_entitlement_toggle_allow_audit_and_org_admin_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_inactive_human_and_service_claims_denied",
+      "method": "test_inactive_human_and_service_claims_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 105,
+      "qualname": "ControlPlaneTests.test_inactive_human_and_service_claims_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_invitation_patch_cannot_promote_global_role",
+      "method": "test_invitation_patch_cannot_promote_global_role",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 72,
+      "qualname": "ControlPlaneTests.test_invitation_patch_cannot_promote_global_role",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_invitation_update_allow_and_cross_tenant_denied",
+      "method": "test_invitation_update_allow_and_cross_tenant_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 204,
+      "qualname": "ControlPlaneTests.test_invitation_update_allow_and_cross_tenant_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_invoice_subscription_cross_tenant_relation_rejected",
+      "method": "test_invoice_subscription_cross_tenant_relation_rejected",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 309,
+      "qualname": "ControlPlaneTests.test_invoice_subscription_cross_tenant_relation_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_member_cannot_activate_subscription_handler",
+      "method": "test_member_cannot_activate_subscription_handler",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 48,
+      "qualname": "ControlPlaneTests.test_member_cannot_activate_subscription_handler",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_member_cannot_mark_invoice_paid_handler",
+      "method": "test_member_cannot_mark_invoice_paid_handler",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 55,
+      "qualname": "ControlPlaneTests.test_member_cannot_mark_invoice_paid_handler",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_membership_foreign_user_and_reparenting_rejected",
+      "method": "test_membership_foreign_user_and_reparenting_rejected",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 213,
+      "qualname": "ControlPlaneTests.test_membership_foreign_user_and_reparenting_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_membership_update_allow_preserves_identity",
+      "method": "test_membership_update_allow_preserves_identity",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 371,
+      "qualname": "ControlPlaneTests.test_membership_update_allow_preserves_identity",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_module_bulk_validates_all_ids_before_effects_and_allows_valid",
+      "method": "test_module_bulk_validates_all_ids_before_effects_and_allows_valid",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 399,
+      "qualname": "ControlPlaneTests.test_module_bulk_validates_all_ids_before_effects_and_allows_valid",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_module_toggle_allow_audit_and_org_admin_denied",
+      "method": "test_module_toggle_allow_audit_and_org_admin_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 347,
+      "qualname": "ControlPlaneTests.test_module_toggle_allow_audit_and_org_admin_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_no_tenant_and_revoked_or_nonadmin_membership_denied",
+      "method": "test_no_tenant_and_revoked_or_nonadmin_membership_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 152,
+      "qualname": "ControlPlaneTests.test_no_tenant_and_revoked_or_nonadmin_membership_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_org_admin_cannot_reset_platform_admin_password",
+      "method": "test_org_admin_cannot_reset_platform_admin_password",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 62,
+      "qualname": "ControlPlaneTests.test_org_admin_cannot_reset_platform_admin_password",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_organization_activate_allow_records_tenant_event",
+      "method": "test_organization_activate_allow_records_tenant_event",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 383,
+      "qualname": "ControlPlaneTests.test_organization_activate_allow_records_tenant_event",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_organization_settings_effect_allow_and_module_escalation_denied",
+      "method": "test_organization_settings_effect_allow_and_module_escalation_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 277,
+      "qualname": "ControlPlaneTests.test_organization_settings_effect_allow_and_module_escalation_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_payment_default_allow_and_cross_tenant_deny",
+      "method": "test_payment_default_allow_and_cross_tenant_deny",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 245,
+      "qualname": "ControlPlaneTests.test_payment_default_allow_and_cross_tenant_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_payment_method_create_allow_and_foreign_organization_denied",
+      "method": "test_payment_method_create_allow_and_foreign_organization_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 229,
+      "qualname": "ControlPlaneTests.test_payment_method_create_allow_and_foreign_organization_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_plan_mutations_anonymous_and_non_superadmin_denied",
+      "method": "test_plan_mutations_anonymous_and_non_superadmin_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 83,
+      "qualname": "ControlPlaneTests.test_plan_mutations_anonymous_and_non_superadmin_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_platform_invoice_mark_paid_allow_activates_subscription",
+      "method": "test_platform_invoice_mark_paid_allow_activates_subscription",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 136,
+      "qualname": "ControlPlaneTests.test_platform_invoice_mark_paid_allow_activates_subscription",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_platform_role_alone_and_missing_operation_grant_denied",
+      "method": "test_platform_role_alone_and_missing_operation_grant_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 95,
+      "qualname": "ControlPlaneTests.test_platform_role_alone_and_missing_operation_grant_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_platform_subscription_actions_allow_and_preserve_effect",
+      "method": "test_platform_subscription_actions_allow_and_preserve_effect",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 126,
+      "qualname": "ControlPlaneTests.test_platform_subscription_actions_allow_and_preserve_effect",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_reset_password_allow_ordinary_same_tenant_target",
+      "method": "test_reset_password_allow_ordinary_same_tenant_target",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 195,
+      "qualname": "ControlPlaneTests.test_reset_password_allow_ordinary_same_tenant_target",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_service_key_header_not_human_session",
+      "method": "test_service_key_header_not_human_session",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 120,
+      "qualname": "ControlPlaneTests.test_service_key_header_not_human_session",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_session_revoke_uses_authenticated_jti_and_owner",
+      "method": "test_session_revoke_uses_authenticated_jti_and_owner",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 261,
+      "qualname": "ControlPlaneTests.test_session_revoke_uses_authenticated_jti_and_owner",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_subscription_invoices_do_not_leak_other_tenant",
+      "method": "test_subscription_invoices_do_not_leak_other_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 435,
+      "qualname": "ControlPlaneTests.test_subscription_invoices_do_not_leak_other_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_subscription_queryset_uses_canonical_not_invoice_ownership",
+      "method": "test_subscription_queryset_uses_canonical_not_invoice_ownership",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 426,
+      "qualname": "ControlPlaneTests.test_subscription_queryset_uses_canonical_not_invoice_ownership",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_user_update_allow_and_privilege_mass_assignment_denied",
+      "method": "test_user_update_allow_and_privilege_mass_assignment_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 181,
+      "qualname": "ControlPlaneTests.test_user_update_allow_and_privilege_mass_assignment_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ControlPlaneTests.test_user_update_cross_tenant_and_privileged_target_denied",
+      "method": "test_user_update_cross_tenant_and_privileged_target_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 172,
+      "qualname": "ControlPlaneTests.test_user_update_cross_tenant_and_privileged_target_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_all_billing_actions_deny_role_only_before_handler",
+      "method": "test_all_billing_actions_deny_role_only_before_handler",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 526,
+      "qualname": "PlatformBillingTests.test_all_billing_actions_deny_role_only_before_handler",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_backoffice_readiness_allow_service_and_role_only_deny",
+      "method": "test_backoffice_readiness_allow_service_and_role_only_deny",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 589,
+      "qualname": "PlatformBillingTests.test_backoffice_readiness_allow_service_and_role_only_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_billing_catalog_mapping_allow_and_missing_permission_deny",
+      "method": "test_billing_catalog_mapping_allow_and_missing_permission_deny",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 549,
+      "qualname": "PlatformBillingTests.test_billing_catalog_mapping_allow_and_missing_permission_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_billing_foreign_subscription_and_price_denied",
+      "method": "test_billing_foreign_subscription_and_price_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 562,
+      "qualname": "PlatformBillingTests.test_billing_foreign_subscription_and_price_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_billing_payment_reject_allow_service_effect_and_org_admin_deny",
+      "method": "test_billing_payment_reject_allow_service_effect_and_org_admin_deny",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 575,
+      "qualname": "PlatformBillingTests.test_billing_payment_reject_allow_service_effect_and_org_admin_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_core_mutations_reject_regular_user_before_handler",
+      "method": "test_core_mutations_reject_regular_user_before_handler",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 614,
+      "qualname": "PlatformBillingTests.test_core_mutations_reject_regular_user_before_handler",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_feature_flags_live_member_allow_and_foreign_id_deny",
+      "method": "test_feature_flags_live_member_allow_and_foreign_id_deny",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 631,
+      "qualname": "PlatformBillingTests.test_feature_flags_live_member_allow_and_foreign_id_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_invitation_create_allow_and_foreign_tenant_deny",
+      "method": "test_invitation_create_allow_and_foreign_tenant_deny",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 661,
+      "qualname": "PlatformBillingTests.test_invitation_create_allow_and_foreign_tenant_deny",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_logout_owner_binding_allow_and_foreign_refresh_denied",
+      "method": "test_logout_owner_binding_allow_and_foreign_refresh_denied",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 599,
+      "qualname": "PlatformBillingTests.test_logout_owner_binding_allow_and_foreign_refresh_denied",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_malformed_plan_id_does_not_reach_save",
+      "method": "test_malformed_plan_id_does_not_reach_save",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 684,
+      "qualname": "PlatformBillingTests.test_malformed_plan_id_does_not_reach_save",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_plan_detail_read_allows_human_without_tenant",
+      "method": "test_plan_detail_read_allows_human_without_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 691,
+      "qualname": "PlatformBillingTests.test_plan_detail_read_allows_human_without_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_plan_read_queryset_keeps_inactive_catalog_hidden",
+      "method": "test_plan_read_queryset_keeps_inactive_catalog_hidden",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 702,
+      "qualname": "PlatformBillingTests.test_plan_read_queryset_keeps_inactive_catalog_hidden",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_subscription_patch_privileged_fields_only_platform",
+      "method": "test_subscription_patch_privileged_fields_only_platform",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 674,
+      "qualname": "PlatformBillingTests.test_subscription_patch_privileged_fields_only_platform",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.PlatformBillingTests.test_user_create_allow_and_global_role_denied_with_real_serializer",
+      "method": "test_user_create_allow_and_global_role_denied_with_real_serializer",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 642,
+      "qualname": "PlatformBillingTests.test_user_create_allow_and_global_role_denied_with_real_serializer",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ServiceDataTests.test_explicit_service_tenant_read_allow",
+      "method": "test_explicit_service_tenant_read_allow",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 464,
+      "qualname": "ServiceDataTests.test_explicit_service_tenant_read_allow",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ServiceDataTests.test_foreign_tenant_and_missing_grants_deny_before_business_query",
+      "method": "test_foreign_tenant_and_missing_grants_deny_before_business_query",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 471,
+      "qualname": "ServiceDataTests.test_foreign_tenant_and_missing_grants_deny_before_business_query",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ServiceDataTests.test_service_list_filters_tenants",
+      "method": "test_service_list_filters_tenants",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 485,
+      "qualname": "ServiceDataTests.test_service_list_filters_tenants",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ServiceDataTests.test_service_product_isolation",
+      "method": "test_service_product_isolation",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 492,
+      "qualname": "ServiceDataTests.test_service_product_isolation",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.test_control_plane.ServiceDataTests.test_service_user_lookup_requires_tenant_and_membership",
+      "method": "test_service_user_lookup_requires_tenant_and_membership",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/test_control_plane.py",
+      "line": 505,
+      "qualname": "ServiceDataTests.test_service_user_lookup_requires_tenant_and_membership",
+      "status": "PASS"
+    }
+  ]
+}

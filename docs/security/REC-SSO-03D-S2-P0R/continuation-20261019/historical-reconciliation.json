@@ -1,0 +1,97 @@
+[
+  {
+    "suite": "p0r",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "p0r-sessions",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "api-p0",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "historical-api-admin",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "admin-d",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "admin-b",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "admin-ch",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "admin-a",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "admin-mfa",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "iso-d",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "iso-d_session",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "iso-b",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "iso-ch",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "iso-decision_a",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "med-d",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "med-d_session",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "med-b",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "med-ch",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  },
+  {
+    "suite": "med-decision_a",
+    "same_method_ids_and_statuses": true,
+    "changes": {}
+  }
+]

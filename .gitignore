@@ -1,0 +1,43 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+credentials.json
+credentials.*.json
+service-account*.json
+service_account*.json
+.netrc
+.npmrc
+.pypirc
+id_rsa*
+id_ed25519*
+# Private runtime data
+*.log
+logs/
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.dump
+*.backup
+*.bak
+media/
+# Installed dependencies and generated output
+.venv*/
+venv*/
+env/
+node_modules/
+__pycache__/
+*.py[cod]
+staticfiles/
+frontend/dist/
+.pytest_cache/
+.coverage

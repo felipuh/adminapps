@@ -1,0 +1,233 @@
+# REC-SSO-03D-S2 / AdminApps API Control Plane P0
+
+Implementación: 2026-10-16. Revisión final: 2026-10-19, America/Costa_Rica. Entorno solicitado: `192.168.56.11`.
+Trabajo exclusivamente sobre `/home/felipe/proyectos/adminapps`, sin sondear servicios del entorno.
+
+**DECISION_D_S2_ADMINAPPS_API_P0_PARTIAL**
+
+**PRODUCTION_READY = FALSE**
+
+**NO_DEPLOYMENT · NO_COMMIT · NO_PUSH**
+
+Se implementó autorización adicional real en las APIs, con **50 métodos nuevos PASS_OFFLINE**,
+**29 históricos preservados y PASS**, y un guardrail adicional PASS. No se certifica cierre
+global de Decision D ni de todos los workflows P0. Los permisos y algunos efectos funcionales
+están verificados; faltan ramas ALLOW de varias operaciones y evidencia de persistencia.
+
+## Evidencia recuperada y baseline
+
+Se recuperaron REPORT.md, test-matrix.csv y authorization-delta.csv del slice anterior en
+`/tmp/rec-sso-03d-s2-20261016`, además de la matriz original
+`/tmp/rec-sso-03d-kbzx0q7o/authorization-matrix.csv`. Sus copias están en `inherited-*`;
+los originales no fueron editados. El reporte original en `docs/security/REC-SSO-03D` permanece intacto.
+La evidencia de esta ejecución está también en `/tmp/rec-sso-03d-api-p0-20261016`.
+
+Antes de editar se tomaron hashes de 45.758 archivos de los tres repositorios, HEAD e índices.
+`baseline.json` y `before/` de ese directorio conservan hashes y código anterior, incluidos cambios
+preexistentes A/B/C/H/D, financieros y del Django Admin. `api-p0-only.patch` separa este incremento
+del estado dirty anterior; no es el diff acumulado contra HEAD.
+
+## Defectos reproducidos y corregidos
+
+Las cuatro pruebas negativas iniciales ejecutaron dispatch DRF y los handlers reales, con
+persistencia simulada. **Las cuatro obtuvieron 200 cuando debían denegar**, con efectos de
+activación, pago, cambio de contraseña o rol. Después de la corrección deniegan sin esos efectos.
+Véanse `reproduction-before-corrected-fixture.log` y `after-reproduction.log`.
+El primer intento del harness, con dos fixtures incompletas, también se conserva; no se cuenta
+como reproducción limpia ni se borraron sus errores.
+
+| Defecto | Corrección | Evidencia funcional nueva |
+|---|---|---|
+| `SubscriptionViewSet.get_permissions()` omitía activate/cancel/change_plan/stats y PATCH/PUT; los decoradores no reparaban el override | Operaciones administrativas explícitas, plataforma humana y permiso Django por operación | activate/cancel ALLOW; miembro DENY; PATCH de descuento ALLOW plataforma/DENY miembro; ID de plan malformado 400 |
+| `InvoiceViewSet.mark_paid` quedaba bajo IsAuthenticated | Gate administrativo efectivo y permiso change_invoice | ALLOW cambia estado/referencia y activa suscripción simulada; miembro DENY sin save |
+| Org admin podía resetear un superadmin del mismo tenant | Política sobre autoridad del usuario objetivo para reset/update/activate/deactivate/delete y membresías | Reset ordinario ALLOW con password temporal; superadmin/staff/tenant ajeno DENY |
+| PATCH de invitaciones usaba serializer sin límites de rol/tenant | Validación compartida con create, identidad del tenant inmutable, solo pendientes | Mensaje ordinario ALLOW; elevación a superadmin y objeto ajeno DENY |
+
+## PlanViewSet: resultado específico
+
+**No se encontró una mutación pública en el código inicial.** El inventario heredado que decía
+AllowAny reflejaba metadatos de clase, no `get_permissions()` efectivo. List/retrieve exigían
+IsAuthenticated; POST/PUT/PATCH/DELETE exigían IsSuperAdmin. Featured/compare conservan su gate
+más restrictivo de superadmin; no se ampliaron.
+
+Ahora se agrega principal humano local activo; las mutaciones exigen también admisión staff y
+el permiso Django add/change/delete_plan. Un rol global aislado no basta. Las pruebas ejecutan
+POST, PUT, PATCH y DELETE legítimos con serializers reales y create/save/delete simulados;
+anónimos, usuarios comunes, admin no-superadmin, staff ausente, permiso ausente y credencial
+técnica no llegan al handler. Los campos ignorados/read-only se rechazan explícitamente.
+
+La revisión del 19 de octubre detectó una regresión del nuevo mixin: el detalle de un plan
+se trataba como objeto tenant y denegaba la lectura legítima a un usuario común. Se reprodujo
+el 403 y se corrigió exclusivamente la comprobación de objeto para lecturas de Plan. Dos pruebas
+adicionales comprueban ALLOW del detalle global y conservación del filtro de planes activos.
+Las restricciones de mutación siguen pasando. `plan-read-before-20261019.log` conserva el fallo;
+`api-p0-20261019.log` registra 50 PASS finales.
+
+## Política implementada y separación de autoridades
+
+`apps/users/api_authorization.py` añade un catálogo explícito de acciones a los ViewSets de
+usuarios, organizaciones, planes, suscripciones, facturas, métodos de pago, sistemas, estándares,
+entitlements, módulos y logs. No sustituye los permisos anteriores: se exige su intersección.
+Una acción nueva sin política se deniega.
+
+- **Plataforma:** instancia autenticada de User, activa, staff, rol administrativo previo y
+  `has_perm(app.add/change/delete/view_model)` según operación. No se asignan permisos ni grupos.
+  El rol superadmin sin staff/permisos no obtiene entrada universal. Django superuser conserva
+  sus permisos Django, sin producir scopes de productos consumidores.
+- **Organización:** organización primaria no nula, membresía viva y tenant activo; escritura o
+  administración exige membresía org_admin además del gate anterior. Querysets limitan tenant;
+  la comprobación de objeto vuelve a verificar tenant y autoridad del objetivo.
+- **Self-service:** perfil/contraseña/sesiones/actividad se ligan al usuario autenticado.
+  `revoke_sessions` obtiene el JTI del token autenticado; no acepta conservar una sesión ajena
+  indicada por el cuerpo. Logout comprueba el propietario del refresh antes de blacklist/auditoría.
+- **Principal técnico:** no puede presentarse como sesión humana, incluso con rol administrativo,
+  cabecera X-API-Key o claims client/product/CENTRAL. Los endpoints SSO mantienen su contrato propio.
+- **Campos/relaciones:** entradas desconocidas/read-only se rechazan en serializers de mutación;
+  no se permite reparenting de membresías, invitaciones, entitlements, módulos, facturas ni precios.
+  Se limita el usuario referenciado de una membresía al tenant y autoridad permitidos. Los scopes
+  de entitlement deben pertenecer al catálogo exacto del producto, sin comodines ni duplicados.
+  Subscription/Invoice/Entitlement deben respetar el FK canónico de organización donde aplica.
+- **Settings:** un org admin puede modificar preferencias; campos module_* y last_backup_at
+  requieren plataforma. No se adjudican derechos comerciales mediante esa validación.
+
+Las suscripciones para tenant se seleccionan por `Organization.subscription`, no por la mera
+existencia de una factura. Se excluyen suscripciones compartidas por organizaciones distintas.
+El listado de facturas de una suscripción y su nombre de organización también se filtran por
+el tenant solicitante. Esto es una restricción conservadora; **no resuelve ownership comercial**.
+
+`bulk_assign` valida todos los IDs, duplicados y estado antes de escribir. Se conserva auditoría
+y se agrupa la ejecución en una transacción. Las pruebas solo simulan esa transacción.
+
+## Billing y backoffice
+
+`apps/users/platform_api_authorization.py` agrega admisión humana de plataforma y una tabla
+explícita de permisos por acción a billing y los agregados de backoffice. Mantiene IsSuperAdmin
+para perfiles fiscales. Las operaciones compuestas requieren varios permisos de sus modelos;
+no se concede acceso a toda la plataforma por IsAdmin.
+
+Se probaron denegaciones antes del handler para las acciones catalogadas de billing, además de
+ALLOW funcional simulado de auto_map en dry-run y rechazo de pago, con servicio/auditoría simulados.
+Los serializers de emisión validan producto-precio y suscripción canónica incluso cuando la
+organización carece de suscripción. El servicio financiero, sus algoritmos, ledger, capabilities,
+migraciones y adjudicaciones Phase31.5 no se cambiaron. **Estas pruebas no acreditan emisión,
+confirmación de pago, Hacienda, exportación, batch, reconciliación ni scheduler completos.**
+
+## IntegrationAPIKey, servicio y SSO
+
+No existe CRUD REST montado para IntegrationAPIKey/SSOClient en el resolver revisado. Su Admin
+permanece de solo lectura; creación/rotación por comandos y servicios existentes requieren
+operador staff. No se crearon ni rotaron claves, ni se ejecutaron esos comandos.
+
+Se detectó que las consultas legacy de organizaciones/usuarios/productos aceptaban una clave
+válida sin alcance de tenant. Ahora `service_data_access` exige grants **servidor**, separados de
+SSOClient, mediante `INTEGRATION_API_GRANTS[credential_id]`:
+
+```python
+# Ejemplo de contrato; NO fue instalado en settings ni corresponde a una credencial real.
+{
+    "<credential_id>": {
+        "operations": ["get_organization", "get_organization_products"],
+        "tenant_ids": ["<tenant UUID>"],
+        "product_codes": ["ISO_SMART"]
+    }
+}
+```
+
+Sin grant se deniega. Solo claves hashed_v1 activas pueden usarlo. Las operaciones son nombres
+exactos de handler; '*' no habilita nada. Listar organizaciones filtra por tenants concedidos;
+lookup de usuario exige tenant explícito y membresía; productos filtran por catálogo concedido.
+Se cubren siete handlers legacy. ALLOW verificado para organización/lista/productos; DENY para
+operación/tenant/producto ajeno, grant ausente, clave revocada y usuario sin membresía.
+
+**Compatibilidad:** los clientes ISO/MedSupplier de módulos legacy necesitan provisión explícita
+de estos grants. Sin ella recibirán denegación. La suite D/SSO verde no certifica ese cliente
+legacy: no se ocultó la dependencia mediante un fallback ni se editaron consumidores/configuración.
+`get_organization_modules` sigue siendo información legacy, no un grant D de recursos; su mapping
+comercial entre módulos y productos sigue pendiente.
+
+SSO login/verify/introspect/logout/rotate, client binding, audiences, RSA, MFA, authority fence,
+generaciones y outbox B se conservaron byte a byte respecto de este baseline. La revocación
+administrativa central existente exige superuser vivo dentro del fence y no tiene ruta REST nueva.
+
+## Inventario y alcance real de las pruebas
+
+`endpoint-inventory.csv` contiene permisos efectivos (`get_permissions()`), boundary adicional,
+handler, acción y método del resolver actual. Se reconciliaron **las 436 entradas API heredadas,
+las 263 rutas y cero rutas removidas**. El inventario ampliado tiene 774 entradas porque enumera
+además 132 HEAD y 206 OPTIONS implícitos. No representan endpoints implementados ni pruebas nuevas.
+Véase `resolver-reconciliation.json`. El catálogo explícito deniega metadata no adjudicada;
+el comportamiento OPTIONS/browsable API requiere revisión de compatibilidad.
+
+`authorization-delta.csv` marca evidencia positiva por acción/rama; 40 acciones tienen alguna
+rama ALLOW con efectos simulados. No implica que todos sus verbos, aliases, estados o relaciones
+estén probados. Los gates generales y la enumeración del resolver no se contabilizan como
+handlers funcionales completos. Las lecturas, acciones financieras y ramas no ejercitadas
+permanecen explícitamente sin evidencia funcional completa.
+
+| Suite | Métodos PASS | Límite |
+|---|---:|---|
+| API P0 nueva | 50 | Dispatch/serializers reales; ORM/servicios/locks simulados |
+| Slice anterior API + Django Admin | 29 | Originales intactos |
+| Guardrail de exposición de serializers | 1 | Comprobación estructural |
+| AdminApps D | 57 | Incluye invariantes B heredadas |
+| AdminApps B original | 43 | Revocación/RSA/aislamiento offline |
+| REC-2FA-04 | 21 | MFA offline original |
+| ISO Smart D / sesión | 361 / 36 | Alcance heredado, sin edición de consumidor |
+| MedSupplier D / sesión | 533 / 36 | Alcance heredado, sin edición de consumidor |
+| **Total ejecuciones de métodos** | **1.167** | Hay repeticiones heredadas; no son casos únicos |
+
+Cero FAIL/ERROR en estas ejecuciones finales y cero conexiones DB/red en los harnesses.
+El 19 de octubre se repitieron API P0 (50), históricos/guardrail (30) y check. Las suites D/B,
+MFA y consumidores corresponden a sus ejecuciones del 16; no se cuentan nuevamente los 48
+métodos del checkpoint anterior ni las repeticiones de los 30 históricos. Sus logs y las
+matrices/resumen anteriores se conservan con sufijo `-20261016`.
+`check` pasó con settings sintéticos y backend dummy. Compilación Python en memoria y
+`git diff --check` pasaron. Ruff no está instalado: **NOT_EVIDENCED**. No se importaron settings
+activos ni .env; no hubo migraciones, SQLite de prueba, queries a bases compartidas, jobs ni HTTP.
+Las suites históricas A/C/H con fallos reconciliados no se reejecutaron ni se reinterpretaron;
+se conserva su adjudicación y se ejecutaron las sucesoras D/B actuales.
+
+## Riesgos y bloqueos que impiden LOCAL_VERIFIED
+
+| Riesgo | Estado y siguiente evidencia necesaria |
+|---|---|
+| **HIGH — cobertura funcional P0 incompleta** | Varias ramas de create/update/delete, activación/trial de entitlement, lecturas/exports y workflows billing tienen gate nuevo pero no ALLOW completo. El CSV no las declara verificadas. Falta completar sus fixtures/efectos y compatibilidad, sin ejecutar servicios reales. |
+| **HIGH — persistencia y concurrencia** | No se verificaron SQL, locks, rollback, RLS, atomicidad de auditorías, unicidad concurrente de bulk ni TOCTOU membresía/rol. Bloqueado por el alcance sin DB/migraciones de esta ejecución. |
+| **HIGH — provisión y compatibilidad** | Staff + permisos Django + membresías vivas + grants de claves son requisitos nuevos. No se provisionaron. Clientes legacy y fixtures DB basados solo en roles requieren actualización/adjudicación; las suites DB no se ejecutaron. |
+| **HIGH — suscripciones/comercial** | Ownership compartido, trials, cuotas y mapping módulos/productos no están adjudicados. Se mantienen holds D y exclusión conservadora de suscripciones compartidas; no se inventan E/F/G. |
+| **HIGH — sesiones locales frente a B** | revoke_sessions modifica registros UserSession; no constituye por sí solo blacklist de access JWT local ni revocación durable de todas las sesiones SSO. Logout local ahora valida ownership. B central se conserva, sin afirmar convergencia global. |
+| **HIGH — superficies auxiliares de servicio** | Ingesta AI/landing/demo y validate_credentials conservan sus guards previos específicos; no se extendió a ellas el contrato nuevo de grants de datos. Falta revisión integral de delegación/tenant de productores y compatibilidad, sin alterar gobernanza financiera. |
+| **MEDIUM — invitaciones bootstrap** | Se preserva registro transaccional y validación de correo/token/rol del slice anterior. La revalidación completa de membresía vigente del invitador al consumir, especialmente invitador eliminado/inactivo para roles ordinarios, no tiene cierre nuevo. |
+| **MEDIUM — lifecycle de claves fuera REST** | CLI/service creation/rotation solo conserva requisitos staff anteriores. No se acredita segregación granular de operadores de claves ni persistencia de rotación concurrente. |
+| **MEDIUM — ergonomía de API** | Rechazo explícito de campos antes ignorados y OPTIONS conservador pueden afectar consumidores. No hubo navegador ni HTTP E2E. |
+
+La existencia de estos bloqueos impide emitir `DECISION_D_S2_ADMINAPPS_API_P0_LOCAL_VERIFIED`.
+No se debilitaron A, B, C/H, D, REC-2FA-04 ni las adjudicaciones financieras para obtener ALLOW.
+
+## Integridad y reproducción
+
+HEAD esperado conservado: AdminApps `b144b2505659ad39f756b9bc4530a7f24fe8c3ad`,
+ISO Smart `0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e`,
+MedSupplier `6a5fd0366841d0511901e0f41a98dc1d801b9f4f`.
+`integrity-final.json` registra hashes de índice, cambios exactos contra baseline y ausencia de
+eliminaciones. Admins, tests históricos, migraciones, settings, contratos, core financiero y
+código SSO/durable se preservaron. Los dos consumidores no tienen cambios nuevos de esta ejecución.
+
+```sh
+cd /home/felipe/proyectos/adminapps
+backend/.venv/bin/python -B backend/scripts/rec_sso_03d_api_p0_offline.py
+backend/.venv/bin/python -B backend/scripts/rec_sso_03d_api_p0_offline.py --check
+backend/.venv/bin/python -B backend/scripts/rec_sso_03d_api_inventory.py /tmp/api-p0-inventory
+backend/.venv/bin/python -B backend/scripts/rec_sso_03d_api_p0_offline.py apps.users.test_authorization apps.users.test_admin_authorization apps.organizations.test_authorization apps.subscriptions.test_authorization apps.api.tests_security_guardrails
+backend/.venv/bin/python -B backend/scripts/rec_sso_03d_offline.py
+backend/.venv/bin/python -B backend/scripts/rec_sso_03b_offline.py
+backend/.venv/bin/python -B backend/scripts/rec_sso_02_2fa_regression.py
+```
+
+Las suites de consumidores se ejecutan desde cada `backend` con `.venv/bin/python -B
+integration/tests_d_offline.py` y `integration/tests_d_session_offline.py`. Todos los logs están
+en este directorio. No se propone activación hasta resolver los bloqueos y revisar el delta.
+
+`code-hashes.json` identifica el código entregado y `SHA256SUMS` sella los artefactos de este
+directorio. La comparación de archivos del baseline excluye enlaces a directorios (lib64),
+que se declaran expresamente en la evidencia; no se les atribuye un hash inicial inexistente.

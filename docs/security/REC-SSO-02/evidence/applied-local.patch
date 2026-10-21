@@ -1,0 +1,74 @@
+diff --git a/backend/apps/integration/sso_views.py b/backend/apps/integration/sso_views.py
+index 4fee87a6..1e20e92a 100644
+--- a/backend/apps/integration/sso_views.py
++++ b/backend/apps/integration/sso_views.py
+@@ -8,6 +8,7 @@ supports 2FA challenge flow, and provides token introspection for services.
+ from __future__ import annotations
+ 
+ import json
++import uuid
+ from functools import wraps
+ from typing import Any
+ 
+@@ -401,8 +402,21 @@ def sso_login_verify_2fa(request):
+     }, status=200)
+ 
+ 
++def _introspection_errors(view):
++    @wraps(view)
++    def wrapped(request, *args, **kwargs):
++        try:
++            return view(request, *args, **kwargs)
++        except DatabaseError:
++            return JsonResponse({
++                "active": False, "error": "Unable to complete introspection",
++            }, status=503)
++    return wrapped
++
++
+ @csrf_exempt
+ @require_http_methods(["POST"])
++@_introspection_errors
+ @require_api_key
+ def sso_introspect(request):
+     """
+@@ -419,11 +433,38 @@ def sso_introspect(request):
+     except TokenError:
+         return JsonResponse({"active": False}, status=200)
+ 
++    # Reuse the issuer contract of _build_token_pair_unchecked. Audience/client
++    # registration is a separate contract; a caller-supplied audience is not an
++    # authorization policy.
++    issuer = getattr(settings, "SMART3AI_SSO_ISSUER", "https://sso.smart3ai.local")
++    if not issuer or parsed.get("iss") != issuer:
++        return JsonResponse({"active": False}, status=200)
++
+     organization_id = str(parsed.get("organization_id") or "")
++    user_id = str(parsed.get("user_id") or parsed.get("sub") or "")
++    try:
++        uuid.UUID(organization_id)
++        uuid.UUID(user_id)
++    except ValueError:
++        return JsonResponse({"active": False}, status=200)
++
++    # Match the live identity/membership predicates used at SSO login. Token
++    # snapshots alone cannot establish continued access to this organization.
++    try:
++        user = User.objects.get(id=user_id, is_active=True)
++    except User.DoesNotExist:
++        return JsonResponse({"active": False}, status=200)
++    if not UserOrganization.objects.filter(
++        user=user,
++        organization_id=organization_id,
++        is_active=True,
++        organization__status="active",
++    ).exists():
++        return JsonResponse({"active": False}, status=200)
+ 
+     return JsonResponse({
+         "active": True,
+-        "sub": str(parsed.get("user_id") or parsed.get("sub") or ""),
++        "sub": user_id,
+         "email": parsed.get("email"),
+         "full_name": parsed.get("full_name"),
+         "role": parsed.get("role"),

@@ -1,0 +1,38 @@
+[
+  {
+    "repo": "isosmart",
+    "cmd": [
+      "node",
+      "scripts/test-decision-a-offline.mjs"
+    ],
+    "exit": 0,
+    "log": "isosmart-frontend-a.log"
+  },
+  {
+    "repo": "isosmart",
+    "cmd": [
+      "node",
+      "scripts/test-decision-b-offline.mjs"
+    ],
+    "exit": 0,
+    "log": "isosmart-frontend-b.log"
+  },
+  {
+    "repo": "ISO_Smart_MedSupplier",
+    "cmd": [
+      "node",
+      "scripts/test-decision-a-offline.mjs"
+    ],
+    "exit": 0,
+    "log": "ISO_Smart_MedSupplier-frontend-a.log"
+  },
+  {
+    "repo": "ISO_Smart_MedSupplier",
+    "cmd": [
+      "node",
+      "scripts/test-decision-b-offline.mjs"
+    ],
+    "exit": 0,
+    "log": "ISO_Smart_MedSupplier-frontend-b.log"
+  }
+]

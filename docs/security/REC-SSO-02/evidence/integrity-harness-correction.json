@@ -1,0 +1,15 @@
+{
+  "cause": "Initial baseline intentionally excluded symlinks; final added-path comparison initially failed to apply the same exclusion.",
+  "action": "Preserved first result; aligned final new-file scope to regular non-symlink files. No source files changed.",
+  "excluded_paths": [
+    "backend/.venv/bin/python",
+    "backend/.venv/bin/python3",
+    "backend/.venv/bin/python3.9",
+    "backend/.venv/lib64",
+    "backend/venv_admin/bin/python",
+    "backend/venv_admin/bin/python3",
+    "backend/venv_admin/bin/python3.9",
+    "backend/venv_admin/lib64"
+  ],
+  "source_hash_comparison_unchanged": true
+}

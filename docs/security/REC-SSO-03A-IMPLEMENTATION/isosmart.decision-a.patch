@@ -1,0 +1,1765 @@
+--- /dev/null
++++ b/backend/integration/central_auth.py
+@@ -0,0 +1,268 @@
++"""Decision A: live central authentication; no local identity fallback.
++
++ADMIN_APPS_SSO requires explicit BASE_URL, ISSUER, CLIENT_ID and AUDIENCE.
++Local session envelopes retain a central access proof and never outlive it.
++No central refresh token is stored; expiry requires central reauthentication.
++"""
++import time
++import uuid
++from functools import wraps
++from urllib.parse import urlsplit
++
++import requests
++from django.conf import settings
++from django.db import transaction
++from django.utils.text import slugify
++from rest_framework.exceptions import AuthenticationFailed, APIException
++
++CONTRACT = 'decision-a-v1'
++
++
++class AuthorityUnavailable(APIException):
++    status_code = 503
++    default_detail = 'No fue posible validar la autenticación central.'
++    default_code = 'central_auth_unavailable'
++
++
++def authority_errors(function):
++    @wraps(function)
++    def wrapped(*args, **kwargs):
++        try:
++            return function(*args, **kwargs)
++        except APIException:
++            raise
++        except Exception:
++            raise AuthorityUnavailable() from None
++    return wrapped
++
++
++def configuration():
++    config = getattr(settings, 'ADMIN_APPS_SSO', {})
++    if not isinstance(config, dict):
++        raise AuthorityUnavailable()
++    if any(not isinstance(config.get(k), str) or not config[k].strip()
++           for k in ('BASE_URL', 'ISSUER', 'CLIENT_ID', 'AUDIENCE')):
++        raise AuthorityUnavailable()
++    url = urlsplit(config['BASE_URL'])
++    if url.scheme not in ('http', 'https') or not url.netloc or url.username or url.password:
++        raise AuthorityUnavailable()
++    if url.scheme != 'https' and not getattr(settings, 'DEBUG', False):
++        raise AuthorityUnavailable()
++    return config
++
++
++def central_request(endpoint, payload):
++    config = configuration()
++    integration = getattr(settings, 'ADMIN_APPS_INTEGRATION', {})
++    try:
++        response = requests.post(
++            config['BASE_URL'].rstrip('/') + endpoint,
++            json=payload, headers={'X-API-Key': integration.get('API_KEY', '')},
++            timeout=integration.get('TIMEOUT', 10), allow_redirects=False,
++        )
++        if response.status_code in (400, 401, 403, 404):
++            raise AuthenticationFailed('Autenticación central rechazada.')
++        if response.status_code != 200:
++            raise AuthorityUnavailable()
++        data = response.json()
++        if not isinstance(data, dict) or data.get('error') or data.get('two_fa_bypassed') is True:
++            raise AuthorityUnavailable()
++        return data
++    except (AuthenticationFailed, AuthorityUnavailable):
++        raise
++    except Exception:
++        raise AuthorityUnavailable() from None
++
++
++def validate_proof(proof, *, organization_id=None, email=None):
++    config = configuration()
++    if not isinstance(proof, str) or not proof:
++        raise AuthenticationFailed('Se requiere autenticación central nueva.')
++    data = central_request('/sso/introspect/', {'token': proof})
++    if (data.get('active') is not True or data.get('auth_contract') != CONTRACT
++            or data.get('iss') != config['ISSUER']
++            or data.get('client_id') != config['CLIENT_ID']
++            or data.get('aud') != [config['AUDIENCE']]
++            or not isinstance(data.get('amr'), list) or 'pwd' not in data['amr']):
++        raise AuthenticationFailed('Prueba central inválida.')
++    try:
++        uuid.UUID(data['sub'])
++        uuid.UUID(data['organization_id'])
++        if type(data['exp']) is not int or data['exp'] <= time.time():
++            raise ValueError()
++        if not isinstance(data['email'], str) or not data['email']:
++            raise ValueError()
++    except (KeyError, TypeError, ValueError, AttributeError):
++        raise AuthenticationFailed('Contexto central inválido.') from None
++    if organization_id is not None and str(organization_id) != data['organization_id']:
++        raise AuthenticationFailed('El cambio de organización requiere autenticación central.')
++    if email is not None and email.lower() != data['email'].lower():
++        raise AuthenticationFailed('Identidad central incompatible.')
++    if getattr(settings, 'OWNER_ORGANIZATION_ONLY_ACCESS', False):
++        owner = getattr(settings, 'OWNER_ORGANIZATION_EXTERNAL_ID', '')
++        if not isinstance(owner, str) or not owner:
++            raise AuthorityUnavailable()
++        if data['organization_id'] != owner:
++            raise AuthenticationFailed('Organización fuera del alcance de esta instancia.')
++    products = data.get('products')
++    product_code = 'ISO_SMART'
++    if not isinstance(products, list) or not any(
++        isinstance(p, dict) and p.get('code') == product_code and p.get('access_allowed') is True
++        for p in products
++    ):
++        raise AuthenticationFailed('Acceso de producto denegado.')
++    return data
++
++
++def login(attrs, request=None):
++    config = configuration()
++    challenge = attrs.get('challenge_token')
++    if challenge:
++        if not attrs.get('otp_code'):
++            raise AuthenticationFailed('Se requiere código TOTP o de respaldo.')
++        data = central_request('/sso/login/verify-2fa/', {
++            'challenge_token': challenge, 'otp_code': attrs['otp_code'],
++            'client_id': config['CLIENT_ID'], 'audience': [config['AUDIENCE']],
++        })
++    else:
++        if not attrs.get('email') or not attrs.get('password'):
++            raise AuthenticationFailed('Email y contraseña requeridos.')
++        org_id = attrs.get('organization_id')
++        if org_id:
++            from core.models import Organization
++            # UUID central or explicit local PK translation; no slug/email guesses.
++            try:
++                uuid.UUID(str(org_id))
++            except (ValueError, TypeError, AttributeError):
++                org_id = Organization.objects.get(pk=org_id, is_active=True).external_id
++        data = central_request('/sso/login/', {
++            'email': attrs['email'], 'password': attrs['password'],
++            'organization_id': str(org_id) if org_id else None,
++            'client_id': config['CLIENT_ID'], 'audience': [config['AUDIENCE']],
++        })
++    if data.get('requires_2fa') is True:
++        if data.get('tokens') or not isinstance(data.get('challenge_token'), str) or not data['challenge_token']:
++            raise AuthorityUnavailable()
++        return {'challenge': {'requires_2fa': True, 'challenge_token': data['challenge_token'],
++                              'challenge_expires_in': data.get('challenge_expires_in', 300)}}
++    if data.get('requires_2fa') is not False or data.get('two_fa_bypassed') is not False:
++        raise AuthorityUnavailable()
++    tokens = data.get('tokens')
++    if not isinstance(tokens, dict):
++        raise AuthorityUnavailable()
++    proof = tokens.get('access_token')
++    verified = validate_proof(proof, email=attrs.get('email'))
++    user, profile = sync_identity(verified)
++    if request is not None:
++        request.admin_apps_data = {'user': {'id': verified['sub'], 'email': verified['email']},
++                                   'organization': {'id': verified['organization_id']},
++                                   'organizations': verified.get('memberships', []), 'role': verified.get('role')}
++    return {'user': user, 'profile': profile, 'central_proof': proof, 'central_exp': verified['exp']}
++
++
++@transaction.atomic
++def sync_identity(data):
++    from authentication.models import User, UserProfile
++    from core.models import Organization
++    from integration.backends import ROLE_MAP
++    org = Organization.objects.filter(external_id=data['organization_id']).first()
++    if org is None:
++        slug = slugify(data.get('organization_code') or data['organization_id'])[:80]
++        if Organization.objects.filter(slug=slug).exists():
++            raise AuthenticationFailed('Conflicto de identidad de organización.')
++        org = Organization.objects.create(external_id=data['organization_id'], slug=slug,
++                                          name=data.get('organization_name') or slug, is_active=True)
++    if not org.is_active:
++        raise AuthenticationFailed('Organización local inactiva.')
++    # An email is not an immutable central subject. Existing projections require
++    # an explicit mapping; never take over a local account by matching email.
++    username = 'adminapps:' + data['sub']
++    user = User.objects.filter(username=username).first()
++    created = False
++    if user is None:
++        user = User.objects.filter(email=data['email'].lower()).first()
++        if user is not None:
++            require_user_binding(user, data['sub'])
++        else:
++            full_name = str(data.get('full_name') or '').split(' ', 1)
++            user = User.objects.create(username=username, email=data['email'].lower(), is_active=True,
++                                       first_name=full_name[0], last_name=full_name[1] if len(full_name)>1 else '')
++            created = True
++    if user.email.lower() != data['email'].lower():
++        raise AuthenticationFailed('Conflicto de identidad de usuario.')
++    if not user.is_active:
++        raise AuthenticationFailed('Usuario local inactivo.')
++    if user.is_locked():
++        raise AuthenticationFailed('Cuenta local temporalmente bloqueada.')
++    from django.utils import timezone
++    expiry = user.get_temporary_password_expiry()
++    if expiry is not None and timezone.now() >= expiry:
++        raise AuthenticationFailed('Contraseña temporal expirada; requiere recuperación central.')
++    if created or user.has_usable_password():
++        user.set_unusable_password()
++        user.save(update_fields=['password'])
++    role = ROLE_MAP.get(data.get('role'))
++    if role is None:
++        raise AuthenticationFailed('Rol central desconocido.')
++    profile, _ = UserProfile.objects.update_or_create(user=user, organization=org,
++                                                    defaults={'role': role, 'is_active': True})
++    return user, profile
++
++
++@authority_errors
++def validate_session(token, user=None):
++    if token.get('auth_contract') != CONTRACT:
++        raise AuthenticationFailed('Se requiere autenticación central nueva.')
++    from authentication.models import User, UserProfile
++    user = user or User.objects.get(pk=token['user_id'], is_active=True)
++    profile = UserProfile.objects.select_related('organization').get(
++        pk=token['profile_id'], user=user, organization_id=token['organization_id'],
++        is_active=True, organization__is_active=True,
++    )
++    data = validate_proof(token.get('central_proof'), organization_id=profile.organization.external_id,
++                          email=user.email)
++    if token.get('central_sub') != data['sub']:
++        raise AuthenticationFailed('Sujeto central incompatible.')
++    require_user_binding(user, data['sub'])
++    from integration.backends import ROLE_MAP
++    if token.get('role') != profile.role or ROLE_MAP.get(data.get('role')) != profile.role:
++        raise AuthenticationFailed('Rol de sesión no vigente.')
++    return data
++
++
++@authority_errors
++def bind_session(refresh, proof, profile, user):
++    data = validate_proof(proof, organization_id=profile.organization.external_id, email=user.email)
++    require_user_binding(user, data['sub'])
++    refresh['auth_contract'] = CONTRACT
++    refresh['central_sub'] = data['sub']
++    refresh['central_proof'] = proof
++    refresh['exp'] = min(refresh['exp'], data['exp'])
++    return refresh
++
++
++def require_user_binding(user, subject):
++    mapping = getattr(settings, 'ADMIN_APPS_USER_BINDINGS', {})
++    if user.username != 'adminapps:' + subject and (
++        not isinstance(mapping, dict) or mapping.get(subject) != user.pk
++    ):
++        raise AuthenticationFailed('Proyección local sin identidad central verificable.')
++
++
++@authority_errors
++def session_pair(user, profile, proof):
++    # Validate before creating even a local outstanding-refresh record.
++    from rest_framework_simplejwt.tokens import RefreshToken
++    data = validate_proof(proof, organization_id=profile.organization.external_id, email=user.email)
++    require_user_binding(user, data['sub'])
++    refresh = RefreshToken.for_user(user)
++    refresh['auth_contract'] = CONTRACT
++    refresh['central_sub'] = data['sub']
++    refresh['central_proof'] = proof
++    refresh['exp'] = min(refresh['exp'], data['exp'])
++    refresh['organization_id'] = profile.organization_id
++    refresh['role'] = profile.role
++    refresh['profile_id'] = profile.id
++    access = refresh.access_token
++    access['exp'] = min(access['exp'], data['exp'])
++    return refresh, access
+--- a/backend/authentication/serializers.py
++++ b/backend/authentication/serializers.py
+@@ -64,380 +64,22 @@
+ 
+ 
+ class LoginSerializer(serializers.Serializer):
+-    """Serializer para el login"""
+-    
+-    email = serializers.EmailField()
+-    password = serializers.CharField(write_only=True)
++    """Central login/challenge only; local passwords and bypass flags are ignored."""
++    email = serializers.EmailField(required=False)
++    password = serializers.CharField(write_only=True, required=False, trim_whitespace=False)
+     organization_id = serializers.CharField(required=False, allow_null=True)
+-
+-    _ROLE_MAP = {
+-        'superadmin': 'org_admin',
+-        'admin': 'org_admin',
+-        'org_admin': 'org_admin',
+-        'iso_manager': 'iso_manager',
+-        'auditor': 'auditor',
+-        'user': 'user',
+-        'viewer': 'viewer',
+-    }
+-
+-    def _map_role(self, role):
+-        return self._ROLE_MAP.get(str(role or '').strip().lower(), 'user')
+-
+-    def _unique_slug(self, base_slug):
+-        candidate = (base_slug or '').strip() or 'organization'
+-        if not Organization.objects.filter(slug=candidate).exists():
+-            return candidate
+-
+-        suffix = 2
+-        while True:
+-            with_suffix = f"{candidate}-{suffix}"
+-            if not Organization.objects.filter(slug=with_suffix).exists():
+-                return with_suffix
+-            suffix += 1
+-
+-    def _sync_profiles_from_adminapps(self, user, admin_apps_data):
+-        organizations = list(admin_apps_data.get('organizations') or [])
+-        if not organizations:
+-            return
+-
+-        default_role = admin_apps_data.get('role')
+-
+-        for org_item in organizations:
+-            candidate_external_ids = []
+-            for key in ('uuid', 'external_id', 'id'):
+-                value = org_item.get(key)
+-                if value is not None:
+-                    candidate_external_ids.append(str(value))
+-
+-            if not candidate_external_ids:
+-                continue
+-
+-            organization = Organization.objects.filter(
+-                external_id__in=candidate_external_ids
+-            ).first()
+-
+-            if not organization:
+-                org_slug = slugify(org_item.get('slug') or org_item.get('name') or '')
+-                if org_slug:
+-                    organization = Organization.objects.filter(slug=org_slug).first()
+-
+-            if not organization:
+-                org_name = (org_item.get('name') or '').strip() or f"Org {candidate_external_ids[0]}"
+-                org_slug = self._unique_slug(slugify(org_item.get('slug') or org_name))
+-                organization = Organization.objects.create(
+-                    external_id=candidate_external_ids[0],
+-                    name=org_name,
+-                    slug=org_slug,
+-                    is_active=True,
+-                )
+-            elif organization.external_id not in candidate_external_ids:
+-                # Keep external IDs aligned with AdminApps so tenant filters match.
+-                organization.external_id = candidate_external_ids[0]
+-                organization.save(update_fields=['external_id'])
+-
+-            if not organization.is_active:
+-                organization.is_active = True
+-                organization.save(update_fields=['is_active'])
+-
+-            mapped_role = self._map_role(org_item.get('role') or default_role)
+-            UserProfile.objects.update_or_create(
+-                user=user,
+-                organization=organization,
+-                defaults={
+-                    'role': mapped_role,
+-                    'is_active': True,
+-                },
+-            )
+-    
+-    def validate(self, attrs):
+-        email = attrs.get('email')
+-        password = attrs.get('password')
+-        organization_id = attrs.get('organization_id')
+-        organization = None
+-
+-        _INVALID_CREDENTIALS_MSG = 'Credenciales inválidas o cuenta temporalmente bloqueada.'
+-        max_attempts = getattr(settings, 'LOGIN_MAX_ATTEMPTS', 5)
+-        lockout_minutes = getattr(settings, 'LOGIN_LOCKOUT_MINUTES', 15)
+-
+-        if email and password:
+-            # Look up user for lockout check before calling authenticate().
+-            # Some environments may run with pending auth migrations; fail closed
+-            # (invalid credentials) instead of bubbling DB field errors as 500.
+-            try:
+-                candidate = User.objects.get(email=email)
+-            except User.DoesNotExist:
+-                candidate = None
+-            except FieldError:
+-                candidate = None
+-            except Exception:
+-                candidate = None
+-
+-            if candidate:
+-                try:
+-                    is_locked = candidate.is_locked()
+-                except Exception:
+-                    # If schema is outdated (missing lockout fields), avoid 500.
+-                    is_locked = False
+-
+-                if is_locked:
+-                    raise serializers.ValidationError(_INVALID_CREDENTIALS_MSG, code='account_locked')
+-
+-            if organization_id:
+-                try:
+-                    organization = Organization.objects.get(id=int(organization_id))
+-                except (ValueError, Organization.DoesNotExist):
+-                    organization = Organization.objects.filter(external_id=organization_id).first()
+-
+-            external_org_id = organization.external_id if organization else organization_id
+-
+-            user = authenticate(
+-                request=self.context.get('request'),
+-                email=email,
+-                password=password,
+-                organization_id=external_org_id
+-            )
+-
+-            if not user:
+-                if candidate:
+-                    try:
+-                        candidate.record_failed_login(
+-                            max_attempts=max_attempts, lockout_minutes=lockout_minutes
+-                        )
+-                    except Exception:
+-                        # Ignore lockout bookkeeping errors when DB is not fully migrated.
+-                        pass
+-                raise serializers.ValidationError(_INVALID_CREDENTIALS_MSG, code='authorization')
+-
+-            if not user.is_active:
+-                raise serializers.ValidationError(
+-                    'Esta cuenta ha sido desactivada.',
+-                    code='authorization'
+-                )
+-
+-            request_obj = self.context.get('request')
+-            request_host = ''
+-            if request_obj:
+-                try:
+-                    request_host = request_obj.get_host().split(':')[0].strip().lower()
+-                except Exception:
+-                    request_host = ''
+-            local_auth_bypass_hosts = {
+-                str(host).strip().lower()
+-                for host in getattr(settings, 'LOCAL_AUTH_BYPASS_HOSTS', set())
+-                if str(host).strip()
+-            }
+-            is_local_request = request_host in local_auth_bypass_hosts
+-            bypass_header_enabled = bool(
+-                request_obj
+-                and str(request_obj.headers.get('X-ISO-LOCAL-AUTH-BYPASS', '')).strip() == '1'
+-                and getattr(settings, 'DEBUG', False)
+-            )
+-            bypass_flag_enabled = bool(
+-                getattr(settings, 'ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS', False)
+-                and is_local_request
+-            )
+-            allow_local_bypass = bypass_header_enabled or bypass_flag_enabled
+-
+-            # Reject local-backend-only logins unless controlled local bypass is explicitly enabled.
+-            request_obj = self.context.get('request')
+-            admin_apps_data = getattr(request_obj, 'admin_apps_data', None) if request_obj else None
+-            if not admin_apps_data:
+-                if not allow_local_bypass:
+-                    raise serializers.ValidationError(
+-                        'No fue posible validar tu acceso contra AdminApps. Contacta al administrador.',
+-                        code='authorization'
+-                    )
+-
+-                # Local bypass for testing: synthesize AdminApps-like payload from active local profiles.
+-                local_profiles = UserProfile.objects.filter(
+-                    user=user,
+-                    is_active=True,
+-                    organization__is_active=True,
+-                ).select_related('organization')
+-
+-                local_orgs = []
+-                for local_profile in local_profiles:
+-                    local_org = local_profile.organization
+-                    local_orgs.append({
+-                        'id': local_org.external_id,
+-                        'name': local_org.name,
+-                        'slug': local_org.slug,
+-                    })
+-
+-                selected_org = organization.external_id if organization else None
+-                current_org = next(
+-                    (org_item for org_item in local_orgs if selected_org and org_item.get('id') == selected_org),
+-                    local_orgs[0] if local_orgs else {},
+-                )
+-
+-                admin_apps_data = {
+-                    'user': {
+-                        'id': user.id,
+-                        'email': user.email,
+-                    },
+-                    'organization': current_org,
+-                    'organizations': local_orgs,
+-                    'role': None,
+-                }
+-
+-                if request_obj is not None:
+-                    request_obj.admin_apps_data = admin_apps_data
+-
+-            # Owner policy: only Smart3AI organization can authenticate in ISO Smart.
+-            if getattr(settings, 'OWNER_ORGANIZATION_ONLY_ACCESS', False) and not allow_local_bypass:
+-                owner_slug = (getattr(settings, 'OWNER_ORGANIZATION_SLUG', '') or '').strip().lower()
+-                owner_name = (getattr(settings, 'OWNER_ORGANIZATION_NAME', '') or '').strip().lower()
+-                owner_external_id = (getattr(settings, 'OWNER_ORGANIZATION_EXTERNAL_ID', '') or '').strip()
+-
+-                candidate_orgs = list(admin_apps_data.get('organizations') or [])
+-                current_org = admin_apps_data.get('organization') or {}
+-                if current_org:
+-                    candidate_orgs.append(current_org)
+-
+-                def _is_owner_org(org_item):
+-                    org_slug = str(org_item.get('slug') or '').strip().lower()
+-                    org_name = str(org_item.get('name') or '').strip().lower()
+-                    org_id = str(org_item.get('id') or '').strip()
+-
+-                    if owner_external_id and org_id == owner_external_id:
+-                        return True
+-                    if owner_slug and org_slug == owner_slug:
+-                        return True
+-                    if owner_name and org_name == owner_name:
+-                        return True
+-                    return False
+-
+-                if not any(_is_owner_org(org_item) for org_item in candidate_orgs):
+-                    raise serializers.ValidationError(
+-                        'Solo la organizacion Smart3AI tiene acceso a esta instancia de ISO Smart.',
+-                        code='authorization'
+-                    )
+-
+-            # Successful authentication — clear any previous failures
+-            try:
+-                user.reset_login_attempts()
+-            except Exception:
+-                # Ignore bookkeeping errors when lockout columns are missing.
+-                pass
+-
+-            try:
+-                temporary_expiry = user.get_temporary_password_expiry()
+-            except Exception:
+-                temporary_expiry = None
+-            if temporary_expiry and timezone.now() >= temporary_expiry:
+-                raise serializers.ValidationError(
+-                    {
+-                        'detail': 'Tu contraseña temporal ha expirado. Solicita un restablecimiento con un administrador.',
+-                        'reason_code': TEMP_PASSWORD_EXPIRED_REASON_CODE,
+-                    },
+-                    code='authorization',
+-                )
+-
+-            temp_password_warning = None
+-            if temporary_expiry:
+-                warning_days = max(0, int(getattr(settings, 'TEMP_PASSWORD_WARNING_DAYS', 2)))
+-                seconds_left = (temporary_expiry - timezone.now()).total_seconds()
+-                if seconds_left > 0:
+-                    days_left = int((seconds_left - 1) // 86400) + 1
+-                    if days_left <= warning_days:
+-                        temp_password_warning = {
+-                            'reason_code': 'TEMP_PASSWORD_EXPIRING',
+-                            'days_left': days_left,
+-                            'expires_at': temporary_expiry,
+-                        }
+-            
+-            allowed_external_org_ids = set()
+-            for org in (admin_apps_data.get('organizations') or []):
+-                for key in ('id', 'uuid', 'external_id'):
+-                    value = org.get(key)
+-                    if value is not None:
+-                        allowed_external_org_ids.add(str(value))
+-
+-            # Obtener perfiles locales solo para organizaciones vigentes en AdminApps
+-            profiles = UserProfile.objects.filter(
+-                user=user,
+-                is_active=True,
+-                organization__is_active=True,
+-            )
+-            if allowed_external_org_ids:
+-                profiles = profiles.filter(organization__external_id__in=allowed_external_org_ids)
+-
+-            if not profiles.exists() and (admin_apps_data.get('organizations') or []):
+-                self._sync_profiles_from_adminapps(user, admin_apps_data)
+-                profiles = UserProfile.objects.filter(
+-                    user=user,
+-                    is_active=True,
+-                    organization__is_active=True,
+-                )
+-                if allowed_external_org_ids:
+-                    profiles = profiles.filter(organization__external_id__in=allowed_external_org_ids)
+-            
+-            if not profiles.exists():
+-                raise serializers.ValidationError(
+-                    'No tienes acceso a ninguna organización.',
+-                    code='authorization'
+-                )
+-            
+-            # Si se especifica organización, verificar acceso
+-            if organization_id:
+-                if not organization:
+-                    organization = Organization.objects.filter(external_id=organization_id).first()
+-
+-                if organization:
+-                    profile = profiles.filter(organization_id=organization.id).first()
+-                else:
+-                    profile = None
+-
+-                if not profile:
+-                    raise serializers.ValidationError(
+-                        'No tienes acceso a esta organización.',
+-                        code='authorization'
+-                    )
+-            else:
+-                # Preferir la organización activa reportada por AdminApps.
+-                current_org = admin_apps_data.get('organization') or {}
+-                current_external_id = (
+-                    current_org.get('uuid')
+-                    or current_org.get('external_id')
+-                    or current_org.get('id')
+-                )
+-                if current_external_id is not None:
+-                    profile = profiles.filter(organization__external_id=current_external_id).first()
+-                else:
+-                    profile = None
+-
+-                if not profile:
+-                    profile = profiles.first()
+-
+-            product_code = getattr(settings, 'ISO_SMART_PRODUCT_CODE', 'ISO_SMART')
+-            product_access = admin_apps_client.validate_product_access(
+-                profile.organization_id,
+-                product_code,
+-                use_cache=False,
+-                allow_local_fallback=allow_local_bypass,
+-            )
+-            if request_obj is not None:
+-                request_obj.admin_apps_product_access = product_access
+-                admin_apps_data['product_access'] = product_access
+-
+-            if not product_access.get('allowed'):
+-                denial_reason = product_access.get('reason') or product_access.get('code') or 'product_access_denied'
+-                raise serializers.ValidationError(
+-                    denial_reason,
+-                    code='authorization'
+-                )
+-            
+-            attrs['user'] = user
+-            attrs['profile'] = profile
+-            attrs['temp_password_warning'] = temp_password_warning
+-            
+-        else:
+-            raise serializers.ValidationError(
+-                'Debes proporcionar email y contraseña.',
+-                code='authorization'
+-            )
+-        
+-        return attrs
++    challenge_token = serializers.CharField(required=False, write_only=True)
++    otp_code = serializers.CharField(required=False, write_only=True, trim_whitespace=False)
++
++    def validate(self, attrs):
++        from integration.central_auth import login, AuthorityUnavailable
++        from rest_framework.exceptions import APIException
++        try:
++            return login(attrs, self.context.get('request'))
++        except APIException:
++            raise
++        except Exception:
++            raise AuthorityUnavailable() from None
+ 
+ 
+ class TokenResponseSerializer(serializers.Serializer):
+--- a/backend/integration/backends.py
++++ b/backend/integration/backends.py
+@@ -49,163 +49,15 @@
+     """
+     
+     def authenticate(self, request, email=None, password=None, organization_id=None, **kwargs):
+-        """
+-        Autentica un usuario contra Admin Apps
+-        
+-        Args:
+-            email: Email del usuario
+-            password: Contraseña
+-            organization_id: ID de organización (opcional)
+-        
+-        Returns:
+-            User object si es válido, None si no
+-        """
+-        if not email or not password:
+-            return None
+-        
+-        # Llamar a Admin Apps para validar credenciales
+-        result = admin_apps_client.validate_credentials(
+-            email=email,
+-            password=password,
+-            organization_id=organization_id
+-        )
+-        
+-        # Verificar resultado
+-        if not result.get('valid'):
+-            logger.info(f"Autenticación fallida para {email}: {result.get('error', 'Unknown')}")
+-            return None
+-        
+-        user_data = result.get('user', {})
+-        org_data = result.get('current_organization', {})
+-        role = result.get('current_role', 'user')
+-        
+-        # Obtener o crear usuario local
+-        from django.conf import settings
+-        sync_users = getattr(settings, 'ADMIN_APPS_INTEGRATION', {}).get('SYNC_USERS', True)
+-        
+-        if sync_users:
+-            user = self._sync_user(user_data, org_data, role)
+-        else:
+-            # Solo obtener usuario existente
+-            try:
+-                user = User.objects.get(email=email)
+-            except User.DoesNotExist:
+-                logger.warning(f"Usuario {email} no existe localmente y SYNC_USERS=False")
+-                return None
+-        
+-        # Guardar datos adicionales en el request para uso posterior
+-        if request:
+-            request.admin_apps_data = {
+-                'user': user_data,
+-                'organization': org_data,
+-                'role': role,
+-                'organizations': result.get('organizations', [])
+-            }
+-        
+-        return user
+-    
+-    def _sync_user(self, user_data, org_data, role):
+-        """
+-        Sincroniza usuario con datos de Admin Apps
+-        Crea si no existe, actualiza si existe
+-        """
+-        from core.models import Organization
+-        from authentication.models import UserProfile
+-        
+-        email = user_data.get('email')
+-        
+-        # Crear o actualizar usuario
+-        user, created = User.objects.update_or_create(
+-            email=email,
+-            defaults={
+-                'first_name': user_data.get('first_name', ''),
+-                'last_name': user_data.get('last_name', ''),
+-                'is_active': True,
+-            }
+-        )
+-        
+-        # For AdminApps-synced identities, force local password to unusable
+-        # so authentication authority remains centralized in AdminApps.
+-        if user.has_usable_password():
+-            user.set_unusable_password()
+-            user.save(update_fields=['password'])
++        from django.core.exceptions import PermissionDenied
++        # LoginSerializer uses the central challenge protocol. A password-only
++        # backend cannot attest completion and must stop all local fallbacks.
++        raise PermissionDenied('Use central SSO authentication')
+ 
+-        if created:
+-            logger.info(f"Usuario {email} creado desde Admin Apps")
+-        
+-        # Sincronizar organización si existe
+-        if org_data:
+-            org_id = org_data.get('id')  # UUID from Admin Apps
+-            try:
+-                organization = Organization.objects.get(external_id=org_id)
+-            except Organization.DoesNotExist:
+-                code = org_data.get('code')
+-                name = org_data.get('name', '')
+-                slug_source = code or name
+-                slug = slugify(slug_source) if slug_source else None
+-                # Reuse existing organization when slug already exists locally,
+-                # then align external_id to avoid duplicate-key errors.
+-                organization = Organization.objects.filter(slug=slug).first() if slug else None
+-                if organization:
+-                    if org_id and organization.external_id != org_id:
+-                        organization.external_id = org_id
+-                        organization.save(update_fields=['external_id'])
+-                else:
+-                    organization = Organization.objects.create(
+-                        external_id=org_id,
+-                        name=name or f"Org {org_id}",
+-                        slug=slug or f"org-{org_id}",
+-                        is_active=org_data.get('is_active', True),
+-                    )
+-                    logger.info(f"Organizacion creada desde Admin Apps: {organization.name}")
+-
+-            # Keep local organization active/updated after successful AdminApps auth.
+-            updates = []
+-            desired_name = (org_data.get('name') or '').strip()
+-            if desired_name and organization.name != desired_name:
+-                organization.name = desired_name
+-                updates.append('name')
+-            if not organization.is_active:
+-                organization.is_active = True
+-                updates.append('is_active')
+-            if updates:
+-                organization.save(update_fields=updates)
+-
+-            # Crear o actualizar perfil
+-            mapped_role = ROLE_MAP.get(role, 'user')
+-            try:
+-                UserProfile.objects.update_or_create(
+-                    user=user,
+-                    organization=organization,
+-                    defaults={
+-                        'role': mapped_role,
+-                        'is_active': True,
+-                    }
+-                )
+-            except IntegrityError:
+-                # Legacy schemas may keep a unique index on user_id only.
+-                # In that case, repoint the existing profile to the synchronized organization.
+-                existing_profile = UserProfile.objects.filter(user=user).first()
+-                if not existing_profile:
+-                    raise
+-                existing_profile.organization = organization
+-                existing_profile.role = mapped_role
+-                existing_profile.is_active = True
+-                existing_profile.save(update_fields=['organization', 'role', 'is_active'])
+-                logger.warning(
+-                    "Perfil de usuario reasignado por restriccion unica legacy. user=%s org=%s",
+-                    user.id,
+-                    organization.id,
+-                )
+-        
+-        return user
+-    
+     def get_user(self, user_id):
+-        """Obtiene usuario por ID"""
+-        try:
+-            return User.objects.get(pk=user_id)
+-        except User.DoesNotExist:
+-            return None
++        # Old Django password sessions carry no central MFA proof. Product
++        # sessions use the validated JWT/cookie adapter, never this backend.
++        return None
+ 
+ 
+ class AdminAppsTokenBackend:
+--- a/backend/integration/sso_auth.py
++++ b/backend/integration/sso_auth.py
+@@ -1,126 +1,19 @@
+-"""
+-Smart3AI SSO authentication for ISO Smart.
+-
+-Accepts JWTs issued by AdminApps and synchronizes local user/profile context
+-from token claims so multi-tenant scoping works across services.
+-"""
+-
+-from __future__ import annotations
+-
+-import logging
+-
+-from django.contrib.auth import get_user_model
+-from django.db import IntegrityError
+-from django.utils.text import slugify
++"""Decision A local session envelopes backed by live central authentication."""
+ from rest_framework_simplejwt.authentication import JWTAuthentication
+-from rest_framework_simplejwt.exceptions import AuthenticationFailed
+-
+-from authentication.models import UserProfile
+-from core.models import Organization
+-from integration.backends import ROLE_MAP
+-
+-User = get_user_model()
+-logger = logging.getLogger(__name__)
+-
++from rest_framework.exceptions import APIException, AuthenticationFailed
++from integration.central_auth import validate_session, AuthorityUnavailable
+ 
+ class Smart3AISSOAuthentication(JWTAuthentication):
+-    """JWT auth backend that supports centrally-issued AdminApps SSO tokens."""
++    def authenticate(self, request):
++        # Browser sessions retain the cookie/CSRF transport.
++        return None
+ 
+     def get_user(self, validated_token):
+-        user_id = validated_token.get("user_id") or validated_token.get("sub")
+-        email = str(validated_token.get("email") or "").strip().lower()
+-
+-        if not user_id and not email:
+-            raise AuthenticationFailed("Token inválido: faltan claims de usuario", code="token_invalid")
+-
+-        user = None
+-        if user_id:
+-            try:
+-                user = User.objects.filter(id=user_id).first()
+-            except Exception:
+-                user = None
+-
+-        if user is None and email:
+-            user = User.objects.filter(email=email).first()
+-
+-        if user is None:
+-            first_name = str(validated_token.get("first_name") or "").strip()
+-            last_name = str(validated_token.get("last_name") or "").strip()
+-            full_name = str(validated_token.get("full_name") or "").strip()
+-            if not first_name and full_name:
+-                first_name = full_name.split(" ")[0]
+-            if not last_name and full_name and " " in full_name:
+-                last_name = " ".join(full_name.split(" ")[1:]).strip()
+-
+-            user = User(
+-                email=email,
+-                first_name=first_name,
+-                last_name=last_name,
+-                is_active=True,
+-            )
+-            user.set_unusable_password()
+-            try:
+-                user.save()
+-            except IntegrityError as exc:
+-                raise AuthenticationFailed("No fue posible sincronizar el usuario SSO") from exc
+-
+-        if not user.is_active:
+-            raise AuthenticationFailed("Usuario inactivo", code="user_inactive")
+-
+-        self._sync_profile_from_token(user, validated_token)
+-        return user
+-
+-    def _sync_profile_from_token(self, user, validated_token):
+-        org_external_id = str(validated_token.get("organization_id") or "").strip()
+-        org_name = str(validated_token.get("organization_name") or "").strip()
+-        org_code = str(validated_token.get("organization_code") or "").strip()
+-        role = str(validated_token.get("role") or "user").strip().lower()
+-        mapped_role = ROLE_MAP.get(role, "user")
+-
+-        if not org_external_id:
+-            return
+-
+-        organization = None
+-
+-        # Local tokens can carry the internal organization PK (int); prefer
+-        # that lookup before treating the claim as external_id.
+-        if org_external_id.isdigit():
+-            organization = Organization.objects.filter(id=int(org_external_id)).first()
+-
+-        if not organization:
+-            organization = Organization.objects.filter(external_id=org_external_id).first()
+-
+-        if not organization:
+-            source_slug = org_code or org_name or org_external_id
+-            base_slug = slugify(source_slug) if source_slug else f"org-{org_external_id}"
+-            slug = base_slug[:80] or f"org-{org_external_id}"
+-            organization = Organization.objects.create(
+-                external_id=org_external_id,
+-                name=org_name or f"Organization {org_external_id}",
+-                slug=slug,
+-                is_active=True,
+-            )
+-
+         try:
+-            UserProfile.objects.update_or_create(
+-                user=user,
+-                organization=organization,
+-                defaults={"role": mapped_role, "is_active": True},
+-            )
+-            return
+-        except IntegrityError:
+-            # Legacy schemas may still enforce unique(user_id) and reject a
+-            # second profile row for the same user across organizations.
+-            existing_profile = UserProfile.objects.filter(user=user).first()
+-            if not existing_profile:
+-                raise
+-
+-            existing_profile.organization = organization
+-            existing_profile.role = mapped_role
+-            existing_profile.is_active = True
+-            existing_profile.save(update_fields=["organization", "role", "is_active"])
+-            logger.warning(
+-                "Perfil de usuario reasignado por restriccion unica legacy (SSO). user=%s org=%s",
+-                user.id,
+-                organization.id,
+-            )
++            user = super().get_user(validated_token)
++            validate_session(validated_token, user)
++            return user
++        except APIException:
++            raise
++        except Exception:
++            raise AuthorityUnavailable() from None
+--- a/backend/authentication/cookie_auth.py
++++ b/backend/authentication/cookie_auth.py
+@@ -1,11 +1,11 @@
+ """Cookie-only transport for the existing SimpleJWT authentication contract."""
+ 
+-from rest_framework_simplejwt.authentication import JWTAuthentication
++from integration.sso_auth import Smart3AISSOAuthentication
+ from rest_framework.authentication import CSRFCheck
+ from rest_framework import exceptions
+ 
+ 
+-class CookieJWTAuthentication(JWTAuthentication):
++class CookieJWTAuthentication(Smart3AISSOAuthentication):
+     """Authenticate a short-lived JWT from an HttpOnly cookie, never a header."""
+ 
+     def authenticate(self, request):
+--- a/backend/authentication/views.py
++++ b/backend/authentication/views.py
+@@ -24,6 +24,7 @@
+ from core.models import AuditLog, Organization
+ from integration.client import admin_apps_client
+ from integration.backends import ROLE_MAP
++from integration.central_auth import bind_session, validate_session, AuthorityUnavailable, session_pair
+ from .serializers import (
+     ChangePasswordSerializer,
+     LoginSerializer,
+@@ -46,14 +47,8 @@
+ PASSWORD_REUSE_REASON_CODE = 'PASSWORD_REUSE_RECENT'
+ 
+ 
+-def _token_pair_for_profile(user, profile):
+-    refresh = RefreshToken.for_user(user)
+-    access = refresh.access_token
+-    for token in (refresh, access):
+-        token['organization_id'] = profile.organization_id
+-        token['role'] = profile.role
+-        token['profile_id'] = profile.id
+-    return refresh, access
++def _token_pair_for_profile(user, profile, proof):
++    return session_pair(user, profile, proof)
+ 
+ 
+ def _password_history_limit():
+@@ -158,7 +153,18 @@
+     return f"{base_url}/reset-password?selector={selector}&token={raw_token}"
+ 
+ 
+-class LoginView(APIView):
++class CentralSessionView(APIView):
++    """Sanitize all authority/session failures without granting a response token."""
++    def handle_exception(self, exc):
++        from rest_framework.exceptions import APIException
++        if isinstance(exc, APIException):
++            response = super().handle_exception(exc)
++        else:
++            response = Response({'detail': AuthorityUnavailable.default_detail}, status=503)
++        return clear_auth_cookies(response)
++
++
++class LoginView(CentralSessionView):
+     """
+     Vista de Login
+     POST /api/auth/login/
+@@ -166,15 +172,21 @@
+     Retorna tokens JWT y datos del usuario
+     """
+     permission_classes = [AllowAny]
++    authentication_classes = []
+     
+     def post(self, request):
++        CookieJWTAuthentication.enforce_csrf(request)
+         serializer = LoginSerializer(data=request.data, context={'request': request})
+         serializer.is_valid(raise_exception=True)
+         
++        if 'challenge' in serializer.validated_data:
++            response = Response(serializer.validated_data['challenge'], status=200)
++            return clear_auth_cookies(response) if 'clear_auth_cookies' in globals() else response
++
+         user = serializer.validated_data['user']
+         profile = serializer.validated_data['profile']
+         
+-        refresh, access = _token_pair_for_profile(user, profile)
++        refresh, access = _token_pair_for_profile(user, profile, serializer.validated_data['central_proof'])
+         
+         # Actualizar último login
+         user.last_login = timezone.now()
+@@ -197,6 +209,7 @@
+         ]
+         
+         response_data = {
++            'requires_2fa': False,
+             'user': UserSerializer(user).data,
+             'profile': UserProfileSerializer(profile).data,
+             'organizations': organizations,
+@@ -241,12 +254,13 @@
+         ))
+ 
+ 
+-class RefreshTokenView(APIView):
++class RefreshTokenView(CentralSessionView):
+     """
+     Vista para refrescar tokens
+     POST /api/auth/refresh/
+     """
+     permission_classes = [AllowAny]
++    authentication_classes = []
+     
+     def post(self, request):
+         try:
+@@ -264,8 +278,13 @@
+                     status=status.HTTP_401_UNAUTHORIZED
+                 )
+             
++            # A local refresh cannot upgrade password-only/old sessions or
++            # extend a central proof beyond its signed lifetime.
++            central = validate_session(refresh)
++
+             # Generar nuevo access token
+             access = refresh.access_token
++            access['exp'] = min(access['exp'], central['exp'])
+             
+             if settings.SIMPLE_JWT.get('ROTATE_REFRESH_TOKENS', False):
+                 RefreshTokenBlacklist.objects.get_or_create(
+@@ -274,6 +293,7 @@
+                 )
+                 refresh.set_jti()
+                 refresh.set_exp()
++                refresh['exp'] = min(refresh['exp'], validate_session(refresh)['exp'])
+             return set_auth_cookies(Response({'detail': 'Sesión renovada.'}), access=access, refresh=refresh)
+             
+         except TokenError as e:
+@@ -333,7 +353,7 @@
+         return Response(response_data, status=status.HTTP_200_OK)
+ 
+ 
+-class SwitchOrganizationView(APIView):
++class SwitchOrganizationView(CentralSessionView):
+     """
+     Vista para cambiar de organización activa
+     POST /api/auth/switch-organization/
+@@ -358,7 +378,7 @@
+             is_active=True
+         ).select_related('organization').first()
+         
+-        refresh, access = _token_pair_for_profile(user, profile)
++        refresh, access = _token_pair_for_profile(user, profile, request.auth.get('central_proof'))
+         
+         # Obtener todas las organizaciones
+         all_profiles = UserProfile.objects.filter(
+--- a/frontend/src/context/AuthContext.jsx
++++ b/frontend/src/context/AuthContext.jsx
+@@ -77,16 +77,24 @@
+   };
+ 
+   // Login
+-  const login = async (email, password, organizationId = null) => {
++  const login = async (email, password, organizationId = null, secondFactor = null) => {
+     try {
+       const normalizedEmail = String(email || '').trim().toLowerCase();
+-      const payload = { email: normalizedEmail, password };
++      const payload = secondFactor || { email: normalizedEmail, password };
+       if (organizationId) {
+         payload.organization_id = organizationId;
+       }
+ 
++      clearAuth();
+       await api.get('/auth/csrf/');
+       const response = await api.post('/auth/login/', payload);
++      if (response.data.requires_2fa === true) {
++        clearAuth();
++        return { success: false, requires_2fa: true, challenge_token: response.data.challenge_token };
++      }
++      if (response.data.requires_2fa !== false || !response.data.user || !response.data.profile) {
++        throw new Error('Respuesta de autenticación incompleta.');
++      }
+       const { user: userData, profile: profileData, organizations: orgs } = response.data;
+ 
+       // Actualizar estado
+@@ -106,6 +114,7 @@
+         securityAlert: response.data.security_alert || null,
+       };
+     } catch (error) {
++      clearAuth();
+       const statusCode = error?.response?.status;
+       if (statusCode && (statusCode === 400 || statusCode === 401)) {
+         console.warn('Login rechazado por credenciales o autorización.');
+--- a/frontend/src/pages/LoginPage.jsx
++++ b/frontend/src/pages/LoginPage.jsx
+@@ -9,12 +9,19 @@
+ import { useI18n } from '../context/I18nContext';
+ 
+ const LoginPage = () => {
+-  const { t } = useI18n();
++  const { t, language } = useI18n();
++  const factorLabels = {
++    'es-LATAM': ['Código TOTP o de respaldo', 'Volver al inicio de sesión'],
++    en: ['TOTP or backup code', 'Return to sign in'],
++    pt: ['Código TOTP ou de recuperação', 'Voltar ao login'],
++  }[language] || ['Código TOTP o de respaldo', 'Volver al inicio de sesión'];
+   const [email, setEmail] = useState('');
+   const [password, setPassword] = useState('');
+   const [error, setError] = useState('');
+   const [loading, setLoading] = useState(false);
+   const [showPassword, setShowPassword] = useState(false);
++  const [challenge, setChallenge] = useState(null);
++  const [otpCode, setOtpCode] = useState('');
+ 
+   const { login } = useAuth();
+   const navigate = useNavigate();
+@@ -26,21 +33,28 @@
+     setLoading(true);
+ 
+     const normalizedEmail = email.trim().toLowerCase();
+-    const normalizedPassword = password.trim();
++    const normalizedPassword = password;
+     if (!normalizedEmail) {
+       setError(`${t('common.forms.email')}: ${t('common.messages.required')}`);
+       setLoading(false);
+       return;
+     }
+ 
+-    if (!normalizedPassword) {
++    if (!challenge && !normalizedPassword) {
+       setError(`${t('common.forms.password')}: ${t('common.messages.required')}`);
+       setLoading(false);
+       return;
+     }
+ 
+     try {
+-      const result = await login(normalizedEmail, normalizedPassword);
++      const result = await login(normalizedEmail, normalizedPassword, null,
++        challenge ? { challenge_token: challenge, otp_code: otpCode } : null);
++      if (result.requires_2fa) {
++        setChallenge(result.challenge_token);
++        setPassword('');
++        setOtpCode('');
++        return;
++      }
+ 
+       if (result.success) {
+         if (result.mustChangePassword) {
+@@ -110,6 +124,7 @@
+                 </div>
+                 <input
+                   id="email"
++                  disabled={Boolean(challenge)}
+                   type="email"
+                   value={email}
+                   onChange={(e) => setEmail(e.target.value)}
+@@ -133,6 +148,7 @@
+                 </div>
+                 <input
+                   id="password"
++                  disabled={Boolean(challenge)}
+                   type={showPassword ? 'text' : 'password'}
+                   value={password}
+                   onChange={(e) => setPassword(e.target.value)}
+@@ -161,6 +177,19 @@
+               </div>
+             </div>
+ 
++            {challenge && (
++              <div>
++                <label htmlFor="otp-code" className="block text-sm font-medium text-slate-300 mb-2">
++                  {factorLabels[0]}
++                </label>
++                <input id="otp-code" value={otpCode} onChange={(e) => setOtpCode(e.target.value)}
++                  autoComplete="one-time-code" required autoFocus
++                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white" />
++                <button type="button" onClick={() => { setChallenge(null); setOtpCode(''); }}
++                  className="text-cyan-400 mt-2">{factorLabels[1]}</button>
++              </div>
++            )}
++
+             {/* Remember & Forgot */}
+             <div className="flex items-center justify-between text-sm">
+               <label className="flex items-center gap-2 text-slate-400 cursor-pointer">
+--- a/frontend/src/services/authService.js
++++ b/frontend/src/services/authService.js
+@@ -5,8 +5,8 @@
+ 
+ const authService = {
+   // Login
+-  login: async (email, password, organizationId = null) => {
+-    const payload = { email, password };
++  login: async (email, password, organizationId = null, secondFactor = null) => {
++    const payload = secondFactor || { email, password };
+     if (organizationId) {
+       payload.organization_id = organizationId;
+     }
+--- /dev/null
++++ b/backend/integration/tests_decision_a_offline.py
+@@ -0,0 +1,262 @@
++"""Offline consumer contracts: actual serializers, views and JWT authentication.
++Run with the consumer venv; synthetic settings, dummy DB, network blocked.
++"""
++import ast
++import copy
++import importlib
++import json
++from pathlib import Path
++import sys
++import time
++from types import SimpleNamespace as NS
++import unittest
++from contextlib import ExitStack
++from unittest.mock import MagicMock, patch
++
++ROOT=Path.cwd()
++sys.path.insert(0,str(ROOT))
++sys.dont_write_bytecode=True
++guards=[patch(t,side_effect=AssertionError('Network forbidden')).start() for t in
++        ('socket.socket.connect','socket.socket.connect_ex','socket.create_connection','socket.getaddrinfo')]
++from django.conf import settings
++settings.configure(SECRET_KEY='synthetic-only-decision-a-key-never-deploy',DEBUG=True,
++    INSTALLED_APPS=['django.contrib.auth','django.contrib.contenttypes','authentication','core','integration'],
++    AUTH_USER_MODEL='authentication.User',DATABASES={'default':{'ENGINE':'django.db.backends.dummy'}},
++    LOGGING_CONFIG=None,USE_TZ=True,REST_FRAMEWORK={},AUTH_COOKIE_SAMESITE='Lax',
++    ADMIN_APPS_INTEGRATION={'API_KEY':'synthetic-key','TIMEOUT':1},
++    ADMIN_APPS_SSO={'BASE_URL':'https://central.invalid/api/integration','ISSUER':'https://central.invalid',
++                    'CLIENT_ID':'synthetic-client','AUDIENCE':'synthetic-audience'})
++from django.db.backends.base.base import BaseDatabaseWrapper
++db=patch.object(BaseDatabaseWrapper,'connect',side_effect=AssertionError('Database forbidden')).start()
++import django
++django.setup()
++from rest_framework.exceptions import APIException,AuthenticationFailed
++from rest_framework_simplejwt.tokens import RefreshToken
++from rest_framework.test import APIRequestFactory
++from authentication.serializers import LoginSerializer
++from authentication import views
++from integration import central_auth as c
++from integration.backends import AdminAppsAuthBackend
++from integration.sso_auth import Smart3AISSOAuthentication
++from django.core.exceptions import PermissionDenied
++
++ORG='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
++SUB='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'
++PRODUCT='MEDSUPPLIER' if ROOT.parent.name=='ISO_Smart_MedSupplier' else 'ISO_SMART'
++def evidence():
++    return {'active':True,'auth_contract':'decision-a-v1','amr':['pwd','otp'],'iss':'https://central.invalid',
++            'aud':['synthetic-audience'],'client_id':'synthetic-client','sub':SUB,'organization_id':ORG,
++            'email':'person@example.invalid','exp':int(time.time())+600,'role':'viewer',
++            'products':[{'code':PRODUCT,'access_allowed':True}]}
++def complete():
++    return {'requires_2fa':False,'two_fa_bypassed':False,'tokens':{'access_token':'synthetic-central-proof'}}
++
++class ConsumerTests(unittest.TestCase):
++    def setUp(self):
++        self.user=NS(id=1,pk=1,username='adminapps:'+SUB,email='person@example.invalid',is_active=True)
++        self.profile=NS(id=2,organization_id=3,organization=NS(external_id=ORG),role='viewer')
++        transport=patch.object(c.requests,'post')
++        self.transport=transport.start()
++        self.addCleanup(transport.stop)
++        self.real_sync=c.sync_identity.__wrapped__
++        sync=patch.object(c,'sync_identity',return_value=(self.user,self.profile))
++        self.sync=sync.start()
++        self.addCleanup(sync.stop)
++        self.response(complete(),evidence())
++    def response(self,*values):
++        self.transport.side_effect=[NS(status_code=200,json=lambda v=v:copy.deepcopy(v)) for v in values]
++    def serializer(self,**attrs):
++        s=LoginSerializer(data=attrs,context={'request':NS()})
++        s.is_valid(raise_exception=True)
++        return s
++    def test_complete_central_login(self):
++        s=self.serializer(email=self.user.email,password=' local secret ')
++        self.assertIs(s.validated_data['user'],self.user)
++        self.assertEqual(self.transport.call_args_list[0].kwargs['json']['password'],' local secret ')
++        self.sync.assert_called_once()
++    def test_challenge_is_not_session(self):
++        self.response({'requires_2fa':True,'challenge_token':'synthetic-challenge'})
++        s=self.serializer(email=self.user.email,password='password')
++        self.assertNotIn('user',s.validated_data)
++        self.sync.assert_not_called()
++        with ExitStack() as stack:
++            stack.enter_context(patch.object(views,'LoginSerializer',return_value=s))
++            mint=stack.enter_context(patch.object(views.RefreshToken,'for_user'))
++            if PRODUCT=='ISO_SMART':stack.enter_context(patch.object(views.CookieJWTAuthentication,'enforce_csrf'))
++            r=views.LoginView().post(NS(data={}))
++            self.assertTrue(r.data['requires_2fa'])
++            self.assertNotIn('access',r.data)
++            mint.assert_not_called()
++    def test_verify_totp_or_backup_through_central(self):
++        for code in ('123456','backup-synthetic'):
++            self.response(complete(),evidence())
++            s=self.serializer(challenge_token='synthetic-challenge',otp_code=code)
++            self.assertIn('user',s.validated_data)
++            sent=self.transport.call_args_list[-2].kwargs['json']
++            self.assertEqual(sent['otp_code'],code)
++            self.assertEqual(sent['client_id'],'synthetic-client')
++    def test_local_password_and_flags_never_rescue(self):
++        for code in (401,403,503):
++            self.transport.side_effect=None
++            self.transport.return_value=NS(status_code=code,json=lambda:{'valid':True})
++            with patch.object(settings,'ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS',True,create=True),\
++                 patch('authentication.serializers.authenticate',return_value=self.user) as local:
++                with self.assertRaises(APIException):
++                    self.serializer(email=self.user.email,password='known-local-password')
++                local.assert_not_called()
++        self.sync.assert_not_called()
++    def test_transport_and_json_errors_are_sanitized(self):
++        for error in (TimeoutError('SECRET'),ValueError('SECRET')):
++            self.transport.side_effect=error
++            with self.assertRaises(c.AuthorityUnavailable) as caught:
++                self.serializer(email=self.user.email,password='password')
++            self.assertNotIn('SECRET',str(caught.exception))
++        self.sync.assert_not_called()
++    def test_malformed_and_contradictory_login(self):
++        for data in ({'valid':True}, {'requires_2fa':'false'},
++                     {'requires_2fa':True,'challenge_token':'challenge','tokens':{'access_token':'x'}},
++                     dict(complete(),two_fa_bypassed=True), dict(complete(),requires_2fa=None)):
++            self.response(data)
++            with self.assertRaises(APIException):
++                self.serializer(email=self.user.email,password='password')
++        self.sync.assert_not_called()
++    def test_invalid_receiver_identity_and_product(self):
++        for key,value in [('active','true'),('auth_contract',None),('iss','foreign'),('client_id','foreign'),
++                          ('aud',['other']),('aud','synthetic-audience'),('sub','bad'),('organization_id','bad'),
++                          ('exp',int(time.time())-1),('exp',True),('amr',[]),('products',[]),('email','other@example.invalid')]:
++            data=evidence();data[key]=value
++            self.response(complete(),data)
++            with self.subTest(key=key),self.assertRaises(APIException):
++                self.serializer(email=self.user.email,password='password')
++        self.sync.assert_not_called()
++    def test_no_configuration_no_default_receiver(self):
++        with patch.object(settings,'ADMIN_APPS_SSO',{}):
++            with self.assertRaises(c.AuthorityUnavailable):
++                self.serializer(email=self.user.email,password='password')
++        self.transport.assert_not_called()
++    def test_direct_backend_stops_local_chain(self):
++        with self.assertRaises(PermissionDenied):
++            AdminAppsAuthBackend().authenticate(NS(),email=self.user.email,password='local')
++        self.assertIsNone(AdminAppsAuthBackend().get_user(1))
++    def test_old_access_session_rejected(self):
++        from rest_framework_simplejwt.authentication import JWTAuthentication
++        with patch.object(JWTAuthentication,'get_user',return_value=self.user):
++            with self.assertRaises(AuthenticationFailed):
++                Smart3AISSOAuthentication().get_user({'user_id':1,'organization_id':3,'role':'viewer'})
++        self.transport.assert_not_called()
++    def test_old_refresh_never_issues_access(self):
++        token=RefreshToken();token['user_id']=1
++        if PRODUCT=='ISO_SMART':
++            req=NS(COOKIES={'isosmart_refresh':str(token)})
++            with patch.object(views.CookieJWTAuthentication,'enforce_csrf'),patch.object(views.RefreshTokenBlacklist.objects,'filter') as blacklist:
++                blacklist.return_value.exists.return_value=False
++                with self.assertRaises(AuthenticationFailed):views.RefreshTokenView().post(req)
++        else:
++            req=NS(data={'refresh':str(token)})
++            with patch.object(views.RefreshTokenBlacklist.objects,'filter') as blacklist:
++                blacklist.return_value.exists.return_value=False
++                with self.assertRaises(AuthenticationFailed):views.RefreshTokenView().post(req)
++        self.transport.assert_not_called()
++    def test_cross_tenant_binding_rejected(self):
++        self.response(evidence())
++        profile=copy.deepcopy(self.profile);profile.organization.external_id='cccccccc-cccc-4ccc-8ccc-cccccccccccc'
++        with self.assertRaises(AuthenticationFailed):c.bind_session(RefreshToken(),'proof',profile,self.user)
++    def test_refresh_bound_by_central_expiry(self):
++        self.response(evidence())
++        refresh=c.bind_session(RefreshToken(),'proof',self.profile,self.user)
++        self.assertLessEqual(refresh['exp'],evidence()['exp'])
++        self.assertEqual(refresh.access_token['auth_contract'],'decision-a-v1')
++    def test_no_email_takeover_without_subject_binding(self):
++        user=copy.deepcopy(self.user);user.username='legacy-local-person'
++        with self.assertRaises(AuthenticationFailed):c.require_user_binding(user,SUB)
++        with patch.object(settings,'ADMIN_APPS_USER_BINDINGS',{SUB:1},create=True):
++            c.require_user_binding(user,SUB)
++        with patch.object(settings,'ADMIN_APPS_USER_BINDINGS',{SUB:2},create=True):
++            with self.assertRaises(AuthenticationFailed):c.require_user_binding(user,SUB)
++    def test_current_session_live_revocation_and_role(self):
++        from authentication.models import UserProfile
++        token={'auth_contract':'decision-a-v1','user_id':1,'organization_id':3,'profile_id':2,
++               'role':'viewer','central_proof':'proof','central_sub':SUB}
++        with patch.object(UserProfile.objects,'select_related') as orm:
++            orm.return_value.get.return_value=self.profile
++            self.response(evidence())
++            self.assertEqual(c.validate_session(token,self.user)['sub'],SUB)
++            for key,value in [('active',False),('role','org_admin'),('organization_id','cccccccc-cccc-4ccc-8ccc-cccccccccccc')]:
++                data=evidence();data[key]=value;self.response(data)
++                with self.assertRaises(AuthenticationFailed):c.validate_session(token,self.user)
++            data=evidence();self.response(data)
++            bad=dict(token,central_sub='cccccccc-cccc-4ccc-8ccc-cccccccccccc')
++            with self.assertRaises(AuthenticationFailed):c.validate_session(bad,self.user)
++    def test_failed_binding_mints_no_local_token(self):
++        self.response(dict(evidence(),active=False))
++        with patch.object(RefreshToken,'for_user') as mint:
++            with self.assertRaises(AuthenticationFailed):c.session_pair(self.user,self.profile,'proof')
++            mint.assert_not_called()
++    def test_projection_rejects_email_and_slug_collision(self):
++        from authentication.models import User,UserProfile
++        from core.models import Organization
++        with patch.object(Organization.objects,'filter') as orgs,patch.object(Organization.objects,'create') as create,patch.object(User.objects,'filter') as users:
++            orgs.return_value.first.return_value=None
++            orgs.return_value.exists.return_value=True
++            with self.assertRaises(AuthenticationFailed):self.real_sync(evidence())
++            create.assert_not_called();users.assert_not_called()
++            orgs.return_value.first.return_value=NS(is_active=True)
++            local=copy.deepcopy(self.user);local.username='existing-email-account'
++            users.return_value.first.side_effect=[None,local]
++            with patch.object(UserProfile.objects,'update_or_create') as profiles:
++                with self.assertRaises(AuthenticationFailed):self.real_sync(evidence())
++                profiles.assert_not_called()
++    def test_missing_profile_or_schema_fails_sanitized(self):
++        from authentication.models import UserProfile
++        token={'auth_contract':'decision-a-v1','profile_id':2,'user_id':1,'organization_id':3}
++        with patch.object(UserProfile.objects,'select_related',side_effect=RuntimeError('private-schema')):
++            with self.assertRaises(c.AuthorityUnavailable) as caught:c.validate_session(token,self.user)
++            self.assertNotIn('private-schema',str(caught.exception))
++        response=views.LoginView().handle_exception(RuntimeError('private-schema'))
++        self.assertEqual(response.status_code,503)
++        self.assertNotIn('private-schema',str(response.data))
++    def test_owner_policy_cannot_be_bypassed(self):
++        with patch.object(settings,'OWNER_ORGANIZATION_ONLY_ACCESS',True,create=True):
++            with patch.object(settings,'OWNER_ORGANIZATION_EXTERNAL_ID','cccccccc-cccc-4ccc-8ccc-cccccccccccc',create=True):
++                self.response(evidence())
++                with self.assertRaises(AuthenticationFailed):c.validate_proof('proof')
++            with patch.object(settings,'OWNER_ORGANIZATION_EXTERNAL_ID','',create=True):
++                self.response(evidence())
++                with self.assertRaises(c.AuthorityUnavailable):c.validate_proof('proof')
++    def test_local_password_discriminant(self):
++        import authentication.serializers as serializers_module
++        baseline='--baseline' in sys.argv
++        if baseline:
++            source=ROOT.parent.parent/'adminapps/docs/security/REC-SSO-03A-IMPLEMENTATION/before'/ROOT.parent.name/'backend/authentication/serializers.py'
++            spec=importlib.util.spec_from_file_location('authentication.baseline_serializers',source)
++            serializers_module=importlib.util.module_from_spec(spec);spec.loader.exec_module(serializers_module)
++        candidate=MagicMock()
++        candidate.is_locked.return_value=False
++        candidate.check_password.return_value=True
++        candidate.is_active=True
++        candidate.get_temporary_password_expiry.return_value=None
++        candidate.id=1;candidate.email=self.user.email
++        req=NS(headers={},get_host=lambda:'localhost')
++        queryset=MagicMock();queryset.exists.return_value=True;queryset.filter.return_value=queryset
++        queryset.select_related.return_value=queryset;queryset.first.return_value=self.profile
++        payload={'user':{'id':1,'email':self.user.email},'organization':{'id':ORG},'organizations':[{'id':ORG}],'role':'viewer'}
++        self.transport.side_effect=None;self.transport.return_value=NS(status_code=403,json=lambda:{'valid':False})
++        with patch.object(serializers_module.User.objects,'get',return_value=candidate),\
++             patch.object(serializers_module.UserProfile.objects,'filter',return_value=queryset),\
++             patch.object(serializers_module,'authenticate',return_value=None):
++            if baseline and PRODUCT=='MEDSUPPLIER':
++                with patch.object(serializers_module.LoginSerializer,'_build_local_adminapps_payload',return_value=payload):
++                    with self.assertRaises(APIException):
++                        s=serializers_module.LoginSerializer(data={'email':self.user.email,'password':'known-local-password'},context={'request':req})
++                        s.is_valid(raise_exception=True)
++            else:
++                with self.assertRaises(APIException):
++                    s=serializers_module.LoginSerializer(data={'email':self.user.email,'password':'known-local-password'},context={'request':req})
++                    s.is_valid(raise_exception=True)
++
++if __name__=='__main__':
++    suite=unittest.defaultTestLoader.loadTestsFromTestCase(ConsumerTests) if '--baseline' not in sys.argv else unittest.TestSuite([ConsumerTests('test_local_password_discriminant')])
++    result=unittest.TextTestRunner(verbosity=2).run(suite)
++    print(json.dumps({'tests':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),
++                      'scope':'offline actual consumer code; NOT E2E','db_attempts':db.call_count}))
++    sys.exit(not result.wasSuccessful() or db.call_count)
+--- /dev/null
++++ b/frontend/scripts/test-decision-a-offline.mjs
+@@ -0,0 +1,25 @@
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++const text=fs.readFileSync('src/context/AuthContext.jsx','utf8');
++const begin=text.indexOf('  const login =');
++const end=text.indexOf('  // Logout',begin);
++const loginSource=text.slice(begin,end);
++const med=process.cwd().includes('ISO_Smart_MedSupplier');
++let tests=0;
++for(const scenario of ['challenge','incomplete','denied','complete']) {
++  const events=[]; const storage=new Map([['access_token','previous'],['refresh_token','previous']]);
++  const payload=scenario==='challenge'?{requires_2fa:true,challenge_token:'synthetic-challenge'}:
++    scenario==='complete'?{requires_2fa:false,user:{id:1},profile:{id:2},organizations:[],access:'synthetic-access',refresh:'synthetic-refresh'}:
++    scenario==='incomplete'?{requires_2fa:false}:null;
++  const api={get:async()=>({data:{}}),post:async()=>{if(scenario==='denied')throw {response:{status:403,data:{detail:'Denied'}}};return {data:payload}},defaults:{headers:{common:{}}}};
++  const clearAuth=()=>{events.push(['clear']);storage.clear();delete api.defaults.headers.common.Authorization};
++  const setters=['setUser','setProfile','setOrganizations','setSecurityAlert','setCurrentOrganization','setIsAuthenticated'];
++  const localStorage={setItem:(k,v)=>storage.set(k,v)};
++  const construct=new Function('api','clearAuth','t','localStorage',...setters,loginSource+'\nreturn login;');
++  const login=construct(api,clearAuth,x=>x,localStorage,...setters.map(n=>v=>events.push([n,v])));
++  const result=await login('person@example.invalid','password');
++  if(scenario==='complete') { assert.equal(result.success,true);assert.ok(events.some(([n,v])=>n==='setIsAuthenticated'&&v===true));if(med)assert.equal(storage.get('access_token'),'synthetic-access'); }
++  else {assert.equal(result.success,false);assert.ok(!events.some(([n,v])=>n==='setIsAuthenticated'&&v===true));assert.equal(storage.size,0);if(scenario==='challenge')assert.equal(result.challenge_token,'synthetic-challenge');}
++  tests++;
++}
++console.log(JSON.stringify({tests,passed:tests,scope:'offline production login closure; NOT browser E2E'}));
+--- /dev/null
++++ b/docs/transformation/DECISION_A_AUTH_CONTRACT.md
+@@ -0,0 +1,22 @@
++# Decision A — contrato de autenticación local con autoridad central
++
++Implementación local autorizada el 2026-10-14. Los registros anteriores siguen siendo antecedentes; este documento no activa despliegues ni modifica gates independientes.
++
++`POST /api/auth/login/` acepta `{email, password, organization_id?}` o, para completar el mismo desafío central, `{challenge_token, otp_code}`. El OTP admite TOTP o código de respaldo y se verifica exclusivamente en AdminApps.
++
++- Desafío: HTTP 200, `{requires_2fa:true, challenge_token, challenge_expires_in}`. Sin user/profile autenticados, access, refresh ni cookie de sesión concedida. ISO borra cookies previas al responder al desafío.
++- Éxito: HTTP 200, `{requires_2fa:false, user, profile, organizations}`. MedSupplier añade `access` y `refresh`; ISO conserva cookies HttpOnly y exige CSRF, también para login y refresh.
++- Rechazo central/contexto/producto/proyección: HTTP 401. Indisponibilidad, contrato/configuración/esquema no verificable: HTTP 503 sanitizado. Campos inválidos: HTTP 400. No fallback a contraseña local, perfil, superusuario, flags o caché positiva.
++- AdminApps legacy: contraseña incorrecta → 401 sin revelar estado MFA; contraseña correcta con factor habilitado → 403, `valid:false`, `code:second_factor_required`. Error DB/key/MFA → 503, `valid:false`.
++
++Configuración requerida del consumidor: `ADMIN_APPS_SSO` con `BASE_URL` (raíz de integración, sin trailing endpoint), `ISSUER`, `CLIENT_ID` y `AUDIENCE`, todos explícitos. No se derivan de nombres de producto. Se compara audience de la prueba exactamente con `[AUDIENCE]`. Producción exige HTTPS. Se reutiliza la API key existente; no se crean claves ni registros.
++
++La prueba central debe estar activa, firmada y con contrato `decision-a-v1` y `amr` que incluya contraseña; si el factor central está habilitado, introspection exige OTP y la generación MFA vigente. Los UUID de sujeto/tenant son obligatorios. El producto de cada consumidor es fijo e independiente: ISO_SMART o MEDSUPPLIER.
++
++La sesión local conserva `central_proof`, `central_sub`, `auth_contract`, tenant, perfil y rol. Cada acceso y refresh vuelve a consultar introspection sin caché; no basta un bool del navegador. Perfil activo, organización activa, UUID externo, email, vínculo de sujeto y rol deben coincidir. La sesión no excede el expiry central. No se almacena refresh central; su expiración requiere login central nuevo.
++
++Una proyección nueva usa `username=adminapps:<UUID>`. Una proyección existente requiere ese vínculo o `ADMIN_APPS_USER_BINDINGS` explícito (UUID → PK). Email/slug coincidente no establece identidad. Se preservan lockout/desactivación y constraints; no se reasigna perfil o UUID externo para superar errores. Una restricción owner requiere `OWNER_ORGANIZATION_EXTERNAL_ID` exacto.
++
++Un switch a tenant distinto exige login/challenge central nuevo. Los refresh/JWT antiguos y sesiones Django sin prueba no conceden autenticación. El consumo central sigue siendo irreversible aunque falle sincronización o emisión local después; no se añade una transacción que restaure el segundo factor.
++
++Audiences/clientes/principales registrados y separación criptográfica quedan pendientes (C/H en la matriz histórica); revocación durable y transición operativa de sesiones, B; scopes y enforcement de dominio/objeto, D. Los permisos QMS y supplier/customer existentes no se reemplazan por MFA ni por `tenant:write`. Sin pruebas HTTP/ORM/concurrencia reales, no se declara E2E ni preparación de producción.
+--- /dev/null
++++ b/docs/transformation/DECISION_A_AUTH.openapi.json
+@@ -0,0 +1,170 @@
++{
++  "openapi": "3.0.3",
++  "info": {
++    "title": "Decision A consumer authentication",
++    "version": "decision-a-v1"
++  },
++  "paths": {
++    "/api/auth/login/": {
++      "post": {
++        "summary": "Start or complete central authentication",
++        "description": "ISO Smart requires CSRF and returns HttpOnly cookies. MedSupplier returns bearer access/refresh. Challenge never grants a session. No local password fallback.",
++        "requestBody": {
++          "required": true,
++          "content": {
++            "application/json": {
++              "schema": {
++                "oneOf": [
++                  {
++                    "type": "object",
++                    "required": [
++                      "email",
++                      "password"
++                    ],
++                    "properties": {
++                      "email": {
++                        "type": "string",
++                        "format": "email"
++                      },
++                      "password": {
++                        "type": "string",
++                        "writeOnly": true
++                      },
++                      "organization_id": {
++                        "type": "string",
++                        "nullable": true
++                      }
++                    }
++                  },
++                  {
++                    "type": "object",
++                    "required": [
++                      "challenge_token",
++                      "otp_code"
++                    ],
++                    "properties": {
++                      "challenge_token": {
++                        "type": "string",
++                        "writeOnly": true
++                      },
++                      "otp_code": {
++                        "type": "string",
++                        "writeOnly": true,
++                        "description": "TOTP or backup code; only AdminApps verifies it"
++                      }
++                    }
++                  }
++                ]
++              }
++            }
++          }
++        },
++        "responses": {
++          "200": {
++            "description": "Pending central challenge or completed product session",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "oneOf": [
++                    {
++                      "type": "object",
++                      "required": [
++                        "requires_2fa",
++                        "challenge_token",
++                        "challenge_expires_in"
++                      ],
++                      "properties": {
++                        "requires_2fa": {
++                          "type": "boolean",
++                          "enum": [
++                            true
++                          ]
++                        },
++                        "challenge_token": {
++                          "type": "string"
++                        },
++                        "challenge_expires_in": {
++                          "type": "integer"
++                        }
++                      },
++                      "additionalProperties": false
++                    },
++                    {
++                      "type": "object",
++                      "required": [
++                        "requires_2fa",
++                        "user",
++                        "profile",
++                        "organizations"
++                      ],
++                      "properties": {
++                        "requires_2fa": {
++                          "type": "boolean",
++                          "enum": [
++                            false
++                          ]
++                        },
++                        "user": {
++                          "type": "object"
++                        },
++                        "profile": {
++                          "type": "object"
++                        },
++                        "organizations": {
++                          "type": "array",
++                          "items": {
++                            "type": "object"
++                          }
++                        },
++                        "access": {
++                          "type": "string",
++                          "description": "MedSupplier only"
++                        },
++                        "refresh": {
++                          "type": "string",
++                          "description": "MedSupplier only"
++                        }
++                      }
++                    }
++                  ]
++                }
++              }
++            }
++          },
++          "400": {
++            "description": "Invalid input"
++          },
++          "401": {
++            "description": "Central authentication, receiver, tenant, product or projection rejected"
++          },
++          "403": {
++            "description": "ISO Smart CSRF validation rejected"
++          },
++          "503": {
++            "description": "Central authority, configuration or schema unavailable; sanitized and terminal"
++          }
++        }
++      }
++    },
++    "/api/auth/refresh/": {
++      "post": {
++        "summary": "Revalidate and renew the bound local session",
++        "description": "ISO requires refresh cookie and CSRF; MedSupplier requires JSON refresh. Revalidates live authority, subject, tenant, product and role. Cannot exceed central access expiry. Old sessions are rejected.",
++        "responses": {
++          "200": {
++            "description": "Session renewed within central lifetime"
++          },
++          "401": {
++            "description": "Reauthentication required"
++          },
++          "403": {
++            "description": "CSRF rejected"
++          },
++          "503": {
++            "description": "Authority unavailable"
++          }
++        }
++      }
++    }
++  }
++}

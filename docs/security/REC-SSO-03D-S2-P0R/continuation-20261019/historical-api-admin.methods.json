@@ -1,0 +1,252 @@
+{
+  "runners": [
+    {
+      "tests": 30,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_actor_cannot_create_or_update_own_membership",
+      "method": "test_actor_cannot_create_or_update_own_membership",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 62,
+      "qualname": "UserOrganizationAuthorizationTests.test_actor_cannot_create_or_update_own_membership",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_admin_cannot_invite_superadmin_or_other_tenant",
+      "method": "test_admin_cannot_invite_superadmin_or_other_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 140,
+      "qualname": "UserOrganizationAuthorizationTests.test_admin_cannot_invite_superadmin_or_other_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_admin_cannot_promote_self_or_other_user_to_superadmin",
+      "method": "test_admin_cannot_promote_self_or_other_user_to_superadmin",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 105,
+      "qualname": "UserOrganizationAuthorizationTests.test_admin_cannot_promote_self_or_other_user_to_superadmin",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_global_admin_cannot_grant_superadmin_on_user_create",
+      "method": "test_global_admin_cannot_grant_superadmin_on_user_create",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 88,
+      "qualname": "UserOrganizationAuthorizationTests.test_global_admin_cannot_grant_superadmin_on_user_create",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_org_admin_can_manage_member_in_own_tenant_with_non_global_role",
+      "method": "test_org_admin_can_manage_member_in_own_tenant_with_non_global_role",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 74,
+      "qualname": "UserOrganizationAuthorizationTests.test_org_admin_can_manage_member_in_own_tenant_with_non_global_role",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_org_admin_cannot_create_membership_in_another_tenant",
+      "method": "test_org_admin_cannot_create_membership_in_another_tenant",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 46,
+      "qualname": "UserOrganizationAuthorizationTests.test_org_admin_cannot_create_membership_in_another_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_org_admin_cannot_delete_own_membership",
+      "method": "test_org_admin_cannot_delete_own_membership",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 82,
+      "qualname": "UserOrganizationAuthorizationTests.test_org_admin_cannot_delete_own_membership",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_org_admin_cannot_grant_global_admin_role",
+      "method": "test_org_admin_cannot_grant_global_admin_role",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 54,
+      "qualname": "UserOrganizationAuthorizationTests.test_org_admin_cannot_grant_global_admin_role",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_registration_consumes_valid_invitation_with_expected_effects_offline",
+      "method": "test_registration_consumes_valid_invitation_with_expected_effects_offline",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 255,
+      "qualname": "UserOrganizationAuthorizationTests.test_registration_consumes_valid_invitation_with_expected_effects_offline",
+      "status": "ERROR"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_registration_invitation_must_match_the_invited_email",
+      "method": "test_registration_invitation_must_match_the_invited_email",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 176,
+      "qualname": "UserOrganizationAuthorizationTests.test_registration_invitation_must_match_the_invited_email",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_registration_rejects_invalid_or_expired_invitations",
+      "method": "test_registration_rejects_invalid_or_expired_invitations",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 198,
+      "qualname": "UserOrganizationAuthorizationTests.test_registration_rejects_invalid_or_expired_invitations",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_authorization.UserOrganizationAuthorizationTests.test_registration_rejects_invitation_with_unauthorized_global_role",
+      "method": "test_registration_rejects_invitation_with_unauthorized_global_role",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_authorization.py",
+      "line": 232,
+      "qualname": "UserOrganizationAuthorizationTests.test_registration_rejects_invitation_with_unauthorized_global_role",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_membership_admin_blocks_self_and_cross_organization_edits",
+      "method": "test_membership_admin_blocks_self_and_cross_organization_edits",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 160,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_membership_admin_blocks_self_and_cross_organization_edits",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_non_superadmin_cannot_assign_superadmin_role_in_admin",
+      "method": "test_non_superadmin_cannot_assign_superadmin_role_in_admin",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 203,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_non_superadmin_cannot_assign_superadmin_role_in_admin",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_non_superuser_cannot_grant_django_staff_privileges",
+      "method": "test_non_superuser_cannot_grant_django_staff_privileges",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 216,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_non_superuser_cannot_grant_django_staff_privileges",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_org_admin_forms_do_not_offer_global_roles",
+      "method": "test_org_admin_forms_do_not_offer_global_roles",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 229,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_org_admin_forms_do_not_offer_global_roles",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_organization_admin_mutations_match_platform_roles",
+      "method": "test_organization_admin_mutations_match_platform_roles",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 137,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_organization_admin_mutations_match_platform_roles",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_security_audit_and_session_admins_are_immutable",
+      "method": "test_security_audit_and_session_admins_are_immutable",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 176,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_security_audit_and_session_admins_are_immutable",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_sensitive_product_and_plan_writes_match_api_roles",
+      "method": "test_sensitive_product_and_plan_writes_match_api_roles",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 71,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_sensitive_product_and_plan_writes_match_api_roles",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_user_admin_protects_global_privilege_fields",
+      "method": "test_user_admin_protects_global_privilege_fields",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 120,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_user_admin_protects_global_privilege_fields",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_user_admin_requires_org_admin_for_create_and_change",
+      "method": "test_user_admin_requires_org_admin_for_create_and_change",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 100,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_user_admin_requires_org_admin_for_create_and_change",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.users.test_admin_authorization.DjangoAdminRoleAuthorizationTests.test_user_and_membership_admin_disable_bulk_delete",
+      "method": "test_user_and_membership_admin_disable_bulk_delete",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/test_admin_authorization.py",
+      "line": 110,
+      "qualname": "DjangoAdminRoleAuthorizationTests.test_user_and_membership_admin_disable_bulk_delete",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.organizations.test_authorization.OrganizationSettingsAuthorizationTests.test_organization_admin_can_change_settings",
+      "method": "test_organization_admin_can_change_settings",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/organizations/test_authorization.py",
+      "line": 40,
+      "qualname": "OrganizationSettingsAuthorizationTests.test_organization_admin_can_change_settings",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.organizations.test_authorization.OrganizationSettingsAuthorizationTests.test_organization_admin_can_read_settings",
+      "method": "test_organization_admin_can_read_settings",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/organizations/test_authorization.py",
+      "line": 30,
+      "qualname": "OrganizationSettingsAuthorizationTests.test_organization_admin_can_read_settings",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.organizations.test_authorization.OrganizationSettingsAuthorizationTests.test_organization_member_can_read_settings",
+      "method": "test_organization_member_can_read_settings",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/organizations/test_authorization.py",
+      "line": 35,
+      "qualname": "OrganizationSettingsAuthorizationTests.test_organization_member_can_read_settings",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.organizations.test_authorization.OrganizationSettingsAuthorizationTests.test_organization_member_cannot_change_settings",
+      "method": "test_organization_member_cannot_change_settings",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/organizations/test_authorization.py",
+      "line": 25,
+      "qualname": "OrganizationSettingsAuthorizationTests.test_organization_member_cannot_change_settings",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.organizations.test_authorization.OrganizationSettingsAuthorizationTests.test_unauthenticated_user_cannot_read_settings",
+      "method": "test_unauthenticated_user_cannot_read_settings",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/organizations/test_authorization.py",
+      "line": 45,
+      "qualname": "OrganizationSettingsAuthorizationTests.test_unauthenticated_user_cannot_read_settings",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.subscriptions.test_authorization.PlanViewSetAuthorizationTests.test_every_model_mutation_requires_superadmin",
+      "method": "test_every_model_mutation_requires_superadmin",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/subscriptions/test_authorization.py",
+      "line": 45,
+      "qualname": "PlanViewSetAuthorizationTests.test_every_model_mutation_requires_superadmin",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.subscriptions.test_authorization.PlanViewSetAuthorizationTests.test_read_actions_require_an_authenticated_user",
+      "method": "test_read_actions_require_an_authenticated_user",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/subscriptions/test_authorization.py",
+      "line": 22,
+      "qualname": "PlanViewSetAuthorizationTests.test_read_actions_require_an_authenticated_user",
+      "status": "PASS"
+    },
+    {
+      "id": "apps.api.tests_security_guardrails.SerializerExposureGuardrailTests.test_model_serializers_do_not_use_fields_all",
+      "method": "test_model_serializers_do_not_use_fields_all",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/api/tests_security_guardrails.py",
+      "line": 18,
+      "qualname": "SerializerExposureGuardrailTests.test_model_serializers_do_not_use_fields_all",
+      "status": "PASS"
+    }
+  ]
+}

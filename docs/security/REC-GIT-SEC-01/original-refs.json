@@ -1,0 +1,402 @@
+[
+  {
+    "ref": "refs/heads/audit/financial-isolated-20261020",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/heads/audit/git-reconciliation-20261020",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/heads/audit/iam-isolated-20261020",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/heads/checkpoint/rec-git-03-adminapps-20261020",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/heads/development",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 37164,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/heads/hardening/p0-enterprise-readiness-20260702",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/heads/hardening/p0-p1-enterprise-readiness",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/heads/lab04/reviewed-delivery-20261021",
+    "env_blobs": [],
+    "nonempty_sensitive_keys": [],
+    "local_dependency_objects": 0,
+    "database_paths": [],
+    "environment_paths": []
+  },
+  {
+    "ref": "refs/heads/lab04/runtime-boundaries-20261021",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/HEAD",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 37164,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/audit/financial-isolated-20261020",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/audit/git-reconciliation-20261020",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/audit/iam-isolated-20261020",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/checkpoint/rec-git-03-adminapps-20261020",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/development",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 37164,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/hardening/p0-enterprise-readiness-20260702",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/hardening/p0-p1-enterprise-readiness",
+    "env_blobs": [
+      "4669a3c9788f2205de8e85fb59ad336e59de44f6",
+      "12be1d17ff95735ba6595d6d645433657924ca11",
+      "bb164f44a84dca24bf91b149d9251c9c377448f6",
+      "228555378f8a389ee141d96b511868e2c396d54b",
+      "a5fd39606215a8821965277c011e59425a4da637",
+      "43dce6f37eed6a9ba63762ca345ff798e5a033da"
+    ],
+    "nonempty_sensitive_keys": [
+      "DB_PASSWORD",
+      "DJANGO_SECRET_KEY",
+      "SMART3AI_SSO_JWT_SECRET"
+    ],
+    "local_dependency_objects": 40788,
+    "database_paths": [
+      "backend/adminapps.sqlite3",
+      "backend/test.sqlite3"
+    ],
+    "environment_paths": [
+      "backend/.env"
+    ]
+  },
+  {
+    "ref": "refs/remotes/origin/lab04/reviewed-delivery-20261021",
+    "env_blobs": [],
+    "nonempty_sensitive_keys": [],
+    "local_dependency_objects": 0,
+    "database_paths": [],
+    "environment_paths": []
+  }
+]

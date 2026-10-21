@@ -1,0 +1,45 @@
+[
+  {
+    "objective": "LAB04-A",
+    "technical": "PASS_POSTGRESQL_LAB (opt-in non-financial boundary)",
+    "development_commit": "7015205aa628301fba2d7a8cd52fb1753022648a",
+    "delivery_commit": "d00bd608d30c623143ae38836d226c7da2df067a",
+    "remote_verified": "d00bd608d30c623143ae38836d226c7da2df067a",
+    "delivery_branch": "lab04/reviewed-delivery-20261021"
+  },
+  {
+    "objective": "LAB04-B",
+    "development_commit": "2d0a6bbef80bfab4225cb44a8ee8a8a0d201415d",
+    "delivery_commit": "b3b11be06e6f94f227f2ad89816107405d940e9e",
+    "remote_verified": "b3b11be06e6f94f227f2ad89816107405d940e9e",
+    "status": "SUPERSEDED_BY_IMPORT_CORRECTION"
+  },
+  {
+    "objective": "LAB04-B-correction",
+    "development_commit": "8b09b7516ae7175dd9f9da44e8757d515048b49e",
+    "delivery_commit": "b14ad0bc6a8b8835a44359a720e75151f99f7ae1",
+    "remote_verified": "b14ad0bc6a8b8835a44359a720e75151f99f7ae1",
+    "delivery_branch": "lab04/reviewed-delivery-20261021"
+  },
+  {
+    "objective": "LAB04-C",
+    "development_commit": "25cb5562ebb10c853c97fdaff9b75a6ba22040ac",
+    "delivery_commit": "7db3cd91a109af9330eaaa48328d4573aa2eb83e",
+    "remote_verified": "7db3cd91a109af9330eaaa48328d4573aa2eb83e",
+    "delivery_branch": "lab04/reviewed-delivery-20261021"
+  },
+  {
+    "objective": "LAB04-D",
+    "development_commit": "e3dc7fde95f2582986bbffd285f2dc249635de8a",
+    "delivery_commit": "267993df81a2eb02e810c16fc6b05e57666c2de8",
+    "remote_verified": "267993df81a2eb02e810c16fc6b05e57666c2de8",
+    "delivery_branch": "lab04/reviewed-delivery-20261021"
+  },
+  {
+    "objective": "LAB04-E",
+    "development_commit": "ef4919cb34a965ce8b8b564c03db419edbb091ea",
+    "delivery_commit": "af2377f2016caba709cbf4d7e7b65bf99297ebee",
+    "remote_verified": "af2377f2016caba709cbf4d7e7b65bf99297ebee",
+    "delivery_branch": "lab04/reviewed-delivery-20261021"
+  }
+]

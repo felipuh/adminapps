@@ -1,0 +1,40 @@
+{
+  "REC-2FA-04": "IMPLEMENTED_AND_REAL_E2E_TESTED",
+  "main_authentication_matrix": "AUTH_REAL_E2E_PASS",
+  "bc_tests": {
+    "BC-T01": "PASS",
+    "BC-T02": "PASS",
+    "BC-T10": "PASS",
+    "BC-T03": "PASS",
+    "BC-T04": "PASS",
+    "BC-T09": "PASS",
+    "BC-T06": "PASS",
+    "BC-T05": "PASS",
+    "BC-T07": "PASS",
+    "BC-T08": "PASS",
+    "BC-SESSION": "PASS"
+  },
+  "int_auth": {
+    "INT-AUTH-01": "PASS",
+    "INT-AUTH-02": "PASS",
+    "INT-AUTH-03": "PASS",
+    "INT-AUTH-04": "PASS",
+    "INT-AUTH-05": "PASS",
+    "INT-AUTH-06": "PASS",
+    "INT-AUTH-07": "PASS",
+    "INT-AUTH-08": "PASS",
+    "INT-AUTH-09": "FAIL"
+  },
+  "current_source_sha256": "bfe76f3488d70a7d8b4a4c3f5c0269fc41fcf8d48f2261cde9153eaaafcdb199",
+  "sso_local": "FAIL_HTTP_500_IN_AUTH_ONLY_LAB_MISSING_PRODUCT_ENTITLEMENTS",
+  "external_IdP": "NOT_EXECUTED",
+  "concurrency_tests": "NOT_REPEATED; historical source and evidence hashes verified",
+  "production_approval": false,
+  "S3-IMP-01": "BLOCKED_PENDING_AUTHORITY",
+  "S3_DECISION_02A_NOT_CLOSED": true,
+  "PHASE31_5": "EXECUTION_HELD",
+  "single_disposable_cluster": true,
+  "campaign_passes": 2,
+  "first_pass_reason": "Visual QA found truncated rejection text; final source reran all main scenarios",
+  "cleanup_complete": true
+}

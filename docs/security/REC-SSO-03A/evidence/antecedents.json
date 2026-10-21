@@ -1,0 +1,748 @@
+{
+  "seals": [
+    {
+      "campaign": "REC-SSO-02",
+      "file": "DECISIONS.md",
+      "expected_sha256": "54c76ccf51b727f5b610a01f88383e5f8f7bbdb0912fd9313cd541812f6f23a3",
+      "actual_sha256": "54c76ccf51b727f5b610a01f88383e5f8f7bbdb0912fd9313cd541812f6f23a3",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "MIGRATION_READINESS.md",
+      "expected_sha256": "76ddcecf0d185519081570947f831e7e4d4d9fc3aa6bf1dc78ec406ee3fabcac",
+      "actual_sha256": "76ddcecf0d185519081570947f831e7e4d4d9fc3aa6bf1dc78ec406ee3fabcac",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "REPORT.md",
+      "expected_sha256": "c24dd956516ded79bc29d5b908f890a236ef415a7bfc67fa1b9e458cebf74ccb",
+      "actual_sha256": "c24dd956516ded79bc29d5b908f890a236ef415a7bfc67fa1b9e458cebf74ccb",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/2fa-regression.log",
+      "expected_sha256": "9b356cc4426c30469376c4b5412cfbefc3b0ec717b21f5cda2fe9005e402797e",
+      "actual_sha256": "9b356cc4426c30469376c4b5412cfbefc3b0ec717b21f5cda2fe9005e402797e",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-2FA-04-closure.json",
+      "expected_sha256": "de4ae7a97ec3f6636253a6e207e067f4f2a6c3f3d9e72cd721b360ea442cc6ce",
+      "actual_sha256": "de4ae7a97ec3f6636253a6e207e067f4f2a6c3f3d9e72cd721b360ea442cc6ce",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-SSO-01/REPORT.md",
+      "expected_sha256": "3209e4898c39ee3554d87f2442b4d705fb50377f7415b48577058913235651bf",
+      "actual_sha256": "3209e4898c39ee3554d87f2442b4d705fb50377f7415b48577058913235651bf",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-SSO-01/integrity-result.json",
+      "expected_sha256": "51a6eff414fe44e2c860ba0b2e7fc8d1a829786459dcd927a378db9b5e8f77ab",
+      "actual_sha256": "51a6eff414fe44e2c860ba0b2e7fc8d1a829786459dcd927a378db9b5e8f77ab",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-SSO-01/model-schema-comparison.json",
+      "expected_sha256": "32226846f3d8e7611d147b6214b65d91d7bf77bfb645ad3db9b2ef70ea603355",
+      "actual_sha256": "32226846f3d8e7611d147b6214b65d91d7bf77bfb645ad3db9b2ef70ea603355",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/REC-SSO-01/offline-results.json",
+      "expected_sha256": "990f2e73130d630a06ebd239724b07b6f5645779a1d81fe985c25f02e24fddd9",
+      "actual_sha256": "990f2e73130d630a06ebd239724b07b6f5645779a1d81fe985c25f02e24fddd9",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/antecedent-hashes.json",
+      "expected_sha256": "7dbec1daa6d5d9827a49c9acd970f727909279246879ee6b45b96634c0264fbe",
+      "actual_sha256": "7dbec1daa6d5d9827a49c9acd970f727909279246879ee6b45b96634c0264fbe",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/applied-local.patch",
+      "expected_sha256": "a3bbc92fc3e16bc0fbb417b60a102d1aec6a5eb49aa0669c1fa17cb8b2f098f9",
+      "actual_sha256": "a3bbc92fc3e16bc0fbb417b60a102d1aec6a5eb49aa0669c1fa17cb8b2f098f9",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/baseline-files.json",
+      "expected_sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+      "actual_sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/baseline-git.json",
+      "expected_sha256": "27f05afde9219077720e4b2664bef22ff19ce455fd17d185787cca9ceda698fa",
+      "actual_sha256": "27f05afde9219077720e4b2664bef22ff19ce455fd17d185787cca9ceda698fa",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/consumer-sources.json",
+      "expected_sha256": "bd7918891157ecaf9281379c7d4dd2d76e698382bfad7fb17f69d309852d5b64",
+      "actual_sha256": "bd7918891157ecaf9281379c7d4dd2d76e698382bfad7fb17f69d309852d5b64",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/diff-check.log",
+      "expected_sha256": "bde294368bfed77c2cddf8cec271d398aee9cdbab3b26e1059281bd33adb0120",
+      "actual_sha256": "bde294368bfed77c2cddf8cec271d398aee9cdbab3b26e1059281bd33adb0120",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/git-final.json",
+      "expected_sha256": "3b260a58d16908e0f42f52c725200b82b56313734094adb637cb6215232c4e19",
+      "actual_sha256": "3b260a58d16908e0f42f52c725200b82b56313734094adb637cb6215232c4e19",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/harness-bootstrap-error.log",
+      "expected_sha256": "e2b84140c14d3ab2978cbce372e378cb2a43b99b81c070afa6efde110d9b6be5",
+      "actual_sha256": "e2b84140c14d3ab2978cbce372e378cb2a43b99b81c070afa6efde110d9b6be5",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/integrity-attempt1.json",
+      "expected_sha256": "570d88233b61077b0fae485aaf89d16dd594b1fbf2f03dd8d6c9f6005f674d1b",
+      "actual_sha256": "570d88233b61077b0fae485aaf89d16dd594b1fbf2f03dd8d6c9f6005f674d1b",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/integrity-final.json",
+      "expected_sha256": "97e7a33ef6951bb7dc1cbf42afc4806ba84e5a522e18d772c220ef4cfc399b2d",
+      "actual_sha256": "97e7a33ef6951bb7dc1cbf42afc4806ba84e5a522e18d772c220ef4cfc399b2d",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/integrity-harness-correction.json",
+      "expected_sha256": "1c7152d1be4662b64185332b54df477e51b09116fac1ff7e09ff84c1e7fa5673",
+      "actual_sha256": "1c7152d1be4662b64185332b54df477e51b09116fac1ff7e09ff84c1e7fa5673",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/local-after.json",
+      "expected_sha256": "28c0166a4ded8ea088545d48223018187caddc236b3ed820b5f2a200c48c3102",
+      "actual_sha256": "28c0166a4ded8ea088545d48223018187caddc236b3ed820b5f2a200c48c3102",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/local-after.log",
+      "expected_sha256": "0bb31df2f894d7b01f257114e621b07684e4f9e1b7346110c95d1c2b94c843a3",
+      "actual_sha256": "0bb31df2f894d7b01f257114e621b07684e4f9e1b7346110c95d1c2b94c843a3",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/migration-graph.json",
+      "expected_sha256": "c246abfb5b4189c02bba11f40e2f3fd74247afe705ad39052c9902f237e8f0d2",
+      "actual_sha256": "c246abfb5b4189c02bba11f40e2f3fd74247afe705ad39052c9902f237e8f0d2",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/offline-checks.log",
+      "expected_sha256": "823acb3c6ced241a5982c5c9682cfca48e1de2c09585fdd6cbaaec6175f9e242",
+      "actual_sha256": "823acb3c6ced241a5982c5c9682cfca48e1de2c09585fdd6cbaaec6175f9e242",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/proposal-checks.json",
+      "expected_sha256": "9b28140aa636af8c7ed72f8ea4d6b55989c7412708f4dc41f4f5e8f813b4bc2c",
+      "actual_sha256": "9b28140aa636af8c7ed72f8ea4d6b55989c7412708f4dc41f4f5e8f813b4bc2c",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/source-manifest.json",
+      "expected_sha256": "2cbc13faec66dd9e46b0ccb2422ac1e900c0bcce806828a236a946fe62ecde0b",
+      "actual_sha256": "2cbc13faec66dd9e46b0ccb2422ac1e900c0bcce806828a236a946fe62ecde0b",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/tests-after.json",
+      "expected_sha256": "ba0e3a7d278370572d8b304134aa6deac84557df2ec53bda504392d324edeb86",
+      "actual_sha256": "ba0e3a7d278370572d8b304134aa6deac84557df2ec53bda504392d324edeb86",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/tests-after.log",
+      "expected_sha256": "1b0bde599ea7003de46a749a79c036ad6003db81a9b59bc5b5e660b238796cff",
+      "actual_sha256": "1b0bde599ea7003de46a749a79c036ad6003db81a9b59bc5b5e660b238796cff",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/tests-before.json",
+      "expected_sha256": "454b6dbfd76992c55492a7ba21942fc890d3037b1a0ce93fabe2af911b988cb4",
+      "actual_sha256": "454b6dbfd76992c55492a7ba21942fc890d3037b1a0ce93fabe2af911b988cb4",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "evidence/tests-before.log",
+      "expected_sha256": "50999dfbc69096e04a5275e98daf4d102ca4233e56d81120fb2c7a74fd21047c",
+      "actual_sha256": "50999dfbc69096e04a5275e98daf4d102ca4233e56d81120fb2c7a74fd21047c",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/A-legacy-deny-2fa.patch",
+      "expected_sha256": "357d07c77f8c19036bb7f07e83ddee4ae388210704532cf050bc9d043c78a418",
+      "actual_sha256": "357d07c77f8c19036bb7f07e83ddee4ae388210704532cf050bc9d043c78a418",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/B-reject-stale-role.patch",
+      "expected_sha256": "883942ffc0588c4c7c4b1f4ea2db86f374cd5b20df625b79e57bd9300583500d",
+      "actual_sha256": "883942ffc0588c4c7c4b1f4ea2db86f374cd5b20df625b79e57bd9300583500d",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/C-register-client-audience.patch",
+      "expected_sha256": "d542bccf0fb7fc3b51be95322a99d884a8959464e6a5cc29bdf69c8f5d09cd0b",
+      "actual_sha256": "d542bccf0fb7fc3b51be95322a99d884a8959464e6a5cc29bdf69c8f5d09cd0b",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/D-role-product-scopes.patch",
+      "expected_sha256": "8c9e7821840ff003ca49734570acda798661e70c3f68c6f387deaaeec9026652",
+      "actual_sha256": "8c9e7821840ff003ca49734570acda798661e70c3f68c6f387deaaeec9026652",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/E-trial-subscription-model.patch",
+      "expected_sha256": "a8cfa3f52d23f29b70aefe9b64c0ff41e7f2841914219eaeca4f2502a6b9aa5e",
+      "actual_sha256": "a8cfa3f52d23f29b70aefe9b64c0ff41e7f2841914219eaeca4f2502a6b9aa5e",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/E-trial-subscription-serializers.patch",
+      "expected_sha256": "a81911164443aa8c3ed6b8673edfab7f4151070e638f1dcbedadc08b5703d60f",
+      "actual_sha256": "a81911164443aa8c3ed6b8673edfab7f4151070e638f1dcbedadc08b5703d60f",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/F-entitlement-start.patch",
+      "expected_sha256": "2c38106bb1b5344d2f4f666bf1c751c363b0678356612e5ecabd393c7bab8ec1",
+      "actual_sha256": "2c38106bb1b5344d2f4f666bf1c751c363b0678356612e5ecabd393c7bab8ec1",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/G-subscription-binding-contract.patch",
+      "expected_sha256": "70ecd6de5ce20e8ef6861c53f29853dbddf93e2481911614de139b6c29b73388",
+      "actual_sha256": "70ecd6de5ce20e8ef6861c53f29853dbddf93e2481911614de139b6c29b73388",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/H-integration-key-scope-contract.patch",
+      "expected_sha256": "027e7b958cdba97d462041abc0e00cdf5168eab55b68eadc19f0c02a84deb255",
+      "actual_sha256": "027e7b958cdba97d462041abc0e00cdf5168eab55b68eadc19f0c02a84deb255",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-02",
+      "file": "proposals/manifest.json",
+      "expected_sha256": "330f6697dbb96cb6eee511c0226f0cf0a8bb82f61765d414db2a4e5edf978e3d",
+      "actual_sha256": "330f6697dbb96cb6eee511c0226f0cf0a8bb82f61765d414db2a4e5edf978e3d",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "APPROVAL_MATRIX.md",
+      "expected_sha256": "25c0273981dcaa8e221a7d64a223b433889eca87bb399e329085f7bec10ff1b5",
+      "actual_sha256": "25c0273981dcaa8e221a7d64a223b433889eca87bb399e329085f7bec10ff1b5",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "COMPATIBILITY.md",
+      "expected_sha256": "6169c6f261780d237c9d255b94d1a6f730448b04963abc5e7ffaffe91b91876d",
+      "actual_sha256": "6169c6f261780d237c9d255b94d1a6f730448b04963abc5e7ffaffe91b91876d",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "DECISIONS.md",
+      "expected_sha256": "615aafb089c1d9fc34ceb7c14f5272bc7a11fbfe3a922b8dc2056a773a9083d8",
+      "actual_sha256": "615aafb089c1d9fc34ceb7c14f5272bc7a11fbfe3a922b8dc2056a773a9083d8",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "DIFF_ASSESSMENT.md",
+      "expected_sha256": "8a334ea866b150f3ae7b6da9545d2305ff8e93e1dd72e9d0988d7c6bbcac6b12",
+      "actual_sha256": "8a334ea866b150f3ae7b6da9545d2305ff8e93e1dd72e9d0988d7c6bbcac6b12",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "EVIDENCE.md",
+      "expected_sha256": "3dfea3f0006805269c8135b3db55146e302d3f4491ff9f868237dab1e5add4df",
+      "actual_sha256": "3dfea3f0006805269c8135b3db55146e302d3f4491ff9f868237dab1e5add4df",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "IMPLEMENTATION_PLAN.md",
+      "expected_sha256": "d29e35b90f3e3b973d246df4afb0f69210cdd187aae8d5c6fa60ce81f058300c",
+      "actual_sha256": "d29e35b90f3e3b973d246df4afb0f69210cdd187aae8d5c6fa60ce81f058300c",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "REPORT.md",
+      "expected_sha256": "edafe3df5f5e3af56cc6b8d2f1cb8f3987668c3a7b68f9753d18a0da4fc1f6b2",
+      "actual_sha256": "edafe3df5f5e3af56cc6b8d2f1cb8f3987668c3a7b68f9753d18a0da4fc1f6b2",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/antecedent-verification.json",
+      "expected_sha256": "916e1f717b528acd7d48b52fbe427900c051d69c2f41844deea6ac3f12f46e01",
+      "actual_sha256": "916e1f717b528acd7d48b52fbe427900c051d69c2f41844deea6ac3f12f46e01",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/baseline.json",
+      "expected_sha256": "2b18930e1ce60eab767ad531aa73ddd8a6837b0cf9109eb8a4c345408f129d8c",
+      "actual_sha256": "2b18930e1ce60eab767ad531aa73ddd8a6837b0cf9109eb8a4c345408f129d8c",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/document-checks.json",
+      "expected_sha256": "e8bd2184164a41900e9e35912ca9179f8003d81cb2b3645338b3f710f20b2c65",
+      "actual_sha256": "e8bd2184164a41900e9e35912ca9179f8003d81cb2b3645338b3f710f20b2c65",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/integrity-final.json",
+      "expected_sha256": "39aa41ff029e500ea20830a353dcc99821331a46fc7be87c3f8247fc29bad576",
+      "actual_sha256": "39aa41ff029e500ea20830a353dcc99821331a46fc7be87c3f8247fc29bad576",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/proposals-review.json",
+      "expected_sha256": "0d0598e71af162862576258c39d115da14f86ec7f24c966120525e62dd9b20aa",
+      "actual_sha256": "0d0598e71af162862576258c39d115da14f86ec7f24c966120525e62dd9b20aa",
+      "matches": true
+    },
+    {
+      "campaign": "REC-SSO-03",
+      "file": "evidence/source-manifest.json",
+      "expected_sha256": "8b36a12a0abecb1c09f1d64bdad806cce02b9d2a66d559d88e45c8a93c41a2ff",
+      "actual_sha256": "8b36a12a0abecb1c09f1d64bdad806cce02b9d2a66d559d88e45c8a93c41a2ff",
+      "matches": true
+    }
+  ],
+  "source_manifest": [
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "docs/PRODUCT_NEUTRAL_ADMINAPPS_CONTRACT.md",
+      "sha256": "69bba978d4cbf02652b175289e845bb159cc1cbfe3959503abce3c4865479da2",
+      "current_sha256": "69bba978d4cbf02652b175289e845bb159cc1cbfe3959503abce3c4865479da2",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "docs/ADMINAPPS_SAAS_PRODUCT_OPERATIONS.md",
+      "sha256": "814f920597200f986e1fa51e562cc6d5c2108ebeb41e6b9c44eccc7b32673db4",
+      "current_sha256": "814f920597200f986e1fa51e562cc6d5c2108ebeb41e6b9c44eccc7b32673db4",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "docs/security/REC-SSO-02/REPORT.md",
+      "sha256": "c24dd956516ded79bc29d5b908f890a236ef415a7bfc67fa1b9e458cebf74ccb",
+      "current_sha256": "c24dd956516ded79bc29d5b908f890a236ef415a7bfc67fa1b9e458cebf74ccb",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "docs/security/REC-SSO-02/DECISIONS.md",
+      "sha256": "54c76ccf51b727f5b610a01f88383e5f8f7bbdb0912fd9313cd541812f6f23a3",
+      "current_sha256": "54c76ccf51b727f5b610a01f88383e5f8f7bbdb0912fd9313cd541812f6f23a3",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "docs/security/REC-SSO-02/MIGRATION_READINESS.md",
+      "sha256": "76ddcecf0d185519081570947f831e7e4d4d9fc3aa6bf1dc78ec406ee3fabcac",
+      "current_sha256": "76ddcecf0d185519081570947f831e7e4d4d9fc3aa6bf1dc78ec406ee3fabcac",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "docs/security/REC-SSO-02/evidence/tests-after.json",
+      "sha256": "ba0e3a7d278370572d8b304134aa6deac84557df2ec53bda504392d324edeb86",
+      "current_sha256": "ba0e3a7d278370572d8b304134aa6deac84557df2ec53bda504392d324edeb86",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "docs/security/REC-SSO-02/evidence/REC-2FA-04-closure.json",
+      "sha256": "de4ae7a97ec3f6636253a6e207e067f4f2a6c3f3d9e72cd721b360ea442cc6ce",
+      "current_sha256": "de4ae7a97ec3f6636253a6e207e067f4f2a6c3f3d9e72cd721b360ea442cc6ce",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "docs/financial/ADMINAPPS_AI_FINANCIAL_S3_IMP_01_CONTRACT_FREEZE_HUMAN_DECISION_2026-10-12.md",
+      "sha256": "d0c0c16bb7b15bcc5fe006c9751993b518999182c6d3cb926eeefbbbcb3a492f",
+      "current_sha256": "d0c0c16bb7b15bcc5fe006c9751993b518999182c6d3cb926eeefbbbcb3a492f",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/integration/views.py",
+      "sha256": "333459137cbc21e7b5519b27c6c2fa8aa46275cdf6821075ffa83339087515dd",
+      "current_sha256": "333459137cbc21e7b5519b27c6c2fa8aa46275cdf6821075ffa83339087515dd",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/integration/sso_views.py",
+      "sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+      "current_sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/integration/services.py",
+      "sha256": "afcb9bf36ff5a57f58db6459b22a6428dc7b41c114c5c6a968c34d1d7c386cb2",
+      "current_sha256": "afcb9bf36ff5a57f58db6459b22a6428dc7b41c114c5c6a968c34d1d7c386cb2",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/products/models.py",
+      "sha256": "ba4ec3e07de9740fb23e7e38b0117245014dc07ea379daa39f26764a9d946193",
+      "current_sha256": "ba4ec3e07de9740fb23e7e38b0117245014dc07ea379daa39f26764a9d946193",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/products/serializers.py",
+      "sha256": "0a866337d5e6103bae629d558bbdc88655d5bfbea1ae78716249ec845517fc3c",
+      "current_sha256": "0a866337d5e6103bae629d558bbdc88655d5bfbea1ae78716249ec845517fc3c",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/products/views.py",
+      "sha256": "ca3b3ca8a8b6f466223aa30d39e393613ba54dbbf97033840dd785f588cc7d69",
+      "current_sha256": "ca3b3ca8a8b6f466223aa30d39e393613ba54dbbf97033840dd785f588cc7d69",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/organizations/models.py",
+      "sha256": "5bd225f9309974a42448784cebd9630b7848f992905e6da0f975177a843b17ab",
+      "current_sha256": "5bd225f9309974a42448784cebd9630b7848f992905e6da0f975177a843b17ab",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/subscriptions/models.py",
+      "sha256": "6baff9248a147840a45fedb5d9c5a340e947e17fcbb20f85325ba32061c3615e",
+      "current_sha256": "6baff9248a147840a45fedb5d9c5a340e947e17fcbb20f85325ba32061c3615e",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/users/models.py",
+      "sha256": "cea7f1ca875d3399d7f62c1e556651f0c913fc9482dba89833a300f2324f82cc",
+      "current_sha256": "cea7f1ca875d3399d7f62c1e556651f0c913fc9482dba89833a300f2324f82cc",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/config/settings.py",
+      "sha256": "408f1c5a3ddf03f7993897e29e661cb4962a8b17cc7b42c0d13db649148dde56",
+      "current_sha256": "408f1c5a3ddf03f7993897e29e661cb4962a8b17cc7b42c0d13db649148dde56",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/users/urls.py",
+      "sha256": "1cd54e5fa6d02d8cd086dd56d719ca9070d8d11791392450e496834bce45bd3a",
+      "current_sha256": "1cd54e5fa6d02d8cd086dd56d719ca9070d8d11791392450e496834bce45bd3a",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/scripts/rec_sso_02_offline.py",
+      "sha256": "caf4c81e54e4452f161b4f9bfafadbdec28f223c83c7c3d263686237ed9c24c7",
+      "current_sha256": "caf4c81e54e4452f161b4f9bfafadbdec28f223c83c7c3d263686237ed9c24c7",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/users/migrations/0004_transactional_2fa.py",
+      "sha256": "bfac6174b4858ea59aeacf602796e9925496a4da1bd37f53909841e4278677fe",
+      "current_sha256": "bfac6174b4858ea59aeacf602796e9925496a4da1bd37f53909841e4278677fe",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/integration/migrations/0006_integration_api_key_lifecycle.py",
+      "sha256": "454bba94025a46467d9ea169bae7ef5415e6601391c03a1b36cad1d85e8b309b",
+      "current_sha256": "454bba94025a46467d9ea169bae7ef5415e6601391c03a1b36cad1d85e8b309b",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "AGENTS.md",
+      "sha256": "fc475d23b2545b27305aee78dc394be47546a54a8be7db83f70533023763e82f",
+      "current_sha256": "fc475d23b2545b27305aee78dc394be47546a54a8be7db83f70533023763e82f",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "docs/transformation/ISO_SMART_AI_ADMINAPPS_CONTRACT.md",
+      "sha256": "482b8fb28a55e7ce57950f93745b83fd1b0be2e8bd477be54e3ac492d27812ab",
+      "current_sha256": "482b8fb28a55e7ce57950f93745b83fd1b0be2e8bd477be54e3ac492d27812ab",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "docs/adr/0002-adminapps-control-plane-boundary.md",
+      "sha256": "b7acacdd6932a702804db73a72fe9208aac96a4c6f147402e22e8636a0c00178",
+      "current_sha256": "b7acacdd6932a702804db73a72fe9208aac96a4c6f147402e22e8636a0c00178",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "docs/FRONTEND_AUTH_SECURITY.md",
+      "sha256": "3dca0799a06f84a90343297016d8348b4d59f93f48916e520c5dde47574e0dc3",
+      "current_sha256": "3dca0799a06f84a90343297016d8348b4d59f93f48916e520c5dde47574e0dc3",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/integration/client.py",
+      "sha256": "9edceb9510fd70e1c2c5e7c1c7040a8c16d74a26f8c143abce62b976f4e6639a",
+      "current_sha256": "9edceb9510fd70e1c2c5e7c1c7040a8c16d74a26f8c143abce62b976f4e6639a",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/integration/backends.py",
+      "sha256": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136",
+      "current_sha256": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/integration/sso_auth.py",
+      "sha256": "7df0bac1cbdc90ca91e5dbcc7e0148a89cd20b583d8974a0365e4aea433b282e",
+      "current_sha256": "7df0bac1cbdc90ca91e5dbcc7e0148a89cd20b583d8974a0365e4aea433b282e",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/integration/middleware.py",
+      "sha256": "4e4fd04c3e51f30db7776228a83e4bbb1a2aed48eb424b0d0e18a10e07a29fd5",
+      "current_sha256": "4e4fd04c3e51f30db7776228a83e4bbb1a2aed48eb424b0d0e18a10e07a29fd5",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/backend/settings.py",
+      "sha256": "14255f0ac7051c535443dac1c255d1042a6de8772e8934089dee0d5cfd9b67bf",
+      "current_sha256": "14255f0ac7051c535443dac1c255d1042a6de8772e8934089dee0d5cfd9b67bf",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/authentication/serializers.py",
+      "sha256": "0afed8538e75c6880ae582fc8be3dab899d502954dc4509ca523de79b1eaaa7e",
+      "current_sha256": "0afed8538e75c6880ae582fc8be3dab899d502954dc4509ca523de79b1eaaa7e",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/authentication/views.py",
+      "sha256": "912b2ddd1920d8efb430f322bcd2d2671d2f9abe94735dddcf32c464f31bea15",
+      "current_sha256": "912b2ddd1920d8efb430f322bcd2d2671d2f9abe94735dddcf32c464f31bea15",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/authentication/permissions.py",
+      "sha256": "ece91e2bf3a81f90383da56ba5ed2692342b33833490184b539fdda9045a6743",
+      "current_sha256": "ece91e2bf3a81f90383da56ba5ed2692342b33833490184b539fdda9045a6743",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/authentication/backends.py",
+      "sha256": "536c9e2d905e40c0530a5a3dd2bae449359fb95ade2bc955db314348cef9470f",
+      "current_sha256": "536c9e2d905e40c0530a5a3dd2bae449359fb95ade2bc955db314348cef9470f",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/authentication/cookie_auth.py",
+      "sha256": "cdc9900e0f5096166b16d44e2c8591b80e871b688f00945114a7dfba6e5a3ce4",
+      "current_sha256": "cdc9900e0f5096166b16d44e2c8591b80e871b688f00945114a7dfba6e5a3ce4",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/foundation/qms_organization.py",
+      "sha256": "14cff52084c237fd8b03d499a7bb50ef811e2674089a3879246cc3d42f13951e",
+      "current_sha256": "14cff52084c237fd8b03d499a7bb50ef811e2674089a3879246cc3d42f13951e",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "frontend/src/services/authService.js",
+      "sha256": "84aa61087336c22418a265168ecddef7e62327ccdc03fbb384018b66544b6451",
+      "current_sha256": "84aa61087336c22418a265168ecddef7e62327ccdc03fbb384018b66544b6451",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "docs/internal/ADMINAPPS_MEDSUPPLIER_CONTRACT.md",
+      "sha256": "a58e4700375efabc5bd77220fac5e64e208db1d9dc583d1fe04b825d691d85e5",
+      "current_sha256": "a58e4700375efabc5bd77220fac5e64e208db1d9dc583d1fe04b825d691d85e5",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "docs/validation/AdminApps_Integration_Decision.md",
+      "sha256": "9965f2f429586ff3e5ee7b9b63583785a3a1457e4705c732f62126a7f68c4f23",
+      "current_sha256": "9965f2f429586ff3e5ee7b9b63583785a3a1457e4705c732f62126a7f68c4f23",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "docs/security/Role_Permission_Matrix.md",
+      "sha256": "b07e6b51bf41fc76376a02461b6dc818cd0846b7001d975319ce636332f6e6e0",
+      "current_sha256": "b07e6b51bf41fc76376a02461b6dc818cd0846b7001d975319ce636332f6e6e0",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/integration/client.py",
+      "sha256": "1341bd80b0442b0bf385530f17450afb666472b2f7dd90c49c37a6bd7e6eb31d",
+      "current_sha256": "1341bd80b0442b0bf385530f17450afb666472b2f7dd90c49c37a6bd7e6eb31d",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/integration/backends.py",
+      "sha256": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136",
+      "current_sha256": "6285adef059d2389989323a3e154386ac4994f11d86a9cbc98e4d8f2e7f81136",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/integration/sso_auth.py",
+      "sha256": "7df0bac1cbdc90ca91e5dbcc7e0148a89cd20b583d8974a0365e4aea433b282e",
+      "current_sha256": "7df0bac1cbdc90ca91e5dbcc7e0148a89cd20b583d8974a0365e4aea433b282e",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/integration/middleware.py",
+      "sha256": "4e4fd04c3e51f30db7776228a83e4bbb1a2aed48eb424b0d0e18a10e07a29fd5",
+      "current_sha256": "4e4fd04c3e51f30db7776228a83e4bbb1a2aed48eb424b0d0e18a10e07a29fd5",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/backend/settings.py",
+      "sha256": "ffe1253fa622e8d393ec51edda106d62e88c384c000a7b3cfbffad654c6998e0",
+      "current_sha256": "ffe1253fa622e8d393ec51edda106d62e88c384c000a7b3cfbffad654c6998e0",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/authentication/serializers.py",
+      "sha256": "fcb2ae9de989cb780267f83cd79cc998d8d7df28ee354bedfe39e6dd5280b60e",
+      "current_sha256": "fcb2ae9de989cb780267f83cd79cc998d8d7df28ee354bedfe39e6dd5280b60e",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/authentication/views.py",
+      "sha256": "c9770171e199c80debfe7721acf840142ddb8a73f88490a4cbdbfd116a81ebde",
+      "current_sha256": "c9770171e199c80debfe7721acf840142ddb8a73f88490a4cbdbfd116a81ebde",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/medsupplier/permissions.py",
+      "sha256": "1c1855b46e5d6f26f6af26765fde77d43ef6e4c6705a0ad82e011738efb831be",
+      "current_sha256": "1c1855b46e5d6f26f6af26765fde77d43ef6e4c6705a0ad82e011738efb831be",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "backend/medsupplier/views.py",
+      "sha256": "966f67c16dced493b9912194c9f24c235a81d355c1e20653343844417b33c21b",
+      "current_sha256": "966f67c16dced493b9912194c9f24c235a81d355c1e20653343844417b33c21b",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "file": "frontend/src/services/authService.js",
+      "sha256": "b87f058c7e14ec3d6b8748d37b8c39949d60ce6d93f9cc3b78b6bfd3569f6adc",
+      "current_sha256": "b87f058c7e14ec3d6b8748d37b8c39949d60ce6d93f9cc3b78b6bfd3569f6adc",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/isosmart",
+      "file": "backend/foundation/operational_bearer_identity.py",
+      "sha256": "a8b792e8f9eae8b8e10d7937236e5fe5085e23161966485cd0099d905dd34599",
+      "current_sha256": "a8b792e8f9eae8b8e10d7937236e5fe5085e23161966485cd0099d905dd34599",
+      "matches": true
+    },
+    {
+      "repository": "/home/felipe/proyectos/adminapps",
+      "file": "backend/apps/integration/models.py",
+      "sha256": "64d26271b6970261f58f6984af575bd90ab6054719cdb5d44696616d19bf2ec2",
+      "current_sha256": "64d26271b6970261f58f6984af575bd90ab6054719cdb5d44696616d19bf2ec2",
+      "matches": true
+    }
+  ]
+}

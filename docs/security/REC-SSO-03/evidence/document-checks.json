@@ -1,0 +1,47 @@
+{
+  "document_count": 7,
+  "source_files": 53,
+  "decisions": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+  ],
+  "diffs": [
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "P05",
+    "P06",
+    "P07",
+    "P08",
+    "P09"
+  ],
+  "report_sections": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L"
+  ],
+  "missing_links": [],
+  "trailing_whitespace": [],
+  "test_execution": "NONE; static review only",
+  "git_diff_check": {
+    "adminapps": 0,
+    "isosmart": 0,
+    "ISO_Smart_MedSupplier": 0
+  }
+}

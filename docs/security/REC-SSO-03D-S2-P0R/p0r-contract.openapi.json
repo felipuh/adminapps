@@ -1,0 +1,156 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AdminApps P0R contract delta",
+    "version": "2026-10-19",
+    "description": "Local preparation. No provisioning/deployment. Central self revocation is distinct from local registry revocation."
+  },
+  "paths": {
+    "/api/auth/users/revoke_sso_sessions/": {
+      "post": {
+        "operationId": "revokeOwnCentralSessions",
+        "security": [
+          {
+            "LocalHumanBearer": []
+          }
+        ],
+        "description": "Omitted session_id revokes all central sessions owned by the authenticated live human; no local sessions or keep-ID. Effects serialized under B fence; no SQL verification claimed.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "session_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Idempotent central revocation count",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "scope",
+                    "revoked",
+                    "local_sessions_revoked"
+                  ],
+                  "properties": {
+                    "scope": {
+                      "type": "string",
+                      "enum": [
+                        "central_sso"
+                      ]
+                    },
+                    "revoked": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "local_sessions_revoked": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid UUID or fields"
+          },
+          "401": {
+            "description": "Authentication, central session ownership or live eligibility rejected"
+          },
+          "403": {
+            "description": "Local human principal admission denied"
+          },
+          "503": {
+            "description": "Database authority unavailable"
+          }
+        }
+      }
+    },
+    "/api/auth/users/revoke_sessions/": {
+      "post": {
+        "operationId": "deactivateOtherLocalRegistryRecords",
+        "description": "Historical UserSession registry only. Does NOT invalidate access JWT, central SSO or Django cookies.",
+        "responses": {
+          "200": {
+            "description": "scope=local_registry, access_tokens_revoked=false, central_sessions_revoked=false"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "LocalHumanBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "AdminApps local human JWT"
+      }
+    },
+    "schemas": {
+      "IntegrationAPIGrant": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operations",
+          "tenant_ids",
+          "product_codes"
+        ],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "list_organizations",
+                "get_organization",
+                "get_organization_users",
+                "get_organization_modules",
+                "get_organization_products",
+                "validate_organization_product_access",
+                "get_user_by_id"
+              ]
+            }
+          },
+          "tenant_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "product_codes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "ISO_SMART",
+                "MEDSUPPLIER"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-persistence-status": "NOT_EVIDENCED"
+}

@@ -1,0 +1,645 @@
+import axios from 'axios';
+import { authSession, installAuthInterceptors } from './authRefresh.js';
+
+// Base API URL - usa variable de entorno de Vite o el proxy por defecto
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
+// Create axios instance
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Create axios instance for 2FA verification (without automatic token injection)
+const api2FA = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Refresh and logout use the separate transport: neither can recursively refresh.
+installAuthInterceptors(api, {
+  requestRefresh: async (refresh) => {
+    const response = await api2FA.post('/auth/refresh/', { refresh });
+    return response.data;
+  },
+  onExpired: () => { window.location.href = '/login'; },
+});
+
+export default api;
+
+// ========================================
+// Auth Services
+// ========================================
+
+export const authService = {
+  login: async (credentialsOrEmail, maybePassword) => {
+    // Backward-compatible signature: login({ email, password }) or login(email, password)
+    const credentials = typeof credentialsOrEmail === 'string'
+      ? { email: credentialsOrEmail, password: maybePassword }
+      : (credentialsOrEmail || {});
+
+    const email = (credentials.email || '').trim();
+    const password = credentials.password || '';
+
+    if (!email || !password) {
+      const validationError = new Error('Email y contraseña son obligatorios');
+      validationError.response = {
+        data: {
+          error: 'Email y contraseña son obligatorios',
+          code: 'missing_credentials',
+        },
+      };
+      throw validationError;
+    }
+
+    const session = authSession.beginLogin();
+    const response = await api2FA.post('/auth/login/', { email, password });
+    return authSession.acceptLogin(session, response.data);
+  },
+
+  verify2fa: async (data, tempToken) => {
+    // Use temporary token from login step, not the one in localStorage
+    // This is used during the login flow before we've fully authenticated
+    const config = {
+      headers: {
+        Authorization: `Bearer ${tempToken}`,
+      },
+    };
+    
+    const response = await api2FA.post('/auth/2fa/verify/', data, config);
+    return response.data;
+  },
+
+  logout: async () => {
+    const session = authSession.snapshot();
+    // Invalidate synchronously; retain the captured pair for this remote attempt.
+    let cleanupError;
+    try {
+      authSession.clear(session, { throwOnStorageError: true });
+    } catch (error) {
+      cleanupError = error;
+    }
+    if (session.refresh) {
+      try {
+        await api2FA.post('/auth/logout/', { refresh: session.refresh }, {
+          headers: session.access ? { Authorization: `Bearer ${session.access}` } : {},
+        });
+      } catch {
+        // Local logout remains effective even if remote revocation is unavailable.
+      }
+    }
+    if (cleanupError) throw cleanupError;
+  },
+
+  getCurrentUser: async () => {
+    const response = await api.get('/auth/users/me/');
+    return response.data;
+  },
+
+  updateProfile: async (data) => {
+    const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+    const response = await api.patch('/auth/users/me/', data, isFormData
+      ? {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      : undefined);
+    return response.data;
+  },
+
+  changePassword: async (currentPassword, newPassword, newPasswordConfirm) => {
+    const response = await api.post('/auth/users/change_password/', {
+      current_password: currentPassword,
+      new_password: newPassword,
+      new_password_confirm: newPasswordConfirm,
+    });
+    return response.data;
+  },
+
+  requestPasswordReset: async (email) => {
+    const response = await api.post('/auth/password-reset/', { email });
+    return response.data;
+  },
+
+  confirmPasswordReset: async (uid, token, newPassword, newPasswordConfirm) => {
+    const response = await api.post('/auth/password-reset/confirm/', {
+      uid,
+      token,
+      new_password: newPassword,
+      new_password_confirm: newPasswordConfirm,
+    });
+    return response.data;
+  },
+
+  getMySessions: async () => {
+    const response = await api.get('/auth/users/sessions/');
+    return response.data;
+  },
+};
+
+// ========================================
+// Organization Services
+// ========================================
+
+export const organizationService = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/organizations/', { params });
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await api.get(`/organizations/${id}/`);
+    return response.data;
+  },
+
+  create: async (data) => {
+    const response = await api.post('/organizations/', data);
+    return response.data;
+  },
+
+  update: async (id, data) => {
+    const response = await api.patch(`/organizations/${id}/`, data);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    await api.delete(`/organizations/${id}/`);
+  },
+
+  getSettings: async (id) => {
+    const response = await api.get(`/organizations/${id}/organization_settings/`);
+    return response.data;
+  },
+
+  updateSettings: async (id, data) => {
+    const response = await api.patch(`/organizations/${id}/organization_settings/`, data);
+    return response.data;
+  },
+
+  getStats: async (id) => {
+    const response = await api.get(`/organizations/${id}/stats/`);
+    return response.data;
+  },
+
+  getUsers: async (id) => {
+    const response = await api.get(`/organizations/${id}/users/`);
+    return response.data;
+  },
+};
+
+// ========================================
+// User Services
+// ========================================
+
+export const userService = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/auth/users/', { params });
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await api.get(`/auth/users/${id}/`);
+    return response.data;
+  },
+
+  create: async (data) => {
+    const response = await api.post('/auth/users/', data);
+    return response.data;
+  },
+
+  update: async (id, data) => {
+    const response = await api.patch(`/auth/users/${id}/`, data);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    await api.delete(`/auth/users/${id}/`);
+  },
+
+  getSessions: async (id) => {
+    const response = await api.get(`/auth/users/${id}/sessions/`);
+    return response.data;
+  },
+
+  getActivityLogs: async (id, params = {}) => {
+    const response = await api.get(`/auth/users/${id}/activity/`, { params });
+    return response.data;
+  },
+
+  // 2FA methods
+  initiate2faSetup: async () => {
+    const response = await api.post('/auth/2fa/setup/initiate/');
+    return response.data;
+  },
+
+  verify2faSetup: async (data) => {
+    const response = await api.post('/auth/2fa/setup/verify/', data);
+    return response.data;
+  },
+
+  verify2faToken: async (data) => {
+    const response = await api.post('/auth/2fa/verify/', data);
+    return response.data;
+  },
+
+  disable2fa: async (data) => {
+    const response = await api.post('/auth/2fa/disable/', data);
+    return response.data;
+  },
+
+  get2faStatus: async () => {
+    const response = await api.get('/auth/2fa/status/');
+    return response.data;
+  },
+};
+
+export const notificationService = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/auth/notifications/', { params });
+    return response.data;
+  },
+
+  getUnreadCount: async () => {
+    const response = await api.get('/auth/notifications/unread_count/');
+    return response.data;
+  },
+
+  markRead: async (notificationId) => {
+    const response = await api.post('/auth/notifications/mark_read/', {
+      notification_id: notificationId,
+    });
+    return response.data;
+  },
+
+  markAllRead: async () => {
+    const response = await api.post('/auth/notifications/mark_all_read/', {});
+    return response.data;
+  },
+};
+
+// ========================================
+// Subscription Services
+// ========================================
+
+export const subscriptionService = {
+  getPlans: async () => {
+    const response = await api.get('/subscriptions/plans/');
+    return response.data;
+  },
+
+  getAll: async (params = {}) => {
+    const response = await api.get('/subscriptions/', { params });
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await api.get(`/subscriptions/${id}/`);
+    return response.data;
+  },
+
+  create: async (data) => {
+    const response = await api.post('/subscriptions/', data);
+    return response.data;
+  },
+
+  update: async (id, data) => {
+    const response = await api.patch(`/subscriptions/${id}/`, data);
+    return response.data;
+  },
+
+  cancel: async (id) => {
+    const response = await api.post(`/subscriptions/${id}/cancel/`);
+    return response.data;
+  },
+
+  activate: async (id) => {
+    const response = await api.post(`/subscriptions/${id}/activate/`);
+    return response.data;
+  },
+
+  changePlan: async (id, planId) => {
+    const response = await api.post(`/subscriptions/${id}/change_plan/`, { plan_id: planId });
+    return response.data;
+  },
+
+  getInvoices: async (subscriptionId) => {
+    const response = await api.get(`/subscriptions/${subscriptionId}/invoices/`);
+    return response.data;
+  },
+
+  downloadInvoice: async (invoiceId) => {
+    const response = await api.get(`/subscriptions/invoices/${invoiceId}/download/`);
+    return response.data;
+  },
+
+  markInvoicePaid: async (invoiceId, paymentReference = '') => {
+    const response = await api.post(`/subscriptions/invoices/${invoiceId}/mark_paid/`, {
+      payment_reference: paymentReference,
+    });
+    return response.data;
+  },
+};
+
+// ========================================
+// Dashboard Services
+// ========================================
+
+export const dashboardService = {
+  getStats: async () => {
+    const response = await api.get('/dashboard/');
+    return response.data;
+  },
+
+  getProductReadiness: async () => {
+    const response = await api.get('/product-readiness/');
+    return response.data;
+  },
+
+  getRecentActivity: async (limit = 10) => {
+    const response = await api.get('/dashboard/activity/', { params: { limit } });
+    return response.data;
+  },
+
+  getOrganizationGrowth: async (period = '30d') => {
+    const response = await api.get('/dashboard/growth/', { params: { period } });
+    return response.data;
+  },
+};
+
+export const featureFlagService = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/feature-flags/', { params });
+    return response.data;
+  },
+};
+// ========================================
+// Products/Modules Services
+// ========================================
+
+export const moduleService = {
+  getByOrganization: async (organizationId) => {
+    if (!organizationId) {
+      throw new Error('organizationId is required');
+    }
+    const response = await api.get('/products/modules/by_organization/', { params: { organization_id: organizationId } });
+    return response.data;
+  },
+
+  getAll: async (params = {}) => {
+    const response = await api.get('/products/modules/', { params });
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await api.get(`/products/modules/${id}/`);
+    return response.data;
+  },
+
+  create: async (data) => {
+    const response = await api.post('/products/modules/', data);
+    return response.data;
+  },
+
+  toggle: async (id, data) => {
+    const response = await api.post(`/products/modules/${id}/toggle/`, data);
+    return response.data;
+  },
+
+  bulkAssign: async (data) => {
+    const response = await api.post('/products/modules/bulk_assign/', data);
+    return response.data;
+  },
+};
+
+export const productSystemService = {
+  list: async (params = {}) => {
+    const response = await api.get('/products/systems/', { params });
+    return response.data;
+  },
+
+  active: async () => {
+    const response = await api.get('/products/systems/active/');
+    return response.data;
+  },
+
+  retrieve: async (id) => {
+    const response = await api.get(`/products/systems/${id}/`);
+    return response.data;
+  },
+};
+
+export const entitlementService = {
+  list: async (params = {}) => {
+    const response = await api.get('/products/entitlements/', { params });
+    return response.data;
+  },
+
+  byOrganization: async (organizationId) => {
+    const response = await api.get('/products/entitlements/by_organization/', {
+      params: { organization_id: organizationId },
+    });
+    return response.data;
+  },
+
+  create: async (data) => {
+    const response = await api.post('/products/entitlements/', data);
+    return response.data;
+  },
+
+  update: async (id, data) => {
+    const response = await api.patch(`/products/entitlements/${id}/`, data);
+    return response.data;
+  },
+
+  toggle: async (id, action, extra = {}) => {
+    const payload = typeof action === 'string' ? { action, ...extra } : action;
+    const response = await api.post(`/products/entitlements/${id}/toggle/`, payload);
+    return response.data;
+  },
+
+  auditLogs: async (id) => {
+    const response = await api.get(`/products/entitlements/${id}/audit_logs/`);
+    return response.data;
+  },
+
+  validate: async (organizationId, productCode) => {
+    const response = await api.get(`/integration/organizations/${organizationId}/products/${productCode}/validate/`);
+    return response.data;
+  },
+};
+
+// ========================================
+// Billing Services
+// ========================================
+
+export const billingService = {
+  getSummary: async () => {
+    const response = await api.get('/billing/summary/');
+    return response.data;
+  },
+
+  getRevenueByProduct: async () => {
+    const response = await api.get('/billing/revenue/by-product/');
+    return response.data;
+  },
+
+  getRevenueByOrganization: async () => {
+    const response = await api.get('/billing/revenue/by-organization/');
+    return response.data;
+  },
+
+  getRevenueTimeline: async () => {
+    const response = await api.get('/billing/revenue/timeline/');
+    return response.data;
+  },
+
+  getAccountsReceivable: async () => {
+    const response = await api.get('/billing/accounts-receivable/');
+    return response.data;
+  },
+
+  getInvoices: async (params = {}) => {
+    const response = await api.get('/billing/invoices/', { params });
+    return response.data;
+  },
+
+  runBatch: async (data) => {
+    const response = await api.post('/billing/invoices/run_batch/', data);
+    return response.data;
+  },
+
+  getFiscalProfiles: async () => {
+    const response = await api.get('/billing/fiscal-profiles/');
+    return response.data.results || response.data;
+  },
+
+  getProducts: async () => {
+    const response = await api.get('/billing/products/?is_active=true');
+    return response.data.results || response.data;
+  },
+
+  updateProduct: async (productId, data) => {
+    const response = await api.patch(`/billing/products/${productId}/`, data);
+    return response.data;
+  },
+
+  getProductMappingAudit: async () => {
+    const response = await api.get('/billing/products/mapping_audit/');
+    return response.data;
+  },
+
+  autoMapProducts: async ({ dryRun = true } = {}) => {
+    const response = await api.post('/billing/products/auto_map/', { dry_run: dryRun });
+    return response.data;
+  },
+
+  getSchedulerStatus: async () => {
+    const response = await api.get('/billing/scheduler/');
+    return response.data;
+  },
+
+  triggerSchedulerNow: async () => {
+    const response = await api.post('/billing/scheduler/');
+    return response.data;
+  },
+
+  getInvoiceDetail: async (id) => {
+    const response = await api.get(`/billing/invoices/${id}/`);
+    return response.data;
+  },
+
+  getInvoiceXml: async (id) => {
+    const response = await api.post(`/billing/invoices/${id}/generate_xml/`, {}, {
+      responseType: 'text',
+    });
+    return response.data;
+  },
+
+  exportInvoicesCsv: async (params = {}) => {
+    const response = await api.get('/billing/invoices/export_csv/', {
+      params,
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  getChurnAnalytics: async () => {
+    const response = await api.get('/billing/churn/');
+    return response.data;
+  },
+
+  getReconciliationSummary: async (params = {}) => {
+    const response = await api.get('/billing/reconciliation/', { params });
+    return response.data;
+  },
+
+  registerPendingPayment: async (data) => {
+    const response = await api.post('/billing/reconciliation/', data);
+    return response.data;
+  },
+
+  confirmPayment: async (paymentId, notes = '') => {
+    const response = await api.post(`/billing/payments/${paymentId}/confirm/`, { notes });
+    return response.data;
+  },
+
+  rejectPayment: async (paymentId, notes = '') => {
+    const response = await api.post(`/billing/payments/${paymentId}/reject/`, { notes });
+    return response.data;
+  },
+
+  getProductDashboard: async () => {
+    const response = await api.get('/billing/products/dashboard/');
+    return response.data;
+  },
+
+  getAlerts: async () => {
+    const response = await api.get('/billing/alerts/');
+    return response.data;
+  },
+
+  createCreditNote: async (invoiceId, reason) => {
+    const response = await api.post(`/billing/invoices/${invoiceId}/credit_note/`, { reason });
+    return response.data;
+  },
+
+  getReportSchedules: async (params = {}) => {
+    const response = await api.get('/billing/reports/schedules/', { params });
+    return response.data;
+  },
+
+  createReportSchedule: async (data) => {
+    const response = await api.post('/billing/reports/schedules/', data);
+    return response.data;
+  },
+
+  updateReportSchedule: async (scheduleId, data) => {
+    const response = await api.patch(`/billing/reports/schedules/${scheduleId}/`, data);
+    return response.data;
+  },
+
+  deleteReportSchedule: async (scheduleId) => {
+    const response = await api.delete(`/billing/reports/schedules/${scheduleId}/`);
+    return response.data;
+  },
+
+  runReportScheduleNow: async (scheduleId) => {
+    const response = await api.post(`/billing/reports/schedules/${scheduleId}/run_now/`, {});
+    return response.data;
+  },
+
+  getLandingAnalyticsSummary: async (params = {}) => {
+    const response = await api.get('/analytics/landing/', { params });
+    return response.data;
+  },
+
+  getAIUsage: async (params = {}) => {
+    const response = await api.get('/billing/ai-usage/', { params });
+    return response.data;
+  },
+};

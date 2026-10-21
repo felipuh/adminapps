@@ -1,0 +1,236 @@
+{
+  "runners": [
+    {
+      "tests": 28,
+      "failures": 0,
+      "errors": 11,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "__main__.ConsumerCHTests.test_alg_none_hmac_unknown_kid",
+      "method": "test_alg_none_hmac_unknown_kid",
+      "source": "integration/tests_ch_offline.py",
+      "line": 115,
+      "qualname": "ConsumerCHTests.test_alg_none_hmac_unknown_kid",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_central_and_local_keys_must_be_distinct",
+      "method": "test_central_and_local_keys_must_be_distinct",
+      "source": "integration/tests_ch_offline.py",
+      "line": 144,
+      "qualname": "ConsumerCHTests.test_central_and_local_keys_must_be_distinct",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_challenge_and_verify_flow",
+      "method": "test_challenge_and_verify_flow",
+      "source": "integration/tests_ch_offline.py",
+      "line": 229,
+      "qualname": "ConsumerCHTests.test_challenge_and_verify_flow",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_direct_backend_stops_local_chain",
+      "method": "test_direct_backend_stops_local_chain",
+      "source": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/integration/tests_decision_a_offline.py",
+      "line": 137,
+      "qualname": "ConsumerTests.test_direct_backend_stops_local_chain",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_expired_central_never_mints_local",
+      "method": "test_expired_central_never_mints_local",
+      "source": "integration/tests_ch_offline.py",
+      "line": 200,
+      "qualname": "ConsumerCHTests.test_expired_central_never_mints_local",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_foreign_product_audience_tenant_and_issuer",
+      "method": "test_foreign_product_audience_tenant_and_issuer",
+      "source": "integration/tests_ch_offline.py",
+      "line": 104,
+      "qualname": "ConsumerCHTests.test_foreign_product_audience_tenant_and_issuer",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_introspection_disagreement_and_revocation",
+      "method": "test_introspection_disagreement_and_revocation",
+      "source": "integration/tests_ch_offline.py",
+      "line": 122,
+      "qualname": "ConsumerCHTests.test_introspection_disagreement_and_revocation",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_local_as_central_and_central_as_local",
+      "method": "test_local_as_central_and_central_as_local",
+      "source": "integration/tests_ch_offline.py",
+      "line": 165,
+      "qualname": "ConsumerCHTests.test_local_as_central_and_central_as_local",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_local_header_algorithm_and_key_restrictions",
+      "method": "test_local_header_algorithm_and_key_restrictions",
+      "source": "integration/tests_ch_offline.py",
+      "line": 290,
+      "qualname": "ConsumerCHTests.test_local_header_algorithm_and_key_restrictions",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_local_pair_is_tenant_subject_and_expiry_bound",
+      "method": "test_local_pair_is_tenant_subject_and_expiry_bound",
+      "source": "integration/tests_ch_offline.py",
+      "line": 152,
+      "qualname": "ConsumerCHTests.test_local_pair_is_tenant_subject_and_expiry_bound",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_local_password_and_flags_never_rescue",
+      "method": "test_local_password_and_flags_never_rescue",
+      "source": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/integration/tests_decision_a_offline.py",
+      "line": 98,
+      "qualname": "ConsumerTests.test_local_password_and_flags_never_rescue",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_local_password_discriminant",
+      "method": "test_local_password_discriminant",
+      "source": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/integration/tests_decision_a_offline.py",
+      "line": 226,
+      "qualname": "ConsumerTests.test_local_password_discriminant",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_middleware_uses_verified_local_family",
+      "method": "test_middleware_uses_verified_local_family",
+      "source": "integration/tests_ch_offline.py",
+      "line": 263,
+      "qualname": "ConsumerCHTests.test_middleware_uses_verified_local_family",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_missing_config_credentials_or_key_material",
+      "method": "test_missing_config_credentials_or_key_material",
+      "source": "integration/tests_ch_offline.py",
+      "line": 136,
+      "qualname": "ConsumerCHTests.test_missing_config_credentials_or_key_material",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_no_email_takeover_without_subject_binding",
+      "method": "test_no_email_takeover_without_subject_binding",
+      "source": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/integration/tests_decision_a_offline.py",
+      "line": 169,
+      "qualname": "ConsumerTests.test_no_email_takeover_without_subject_binding",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_old_generic_tokens_never_become_local",
+      "method": "test_old_generic_tokens_never_become_local",
+      "source": "integration/tests_ch_offline.py",
+      "line": 172,
+      "qualname": "ConsumerCHTests.test_old_generic_tokens_never_become_local",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_owner_policy",
+      "method": "test_owner_policy",
+      "source": "integration/tests_ch_offline.py",
+      "line": 237,
+      "qualname": "ConsumerCHTests.test_owner_policy",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_projection_rejects_email_and_slug_collision",
+      "method": "test_projection_rejects_email_and_slug_collision",
+      "source": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/integration/tests_decision_a_offline.py",
+      "line": 195,
+      "qualname": "ConsumerTests.test_projection_rejects_email_and_slug_collision",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_refresh_live_authority_and_revocation",
+      "method": "test_refresh_live_authority_and_revocation",
+      "source": "integration/tests_ch_offline.py",
+      "line": 178,
+      "qualname": "ConsumerCHTests.test_refresh_live_authority_and_revocation",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_refresh_with_expired_embedded_proof_is_denied",
+      "method": "test_refresh_with_expired_embedded_proof_is_denied",
+      "source": "integration/tests_ch_offline.py",
+      "line": 281,
+      "qualname": "ConsumerCHTests.test_refresh_with_expired_embedded_proof_is_denied",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_requested_tenant_cannot_be_substituted",
+      "method": "test_requested_tenant_cannot_be_substituted",
+      "source": "integration/tests_ch_offline.py",
+      "line": 130,
+      "qualname": "ConsumerCHTests.test_requested_tenant_cannot_be_substituted",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_schema_failure_sanitized",
+      "method": "test_schema_failure_sanitized",
+      "source": "integration/tests_ch_offline.py",
+      "line": 223,
+      "qualname": "ConsumerCHTests.test_schema_failure_sanitized",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_session_profile_role_tenant_and_subject",
+      "method": "test_session_profile_role_tenant_and_subject",
+      "source": "integration/tests_ch_offline.py",
+      "line": 213,
+      "qualname": "ConsumerCHTests.test_session_profile_role_tenant_and_subject",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_session_transport_preserved",
+      "method": "test_session_transport_preserved",
+      "source": "integration/tests_ch_offline.py",
+      "line": 242,
+      "qualname": "ConsumerCHTests.test_session_transport_preserved",
+      "status": "ERROR"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_tampered_signature_denied_before_transport",
+      "method": "test_tampered_signature_denied_before_transport",
+      "source": "integration/tests_ch_offline.py",
+      "line": 99,
+      "qualname": "ConsumerCHTests.test_tampered_signature_denied_before_transport",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_tenant_switch_and_uuid_binding",
+      "method": "test_tenant_switch_and_uuid_binding",
+      "source": "integration/tests_ch_offline.py",
+      "line": 207,
+      "qualname": "ConsumerCHTests.test_tenant_switch_and_uuid_binding",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_transport_and_json_errors_are_sanitized",
+      "method": "test_transport_and_json_errors_are_sanitized",
+      "source": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/integration/tests_decision_a_offline.py",
+      "line": 108,
+      "qualname": "ConsumerTests.test_transport_and_json_errors_are_sanitized",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.ConsumerCHTests.test_valid_login_real_signature_before_projection",
+      "method": "test_valid_login_real_signature_before_projection",
+      "source": "integration/tests_ch_offline.py",
+      "line": 87,
+      "qualname": "ConsumerCHTests.test_valid_login_real_signature_before_projection",
+      "status": "ERROR"
+    }
+  ]
+}

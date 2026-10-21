@@ -1,0 +1,267 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AdminApps CH SSO integration",
+    "version": "rec-sso-03b-ch-v1"
+  },
+  "components": {
+    "securitySchemes": {
+      "IntegrationKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "paths": {
+    "/api/integration/sso/login/": {
+      "post": {
+        "security": [
+          {
+            "IntegrationKey": []
+          }
+        ],
+        "summary": "Authenticated CH login",
+        "description": "All receiver fields are assertions checked against the durable client resolved by the authenticated principal. No request field selects another client. No idempotent factor replay.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "client_id",
+                  "product",
+                  "audience",
+                  "contract_version",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "product": {
+                    "type": "string",
+                    "enum": [
+                      "ISO_SMART",
+                      "MEDSUPPLIER"
+                    ]
+                  },
+                  "audience": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "contract_version": {
+                    "type": "string",
+                    "enum": [
+                      "rec-sso-03b-ch-v1"
+                    ]
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "writeOnly": true
+                  },
+                  "organization_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pending challenge, issued proofs, or introspection active true/false; never a local consumer session"
+          },
+          "400": {
+            "description": "Malformed request"
+          },
+          "401": {
+            "description": "Invalid principal/context/proof"
+          },
+          "403": {
+            "description": "Membership or challenge context denied"
+          },
+          "500": {
+            "description": "Sanitized post-consumption issuance failure; factor not restored"
+          },
+          "503": {
+            "description": "Registry, keys or authority unavailable"
+          }
+        }
+      }
+    },
+    "/api/integration/sso/login/verify-2fa/": {
+      "post": {
+        "security": [
+          {
+            "IntegrationKey": []
+          }
+        ],
+        "summary": "Authenticated CH login/verify-2fa",
+        "description": "All receiver fields are assertions checked against the durable client resolved by the authenticated principal. No request field selects another client. No idempotent factor replay.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "client_id",
+                  "product",
+                  "audience",
+                  "contract_version",
+                  "challenge_token",
+                  "otp_code"
+                ],
+                "properties": {
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "product": {
+                    "type": "string",
+                    "enum": [
+                      "ISO_SMART",
+                      "MEDSUPPLIER"
+                    ]
+                  },
+                  "audience": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "contract_version": {
+                    "type": "string",
+                    "enum": [
+                      "rec-sso-03b-ch-v1"
+                    ]
+                  },
+                  "challenge_token": {
+                    "type": "string",
+                    "writeOnly": true
+                  },
+                  "otp_code": {
+                    "type": "string",
+                    "writeOnly": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pending challenge, issued proofs, or introspection active true/false; never a local consumer session"
+          },
+          "400": {
+            "description": "Malformed request"
+          },
+          "401": {
+            "description": "Invalid principal/context/proof"
+          },
+          "403": {
+            "description": "Membership or challenge context denied"
+          },
+          "500": {
+            "description": "Sanitized post-consumption issuance failure; factor not restored"
+          },
+          "503": {
+            "description": "Registry, keys or authority unavailable"
+          }
+        }
+      }
+    },
+    "/api/integration/sso/introspect/": {
+      "post": {
+        "security": [
+          {
+            "IntegrationKey": []
+          }
+        ],
+        "summary": "Authenticated CH introspect",
+        "description": "All receiver fields are assertions checked against the durable client resolved by the authenticated principal. No request field selects another client. No idempotent factor replay.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "client_id",
+                  "product",
+                  "audience",
+                  "contract_version",
+                  "token"
+                ],
+                "properties": {
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "product": {
+                    "type": "string",
+                    "enum": [
+                      "ISO_SMART",
+                      "MEDSUPPLIER"
+                    ]
+                  },
+                  "audience": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "contract_version": {
+                    "type": "string",
+                    "enum": [
+                      "rec-sso-03b-ch-v1"
+                    ]
+                  },
+                  "token": {
+                    "type": "string",
+                    "writeOnly": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pending challenge, issued proofs, or introspection active true/false; never a local consumer session"
+          },
+          "400": {
+            "description": "Malformed request"
+          },
+          "401": {
+            "description": "Invalid principal/context/proof"
+          },
+          "403": {
+            "description": "Membership or challenge context denied"
+          },
+          "500": {
+            "description": "Sanitized post-consumption issuance failure; factor not restored"
+          },
+          "503": {
+            "description": "Registry, keys or authority unavailable"
+          }
+        }
+      }
+    }
+  }
+}

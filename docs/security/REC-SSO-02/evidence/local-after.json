@@ -1,0 +1,33 @@
+{
+  "scope": "offline unit and local consumer contracts; NOT E2E",
+  "group": "local",
+  "tests_run": 20,
+  "outcomes": {
+    "__main__.LocalFixTests.test_api_key_required_and_invalid_denied": "PASS",
+    "__main__.LocalFixTests.test_api_key_usage_write_failure_is_closed": "PASS",
+    "__main__.LocalFixTests.test_bad_signature_expiry_and_refresh_rejected": "PASS",
+    "__main__.LocalFixTests.test_database_failures_are_closed_and_sanitized": "PASS",
+    "__main__.LocalFixTests.test_deleted_membership": "PASS",
+    "__main__.LocalFixTests.test_deleted_user": "PASS",
+    "__main__.LocalFixTests.test_entitlement_denial_and_allowed_products": "PASS",
+    "__main__.LocalFixTests.test_foreign_tenant": "PASS",
+    "__main__.LocalFixTests.test_invalid_identifiers": "PASS",
+    "__main__.LocalFixTests.test_live_membership_revocation": "PASS",
+    "__main__.LocalFixTests.test_live_organization_revocation": "PASS",
+    "__main__.LocalFixTests.test_live_user_revocation": "PASS",
+    "__main__.LocalFixTests.test_missing_issuer": "PASS",
+    "__main__.LocalFixTests.test_missing_subject": "PASS",
+    "__main__.LocalFixTests.test_missing_tenant": "PASS",
+    "__main__.LocalFixTests.test_product_database_error_prevents_issuance": "PASS",
+    "__main__.LocalFixTests.test_product_revocation_reloaded": "PASS",
+    "__main__.LocalFixTests.test_sso_2fa_enabled_never_issues_without_factor": "PASS",
+    "__main__.LocalFixTests.test_valid_response_contract": "PASS",
+    "__main__.LocalFixTests.test_wrong_issuer": "PASS"
+  },
+  "passed": 20,
+  "failed": 0,
+  "errors": 0,
+  "database_connection_attempts": 0,
+  "network_attempts": 0,
+  "success": true
+}

@@ -1,0 +1,545 @@
+{
+  "result.json": {
+    "stage": "C",
+    "status": "PASS_POSTGRESQL_LAB",
+    "private_socket": true,
+    "tcp": false,
+    "financial_migrations": 0,
+    "principals": [
+      "lab04_iam",
+      "lab04_control_plane",
+      "lab04_admin",
+      "lab04_events"
+    ]
+  },
+  "cleanup.json": {
+    "owned_runtime_removed": true
+  },
+  "catalog.json": [
+    {
+      "case": "inactive catalog plan",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "plan update",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "plan commercial pricing held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "plan quota held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "plan trial held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "plan activation held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "plan platform role insufficient",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "tenant cannot see inactive plan",
+      "http": 404,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "product create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "separate product",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "product metadata update",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "product identity immutable",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "product billing held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "unknown field rejected",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "viewer product catalog denied",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "platform catalog read",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "trial default held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "entitlement create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "foreign product scope",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "tenant reparent rejected",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "product reparent rejected",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "trial toggle held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "entitlement disable",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "entitlement enable explicit",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "tenant cannot control entitlements",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "entitlement audit",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "entitlement and audit rollback",
+      "status": "PASS",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "standard create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "module assignment",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "module disable",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "module trial held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "module foreign relation rejected",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "product deactivation",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invoice authorized read",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invoice write held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "subscription write held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "payment write held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    }
+  ],
+  "organizations.json": [
+    {
+      "case": "create tenant identity",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "read organization",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "authorized rename",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "settings preferences",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "settings cross tenant",
+      "http": 404,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "settings platform field",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "tenant quota held",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "tenant trial held",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "no physical deletion",
+      "http": 405,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "suspend",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "suspended membership",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "reactivate existing contract",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invite create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invitation preview",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "invite foreign",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "invite role escalation",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "invitation reparent",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "viewer cannot invite",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "staff cannot invite",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "technical credential rejected",
+      "http": 403,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "cancel create",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "cancel",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "cancelled preview denied",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "membership deactivation",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "membership reparent denied",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "member physical deletion denied",
+      "http": 405,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "user physical deletion denied",
+      "http": 405,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "create membership",
+      "http": 201,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "audit and tenant event rollback",
+      "kind": "ALLOW",
+      "status": "PASS"
+    },
+    {
+      "case": "withdraw inviter membership",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    },
+    {
+      "case": "revoked invitation authority",
+      "http": 400,
+      "principal": "lab04_control_plane",
+      "kind": "DENY_AUTHORIZATION"
+    },
+    {
+      "case": "restore inviter membership",
+      "http": 200,
+      "principal": "lab04_control_plane",
+      "kind": "ALLOW"
+    }
+  ],
+  "functional-results.json": [
+    {
+      "test": "test_lab.Lab.test_02_durable_client_lifecycle",
+      "status": "PASS",
+      "seconds": 0.636
+    },
+    {
+      "test": "test_lab.Lab.test_03_two_refresh",
+      "status": "PASS",
+      "seconds": 0.272
+    },
+    {
+      "test": "test_lab.Lab.test_04_refresh_revoke_both_orders",
+      "status": "PASS",
+      "seconds": 0.75
+    },
+    {
+      "test": "test_lab.Lab.test_05_logout_rotation",
+      "status": "PASS",
+      "seconds": 0.539
+    },
+    {
+      "test": "test_lab.Lab.test_06_individual_and_global_revocation",
+      "status": "PASS",
+      "seconds": 0.795
+    },
+    {
+      "test": "test_lab.Lab.test_09_password_and_activity_all_write_paths",
+      "status": "PASS",
+      "seconds": 1.535
+    },
+    {
+      "test": "test_lab.Lab.test_10_trigger_guards",
+      "status": "PASS",
+      "seconds": 0.359
+    },
+    {
+      "test": "test_lab.Lab.test_12_rollback_local_central_outbox",
+      "status": "PASS",
+      "seconds": 0.329
+    },
+    {
+      "test": "test_lab.Lab.test_13_hash_upgrade",
+      "status": "PASS",
+      "seconds": 0.366
+    },
+    {
+      "test": "test_lab.Lab.test_14_reset_vs_hash_upgrade",
+      "status": "PASS",
+      "seconds": 0.448
+    },
+    {
+      "test": "test_lab.Lab.test_15_b_authority_separation",
+      "status": "PASS",
+      "seconds": 0.789
+    },
+    {
+      "test": "test_lab.Lab.test_18_legacy_foreign_and_cookie",
+      "status": "PASS",
+      "seconds": 0.251
+    },
+    {
+      "test": "test_extended.Extended.test_23_insert_failure_login_mfa",
+      "status": "PASS",
+      "seconds": 0.507
+    },
+    {
+      "test": "test_extended.Extended.test_24_backup_mfa",
+      "status": "PASS",
+      "seconds": 0.562
+    },
+    {
+      "test": "test_extended.Extended.test_25_b_and_human_concurrency",
+      "status": "PASS",
+      "seconds": 0.948
+    },
+    {
+      "test": "__main__.Added.test_mfa_totp_registration",
+      "status": "PASS",
+      "seconds": 0.803
+    },
+    {
+      "test": "__main__.Added.test_b_service_and_retention",
+      "status": "PASS",
+      "seconds": 0.413
+    }
+  ],
+  "acceptance-fixed.json": {
+    "phase": "fixed",
+    "before_revoke": 200,
+    "after_revoke": 401,
+    "delete_reinsert_sqlstate": "42501",
+    "after_attack_fresh_connection": 401,
+    "handler_delta_after_attack": 0,
+    "pids": [
+      8962,
+      8963
+    ],
+    "token_sha256": "0e1d4f12ae3e64b7c634b2aea83d1d716a071305444b37eff793e27ede7c5a9a",
+    "sid": "5a5c0dca-6481-4de5-a9bb-3ce939e68862",
+    "refresh": "DENIED",
+    "lost_response_retry": 0
+  },
+  "acceptance-restart.json": {
+    "phase": "restart",
+    "access_http": 401,
+    "refresh": "DENIED",
+    "handler_delta": 0,
+    "pid": 8984,
+    "token_sha256": "0e1d4f12ae3e64b7c634b2aea83d1d716a071305444b37eff793e27ede7c5a9a"
+  }
+}

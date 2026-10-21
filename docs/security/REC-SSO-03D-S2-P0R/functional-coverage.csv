@@ -1,0 +1,12 @@
+operation,branches,real_code_evidence,test,persistence,full_branch_coverage
+Subscription.change_plan,ALLOW + missing/inactive plan lookup DENY,UUID field; plan and amount changed,test_subscription_change_plan_effect_and_missing_plan_deny,NOT_EVIDENCED,NOT_EVIDENCED
+Subscription.activate/cancel,ALLOW,real model states and dates,test_subscription_activation_and_cancellation_execute_model_effects,NOT_EVIDENCED,NOT_EVIDENCED
+Invoice.mark_paid,ALLOW pending,reference/paid_at + real subscription activation,test_invoice_payment_executes_subscription_activation,NOT_EVIDENCED,NOT_EVIDENCED
+Entitlement.partial_update,ALLOW restrictive + DENY unknown scope/state,real serializer + before/after audit,test_entitlement_restrictive_patch_real_serializer_and_audit,NOT_EVIDENCED,NOT_EVIDENCED
+Membership.partial_update,ALLOW deactivate + DENY reparent,real serializer and ownership,test_membership_deactivation_then_foreign_reference_denied,NOT_EVIDENCED,NOT_EVIDENCED
+User.deactivate/change_password,ALLOW + self/wrong-current-password DENY,is_active/hash/audit,test_user_password_change_real_serializer_hash_and_audit,NOT_EVIDENCED,NOT_EVIDENCED
+Organization.suspend,ALLOW twice,one save/event; other tenant unchanged,test_tenant_suspend_is_idempotent_and_emits_one_event,NOT_EVIDENCED,NOT_EVIDENCED
+Invitation.accept/RegisterView,ALLOW + authority lost at consume DENY,preview/real serializer/signed JWT/membership,test_registration_dispatch_emits_signed_tokens_after_live_consumption,NOT_EVIDENCED,NOT_EVIDENCED
+Seven legacy service handlers,ALLOW and credential/grant/tenant/product DENY,"both actual adapters, hash verified",test_both_adapters_all_seven_legacy_handlers_with_authenticated_credential,NOT_EVIDENCED,NOT_EVIDENCED
+User.revoke_sso_sessions,ALLOW + ownership/replay DENY,real UUID dispatch + RSA lifecycle service,P0RSessions,NOT_EVIDENCED,NOT_EVIDENCED
+User.revoke_sessions,scope characterization,local registry only; access remains valid,test_local_registry_revocation_reports_its_limit_and_keeps_owner_filter,NOT_EVIDENCED,NOT_EVIDENCED

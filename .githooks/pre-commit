@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+export GITLEAKS="${GITLEAKS:-$HOME/.local/bin/gitleaks}"
+checker=$(dirname "$0")/../scripts/security/check_secrets.py
+exec python3 "$checker"

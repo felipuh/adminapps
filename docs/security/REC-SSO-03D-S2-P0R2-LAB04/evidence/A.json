@@ -1,0 +1,431 @@
+{
+  "result.json": {
+    "stage": "A",
+    "status": "PASS_POSTGRESQL_LAB",
+    "private_socket": true,
+    "tcp": false,
+    "financial_migrations": 0,
+    "principals": [
+      "lab04_iam",
+      "lab04_control_plane",
+      "lab04_admin",
+      "lab04_events"
+    ]
+  },
+  "cleanup.json": {
+    "owned_runtime_removed": true
+  },
+  "boundaries.json": [
+    {
+      "role": "lab04_iam",
+      "sql": "DELETE FROM user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "TRUNCATE user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "DELETE FROM sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "TRUNCATE sso_security_fence",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "DELETE FROM sso_revocation_outbox",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "ALTER TABLE user_sessions DISABLE TRIGGER ALL",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "CREATE TABLE public.lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "CREATE TEMP TABLE lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "SET ROLE lab04_maintenance",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "SET session_replication_role='replica'",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_iam",
+      "sql": "UPDATE sso_security_fence SET enabled=true",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "DELETE FROM user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "TRUNCATE user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "DELETE FROM sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "TRUNCATE sso_security_fence",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "DELETE FROM sso_revocation_outbox",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "ALTER TABLE user_sessions DISABLE TRIGGER ALL",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "CREATE TABLE public.lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "CREATE TEMP TABLE lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "SET ROLE lab04_maintenance",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "SET session_replication_role='replica'",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_control_plane",
+      "sql": "UPDATE sso_security_fence SET enabled=true",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "DELETE FROM user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "TRUNCATE user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "DELETE FROM sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "TRUNCATE sso_security_fence",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "DELETE FROM sso_revocation_outbox",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "ALTER TABLE user_sessions DISABLE TRIGGER ALL",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "CREATE TABLE public.lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "CREATE TEMP TABLE lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "SET ROLE lab04_maintenance",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "SET session_replication_role='replica'",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_admin",
+      "sql": "UPDATE sso_security_fence SET enabled=true",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "DELETE FROM user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "TRUNCATE user_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "DELETE FROM sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "TRUNCATE sso_security_fence",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "DELETE FROM sso_revocation_outbox",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "ALTER TABLE user_sessions DISABLE TRIGGER ALL",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "CREATE TABLE public.lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "CREATE TEMP TABLE lab_escape (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "SET ROLE lab04_maintenance",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "SET session_replication_role='replica'",
+      "sqlstate": "42501"
+    },
+    {
+      "role": "lab04_events",
+      "sql": "UPDATE sso_security_fence SET enabled=true",
+      "sqlstate": "42501"
+    }
+  ],
+  "functional-results.json": [
+    {
+      "test": "test_lab.Lab.test_02_durable_client_lifecycle",
+      "status": "PASS",
+      "seconds": 0.658
+    },
+    {
+      "test": "test_lab.Lab.test_03_two_refresh",
+      "status": "PASS",
+      "seconds": 0.268
+    },
+    {
+      "test": "test_lab.Lab.test_04_refresh_revoke_both_orders",
+      "status": "PASS",
+      "seconds": 0.655
+    },
+    {
+      "test": "test_lab.Lab.test_05_logout_rotation",
+      "status": "PASS",
+      "seconds": 0.535
+    },
+    {
+      "test": "test_lab.Lab.test_06_individual_and_global_revocation",
+      "status": "PASS",
+      "seconds": 0.821
+    },
+    {
+      "test": "test_lab.Lab.test_09_password_and_activity_all_write_paths",
+      "status": "PASS",
+      "seconds": 1.567
+    },
+    {
+      "test": "test_lab.Lab.test_10_trigger_guards",
+      "status": "PASS",
+      "seconds": 0.33
+    },
+    {
+      "test": "test_lab.Lab.test_12_rollback_local_central_outbox",
+      "status": "PASS",
+      "seconds": 0.311
+    },
+    {
+      "test": "test_lab.Lab.test_13_hash_upgrade",
+      "status": "PASS",
+      "seconds": 0.363
+    },
+    {
+      "test": "test_lab.Lab.test_14_reset_vs_hash_upgrade",
+      "status": "PASS",
+      "seconds": 0.415
+    },
+    {
+      "test": "test_lab.Lab.test_15_b_authority_separation",
+      "status": "PASS",
+      "seconds": 0.765
+    },
+    {
+      "test": "test_lab.Lab.test_18_legacy_foreign_and_cookie",
+      "status": "PASS",
+      "seconds": 0.273
+    },
+    {
+      "test": "test_extended.Extended.test_23_insert_failure_login_mfa",
+      "status": "PASS",
+      "seconds": 0.539
+    },
+    {
+      "test": "test_extended.Extended.test_24_backup_mfa",
+      "status": "PASS",
+      "seconds": 0.525
+    },
+    {
+      "test": "test_extended.Extended.test_25_b_and_human_concurrency",
+      "status": "PASS",
+      "seconds": 0.966
+    },
+    {
+      "test": "__main__.Added.test_mfa_totp_registration",
+      "status": "PASS",
+      "seconds": 0.806
+    },
+    {
+      "test": "__main__.Added.test_b_service_and_retention",
+      "status": "PASS",
+      "seconds": 0.414
+    }
+  ],
+  "acceptance-fixed.json": {
+    "phase": "fixed",
+    "before_revoke": 200,
+    "after_revoke": 401,
+    "delete_reinsert_sqlstate": "42501",
+    "after_attack_fresh_connection": 401,
+    "handler_delta_after_attack": 0,
+    "pids": [
+      6778,
+      6779
+    ],
+    "token_sha256": "d0a88c39bd2c1dedbc88d182314799f692241e0b64fb437fefc36e710439d8d0",
+    "sid": "562fa287-642b-490e-af81-ac09a5a491e1",
+    "refresh": "DENIED",
+    "lost_response_retry": 0
+  },
+  "acceptance-restart.json": {
+    "phase": "restart",
+    "access_http": 401,
+    "refresh": "DENIED",
+    "handler_delta": 0,
+    "pid": 6799,
+    "token_sha256": "d0a88c39bd2c1dedbc88d182314799f692241e0b64fb437fefc36e710439d8d0"
+  },
+  "process-iam.json": {
+    "profile": "iam",
+    "current_user": "lab04_iam",
+    "routes": [
+      [
+        "/admin/",
+        404
+      ],
+      [
+        "/api/products/systems/",
+        404
+      ],
+      [
+        "/api/auth/users/",
+        404
+      ]
+    ],
+    "connection_aliases": [
+      "default"
+    ]
+  },
+  "process-control_plane.json": {
+    "profile": "control_plane",
+    "current_user": "lab04_control_plane",
+    "routes": [
+      [
+        "/admin/",
+        404
+      ],
+      [
+        "/api/auth/login/",
+        404
+      ],
+      [
+        "/api/products/systems/",
+        403
+      ]
+    ],
+    "connection_aliases": [
+      "default"
+    ]
+  },
+  "process-admin.json": {
+    "profile": "admin",
+    "current_user": "lab04_admin",
+    "routes": [
+      [
+        "/api/auth/login/",
+        404
+      ],
+      [
+        "/api/products/systems/",
+        404
+      ],
+      [
+        "/admin/",
+        302
+      ]
+    ],
+    "connection_aliases": [
+      "default"
+    ]
+  },
+  "process-events.json": {
+    "profile": "events",
+    "current_user": "lab04_events",
+    "routes": [
+      [
+        "/admin/",
+        404
+      ],
+      [
+        "/api/auth/login/",
+        404
+      ]
+    ],
+    "connection_aliases": [
+      "default"
+    ]
+  }
+}

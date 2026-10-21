@@ -1,0 +1,2900 @@
+{
+  "runners": [
+    {
+      "tests": 361,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "__main__.AuthorizationTests.test_absent_grants_and_inactive_authority",
+      "method": "test_absent_grants_and_inactive_authority",
+      "source": "integration/tests_d_offline.py",
+      "line": 102,
+      "qualname": "AuthorizationTests.test_absent_grants_and_inactive_authority",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_binding_state_principal_role_injection",
+      "method": "test_binding_state_principal_role_injection",
+      "source": "integration/tests_d_offline.py",
+      "line": 98,
+      "qualname": "AuthorizationTests.test_binding_state_principal_role_injection",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_0",
+      "method": "test_endpoint_0",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_1",
+      "method": "test_endpoint_1",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_10",
+      "method": "test_endpoint_10",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_100",
+      "method": "test_endpoint_100",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_101",
+      "method": "test_endpoint_101",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_102",
+      "method": "test_endpoint_102",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_103",
+      "method": "test_endpoint_103",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_104",
+      "method": "test_endpoint_104",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_105",
+      "method": "test_endpoint_105",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_106",
+      "method": "test_endpoint_106",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_107",
+      "method": "test_endpoint_107",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_108",
+      "method": "test_endpoint_108",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_109",
+      "method": "test_endpoint_109",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_11",
+      "method": "test_endpoint_11",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_110",
+      "method": "test_endpoint_110",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_111",
+      "method": "test_endpoint_111",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_112",
+      "method": "test_endpoint_112",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_113",
+      "method": "test_endpoint_113",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_114",
+      "method": "test_endpoint_114",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_115",
+      "method": "test_endpoint_115",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_116",
+      "method": "test_endpoint_116",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_117",
+      "method": "test_endpoint_117",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_118",
+      "method": "test_endpoint_118",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_119",
+      "method": "test_endpoint_119",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_12",
+      "method": "test_endpoint_12",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_120",
+      "method": "test_endpoint_120",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_121",
+      "method": "test_endpoint_121",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_122",
+      "method": "test_endpoint_122",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_123",
+      "method": "test_endpoint_123",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_124",
+      "method": "test_endpoint_124",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_125",
+      "method": "test_endpoint_125",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_126",
+      "method": "test_endpoint_126",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_127",
+      "method": "test_endpoint_127",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_128",
+      "method": "test_endpoint_128",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_129",
+      "method": "test_endpoint_129",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_13",
+      "method": "test_endpoint_13",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_130",
+      "method": "test_endpoint_130",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_131",
+      "method": "test_endpoint_131",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_132",
+      "method": "test_endpoint_132",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_133",
+      "method": "test_endpoint_133",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_134",
+      "method": "test_endpoint_134",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_135",
+      "method": "test_endpoint_135",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_136",
+      "method": "test_endpoint_136",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_137",
+      "method": "test_endpoint_137",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_138",
+      "method": "test_endpoint_138",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_139",
+      "method": "test_endpoint_139",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_14",
+      "method": "test_endpoint_14",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_140",
+      "method": "test_endpoint_140",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_141",
+      "method": "test_endpoint_141",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_142",
+      "method": "test_endpoint_142",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_143",
+      "method": "test_endpoint_143",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_144",
+      "method": "test_endpoint_144",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_145",
+      "method": "test_endpoint_145",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_146",
+      "method": "test_endpoint_146",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_147",
+      "method": "test_endpoint_147",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_148",
+      "method": "test_endpoint_148",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_149",
+      "method": "test_endpoint_149",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_15",
+      "method": "test_endpoint_15",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_150",
+      "method": "test_endpoint_150",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_151",
+      "method": "test_endpoint_151",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_152",
+      "method": "test_endpoint_152",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_153",
+      "method": "test_endpoint_153",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_154",
+      "method": "test_endpoint_154",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_155",
+      "method": "test_endpoint_155",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_156",
+      "method": "test_endpoint_156",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_157",
+      "method": "test_endpoint_157",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_158",
+      "method": "test_endpoint_158",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_159",
+      "method": "test_endpoint_159",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_16",
+      "method": "test_endpoint_16",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_160",
+      "method": "test_endpoint_160",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_161",
+      "method": "test_endpoint_161",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_162",
+      "method": "test_endpoint_162",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_163",
+      "method": "test_endpoint_163",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_164",
+      "method": "test_endpoint_164",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_165",
+      "method": "test_endpoint_165",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_166",
+      "method": "test_endpoint_166",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_167",
+      "method": "test_endpoint_167",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_168",
+      "method": "test_endpoint_168",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_169",
+      "method": "test_endpoint_169",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_17",
+      "method": "test_endpoint_17",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_170",
+      "method": "test_endpoint_170",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_171",
+      "method": "test_endpoint_171",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_172",
+      "method": "test_endpoint_172",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_173",
+      "method": "test_endpoint_173",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_174",
+      "method": "test_endpoint_174",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_175",
+      "method": "test_endpoint_175",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_176",
+      "method": "test_endpoint_176",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_177",
+      "method": "test_endpoint_177",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_178",
+      "method": "test_endpoint_178",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_179",
+      "method": "test_endpoint_179",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_18",
+      "method": "test_endpoint_18",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_180",
+      "method": "test_endpoint_180",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_181",
+      "method": "test_endpoint_181",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_182",
+      "method": "test_endpoint_182",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_183",
+      "method": "test_endpoint_183",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_184",
+      "method": "test_endpoint_184",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_185",
+      "method": "test_endpoint_185",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_186",
+      "method": "test_endpoint_186",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_187",
+      "method": "test_endpoint_187",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_188",
+      "method": "test_endpoint_188",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_189",
+      "method": "test_endpoint_189",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_19",
+      "method": "test_endpoint_19",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_190",
+      "method": "test_endpoint_190",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_191",
+      "method": "test_endpoint_191",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_192",
+      "method": "test_endpoint_192",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_193",
+      "method": "test_endpoint_193",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_194",
+      "method": "test_endpoint_194",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_195",
+      "method": "test_endpoint_195",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_196",
+      "method": "test_endpoint_196",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_197",
+      "method": "test_endpoint_197",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_198",
+      "method": "test_endpoint_198",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_199",
+      "method": "test_endpoint_199",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_2",
+      "method": "test_endpoint_2",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_20",
+      "method": "test_endpoint_20",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_200",
+      "method": "test_endpoint_200",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_201",
+      "method": "test_endpoint_201",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_202",
+      "method": "test_endpoint_202",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_203",
+      "method": "test_endpoint_203",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_204",
+      "method": "test_endpoint_204",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_205",
+      "method": "test_endpoint_205",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_206",
+      "method": "test_endpoint_206",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_207",
+      "method": "test_endpoint_207",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_208",
+      "method": "test_endpoint_208",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_209",
+      "method": "test_endpoint_209",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_21",
+      "method": "test_endpoint_21",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_210",
+      "method": "test_endpoint_210",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_211",
+      "method": "test_endpoint_211",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_212",
+      "method": "test_endpoint_212",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_213",
+      "method": "test_endpoint_213",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_214",
+      "method": "test_endpoint_214",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_215",
+      "method": "test_endpoint_215",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_216",
+      "method": "test_endpoint_216",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_217",
+      "method": "test_endpoint_217",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_218",
+      "method": "test_endpoint_218",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_219",
+      "method": "test_endpoint_219",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_22",
+      "method": "test_endpoint_22",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_220",
+      "method": "test_endpoint_220",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_221",
+      "method": "test_endpoint_221",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_222",
+      "method": "test_endpoint_222",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_223",
+      "method": "test_endpoint_223",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_224",
+      "method": "test_endpoint_224",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_225",
+      "method": "test_endpoint_225",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_226",
+      "method": "test_endpoint_226",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_227",
+      "method": "test_endpoint_227",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_228",
+      "method": "test_endpoint_228",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_229",
+      "method": "test_endpoint_229",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_23",
+      "method": "test_endpoint_23",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_230",
+      "method": "test_endpoint_230",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_231",
+      "method": "test_endpoint_231",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_232",
+      "method": "test_endpoint_232",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_233",
+      "method": "test_endpoint_233",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_234",
+      "method": "test_endpoint_234",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_235",
+      "method": "test_endpoint_235",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_236",
+      "method": "test_endpoint_236",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_237",
+      "method": "test_endpoint_237",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_238",
+      "method": "test_endpoint_238",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_239",
+      "method": "test_endpoint_239",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_24",
+      "method": "test_endpoint_24",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_240",
+      "method": "test_endpoint_240",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_241",
+      "method": "test_endpoint_241",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_242",
+      "method": "test_endpoint_242",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_243",
+      "method": "test_endpoint_243",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_244",
+      "method": "test_endpoint_244",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_245",
+      "method": "test_endpoint_245",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_246",
+      "method": "test_endpoint_246",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_247",
+      "method": "test_endpoint_247",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_248",
+      "method": "test_endpoint_248",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_249",
+      "method": "test_endpoint_249",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_25",
+      "method": "test_endpoint_25",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_250",
+      "method": "test_endpoint_250",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_251",
+      "method": "test_endpoint_251",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_252",
+      "method": "test_endpoint_252",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_253",
+      "method": "test_endpoint_253",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_254",
+      "method": "test_endpoint_254",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_255",
+      "method": "test_endpoint_255",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_256",
+      "method": "test_endpoint_256",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_257",
+      "method": "test_endpoint_257",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_258",
+      "method": "test_endpoint_258",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_259",
+      "method": "test_endpoint_259",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_26",
+      "method": "test_endpoint_26",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_260",
+      "method": "test_endpoint_260",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_261",
+      "method": "test_endpoint_261",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_262",
+      "method": "test_endpoint_262",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_263",
+      "method": "test_endpoint_263",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_264",
+      "method": "test_endpoint_264",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_265",
+      "method": "test_endpoint_265",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_266",
+      "method": "test_endpoint_266",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_267",
+      "method": "test_endpoint_267",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_268",
+      "method": "test_endpoint_268",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_269",
+      "method": "test_endpoint_269",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_27",
+      "method": "test_endpoint_27",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_270",
+      "method": "test_endpoint_270",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_271",
+      "method": "test_endpoint_271",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_272",
+      "method": "test_endpoint_272",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_273",
+      "method": "test_endpoint_273",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_274",
+      "method": "test_endpoint_274",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_275",
+      "method": "test_endpoint_275",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_276",
+      "method": "test_endpoint_276",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_277",
+      "method": "test_endpoint_277",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_278",
+      "method": "test_endpoint_278",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_279",
+      "method": "test_endpoint_279",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_28",
+      "method": "test_endpoint_28",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_280",
+      "method": "test_endpoint_280",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_281",
+      "method": "test_endpoint_281",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_282",
+      "method": "test_endpoint_282",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_283",
+      "method": "test_endpoint_283",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_284",
+      "method": "test_endpoint_284",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_285",
+      "method": "test_endpoint_285",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_286",
+      "method": "test_endpoint_286",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_287",
+      "method": "test_endpoint_287",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_288",
+      "method": "test_endpoint_288",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_289",
+      "method": "test_endpoint_289",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_29",
+      "method": "test_endpoint_29",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_290",
+      "method": "test_endpoint_290",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_291",
+      "method": "test_endpoint_291",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_292",
+      "method": "test_endpoint_292",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_293",
+      "method": "test_endpoint_293",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_294",
+      "method": "test_endpoint_294",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_295",
+      "method": "test_endpoint_295",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_296",
+      "method": "test_endpoint_296",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_297",
+      "method": "test_endpoint_297",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_298",
+      "method": "test_endpoint_298",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_299",
+      "method": "test_endpoint_299",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_3",
+      "method": "test_endpoint_3",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_30",
+      "method": "test_endpoint_30",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_300",
+      "method": "test_endpoint_300",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_301",
+      "method": "test_endpoint_301",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_302",
+      "method": "test_endpoint_302",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_303",
+      "method": "test_endpoint_303",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_304",
+      "method": "test_endpoint_304",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_305",
+      "method": "test_endpoint_305",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_306",
+      "method": "test_endpoint_306",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_307",
+      "method": "test_endpoint_307",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_308",
+      "method": "test_endpoint_308",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_309",
+      "method": "test_endpoint_309",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_31",
+      "method": "test_endpoint_31",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_310",
+      "method": "test_endpoint_310",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_311",
+      "method": "test_endpoint_311",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_312",
+      "method": "test_endpoint_312",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_313",
+      "method": "test_endpoint_313",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_314",
+      "method": "test_endpoint_314",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_315",
+      "method": "test_endpoint_315",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_316",
+      "method": "test_endpoint_316",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_317",
+      "method": "test_endpoint_317",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_318",
+      "method": "test_endpoint_318",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_319",
+      "method": "test_endpoint_319",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_32",
+      "method": "test_endpoint_32",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_320",
+      "method": "test_endpoint_320",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_321",
+      "method": "test_endpoint_321",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_322",
+      "method": "test_endpoint_322",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_323",
+      "method": "test_endpoint_323",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_324",
+      "method": "test_endpoint_324",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_325",
+      "method": "test_endpoint_325",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_326",
+      "method": "test_endpoint_326",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_327",
+      "method": "test_endpoint_327",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_328",
+      "method": "test_endpoint_328",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_329",
+      "method": "test_endpoint_329",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_33",
+      "method": "test_endpoint_33",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_330",
+      "method": "test_endpoint_330",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_331",
+      "method": "test_endpoint_331",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_332",
+      "method": "test_endpoint_332",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_333",
+      "method": "test_endpoint_333",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_334",
+      "method": "test_endpoint_334",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_335",
+      "method": "test_endpoint_335",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_336",
+      "method": "test_endpoint_336",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_337",
+      "method": "test_endpoint_337",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_338",
+      "method": "test_endpoint_338",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_339",
+      "method": "test_endpoint_339",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_34",
+      "method": "test_endpoint_34",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_340",
+      "method": "test_endpoint_340",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_341",
+      "method": "test_endpoint_341",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_342",
+      "method": "test_endpoint_342",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_343",
+      "method": "test_endpoint_343",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_344",
+      "method": "test_endpoint_344",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_345",
+      "method": "test_endpoint_345",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_346",
+      "method": "test_endpoint_346",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_35",
+      "method": "test_endpoint_35",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_36",
+      "method": "test_endpoint_36",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_37",
+      "method": "test_endpoint_37",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_38",
+      "method": "test_endpoint_38",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_39",
+      "method": "test_endpoint_39",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_4",
+      "method": "test_endpoint_4",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_40",
+      "method": "test_endpoint_40",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_41",
+      "method": "test_endpoint_41",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_42",
+      "method": "test_endpoint_42",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_43",
+      "method": "test_endpoint_43",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_44",
+      "method": "test_endpoint_44",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_45",
+      "method": "test_endpoint_45",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_46",
+      "method": "test_endpoint_46",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_47",
+      "method": "test_endpoint_47",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_48",
+      "method": "test_endpoint_48",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_49",
+      "method": "test_endpoint_49",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_5",
+      "method": "test_endpoint_5",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_50",
+      "method": "test_endpoint_50",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_51",
+      "method": "test_endpoint_51",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_52",
+      "method": "test_endpoint_52",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_53",
+      "method": "test_endpoint_53",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_54",
+      "method": "test_endpoint_54",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_55",
+      "method": "test_endpoint_55",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_56",
+      "method": "test_endpoint_56",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_57",
+      "method": "test_endpoint_57",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_58",
+      "method": "test_endpoint_58",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_59",
+      "method": "test_endpoint_59",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_6",
+      "method": "test_endpoint_6",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_60",
+      "method": "test_endpoint_60",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_61",
+      "method": "test_endpoint_61",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_62",
+      "method": "test_endpoint_62",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_63",
+      "method": "test_endpoint_63",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_64",
+      "method": "test_endpoint_64",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_65",
+      "method": "test_endpoint_65",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_66",
+      "method": "test_endpoint_66",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_67",
+      "method": "test_endpoint_67",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_68",
+      "method": "test_endpoint_68",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_69",
+      "method": "test_endpoint_69",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_7",
+      "method": "test_endpoint_7",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_70",
+      "method": "test_endpoint_70",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_71",
+      "method": "test_endpoint_71",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_72",
+      "method": "test_endpoint_72",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_73",
+      "method": "test_endpoint_73",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_74",
+      "method": "test_endpoint_74",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_75",
+      "method": "test_endpoint_75",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_76",
+      "method": "test_endpoint_76",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_77",
+      "method": "test_endpoint_77",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_78",
+      "method": "test_endpoint_78",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_79",
+      "method": "test_endpoint_79",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_8",
+      "method": "test_endpoint_8",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_80",
+      "method": "test_endpoint_80",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_81",
+      "method": "test_endpoint_81",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_82",
+      "method": "test_endpoint_82",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_83",
+      "method": "test_endpoint_83",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_84",
+      "method": "test_endpoint_84",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_85",
+      "method": "test_endpoint_85",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_86",
+      "method": "test_endpoint_86",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_87",
+      "method": "test_endpoint_87",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_88",
+      "method": "test_endpoint_88",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_89",
+      "method": "test_endpoint_89",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_9",
+      "method": "test_endpoint_9",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_90",
+      "method": "test_endpoint_90",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_91",
+      "method": "test_endpoint_91",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_92",
+      "method": "test_endpoint_92",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_93",
+      "method": "test_endpoint_93",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_94",
+      "method": "test_endpoint_94",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_95",
+      "method": "test_endpoint_95",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_96",
+      "method": "test_endpoint_96",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_97",
+      "method": "test_endpoint_97",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_98",
+      "method": "test_endpoint_98",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_endpoint_99",
+      "method": "test_endpoint_99",
+      "source": "integration/tests_d_offline.py",
+      "line": 164,
+      "qualname": "endpoint_test.<locals>.test",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_nested_queryset_uses_authenticated_tenant_not_query",
+      "method": "test_nested_queryset_uses_authenticated_tenant_not_query",
+      "source": "integration/tests_d_offline.py",
+      "line": 131,
+      "qualname": "AuthorizationTests.test_nested_queryset_uses_authenticated_tenant_not_query",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_object_checks_fail_closed_for_missing_and_foreign_nested_tenant",
+      "method": "test_object_checks_fail_closed_for_missing_and_foreign_nested_tenant",
+      "source": "integration/tests_d_offline.py",
+      "line": 126,
+      "qualname": "AuthorizationTests.test_object_checks_fail_closed_for_missing_and_foreign_nested_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_permission_resolution_error_denies_without_effects",
+      "method": "test_permission_resolution_error_denies_without_effects",
+      "source": "integration/tests_d_offline.py",
+      "line": 105,
+      "qualname": "AuthorizationTests.test_permission_resolution_error_denies_without_effects",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_query_and_body_tenant_and_contract_fields_rejected",
+      "method": "test_query_and_body_tenant_and_contract_fields_rejected",
+      "source": "integration/tests_d_offline.py",
+      "line": 108,
+      "qualname": "AuthorizationTests.test_query_and_body_tenant_and_contract_fields_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_read_cannot_create_patch_delete_before_save",
+      "method": "test_read_cannot_create_patch_delete_before_save",
+      "source": "integration/tests_d_offline.py",
+      "line": 88,
+      "qualname": "AuthorizationTests.test_read_cannot_create_patch_delete_before_save",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_real_create_authorized_resource_binds_tenant_before_save",
+      "method": "test_real_create_authorized_resource_binds_tenant_before_save",
+      "source": "integration/tests_d_offline.py",
+      "line": 114,
+      "qualname": "AuthorizationTests.test_real_create_authorized_resource_binds_tenant_before_save",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_real_detail_foreign_id_is_404",
+      "method": "test_real_detail_foreign_id_is_404",
+      "source": "integration/tests_d_offline.py",
+      "line": 84,
+      "qualname": "AuthorizationTests.test_real_detail_foreign_id_is_404",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_real_detail_own_id_allows_without_other_permissions",
+      "method": "test_real_detail_own_id_allows_without_other_permissions",
+      "source": "integration/tests_d_offline.py",
+      "line": 86,
+      "qualname": "AuthorizationTests.test_real_detail_own_id_allows_without_other_permissions",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_real_list_reaches_policy_and_filters_foreign_tenant",
+      "method": "test_real_list_reaches_policy_and_filters_foreign_tenant",
+      "source": "integration/tests_d_offline.py",
+      "line": 82,
+      "qualname": "AuthorizationTests.test_real_list_reaches_policy_and_filters_foreign_tenant",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_real_partial_update_authorized_own_object",
+      "method": "test_real_partial_update_authorized_own_object",
+      "source": "integration/tests_d_offline.py",
+      "line": 121,
+      "qualname": "AuthorizationTests.test_real_partial_update_authorized_own_object",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_scopes_empty_unknown_foreign_wildcard_duplicates",
+      "method": "test_scopes_empty_unknown_foreign_wildcard_duplicates",
+      "source": "integration/tests_d_offline.py",
+      "line": 93,
+      "qualname": "AuthorizationTests.test_scopes_empty_unknown_foreign_wildcard_duplicates",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.AuthorizationTests.test_sensitive_related_user_and_reparenting_denied",
+      "method": "test_sensitive_related_user_and_reparenting_denied",
+      "source": "integration/tests_d_offline.py",
+      "line": 138,
+      "qualname": "AuthorizationTests.test_sensitive_related_user_and_reparenting_denied",
+      "status": "PASS"
+    }
+  ]
+}

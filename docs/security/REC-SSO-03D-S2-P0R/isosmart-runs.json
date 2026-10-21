@@ -1,0 +1,57 @@
+[
+  {
+    "suite": "iso-d",
+    "exit": 0,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/iso-d.methods.json",
+      "integration/tests_d_offline.py"
+    ]
+  },
+  {
+    "suite": "iso-d_session",
+    "exit": 0,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/iso-d_session.methods.json",
+      "integration/tests_d_session_offline.py"
+    ]
+  },
+  {
+    "suite": "iso-b",
+    "exit": 0,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/iso-b.methods.json",
+      "integration/tests_b_offline.py"
+    ]
+  },
+  {
+    "suite": "iso-ch",
+    "exit": 1,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/iso-ch.methods.json",
+      "integration/tests_ch_offline.py"
+    ]
+  },
+  {
+    "suite": "iso-decision_a",
+    "exit": 1,
+    "cmd": [
+      ".venv/bin/python",
+      "-B",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/run_suite.py",
+      "/tmp/rec-sso-03d-s2-p0r-20261019/iso-decision_a.methods.json",
+      "integration/tests_decision_a_offline.py"
+    ]
+  }
+]

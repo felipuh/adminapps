@@ -1,0 +1,2482 @@
+--- before/backend/apps/api/views.py
++++ after/backend/apps/api/views.py
+@@ -2,6 +2,9 @@
+ API Views - Admin Apps
+ Dashboard y endpoints generales para Comtech (backoffice)
+ """
++from apps.users.api_authorization import ControlPlaneMixin
++from apps.users.platform_api_authorization import PlatformOperationMixin
++
+ from rest_framework.views import APIView
+ from rest_framework.response import Response
+ from rest_framework.permissions import IsAuthenticated, AllowAny
+@@ -31,7 +34,7 @@
+         })
+ 
+ 
+-class DashboardView(APIView):
++class DashboardView(PlatformOperationMixin, APIView):
+     """
+     Dashboard principal de Admin Apps
+     Panel de control interno de Comtech
+@@ -186,7 +189,7 @@
+         })
+ 
+ 
+-class SystemStatsView(APIView):
++class SystemStatsView(PlatformOperationMixin, APIView):
+     """
+     Estadísticas detalladas del sistema
+     Métricas internas de Comtech
+@@ -231,7 +234,7 @@
+         })
+ 
+ 
+-class ProductReadinessView(APIView):
++class ProductReadinessView(PlatformOperationMixin, APIView):
+     """Read-only SaaS product access readiness report for AdminApps operators."""
+ 
+     permission_classes = [IsAuthenticated, IsAdmin]
+@@ -240,7 +243,7 @@
+         return Response(build_product_access_readiness_report())
+ 
+ 
+-class QuickActionsView(APIView):
++class QuickActionsView(PlatformOperationMixin, APIView):
+     """
+     Acciones rápidas para el dashboard de Comtech
+     """
+@@ -281,7 +284,7 @@
+         return Response(actions)
+ 
+ 
+-class LandingAnalyticsSummaryView(APIView):
++class LandingAnalyticsSummaryView(PlatformOperationMixin, APIView):
+     """Resumen centralizado de analítica del landing para backoffice."""
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+@@ -341,7 +344,7 @@
+         })
+ 
+ 
+-class FeatureFlagsView(APIView):
++class FeatureFlagsView(ControlPlaneMixin, APIView):
+     """Resolve feature flags for the current user organization context."""
+ 
+     permission_classes = [IsAuthenticated]
+--- before/backend/apps/billing/serializers.py
++++ after/backend/apps/billing/serializers.py
+@@ -1,3 +1,4 @@
++from apps.users.api_authorization import StrictInputMixin, reject_reparenting
+ from django.conf import settings
+ from rest_framework import serializers
+ 
+@@ -38,7 +39,7 @@
+     return False
+ 
+ 
+-class IssueInvoiceSerializer(serializers.Serializer):
++class IssueInvoiceSerializer(StrictInputMixin, serializers.Serializer):
+     fiscal_profile = serializers.PrimaryKeyRelatedField(queryset=FiscalProfile.objects.filter(is_active=True))
+     organization = serializers.PrimaryKeyRelatedField(queryset=ElectronicInvoice._meta.get_field('organization').remote_field.model.objects.all())
+     product = serializers.PrimaryKeyRelatedField(queryset=ProductCatalog.objects.filter(is_active=True))
+@@ -64,7 +65,7 @@
+                 'product_price': 'El precio seleccionado no pertenece al producto indicado.'
+             })
+ 
+-        if subscription and organization.subscription_id and subscription.id != organization.subscription_id:
++        if subscription and subscription.id != organization.subscription_id:
+             raise serializers.ValidationError({
+                 'subscription': 'La suscripcion debe coincidir con la suscripcion activa de la organizacion.'
+             })
+@@ -73,7 +74,7 @@
+         return attrs
+ 
+ 
+-class IssueSubscriptionInvoiceSerializer(serializers.Serializer):
++class IssueSubscriptionInvoiceSerializer(StrictInputMixin, serializers.Serializer):
+     fiscal_profile = serializers.PrimaryKeyRelatedField(queryset=FiscalProfile.objects.filter(is_active=True))
+     organization = serializers.PrimaryKeyRelatedField(queryset=ElectronicInvoice._meta.get_field('organization').remote_field.model.objects.all())
+     product = serializers.PrimaryKeyRelatedField(queryset=ProductCatalog.objects.filter(is_active=True))
+@@ -106,7 +107,7 @@
+         return attrs
+ 
+ 
+-class RunSubscriptionBillingCycleSerializer(serializers.Serializer):
++class RunSubscriptionBillingCycleSerializer(StrictInputMixin, serializers.Serializer):
+     fiscal_profile = serializers.PrimaryKeyRelatedField(queryset=FiscalProfile.objects.filter(is_active=True))
+     organization = serializers.PrimaryKeyRelatedField(queryset=ElectronicInvoice._meta.get_field('organization').remote_field.model.objects.all())
+     product = serializers.PrimaryKeyRelatedField(queryset=ProductCatalog.objects.filter(is_active=True))
+@@ -129,7 +130,7 @@
+         return attrs
+ 
+ 
+-class RunBatchBillingCycleSerializer(serializers.Serializer):
++class RunBatchBillingCycleSerializer(StrictInputMixin, serializers.Serializer):
+     fiscal_profile = serializers.PrimaryKeyRelatedField(queryset=FiscalProfile.objects.filter(is_active=True))
+     product = serializers.PrimaryKeyRelatedField(queryset=ProductCatalog.objects.filter(is_active=True))
+     product_price = serializers.PrimaryKeyRelatedField(
+@@ -152,23 +153,23 @@
+         return attrs
+ 
+ 
+-class HaciendaStatusUpdateSerializer(serializers.Serializer):
++class HaciendaStatusUpdateSerializer(StrictInputMixin, serializers.Serializer):
+     hacienda_status = serializers.ChoiceField(choices=['processing', 'accepted', 'rejected', 'error'])
+     hacienda_message = serializers.CharField(required=False, allow_blank=True)
+     hacienda_track_id = serializers.CharField(required=False, allow_blank=True)
+ 
+ 
+-class CreditNoteSerializer(serializers.Serializer):
++class CreditNoteSerializer(StrictInputMixin, serializers.Serializer):
+     reason = serializers.CharField(max_length=255)
+ 
+ 
+-class RecordPaymentSerializer(serializers.Serializer):
++class RecordPaymentSerializer(StrictInputMixin, serializers.Serializer):
+     method = serializers.ChoiceField(choices=['sinpe', 'bank_transfer', 'card', 'cash', 'check', 'deposit', 'other'])
+     reference = serializers.CharField(required=False, allow_blank=True)
+     paid_at = serializers.DateTimeField(required=False, allow_null=True)
+ 
+ 
+-class FiscalProfileSerializer(serializers.ModelSerializer):
++class FiscalProfileSerializer(StrictInputMixin, serializers.ModelSerializer):
+     class Meta:
+         model = FiscalProfile
+         fields = [
+@@ -182,7 +183,7 @@
+         read_only_fields = ['id', 'created_at', 'updated_at']
+ 
+ 
+-class ProductCatalogSerializer(serializers.ModelSerializer):
++class ProductCatalogSerializer(StrictInputMixin, serializers.ModelSerializer):
+     system_product_code = serializers.CharField(source='system_product.code', read_only=True, default=None)
+     system_product_name = serializers.CharField(source='system_product.name', read_only=True, default=None)
+ 
+@@ -196,7 +197,7 @@
+         read_only_fields = ['id', 'created_at', 'updated_at']
+ 
+ 
+-class ProductPriceSerializer(serializers.ModelSerializer):
++class ProductPriceSerializer(StrictInputMixin, serializers.ModelSerializer):
+     product_name = serializers.CharField(source='product.name', read_only=True)
+ 
+     class Meta:
+@@ -207,6 +208,10 @@
+             'valid_from', 'valid_until', 'metadata', 'created_at', 'updated_at',
+         ]
+         read_only_fields = ['id', 'created_at', 'updated_at']
++
++    def validate(self, attrs):
++        reject_reparenting(self.instance, attrs, ('product',))
++        return attrs
+ 
+     def validate_cabys_code(self, value):
+         if value and (not value.isdigit() or len(value) != 13):
+@@ -320,7 +325,7 @@
+     payment_methods_amount = serializers.DictField(child=serializers.CharField(), required=False)
+ 
+ 
+-class CreatePendingPaymentSerializer(serializers.Serializer):
++class CreatePendingPaymentSerializer(StrictInputMixin, serializers.Serializer):
+     invoice = serializers.UUIDField()
+     method = serializers.ChoiceField(choices=['sinpe', 'bank_transfer', 'card', 'cash', 'check', 'deposit', 'other'])
+     reference = serializers.CharField(max_length=255, required=False, default='')
+@@ -411,7 +416,7 @@
+     arr = serializers.DecimalField(max_digits=14, decimal_places=2)
+ 
+ 
+-class RecurringReportScheduleSerializer(serializers.ModelSerializer):
++class RecurringReportScheduleSerializer(StrictInputMixin, serializers.ModelSerializer):
+     class Meta:
+         model = RecurringReportSchedule
+         fields = [
+--- before/backend/apps/billing/views.py
++++ after/backend/apps/billing/views.py
+@@ -1,3 +1,4 @@
++from apps.users.platform_api_authorization import PlatformOperationMixin
+ from decimal import Decimal
+ import csv
+ import io
+@@ -79,7 +80,7 @@
+     )
+ 
+ 
+-class BillingSummaryView(APIView):
++class BillingSummaryView(PlatformOperationMixin, APIView):
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+     def get(self, request):
+@@ -137,7 +138,7 @@
+         return Response(BillingSummarySerializer(summary).data)
+ 
+ 
+-class AIUsageDashboardView(APIView):
++class AIUsageDashboardView(PlatformOperationMixin, APIView):
+     """Cross-tenant provider-usage observability; never customer billing."""
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+@@ -182,7 +183,7 @@
+         })
+ 
+ 
+-class RevenueByProductView(APIView):
++class RevenueByProductView(PlatformOperationMixin, APIView):
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+     def get(self, request):
+@@ -199,7 +200,7 @@
+         return Response(RevenueByProductSerializer(queryset, many=True).data)
+ 
+ 
+-class RevenueByOrganizationView(APIView):
++class RevenueByOrganizationView(PlatformOperationMixin, APIView):
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+     def get(self, request):
+@@ -237,7 +238,7 @@
+         return Response(RevenueByOrganizationSerializer(payload, many=True).data)
+ 
+ 
+-class RevenueTimelineView(APIView):
++class RevenueTimelineView(PlatformOperationMixin, APIView):
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+     def get(self, request):
+@@ -267,7 +268,7 @@
+         return Response(RevenueTimelineSerializer(payload, many=True).data)
+ 
+ 
+-class AccountsReceivableView(APIView):
++class AccountsReceivableView(PlatformOperationMixin, APIView):
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+     def get(self, request):
+@@ -294,7 +295,7 @@
+         return Response(AccountsReceivableSerializer(data).data)
+ 
+ 
+-class FiscalProfileViewSet(viewsets.ModelViewSet):
++class FiscalProfileViewSet(PlatformOperationMixin, viewsets.ModelViewSet):
+     queryset = FiscalProfile.objects.all()
+     serializer_class = FiscalProfileSerializer
+     permission_classes = [IsAuthenticated, IsSuperAdmin]
+@@ -302,7 +303,7 @@
+     ordering = ['legal_name']
+ 
+ 
+-class ProductCatalogViewSet(viewsets.ModelViewSet):
++class ProductCatalogViewSet(PlatformOperationMixin, viewsets.ModelViewSet):
+     queryset = ProductCatalog.objects.select_related('system_product')
+     serializer_class = ProductCatalogSerializer
+     permission_classes = [IsAuthenticated, IsAdmin]
+@@ -373,7 +374,7 @@
+         return Response(result)
+ 
+ 
+-class ProductPriceViewSet(viewsets.ModelViewSet):
++class ProductPriceViewSet(PlatformOperationMixin, viewsets.ModelViewSet):
+     queryset = ProductPrice.objects.select_related('product')
+     serializer_class = ProductPriceSerializer
+     permission_classes = [IsAuthenticated, IsAdmin]
+@@ -382,7 +383,7 @@
+     ordering = ['product__name', 'amount']
+ 
+ 
+-class ElectronicInvoiceViewSet(viewsets.ReadOnlyModelViewSet):
++class ElectronicInvoiceViewSet(PlatformOperationMixin, viewsets.ReadOnlyModelViewSet):
+     queryset = ElectronicInvoice.objects.select_related(
+         'organization', 'product', 'product_price', 'subscription', 'fiscal_profile'
+     ).prefetch_related('lines')
+@@ -677,7 +678,7 @@
+         return Response(ElectronicInvoiceDetailSerializer(note).data, status=201)
+ 
+ 
+-class PaymentRecordViewSet(viewsets.ReadOnlyModelViewSet):
++class PaymentRecordViewSet(PlatformOperationMixin, viewsets.ReadOnlyModelViewSet):
+     queryset = PaymentRecord.objects.select_related('organization', 'invoice')
+     serializer_class = PaymentRecordSerializer
+     permission_classes = [IsAuthenticated, IsAdmin]
+@@ -758,7 +759,7 @@
+         return Response(PaymentRecordSerializer(payment).data)
+ 
+ 
+-class RevenueSnapshotViewSet(viewsets.ReadOnlyModelViewSet):
++class RevenueSnapshotViewSet(PlatformOperationMixin, viewsets.ReadOnlyModelViewSet):
+     queryset = RevenueSnapshot.objects.select_related('product', 'organization')
+     serializer_class = RevenueSnapshotSerializer
+     permission_classes = [IsAuthenticated, IsAdmin]
+@@ -767,7 +768,7 @@
+     ordering = ['-snapshot_date']
+ 
+ 
+-class RecurringReportScheduleViewSet(viewsets.ModelViewSet):
++class RecurringReportScheduleViewSet(PlatformOperationMixin, viewsets.ModelViewSet):
+     queryset = RecurringReportSchedule.objects.all()
+     serializer_class = RecurringReportScheduleSerializer
+     permission_classes = [IsAuthenticated, IsAdmin]
+@@ -803,7 +804,7 @@
+         return Response(result)
+ 
+ 
+-class SchedulerStatusView(APIView):
++class SchedulerStatusView(PlatformOperationMixin, APIView):
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+     def get(self, request):
+@@ -855,7 +856,7 @@
+             'result_summary': last_log.result_summary if last_log else {},
+         })
+ 
+-class BillingChurnAnalyticsView(APIView):
++class BillingChurnAnalyticsView(PlatformOperationMixin, APIView):
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+     def get(self, request):
+@@ -916,7 +917,7 @@
+         })
+ 
+ 
+-class BillingReconciliationView(APIView):
++class BillingReconciliationView(PlatformOperationMixin, APIView):
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+     def get(self, request):
+@@ -961,7 +962,7 @@
+         return Response(PaymentRecordSerializer(payment).data, status=201)
+ 
+ 
+-class ProductDashboardView(APIView):
++class ProductDashboardView(PlatformOperationMixin, APIView):
+     """Per-product metrics: revenue, subscriptions, MRR/ARR, invoices."""
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+@@ -1009,7 +1010,7 @@
+         return Response(ProductDashboardSerializer(result, many=True).data)
+ 
+ 
+-class BillingAlertsView(APIView):
++class BillingAlertsView(PlatformOperationMixin, APIView):
+     """Operational billing alerts: overdue, Hacienda, trials, scheduler errors."""
+     permission_classes = [IsAuthenticated, IsAdmin]
+ 
+--- before/backend/apps/integration/views.py
++++ after/backend/apps/integration/views.py
+@@ -23,6 +23,7 @@
+ from apps.users.models import UserOrganization
+ from .models import AIUsageProjection, DemoRequest, IntegrationAPIKey, LandingAnalyticsEvent
+ from .services import authenticate_integration_api_key
++from .api_authorization import service_data_access
+ 
+ User = get_user_model()
+ 
+@@ -151,6 +152,7 @@
+ 
+         service_name = credential.name if isinstance(credential, IntegrationAPIKey) else credential
+         request.integration_service = service_name
++        request.integration_principal = credential
+         if isinstance(credential, IntegrationAPIKey):
+             credential.last_used_at = timezone.now()
+             credential.last_used_service = service_name[:100]
+@@ -259,11 +261,12 @@
+ @csrf_exempt
+ @require_http_methods(["GET"])
+ @require_api_key
++@service_data_access
+ def list_organizations(request):
+     """
+     Lista todas las organizaciones activas
+     """
+-    organizations = Organization.objects.filter(status='active')
++    organizations = Organization.objects.filter(status='active', pk__in=request.authorized_tenant_ids)
+     
+     data = {
+         'organizations': [
+@@ -286,6 +289,7 @@
+ @csrf_exempt
+ @require_http_methods(["GET"])
+ @require_api_key
++@service_data_access
+ def get_organization(request, org_id):
+     """
+     Obtiene detalle de una organización
+@@ -314,6 +318,7 @@
+ @csrf_exempt
+ @require_http_methods(["GET"])
+ @require_api_key
++@service_data_access
+ def get_organization_users(request, org_id):
+     """
+     Obtiene usuarios de una organización
+@@ -353,6 +358,7 @@
+ @csrf_exempt
+ @require_http_methods(["GET"])
+ @require_api_key
++@service_data_access
+ def get_organization_modules(request, org_id):
+     """
+     Obtiene módulos habilitados para una organización
+@@ -426,6 +432,7 @@
+ @csrf_exempt
+ @require_http_methods(["GET"])
+ @require_api_key
++@service_data_access
+ def get_organization_products(request, org_id):
+     """Lista productos/sistemas habilitados para una organizacion."""
+     try:
+@@ -436,7 +443,9 @@
+             'code': 'organization_not_found'
+         }, status=404)
+ 
+-    entitlements = [_entitlement_payload(item) for item in _active_product_entitlements(org)]
++    entitlements = [_entitlement_payload(item) for item in _active_product_entitlements(org).filter(
++        product__code__in=request.authorized_product_codes
++    )]
+     return JsonResponse({
+         'organization_id': str(org.id),
+         'organization_name': org.name,
+@@ -447,6 +456,7 @@
+ @csrf_exempt
+ @require_http_methods(["GET"])
+ @require_api_key
++@service_data_access
+ def validate_organization_product_access(request, org_id, product_code):
+     """Valida acceso producto-neutral de una organizacion."""
+     try:
+@@ -638,6 +648,7 @@
+ @csrf_exempt
+ @require_http_methods(["POST"])
+ @require_api_key
++@service_data_access
+ def get_user_by_id(request):
+     """
+     Obtiene información de un usuario por ID
+@@ -678,6 +689,9 @@
+     if organization_id:
+         memberships = memberships.filter(organization_id=organization_id)
+     
++    if not memberships.exists():
++        return JsonResponse({'code': 'user_not_found'}, status=404)
++
+     response_data = {
+         'id': user.id,
+         'email': user.email,
+--- before/backend/apps/organizations/serializers.py
++++ after/backend/apps/organizations/serializers.py
+@@ -1,6 +1,8 @@
+ """
+ Serializers for Organizations - Admin Apps
+ """
++from apps.users.api_authorization import StrictInputMixin, reject_reparenting
++
+ from django.conf import settings
+ from django.db import transaction
+ from rest_framework import serializers
+@@ -27,10 +29,17 @@
+     return False
+ 
+ 
+-class OrganizationSettingsSerializer(serializers.ModelSerializer):
++class OrganizationSettingsSerializer(StrictInputMixin, serializers.ModelSerializer):
+     class Meta:
+         model = OrganizationSettings
+         exclude = ['organization']
++
++    def validate(self, attrs):
++        actor = getattr(self.context.get('request'), 'user', None)
++        privileged = {key for key in attrs if key.startswith('module_') or key == 'last_backup_at'}
++        if privileged and not (actor and actor.is_staff and actor.is_admin):
++            raise serializers.ValidationError({key: 'Campo reservado a plataforma.' for key in privileged})
++        return attrs
+ 
+ 
+ class OrganizationListSerializer(serializers.ModelSerializer):
+@@ -80,7 +89,7 @@
+         read_only_fields = ['id', 'code', 'created_at', 'updated_at']
+ 
+ 
+-class OrganizationCreateSerializer(serializers.ModelSerializer):
++class OrganizationCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para crear organizaciones"""
+     
+     class Meta:
+@@ -104,7 +113,7 @@
+             return organization
+ 
+ 
+-class OrganizationUpdateSerializer(serializers.ModelSerializer):
++class OrganizationUpdateSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para actualizar organizaciones"""
+     
+     class Meta:
+@@ -132,7 +141,7 @@
+             return instance
+ 
+ 
+-class OrganizationInvitationSerializer(serializers.ModelSerializer):
++class OrganizationInvitationSerializer(StrictInputMixin, serializers.ModelSerializer):
+     organization_name = serializers.CharField(source='organization.name', read_only=True)
+     invited_by_name = serializers.CharField(source='invited_by.full_name', read_only=True)
+     is_expired = serializers.ReadOnlyField()
+@@ -146,8 +155,14 @@
+         ]
+         read_only_fields = ['id', 'token', 'status', 'invited_by', 'created_at', 'accepted_at']
+ 
+-
+-class OrganizationInvitationCreateSerializer(serializers.ModelSerializer):
++    def validate(self, attrs):
++        reject_reparenting(self.instance, attrs, ('organization',))
++        if self.instance and self.instance.status != 'pending':
++            raise serializers.ValidationError('Solo se pueden modificar invitaciones pendientes.')
++        return OrganizationInvitationCreateSerializer.validate(self, attrs)
++
++
++class OrganizationInvitationCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
+     class Meta:
+         model = OrganizationInvitation
+         fields = ['organization', 'email', 'role', 'message']
+@@ -158,7 +173,7 @@
+         if not actor or not actor.is_authenticated:
+             raise serializers.ValidationError('Se requiere una sesión autenticada.')
+ 
+-        role = attrs.get('role')
++        role = attrs.get('role', getattr(self.instance, 'role', None))
+         if role == 'superadmin' and not actor.is_superadmin:
+             raise serializers.ValidationError({
+                 'role': 'Solo un superadministrador puede asignar ese rol.'
+@@ -168,7 +183,7 @@
+                 'role': 'No puedes asignar roles administrativos globales.'
+             })
+ 
+-        organization = attrs.get('organization')
++        organization = attrs.get('organization', getattr(self.instance, 'organization', None))
+         organization_id = getattr(
+             organization,
+             'pk',
+--- before/backend/apps/organizations/views.py
++++ after/backend/apps/organizations/views.py
+@@ -1,6 +1,8 @@
+ """
+ Views for Organizations - Admin Apps
+ """
++from apps.users.api_authorization import ControlPlaneMixin
++
+ from rest_framework import viewsets, status, filters
+ from rest_framework.decorators import action
+ from rest_framework.response import Response
+@@ -24,7 +26,7 @@
+ from apps.users.permissions import IsSuperAdmin, IsAdmin, IsOrgAdmin
+ 
+ 
+-class OrganizationViewSet(viewsets.ModelViewSet):
++class OrganizationViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de organizaciones
+     """
+@@ -77,7 +79,7 @@
+         
+         if request.method == 'PATCH':
+             serializer = OrganizationSettingsSerializer(
+-                org_settings, data=request.data, partial=True
++                org_settings, data=request.data, partial=True, context={'request': request}
+             )
+             serializer.is_valid(raise_exception=True)
+             serializer.save()
+@@ -148,7 +150,7 @@
+         return Response({'status': 'suspended'})
+ 
+ 
+-class OrganizationInvitationViewSet(viewsets.ModelViewSet):
++class OrganizationInvitationViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de invitaciones
+     """
+--- before/backend/apps/products/serializers.py
++++ after/backend/apps/products/serializers.py
+@@ -2,7 +2,11 @@
+ Serializers for Products - Admin Apps
+ Control de módulos ISO
+ """
++from apps.users.api_authorization import StrictInputMixin, reject_reparenting
++
+ from rest_framework import serializers
++from apps.integration.authorization_contract import CATALOG
++from apps.organizations.models import Organization
+ from .models import (
+     ISOStandard,
+     ModuleActivityLog,
+@@ -13,7 +17,22 @@
+ )
+ 
+ 
+-class ProductSystemSerializer(serializers.ModelSerializer):
++def validate_entitlement_relations(instance, attrs):
++    reject_reparenting(instance, attrs, ('organization', 'product'))
++    organization = attrs.get('organization') or getattr(instance, 'organization', None)
++    product = attrs.get('product') or getattr(instance, 'product', None)
++    subscription = attrs.get('subscription', getattr(instance, 'subscription', None))
++    if subscription and (not organization or subscription.pk != organization.subscription_id):
++        raise serializers.ValidationError({'subscription': 'Suscripción ajena a la relación canónica del tenant.'})
++    if 'scopes' in attrs:
++        scopes = attrs['scopes']
++        catalog = CATALOG.get(getattr(product, 'code', None), ())
++        if (not isinstance(scopes, list) or any(not isinstance(s, str) or s not in catalog for s in scopes)
++                or len(set(scopes)) != len(scopes)):
++            raise serializers.ValidationError({'scopes': 'Scopes inválidos o ajenos al producto.'})
++
++
++class ProductSystemSerializer(StrictInputMixin, serializers.ModelSerializer):
+     is_available = serializers.ReadOnlyField()
+ 
+     class Meta:
+@@ -38,7 +57,7 @@
+         ]
+ 
+ 
+-class OrganizationProductEntitlementSerializer(serializers.ModelSerializer):
++class OrganizationProductEntitlementSerializer(StrictInputMixin, serializers.ModelSerializer):
+     organization_name = serializers.CharField(source='organization.name', read_only=True)
+     organization_code = serializers.CharField(source='organization.code', read_only=True)
+     product_code = serializers.CharField(source='product.code', read_only=True)
+@@ -89,6 +108,7 @@
+         return plan.code if plan else None
+ 
+     def validate(self, attrs):
++        validate_entitlement_relations(self.instance, attrs)
+         organization = attrs.get('organization') or getattr(self.instance, 'organization', None)
+         product = attrs.get('product') or getattr(self.instance, 'product', None)
+         subscription = attrs.get('subscription')
+@@ -110,7 +130,7 @@
+         return attrs
+ 
+ 
+-class OrganizationProductEntitlementCreateSerializer(serializers.ModelSerializer):
++class OrganizationProductEntitlementCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
+     class Meta:
+         model = OrganizationProductEntitlement
+         fields = [
+@@ -119,6 +139,7 @@
+         ]
+ 
+     def validate(self, attrs):
++        validate_entitlement_relations(self.instance, attrs)
+         if OrganizationProductEntitlement.objects.filter(
+             organization=attrs.get('organization'),
+             product=attrs.get('product'),
+@@ -161,13 +182,13 @@
+         read_only_fields = fields
+ 
+ 
+-class OrganizationProductEntitlementToggleSerializer(serializers.Serializer):
++class OrganizationProductEntitlementToggleSerializer(StrictInputMixin, serializers.Serializer):
+     action = serializers.ChoiceField(choices=['enable', 'disable', 'trial'])
+     reason = serializers.CharField(required=False, allow_blank=True)
+     trial_days = serializers.IntegerField(required=False, default=14, min_value=1, max_value=365)
+ 
+ 
+-class ISOStandardSerializer(serializers.ModelSerializer):
++class ISOStandardSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para estándares ISO"""
+     is_available = serializers.ReadOnlyField()
+     
+@@ -193,7 +214,7 @@
+         ]
+ 
+ 
+-class OrganizationModuleSerializer(serializers.ModelSerializer):
++class OrganizationModuleSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para módulos asignados a organizaciones"""
+     organization_name = serializers.CharField(source='organization.name', read_only=True)
+     organization_code = serializers.CharField(source='organization.code', read_only=True)
+@@ -211,10 +232,14 @@
+             'activated_by', 'activated_by_name', 'internal_notes',
+             'created_at', 'updated_at',
+         ]
+-        read_only_fields = ['id', 'activated_at', 'created_at', 'updated_at']
+-
+-
+-class OrganizationModuleCreateSerializer(serializers.ModelSerializer):
++        read_only_fields = ['id', 'activated_by', 'activated_at', 'created_at', 'updated_at']
++
++    def validate(self, attrs):
++        reject_reparenting(self.instance, attrs, ('organization', 'iso_standard'))
++        return attrs
++
++
++class OrganizationModuleCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para asignar módulos a organizaciones"""
+     
+     class Meta:
+@@ -233,7 +258,7 @@
+         return attrs
+ 
+ 
+-class OrganizationModuleToggleSerializer(serializers.Serializer):
++class OrganizationModuleToggleSerializer(StrictInputMixin, serializers.Serializer):
+     """Serializer para activar/desactivar módulos"""
+     action = serializers.ChoiceField(choices=['enable', 'disable', 'trial'])
+     reason = serializers.CharField(required=False, allow_blank=True)
+@@ -265,3 +290,14 @@
+     trial_modules = serializers.IntegerField()
+     suspended_modules = serializers.IntegerField()
+     modules = OrganizationModuleSerializer(many=True)
++
++
++class OrganizationModuleBulkSerializer(StrictInputMixin, serializers.Serializer):
++    organization_id = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all())
++    iso_standards = serializers.PrimaryKeyRelatedField(queryset=ISOStandard.objects.all(), many=True, allow_empty=False)
++    status = serializers.ChoiceField(choices=['active', 'trial', 'suspended', 'expired'], default='trial')
++
++    def validate_iso_standards(self, values):
++        if len({value.pk for value in values}) != len(values):
++            raise serializers.ValidationError('No se permiten módulos duplicados.')
++        return values
+--- before/backend/apps/products/views.py
++++ after/backend/apps/products/views.py
+@@ -2,7 +2,9 @@
+ Views for Products - Admin Apps
+ Control maestro de módulos ISO por cliente
+ """
+-from rest_framework import viewsets, status, filters
++from apps.users.api_authorization import ControlPlaneMixin
++
++from rest_framework import viewsets, status, filters, serializers
+ from rest_framework.decorators import action
+ from rest_framework.exceptions import ValidationError
+ from rest_framework.response import Response
+@@ -10,6 +12,7 @@
+ from django_filters.rest_framework import DjangoFilterBackend
+ from django.utils import timezone
+ from django.db.models import Count, Q
++from django.db import transaction
+ 
+ from .models import (
+     ISOStandard,
+@@ -24,6 +27,7 @@
+     ISOStandardListSerializer,
+     OrganizationModuleSerializer,
+     OrganizationModuleCreateSerializer,
++    OrganizationModuleBulkSerializer,
+     OrganizationModuleToggleSerializer,
+     ModuleActivityLogSerializer,
+     OrganizationModulesOverviewSerializer,
+@@ -38,7 +42,7 @@
+ from apps.organizations.models import Organization
+ 
+ 
+-class ProductSystemViewSet(viewsets.ModelViewSet):
++class ProductSystemViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """Catalogo producto-neutral de sistemas administrables."""
+ 
+     queryset = ProductSystem.objects.all()
+@@ -104,6 +108,8 @@
+ 
+ 
+ def _validate_entitlement_can_activate(entitlement):
++    if entitlement.subscription_id and entitlement.subscription_id != entitlement.organization.subscription_id:
++        raise ValidationError({'subscription': 'La suscripción no pertenece al tenant canónico.'})
+     if not entitlement.product.billing_enabled:
+         return
+     subscription = entitlement.effective_subscription
+@@ -117,7 +123,7 @@
+         })
+ 
+ 
+-class OrganizationProductEntitlementViewSet(viewsets.ModelViewSet):
++class OrganizationProductEntitlementViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """Habilitacion producto-neutral por organizacion."""
+ 
+     queryset = OrganizationProductEntitlement.objects.all()
+@@ -208,6 +214,7 @@
+         if not org_id:
+             return Response({'error': 'organization_id es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+ 
++        org_id = serializers.UUIDField().run_validation(org_id)
+         try:
+             organization = Organization.objects.get(pk=org_id)
+         except Organization.DoesNotExist:
+@@ -228,7 +235,7 @@
+         return Response(serializer.data)
+ 
+ 
+-class ProductEntitlementAuditLogViewSet(viewsets.ReadOnlyModelViewSet):
++class ProductEntitlementAuditLogViewSet(ControlPlaneMixin, viewsets.ReadOnlyModelViewSet):
+     """Read-only audit trail for product entitlement changes."""
+ 
+     queryset = ProductEntitlementAuditLog.objects.all()
+@@ -244,7 +251,7 @@
+         )
+ 
+ 
+-class ISOStandardViewSet(viewsets.ModelViewSet):
++class ISOStandardViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de estándares ISO
+     Solo administradores de Comtech pueden crear/editar
+@@ -286,7 +293,7 @@
+         return Response(serializer.data)
+ 
+ 
+-class OrganizationModuleViewSet(viewsets.ModelViewSet):
++class OrganizationModuleViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de módulos por organización
+     CONTROL MAESTRO - Solo equipo Comtech
+@@ -434,67 +441,31 @@
+         POST /api/modules/bulk_assign/
+         Body: {"organization_id": "xxx", "iso_standards": ["uuid1", "uuid2"], "status": "trial"}
+         """
+-        org_id = request.data.get('organization_id')
+-        iso_ids = request.data.get('iso_standards', [])
+-        initial_status = request.data.get('status', 'trial')
+-        
+-        # Validar que org_id sea válido
+-        if not org_id or org_id == 'new' or len(str(org_id)) < 10:
+-            return Response(
+-                {'error': 'ID de organización inválido'},
+-                status=status.HTTP_400_BAD_REQUEST
+-            )
+-        
+-        try:
+-            organization = Organization.objects.get(pk=org_id)
+-        except Organization.DoesNotExist:
+-            return Response(
+-                {'error': 'Organización no encontrada'},
+-                status=status.HTTP_404_NOT_FOUND
+-            )
+-        except Exception as e:
+-            return Response(
+-                {'error': 'ID de organización inválido'},
+-                status=status.HTTP_400_BAD_REQUEST
+-            )
+-        
+-        created = []
+-        skipped = []
+-        
+-        for iso_id in iso_ids:
+-            try:
+-                iso_standard = ISOStandard.objects.get(pk=iso_id)
+-                
+-                # Verificar si ya existe
+-                if OrganizationModule.objects.filter(
+-                    organization=organization, 
+-                    iso_standard=iso_standard
+-                ).exists():
++        serializer = OrganizationModuleBulkSerializer(data=request.data)
++        serializer.is_valid(raise_exception=True)
++        organization = serializer.validated_data['organization_id']
++        standards = serializer.validated_data['iso_standards']
++        initial_status = serializer.validated_data['status']
++        created, skipped = [], []
++        with transaction.atomic():
++            for iso_standard in standards:
++                if OrganizationModule.objects.filter(organization=organization, iso_standard=iso_standard).exists():
+                     skipped.append(iso_standard.code)
+                     continue
+-                
+                 module = OrganizationModule.objects.create(
+-                    organization=organization,
+-                    iso_standard=iso_standard,
+-                    status=initial_status,
+-                    activated_by=request.user
++                    organization=organization, iso_standard=iso_standard,
++                    status=initial_status, activated_by=request.user,
+                 )
+-                
+                 if initial_status == 'trial':
+                     module.set_trial(days=14)
+-                
+                 ModuleActivityLog.objects.create(
+                     organization_module=module,
+                     action='enabled' if initial_status == 'active' else 'trial_started',
+                     performed_by=request.user,
+-                    notes=f"Asignación masiva - Status inicial: {initial_status}"
++                    notes=f"Asignación masiva - Status inicial: {initial_status}",
+                 )
+-                
+                 created.append(iso_standard.code)
+-                
+-            except ISOStandard.DoesNotExist:
+-                continue
+-        
++
+         return Response({
+             'status': 'success',
+             'created': created,
+@@ -503,7 +474,7 @@
+         })
+ 
+ 
+-class ModuleActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
++class ModuleActivityLogViewSet(ControlPlaneMixin, viewsets.ReadOnlyModelViewSet):
+     """
+     ViewSet para consultar logs de actividad (solo lectura)
+     Auditoría interna de Comtech
+--- before/backend/apps/subscriptions/serializers.py
++++ after/backend/apps/subscriptions/serializers.py
+@@ -1,8 +1,11 @@
+ """
+ Serializers for Subscriptions - Admin Apps
+ """
++from apps.users.api_authorization import StrictInputMixin, reject_reparenting
++
+ from django.conf import settings
+ from rest_framework import serializers
++from apps.organizations.models import Organization
+ from .models import Plan, Subscription, Invoice, PaymentMethod
+ 
+ 
+@@ -43,7 +46,7 @@
+         ]
+ 
+ 
+-class PlanDetailSerializer(serializers.ModelSerializer):
++class PlanDetailSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer completo para detalle de planes"""
+     
+     class Meta:
+@@ -76,7 +79,11 @@
+         ]
+ 
+     def _get_organization(self, obj):
+-        invoice = obj.invoices.select_related('organization').order_by('-issued_at').first()
++        invoices = obj.invoices.select_related('organization')
++        actor = getattr(self.context.get('request'), 'user', None)
++        if actor and not actor.is_admin:
++            invoices = invoices.filter(organization_id=actor.organization_id)
++        invoice = invoices.order_by('-issued_at').first()
+         return invoice.organization if invoice and invoice.organization else None
+ 
+     def get_organization_name(self, obj):
+@@ -87,7 +94,7 @@
+         return _is_billing_exempt_owner_org(self._get_organization(obj))
+ 
+ 
+-class SubscriptionDetailSerializer(serializers.ModelSerializer):
++class SubscriptionDetailSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer completo para detalle de suscripciones"""
+     plan = PlanListSerializer(read_only=True)
+     days_remaining = serializers.ReadOnlyField()
+@@ -113,7 +120,11 @@
+         read_only_fields = ['id', 'created_at', 'updated_at']
+ 
+     def _get_organization(self, obj):
+-        invoice = obj.invoices.select_related('organization').order_by('-issued_at').first()
++        invoices = obj.invoices.select_related('organization')
++        actor = getattr(self.context.get('request'), 'user', None)
++        if actor and not actor.is_admin:
++            invoices = invoices.filter(organization_id=actor.organization_id)
++        invoice = invoices.order_by('-issued_at').first()
+         return invoice.organization if invoice and invoice.organization else None
+ 
+     def get_organization_name(self, obj):
+@@ -124,7 +135,7 @@
+         return _is_billing_exempt_owner_org(self._get_organization(obj))
+ 
+ 
+-class SubscriptionCreateSerializer(serializers.ModelSerializer):
++class SubscriptionCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para crear suscripciones"""
+     
+     class Meta:
+@@ -153,7 +164,7 @@
+         return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))
+ 
+ 
+-class InvoiceDetailSerializer(serializers.ModelSerializer):
++class InvoiceDetailSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer completo para detalle de facturas"""
+     organization_name = serializers.CharField(source='organization.name', read_only=True)
+     subscription_plan = serializers.CharField(source='subscription.plan.name', read_only=True)
+@@ -171,23 +182,43 @@
+         ]
+         read_only_fields = ['id', 'created_at', 'updated_at']
+ 
++    def validate(self, attrs):
++        reject_reparenting(self.instance, attrs, ('organization', 'subscription'))
++        organization = attrs.get('organization') or getattr(self.instance, 'organization', None)
++        subscription = attrs.get('subscription') or getattr(self.instance, 'subscription', None)
++        if subscription and (not organization or organization.subscription_id != subscription.pk):
++            raise serializers.ValidationError({'subscription': 'La suscripción no es la relación canónica de la organización.'})
++        return attrs
++
+     def get_billing_exempt(self, obj):
+         return _is_billing_exempt_owner_org(getattr(obj, 'organization', None))
+ 
+ 
+-class PaymentMethodSerializer(serializers.ModelSerializer):
++class PaymentMethodSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para métodos de pago"""
+     display_name = serializers.SerializerMethodField()
++    organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all(), required=False, write_only=True)
+     
+     class Meta:
+         model = PaymentMethod
+         fields = [
+-            'id', 'type', 'name', 'display_name',
++            'id', 'organization', 'type', 'name', 'display_name',
+             'card_last_four', 'card_brand', 'card_exp_month', 'card_exp_year',
+             'bank_name', 'is_default', 'is_active', 'created_at'
+         ]
+         read_only_fields = ['id', 'created_at']
+     
++    def validate(self, attrs):
++        reject_reparenting(self.instance, attrs, ('organization',))
++        actor = self.context['request'].user
++        organization = attrs.get('organization') or getattr(self.instance, 'organization', None) or actor.organization
++        if not organization or not organization.is_active:
++            raise serializers.ValidationError({'organization': 'Se requiere una organización activa.'})
++        if not actor.is_admin and str(organization.pk) != str(actor.organization_id):
++            raise serializers.ValidationError({'organization': 'Organización no autorizada.'})
++        attrs['organization'] = organization
++        return attrs
++
+     def get_display_name(self, obj):
+         return str(obj)
+ 
+--- before/backend/apps/subscriptions/views.py
++++ after/backend/apps/subscriptions/views.py
+@@ -1,7 +1,9 @@
+ """
+ Views for Subscriptions - Admin Apps
+ """
+-from rest_framework import viewsets, status, filters
++from apps.users.api_authorization import ControlPlaneMixin
++
++from rest_framework import viewsets, status, filters, serializers
+ from rest_framework.decorators import action
+ from rest_framework.response import Response
+ from rest_framework.permissions import IsAuthenticated
+@@ -10,6 +12,7 @@
+ from django.db.models import Sum, Count, Q
+ from decimal import Decimal
+ 
++from apps.organizations.models import Organization
+ from .models import Plan, Subscription, Invoice, PaymentMethod
+ from .serializers import (
+     PlanListSerializer,
+@@ -25,7 +28,7 @@
+ from apps.users.permissions import IsSuperAdmin, IsAdmin, IsOrgAdmin
+ 
+ 
+-class PlanViewSet(viewsets.ModelViewSet):
++class PlanViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de planes
+     """
+@@ -72,7 +75,7 @@
+         return Response(comparison)
+ 
+ 
+-class SubscriptionViewSet(viewsets.ModelViewSet):
++class SubscriptionViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de suscripciones
+     """
+@@ -91,7 +94,7 @@
+         return SubscriptionDetailSerializer
+     
+     def get_permissions(self):
+-        if self.action in ['create', 'destroy']:
++        if self.action in ['create', 'update', 'partial_update', 'destroy', 'activate', 'cancel', 'change_plan', 'stats']:
+             return [IsAdmin()]
+         return [IsAuthenticated()]
+     
+@@ -102,7 +105,9 @@
+         if not user.is_admin:
+             # Solo ver suscripción de su organización
+             if user.organization:
+-                queryset = queryset.filter(invoices__organization=user.organization).distinct()
++                queryset = queryset.filter(organizations=user.organization).exclude(
++                    organizations__in=Organization.objects.exclude(pk=user.organization_id)
++                ).distinct()
+             else:
+                 queryset = queryset.none()
+         
+@@ -134,6 +139,7 @@
+                 status=status.HTTP_400_BAD_REQUEST
+             )
+         
++        new_plan_id = serializers.UUIDField().run_validation(new_plan_id)
+         try:
+             new_plan = Plan.objects.get(pk=new_plan_id, is_active=True)
+         except Plan.DoesNotExist:
+@@ -182,11 +188,13 @@
+         """Listar facturas de una suscripción"""
+         subscription = self.get_object()
+         invoices_qs = Invoice.objects.filter(subscription=subscription).select_related('organization').order_by('-issued_at')
++        if not request.user.is_admin:
++            invoices_qs = invoices_qs.filter(organization_id=request.user.organization_id)
+         serializer = InvoiceListSerializer(invoices_qs, many=True)
+         return Response(serializer.data)
+ 
+ 
+-class InvoiceViewSet(viewsets.ModelViewSet):
++class InvoiceViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de facturas
+     """
+@@ -204,7 +212,7 @@
+         return InvoiceDetailSerializer
+     
+     def get_permissions(self):
+-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
++        if self.action in ['create', 'update', 'partial_update', 'destroy', 'mark_paid']:
+             return [IsAdmin()]
+         return [IsAuthenticated()]
+     
+@@ -240,7 +248,7 @@
+         return Response({'url': f'/api/invoices/{invoice.id}/pdf/'})
+ 
+ 
+-class PaymentMethodViewSet(viewsets.ModelViewSet):
++class PaymentMethodViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de métodos de pago
+     """
+@@ -258,13 +266,7 @@
+         return PaymentMethod.objects.filter(organization=user.organization)
+     
+     def perform_create(self, serializer):
+-        organization = self.request.user.organization
+-        if self.request.user.is_admin:
+-            org_id = self.request.data.get('organization')
+-            if org_id:
+-                from apps.organizations.models import Organization
+-                organization = Organization.objects.get(pk=org_id)
+-        
++        organization = serializer.validated_data.get('organization', self.request.user.organization)
+         serializer.save(organization=organization)
+     
+     @action(detail=True, methods=['post'])
+--- before/backend/apps/users/serializers.py
++++ after/backend/apps/users/serializers.py
+@@ -1,6 +1,8 @@
+ """
+ Serializers for Users - Admin Apps
+ """
++from apps.users.api_authorization import StrictInputMixin, reject_reparenting, may_manage_user
++
+ from rest_framework import serializers
+ from rest_framework.exceptions import APIException, AuthenticationFailed
+ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer
+@@ -178,7 +180,7 @@
+         ]
+ 
+ 
+-class UserCreateSerializer(serializers.ModelSerializer):
++class UserCreateSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para crear usuarios"""
+     email = serializers.EmailField(validators=[])
+     password = serializers.CharField(write_only=True, validators=[validate_password])
+@@ -258,7 +260,7 @@
+         return user
+ 
+ 
+-class UserUpdateSerializer(serializers.ModelSerializer):
++class UserUpdateSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para actualizar usuarios"""
+     
+     class Meta:
+@@ -302,7 +304,7 @@
+         return attrs
+ 
+ 
+-class UserProfileSerializer(serializers.ModelSerializer):
++class UserProfileSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para que el usuario actualice su propio perfil"""
+     
+     class Meta:
+@@ -355,7 +357,7 @@
+         return attrs
+ 
+ 
+-class UserOrganizationSerializer(serializers.ModelSerializer):
++class UserOrganizationSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para membresías de organización"""
+     organization_name = serializers.CharField(source='organization.name', read_only=True)
+     user_email = serializers.CharField(source='user.email', read_only=True)
+@@ -374,7 +376,10 @@
+         if not actor or not actor.is_authenticated:
+             raise serializers.ValidationError('Se requiere una sesión autenticada.')
+ 
++        reject_reparenting(self.instance, attrs, ('user', 'organization'))
+         member = attrs.get('user', getattr(self.instance, 'user', None))
++        if member is not None and not may_manage_user(actor, member):
++            raise serializers.ValidationError({'user': 'Principal de mayor autoridad.'})
+         if member is not None and (
+             member == actor
+             or getattr(member, 'pk', None) == getattr(actor, 'pk', None)
+@@ -410,6 +415,9 @@
+                 'organization': 'No puedes administrar membresías de otra organización.'
+             })
+ 
++        if not member or str(getattr(member, 'organization_id', None)) != str(actor.organization_id):
++            raise serializers.ValidationError({'user': 'Usuario fuera de tu organización.'})
++
+         if role in {'superadmin', 'admin'}:
+             raise serializers.ValidationError({
+                 'role': 'No puedes asignar roles administrativos globales.'
+@@ -458,7 +466,7 @@
+     created_at = serializers.DateTimeField()
+ 
+ 
+-class RegisterSerializer(serializers.ModelSerializer):
++class RegisterSerializer(StrictInputMixin, serializers.ModelSerializer):
+     """Serializer para registro público"""
+     email = serializers.EmailField(validators=[])
+     password = serializers.CharField(write_only=True, validators=[validate_password])
+--- before/backend/apps/users/services.py
++++ after/backend/apps/users/services.py
+@@ -9,6 +9,7 @@
+ from django.utils.http import urlsafe_base64_decode
+ from rest_framework_simplejwt.exceptions import TokenError
+ from rest_framework_simplejwt.tokens import RefreshToken
++from rest_framework_simplejwt.settings import api_settings
+ 
+ from .models import User, UserActivityLog
+ 
+@@ -29,12 +30,14 @@
+     user_agent: str
+ 
+ 
+-def blacklist_refresh_token(refresh_token: str | None) -> None:
++def blacklist_refresh_token(refresh_token: str | None, *, expected_user_id=None) -> None:
+     """Blacklist refresh token when provided."""
+     if not refresh_token:
+         return
+     try:
+         token = RefreshToken(refresh_token)
++        if expected_user_id is not None and str(token.get(api_settings.USER_ID_CLAIM)) != str(expected_user_id):
++            raise LogoutError('El token no pertenece a la sesión humana autenticada')
+         token.blacklist()
+     except TokenError as exc:
+         raise LogoutError("Token de refresco invalido") from exc
+--- before/backend/apps/users/views.py
++++ after/backend/apps/users/views.py
+@@ -1,6 +1,8 @@
+ """
+ Views for Users - Admin Apps
+ """
++from apps.users.api_authorization import ControlPlaneMixin, require_human
++
+ from rest_framework import viewsets, status, filters, serializers
+ from rest_framework.decorators import action
+ from rest_framework.response import Response
+@@ -178,8 +180,9 @@
+     permission_classes = [IsAuthenticated]
+     
+     def post(self, request):
++        require_human(request)
+         try:
+-            blacklist_refresh_token(request.data.get('refresh'))
++            blacklist_refresh_token(request.data.get('refresh'), expected_user_id=request.user.pk)
+             log_logout_activity(
+                 user=request.user,
+                 context=RequestContext(
+@@ -192,7 +195,7 @@
+             return Response({'error': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+ 
+ 
+-class UserViewSet(viewsets.ModelViewSet):
++class UserViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de usuarios
+     """
+@@ -381,7 +384,11 @@
+     @action(detail=False, methods=['post'])
+     def revoke_sessions(self, request):
+         """Revocar todas las sesiones excepto la actual"""
+-        current_token = request.data.get('current_token_jti')
++        auth = getattr(request, 'auth', None)
++        current_token = auth.get('jti') if hasattr(auth, 'get') else None
++        supplied = request.data.get('current_token_jti')
++        if supplied is not None and supplied != current_token:
++            raise serializers.ValidationError({'current_token_jti': 'No coincide con la sesión autenticada.'})
+         
+         UserSession.objects.filter(
+             user=request.user,
+@@ -401,7 +408,7 @@
+         return Response(serializer.data)
+ 
+ 
+-class UserOrganizationViewSet(viewsets.ModelViewSet):
++class UserOrganizationViewSet(ControlPlaneMixin, viewsets.ModelViewSet):
+     """
+     ViewSet para gestión de membresías de usuarios en organizaciones
+     """
+@@ -423,7 +430,7 @@
+         instance.delete()
+ 
+ 
+-class UserActivityLogViewSet(viewsets.ReadOnlyModelViewSet):
++class UserActivityLogViewSet(ControlPlaneMixin, viewsets.ReadOnlyModelViewSet):
+     """
+     ViewSet para consultar logs de actividad (solo lectura)
+     """
+@@ -443,7 +450,7 @@
+         return UserActivityLog.objects.filter(organization=user.organization)
+ 
+ 
+-class UserNotificationViewSet(viewsets.ViewSet):
++class UserNotificationViewSet(ControlPlaneMixin, viewsets.ViewSet):
+     """In-app notification center built from activity and alert logs."""
+ 
+     permission_classes = [IsAuthenticated]
+--- /dev/null
++++ after/backend/apps/api/test_control_plane.py
+@@ -0,0 +1,709 @@
++"""Real DRF dispatch and serializer tests with explicitly simulated persistence."""
++from types import SimpleNamespace as NS
++from unittest import TestCase
++from unittest.mock import Mock, patch, MagicMock
++import uuid
++
++from django.utils import timezone
++from rest_framework.test import APIRequestFactory, force_authenticate
++from apps.users.models import User, UserOrganization
++from apps.organizations.models import Organization, OrganizationInvitation
++from apps.organizations.views import OrganizationInvitationViewSet
++from apps.subscriptions.views import SubscriptionViewSet, InvoiceViewSet
++from apps.users.views import UserViewSet
++
++
++class ControlPlaneTests(TestCase):
++    def setUp(self):
++        self.factory = APIRequestFactory()
++        self.org = Organization(id=uuid.uuid4(), name='Tenant A', status='active')
++        self.other = Organization(id=uuid.uuid4(), name='Tenant B', status='active')
++        self.membership_active = True
++        self.member_role = 'org_admin'
++        self.member_filter = patch.object(UserOrganization.objects, 'filter', side_effect=self.members)
++        self.member_filter.start()
++        self.addCleanup(self.member_filter.stop)
++
++    def members(self, **kw):
++        query = MagicMock()
++        valid = (self.membership_active and kw.get('is_active') is True
++                 and kw.get('organization__status') == 'active'
++                 and kw.get('organization_id') == self.org.pk)
++        query.exists.return_value = valid
++        query.filter.return_value.exists.side_effect = lambda: valid and self.member_role == 'org_admin'
++        return query
++
++    def user(self, role='user', **kwargs):
++        user = User(id=uuid.uuid4(), email='synthetic@example.invalid', role=role,
++                    organization=self.org, is_active=True, **kwargs)
++        user.has_perm = Mock(return_value=True)
++        return user
++
++    def call(self, cls, action, user, data=None, method='post', pk=None):
++        request = getattr(self.factory, method)('/offline/', data or {}, format='json')
++        if user is not None:
++            force_authenticate(request, user=user)
++        return cls.as_view({method: action})(request, **({'pk': str(pk)} if pk else {}))
++
++    def test_member_cannot_activate_subscription_handler(self):
++        obj = NS(activate=Mock())
++        with patch.object(SubscriptionViewSet, 'get_object', return_value=obj):
++            response = self.call(SubscriptionViewSet, 'activate', self.user())
++        self.assertEqual(response.status_code, 403)
++        obj.activate.assert_not_called()
++
++    def test_member_cannot_mark_invoice_paid_handler(self):
++        obj = NS(status='pending', subscription=None, save=Mock())
++        with patch.object(InvoiceViewSet, 'get_object', return_value=obj):
++            response = self.call(InvoiceViewSet, 'mark_paid', self.user())
++        self.assertEqual(response.status_code, 403)
++        obj.save.assert_not_called()
++
++    def test_org_admin_cannot_reset_platform_admin_password(self):
++        obj = self.user('superadmin', is_staff=True)
++        with patch.object(UserViewSet, 'get_queryset') as qs, patch.object(obj, 'save') as save:
++            qs.return_value = User.objects.all()
++            with patch('rest_framework.generics.get_object_or_404', return_value=obj):
++                response = self.call(UserViewSet, 'reset_password', self.user('org_admin'),
++                                     {'new_password': 'Synthetic-New-Password-123!'}, pk=obj.pk)
++        self.assertEqual(response.status_code, 403)
++        save.assert_not_called()
++
++    def test_invitation_patch_cannot_promote_global_role(self):
++        obj = OrganizationInvitation(id=uuid.uuid4(), organization=self.org,
++                                     email='invited@example.invalid', role='user',
++                                     expires_at=timezone.now() + timezone.timedelta(days=1))
++        with patch.object(OrganizationInvitationViewSet, 'get_object', return_value=obj), \
++             patch.object(obj, 'save') as save:
++            response = self.call(OrganizationInvitationViewSet, 'partial_update', self.user('org_admin'),
++                                 {'role': 'superadmin'}, method='patch', pk=obj.pk)
++        self.assertIn(response.status_code, (400, 403))
++        save.assert_not_called()
++
++    def test_plan_mutations_anonymous_and_non_superadmin_denied(self):
++        from apps.subscriptions.views import PlanViewSet
++        for actor in (None, self.user(), self.user('admin', is_staff=True)):
++            for method, action in [('post', 'create'), ('put', 'update'), ('patch', 'partial_update'), ('delete', 'destroy')]:
++                with self.subTest(action=action, actor=getattr(actor, 'role', None)), \
++                     patch.object(PlanViewSet, 'perform_create') as create, \
++                     patch.object(PlanViewSet, 'get_object') as lookup:
++                    response = self.call(PlanViewSet, action, actor, {'name': 'Probe'}, method=method)
++                    self.assertIn(response.status_code, (401, 403))
++                    create.assert_not_called()
++                    lookup.assert_not_called()
++
++    def test_platform_role_alone_and_missing_operation_grant_denied(self):
++        from apps.subscriptions.views import PlanViewSet
++        for staff, grant in [(False, True), (True, False)]:
++            actor = self.user('superadmin', is_staff=staff)
++            actor.has_perm.return_value = grant
++            with patch.object(PlanViewSet, 'perform_create') as save:
++                response = self.call(PlanViewSet, 'create', actor, {'name': 'Probe'})
++            self.assertEqual(response.status_code, 403)
++            save.assert_not_called()
++
++    def test_inactive_human_and_service_claims_denied(self):
++        from apps.subscriptions.views import PlanViewSet
++        from apps.integration.models import IntegrationAPIKey
++        actors = [self.user('superadmin', is_staff=True), IntegrationAPIKey(name='service')]
++        actors[0].is_active = False
++        for actor in actors:
++            response = self.call(PlanViewSet, 'list', actor, method='get')
++            self.assertIn(response.status_code, (401, 403))
++        actor = self.user('superadmin', is_staff=True)
++        for auth in ({'principal_type': 'service'}, {'client_id': 'iso-client'}, {'token_family': 'CENTRAL'}):
++            request = self.factory.post('/offline/', {}, format='json')
++            force_authenticate(request, user=actor, token=auth)
++            response = PlanViewSet.as_view({'post': 'create'})(request)
++            self.assertEqual(response.status_code, 403)
++
++    def test_service_key_header_not_human_session(self):
++        from apps.subscriptions.views import PlanViewSet
++        request = self.factory.post('/offline/', {}, format='json', HTTP_X_API_KEY='synthetic')
++        force_authenticate(request, user=self.user('superadmin', is_staff=True))
++        self.assertEqual(PlanViewSet.as_view({'post': 'create'})(request).status_code, 403)
++
++    def test_platform_subscription_actions_allow_and_preserve_effect(self):
++        actor = self.user('admin', is_staff=True)
++        for action in ('activate', 'cancel'):
++            obj = NS(activate=Mock(), cancel=Mock())
++            with patch.object(SubscriptionViewSet, 'get_object', return_value=obj):
++                response = self.call(SubscriptionViewSet, action, actor)
++            self.assertEqual(response.status_code, 200)
++            getattr(obj, action).assert_called_once_with()
++            actor.has_perm.assert_called_with('subscriptions.change_subscription')
++
++    def test_platform_invoice_mark_paid_allow_activates_subscription(self):
++        obj = NS(status='pending', subscription=NS(status='past_due', activate=Mock()), save=Mock())
++        with patch.object(InvoiceViewSet, 'get_object', return_value=obj):
++            response = self.call(InvoiceViewSet, 'mark_paid', self.user('admin', is_staff=True), {'payment_reference': 'offline'})
++        self.assertEqual(response.status_code, 200)
++        self.assertEqual(obj.status, 'paid')
++        self.assertEqual(obj.payment_reference, 'offline')
++        obj.save.assert_called_once_with()
++        obj.subscription.activate.assert_called_once_with()
++
++    def test_action_payload_cannot_assign_tenant_or_privileges(self):
++        with patch.object(SubscriptionViewSet, 'get_object') as obj:
++            response = self.call(SubscriptionViewSet, 'activate', self.user('admin', is_staff=True), {'organization': str(self.other.pk)})
++        self.assertEqual(response.status_code, 400)
++        obj.assert_not_called()
++
++    def test_no_tenant_and_revoked_or_nonadmin_membership_denied(self):
++        from apps.subscriptions.views import PaymentMethodViewSet
++        for case in ('absent', 'revoked', 'viewer'):
++            actor = self.user('org_admin')
++            if case == 'absent':
++                actor.organization = None
++            self.membership_active = case != 'revoked'
++            self.member_role = 'viewer' if case == 'viewer' else 'org_admin'
++            with patch.object(PaymentMethodViewSet, 'perform_create') as create:
++                response = self.call(PaymentMethodViewSet, 'create', actor, {'type': 'card'})
++            self.assertEqual(response.status_code, 403)
++            create.assert_not_called()
++
++    def resolved(self, cls, obj):
++        from contextlib import ExitStack
++        stack = ExitStack()
++        stack.enter_context(patch.object(cls, 'filter_queryset', side_effect=lambda qs: qs))
++        stack.enter_context(patch('rest_framework.generics.get_object_or_404', return_value=obj))
++        return stack
++
++    def test_user_update_cross_tenant_and_privileged_target_denied(self):
++        for target in (self.user(), self.user('superadmin'), self.user('user', is_staff=True)):
++            if target.role == 'user' and not target.is_staff:
++                target.organization = self.other
++            with self.resolved(UserViewSet, target), patch.object(target, 'save') as save:
++                response = self.call(UserViewSet, 'partial_update', self.user('org_admin'), {'first_name': 'Probe'}, method='patch', pk=target.pk)
++            self.assertEqual(response.status_code, 403)
++            save.assert_not_called()
++
++    def test_user_update_allow_and_privilege_mass_assignment_denied(self):
++        target = self.user()
++        actor = self.user('org_admin')
++        with self.resolved(UserViewSet, target), patch.object(target, 'save') as save:
++            response = self.call(UserViewSet, 'partial_update', actor, {'first_name': 'Updated'}, method='patch', pk=target.pk)
++            self.assertEqual(response.status_code, 200)
++            self.assertEqual(target.first_name, 'Updated')
++            save.assert_called_once()
++            save.reset_mock()
++            for data in ({'is_superuser': True}, {'is_staff': True}, {'organization': str(self.other.pk)}, {'role': 'admin'}, {'groups': [1]}, {'user_permissions': [1]}):
++                response = self.call(UserViewSet, 'partial_update', actor, data, method='patch', pk=target.pk)
++                self.assertEqual(response.status_code, 400)
++            save.assert_not_called()
++
++    def test_reset_password_allow_ordinary_same_tenant_target(self):
++        target = self.user()
++        with self.resolved(UserViewSet, target), patch.object(target, 'save') as save:
++            response = self.call(UserViewSet, 'reset_password', self.user('org_admin'), {'new_password': 'Synthetic-Only-123!'}, pk=target.pk)
++        self.assertEqual(response.status_code, 200)
++        self.assertTrue(target.check_password('Synthetic-Only-123!'))
++        self.assertTrue(target.must_change_password)
++        save.assert_called_once()
++
++    def test_invitation_update_allow_and_cross_tenant_denied(self):
++        for org, expected in ((self.org, 200), (self.other, 403)):
++            obj = OrganizationInvitation(id=uuid.uuid4(), organization=org, role='user',
++                                         email='invited@example.invalid', expires_at=timezone.now()+timezone.timedelta(days=1))
++            with self.resolved(OrganizationInvitationViewSet, obj), patch.object(obj, 'save') as save:
++                response = self.call(OrganizationInvitationViewSet, 'partial_update', self.user('org_admin'), {'message': 'Welcome'}, method='patch', pk=obj.pk)
++            self.assertEqual(response.status_code, expected)
++            self.assertEqual(save.call_count, int(expected == 200))
++
++    def test_membership_foreign_user_and_reparenting_rejected(self):
++        from apps.users.serializers import UserOrganizationSerializer
++        target = self.user()
++        actor = self.user('org_admin')
++        other_user = self.user()
++        other_user.organization = self.other
++        instance = UserOrganization(user=target, organization=self.org, role='user')
++        from rest_framework.exceptions import ValidationError
++        for data in ({'user': other_user}, {'organization': self.other}):
++            with self.assertRaises(ValidationError):
++                UserOrganizationSerializer(instance, context={'request': NS(user=actor)}).validate(data)
++        with self.assertRaises(ValidationError):
++            UserOrganizationSerializer(context={'request': NS(user=actor)}).validate({'user': other_user, 'organization': self.org, 'role': 'user'})
++        with self.assertRaises(ValidationError):
++            UserOrganizationSerializer(context={'request': NS(user=actor)}).validate({'user': self.user(is_staff=True), 'organization': self.org, 'role': 'user'})
++
++    def test_payment_method_create_allow_and_foreign_organization_denied(self):
++        from apps.subscriptions.views import PaymentMethodViewSet
++        from apps.subscriptions.models import PaymentMethod
++        actor = self.user('org_admin')
++        def create(**kwargs):
++            return PaymentMethod(**kwargs)
++        with patch.object(PaymentMethod.objects, 'create', side_effect=create) as saved:
++            response = self.call(PaymentMethodViewSet, 'create', actor, {'type': 'card', 'name': 'Offline'})
++            self.assertEqual(response.status_code, 201)
++            self.assertEqual(saved.call_args.kwargs['organization'], self.org)
++            saved.reset_mock()
++            with patch('django.db.models.query.QuerySet.get', return_value=self.other):
++                response = self.call(PaymentMethodViewSet, 'create', actor, {'type': 'card', 'organization': str(self.other.pk)})
++            self.assertEqual(response.status_code, 400)
++            saved.assert_not_called()
++
++    def test_payment_default_allow_and_cross_tenant_deny(self):
++        from apps.subscriptions.views import PaymentMethodViewSet
++        from apps.subscriptions.models import PaymentMethod
++        for org, expected in ((self.org, 200), (self.other, 403)):
++            obj = PaymentMethod(organization=org, type='card')
++            with self.resolved(PaymentMethodViewSet, obj), patch.object(obj, 'save') as save, \
++                 patch.object(PaymentMethod.objects, 'filter') as filtered:
++                response = self.call(PaymentMethodViewSet, 'set_default', self.user('org_admin'), pk=obj.pk)
++            self.assertEqual(response.status_code, expected)
++            self.assertEqual(save.call_count, int(expected == 200))
++            if expected == 200:
++                filtered.assert_called_with(organization=self.org, is_default=True)
++                filtered.return_value.update.assert_called_once_with(is_default=False)
++            else:
++                filtered.return_value.update.assert_not_called()
++
++    def test_session_revoke_uses_authenticated_jti_and_owner(self):
++        from apps.users.models import UserSession
++        actor = self.user()
++        request = self.factory.post('/offline/', {'current_token_jti': 'trusted'}, format='json')
++        force_authenticate(request, user=actor, token={'jti': 'trusted'})
++        with patch.object(UserSession.objects, 'filter') as sessions:
++            response = UserViewSet.as_view({'post': 'revoke_sessions'})(request)
++        self.assertEqual(response.status_code, 200)
++        sessions.assert_called_once_with(user=actor, is_active=True)
++        sessions.return_value.exclude.assert_called_once_with(token_jti='trusted')
++        sessions.return_value.exclude.return_value.update.assert_called_once_with(is_active=False)
++        with patch.object(UserSession.objects, 'filter') as sessions:
++            response = self.call(UserViewSet, 'revoke_sessions', actor, {'current_token_jti': 'foreign'})
++        self.assertEqual(response.status_code, 400)
++        sessions.assert_not_called()
++
++    def test_organization_settings_effect_allow_and_module_escalation_denied(self):
++        from apps.organizations.views import OrganizationViewSet
++        from apps.organizations.models import OrganizationSettings
++        actor = self.user('org_admin')
++        obj = OrganizationSettings(organization=self.org)
++        with self.resolved(OrganizationViewSet, self.org), \
++             patch.object(OrganizationSettings.objects, 'get_or_create', return_value=(obj, False)), \
++             patch.object(obj, 'save') as save:
++            response = self.call(OrganizationViewSet, 'organization_settings', actor, {'theme': 'light'}, method='patch', pk=self.org.pk)
++            self.assertEqual(response.status_code, 200)
++            self.assertEqual(obj.theme, 'light')
++            save.assert_called_once()
++            save.reset_mock()
++            response = self.call(OrganizationViewSet, 'organization_settings', actor, {'module_sca_enabled': True}, method='patch', pk=self.org.pk)
++            self.assertEqual(response.status_code, 400)
++            save.assert_not_called()
++
++    def test_entitlement_relations_and_exact_product_scopes(self):
++        from apps.products.serializers import OrganizationProductEntitlementSerializer
++        from apps.products.models import OrganizationProductEntitlement, ProductSystem
++        from apps.subscriptions.models import Subscription
++        from rest_framework.exceptions import ValidationError
++        product = ProductSystem(code='ISO_SMART', billing_enabled=False)
++        obj = OrganizationProductEntitlement(organization=self.org, product=product, status='active')
++        for data in ({'organization': self.other}, {'product': ProductSystem(code='MEDSUPPLIER')},
++                     {'subscription': Subscription()}, {'scopes': ['*']},
++                     {'scopes': ['MEDSUPPLIER:medsupplier.suppliercontact:read']}):
++            with self.subTest(data=data), self.assertRaises(ValidationError):
++                OrganizationProductEntitlementSerializer(obj).validate(data)
++        data = {'scopes': ['ISO_SMART:resources.resource:read']}
++        self.assertEqual(OrganizationProductEntitlementSerializer(obj).validate(data), data)
++
++    def test_invoice_subscription_cross_tenant_relation_rejected(self):
++        from apps.subscriptions.serializers import InvoiceDetailSerializer
++        from apps.subscriptions.models import Subscription
++        from rest_framework.exceptions import ValidationError
++        with self.assertRaises(ValidationError):
++            InvoiceDetailSerializer().validate({'organization': self.org, 'subscription': Subscription()})
++
++    def test_catalog_crud_allow_real_serializers_and_effects(self):
++        from apps.subscriptions.models import Plan
++        from apps.subscriptions.views import PlanViewSet
++        from apps.products.models import ProductSystem, ISOStandard
++        from apps.products.views import ProductSystemViewSet, ISOStandardViewSet
++        actor = self.user('superadmin', is_staff=True)
++        for cls, model, payload in (
++            (PlanViewSet, Plan, {'code': 'offline', 'name': 'Offline', 'price': '15.00'}),
++            (ProductSystemViewSet, ProductSystem, {'code': 'OFFLINE', 'name': 'Offline', 'slug': 'offline'}),
++            (ISOStandardViewSet, ISOStandard, {'code': 'ISO-OFFLINE', 'name': 'Offline', 'full_name': 'Offline', 'version': '1'}),
++        ):
++            with self.subTest(model=model.__name__), \
++                 patch('django.db.models.query.QuerySet.exists', return_value=False), \
++                 patch.object(model.objects, 'create', side_effect=lambda **kw: model(**kw)) as create:
++                response = self.call(cls, 'create', actor, payload)
++                self.assertEqual(response.status_code, 201, response.data)
++                create.assert_called_once()
++            obj = model(**payload)
++            for method, action in [('patch', 'partial_update'), ('put', 'update')]:
++                data = {'name': 'Changed'} if method == 'patch' else dict(payload, name='Changed')
++                with self.resolved(cls, obj), patch.object(obj, 'save') as save, \
++                     patch('django.db.models.query.QuerySet.exists', return_value=False):
++                    response = self.call(cls, action, actor, data, method=method, pk=obj.pk)
++                self.assertEqual(response.status_code, 200, response.data)
++                self.assertEqual(obj.name, 'Changed')
++                save.assert_called_once()
++            with self.resolved(cls, obj), patch.object(obj, 'delete') as delete:
++                response = self.call(cls, 'destroy', actor, method='delete', pk=obj.pk)
++            self.assertEqual(response.status_code, 204)
++            delete.assert_called_once()
++
++    def test_module_toggle_allow_audit_and_org_admin_denied(self):
++        from apps.products.models import OrganizationModule, ISOStandard, ModuleActivityLog
++        from apps.products.views import OrganizationModuleViewSet
++        obj = OrganizationModule(organization=self.org, iso_standard=ISOStandard(code='ISO-OFFLINE'))
++        for actor, expected in ((self.user('admin', is_staff=True), 200), (self.user('org_admin'), 403)):
++            with self.resolved(OrganizationModuleViewSet, obj), patch.object(obj, 'disable') as disable, \
++                 patch.object(ModuleActivityLog.objects, 'create') as audit:
++                response = self.call(OrganizationModuleViewSet, 'toggle', actor, {'action': 'disable', 'reason': 'offline'}, pk=obj.pk)
++            self.assertEqual(response.status_code, expected, response.data)
++            self.assertEqual(disable.call_count, int(expected == 200))
++            self.assertEqual(audit.call_count, int(expected == 200))
++
++    def test_entitlement_toggle_allow_audit_and_org_admin_denied(self):
++        from apps.products.models import OrganizationProductEntitlement, ProductSystem, ProductEntitlementAuditLog
++        from apps.products.views import OrganizationProductEntitlementViewSet
++        obj = OrganizationProductEntitlement(organization=self.org, product=ProductSystem(code='ISO_SMART', billing_enabled=False))
++        for actor, expected in ((self.user('admin', is_staff=True), 200), (self.user('org_admin'), 403)):
++            with self.resolved(OrganizationProductEntitlementViewSet, obj), patch.object(obj, 'disable') as disable, \
++                 patch.object(ProductEntitlementAuditLog.objects, 'create') as audit:
++                response = self.call(OrganizationProductEntitlementViewSet, 'toggle', actor, {'action': 'disable', 'reason': 'offline'}, pk=obj.pk)
++            self.assertEqual(response.status_code, expected, response.data)
++            self.assertEqual(disable.call_count, int(expected == 200))
++            self.assertEqual(audit.call_count, int(expected == 200))
++
++    def test_membership_update_allow_preserves_identity(self):
++        from apps.users.views import UserOrganizationViewSet
++        target = self.user()
++        obj = UserOrganization(user=target, organization=self.org, role='viewer')
++        # Stop the fixture membership lookup mock while exercising the target queryset.
++        with self.resolved(UserOrganizationViewSet, obj), patch.object(obj, 'save') as save:
++            response = self.call(UserOrganizationViewSet, 'partial_update', self.user('org_admin'), {'role': 'user'}, method='patch', pk=obj.pk)
++        self.assertEqual(response.status_code, 200, response.data)
++        self.assertEqual(obj.user_id, target.pk)
++        self.assertEqual(obj.role, 'user')
++        save.assert_called_once()
++
++    def test_organization_activate_allow_records_tenant_event(self):
++        from contextlib import nullcontext
++        from apps.organizations.views import OrganizationViewSet
++        self.org.status = 'suspended'
++        with self.resolved(OrganizationViewSet, self.org), patch.object(self.org, 'save') as save, \
++             patch('apps.organizations.views.transaction.atomic', return_value=nullcontext()), \
++             patch.object(Organization.objects, 'select_for_update') as locked, \
++             patch('apps.organizations.tenant_events.record_tenant_event') as event:
++            locked.return_value.get.return_value = self.org
++            actor = self.user('superadmin', is_staff=True)
++            response = self.call(OrganizationViewSet, 'activate', actor, pk=self.org.pk)
++        self.assertEqual(response.status_code, 200)
++        self.assertEqual(self.org.status, 'active')
++        save.assert_called_once()
++        event.assert_called_once_with(self.org, actor_id=actor.pk)
++
++    def test_module_bulk_validates_all_ids_before_effects_and_allows_valid(self):
++        from contextlib import nullcontext
++        from apps.products.models import ISOStandard, OrganizationModule, ModuleActivityLog
++        from apps.products.views import OrganizationModuleViewSet
++        iso = ISOStandard(code='ISO-OFFLINE')
++        def lookup(query, **kw):
++            if query.model is Organization and str(kw['pk']) == str(self.org.pk):
++                return self.org
++            if query.model is ISOStandard and str(kw['pk']) == str(iso.pk):
++                return iso
++            raise query.model.DoesNotExist
++        actor = self.user('admin', is_staff=True)
++        for ids, expected in (([str(iso.pk), str(uuid.uuid4())], 400), ([str(iso.pk)], 200)):
++            module = OrganizationModule(organization=self.org, iso_standard=iso)
++            with patch('django.db.models.query.QuerySet.get', autospec=True, side_effect=lookup), \
++                 patch('apps.products.views.transaction.atomic', return_value=nullcontext()), \
++                 patch.object(OrganizationModule.objects, 'filter') as existing, \
++                 patch.object(OrganizationModule.objects, 'create', return_value=module) as create, \
++                 patch.object(module, 'set_trial') as trial, \
++                 patch.object(ModuleActivityLog.objects, 'create') as audit:
++                existing.return_value.exists.return_value = False
++                response = self.call(OrganizationModuleViewSet, 'bulk_assign', actor, {'organization_id': str(self.org.pk), 'iso_standards': ids})
++            self.assertEqual(response.status_code, expected, response.data)
++            self.assertEqual(create.call_count, int(expected == 200))
++            self.assertEqual(trial.call_count, int(expected == 200))
++            self.assertEqual(audit.call_count, int(expected == 200))
++
++    def test_subscription_queryset_uses_canonical_not_invoice_ownership(self):
++        view = SubscriptionViewSet()
++        view.request = NS(user=self.user())
++        with patch('apps.subscriptions.views.Subscription.objects.all') as all_subs:
++            query = view.get_queryset()
++        all_subs.return_value.filter.assert_called_once_with(organizations=self.org)
++        exclusions = all_subs.return_value.filter.return_value.exclude.call_args.kwargs
++        self.assertIn('organizations__in', exclusions)
++
++    def test_subscription_invoices_do_not_leak_other_tenant(self):
++        from apps.subscriptions.models import Subscription, Invoice
++        obj = Subscription()
++        with self.resolved(SubscriptionViewSet, obj), patch.object(Invoice.objects, 'filter') as invoices:
++            invoices.return_value.select_related.return_value.order_by.return_value.filter.return_value = []
++            response = self.call(SubscriptionViewSet, 'invoices', self.user(), method='get', pk=obj.pk)
++        self.assertEqual(response.status_code, 200)
++        invoices.return_value.select_related.return_value.order_by.return_value.filter.assert_called_once_with(organization_id=self.org.pk)
++
++
++class ServiceDataTests(TestCase):
++    def setUp(self):
++        from apps.integration.models import IntegrationAPIKey
++        self.factory = APIRequestFactory()
++        self.org = Organization(id=uuid.uuid4(), name='Tenant', code='TENANT', status='active', created_at=timezone.now())
++        self.principal = IntegrationAPIKey(id=1, credential_id='a'*32, name='offline', status='active', credential_format='hashed_v1')
++        self.grant = {'operations': ['get_organization', 'get_user_by_id', 'list_organizations', 'get_organization_products', 'validate_organization_product_access'],
++                      'tenant_ids': [str(self.org.pk)], 'product_codes': ['ISO_SMART']}
++
++    def call(self, handler, data=None, **kwargs):
++        from django.test import override_settings
++        from apps.integration import views
++        request = (self.factory.post('/offline/', data, format='json', HTTP_X_API_KEY='synthetic') if data is not None
++                   else self.factory.get('/offline/', HTTP_X_API_KEY='synthetic'))
++        with override_settings(INTEGRATION_API_GRANTS={self.principal.credential_id: self.grant}), \
++             patch.object(views, 'authenticate_integration_api_key', return_value=self.principal), \
++             patch.object(self.principal, 'save'):
++            return handler(request, **kwargs)
++
++    def test_explicit_service_tenant_read_allow(self):
++        from apps.integration import views
++        with patch.object(Organization.objects, 'get', return_value=self.org) as get:
++            response = self.call(views.get_organization, org_id=self.org.pk)
++        self.assertEqual(response.status_code, 200)
++        get.assert_called_once_with(id=self.org.pk, status='active')
++
++    def test_foreign_tenant_and_missing_grants_deny_before_business_query(self):
++        from apps.integration import views
++        for case in ('foreign', 'missing', 'revoked', 'ungranted_operation', 'malformed'):
++            self.principal.is_active = case != 'revoked'
++            self.grant['operations'] = ['get_organization'] if case != 'ungranted_operation' else []
++            self.grant['tenant_ids'] = [] if case == 'missing' else [str(self.org.pk)]
++            if case == 'malformed':
++                self.grant['tenant_ids'] = ['*']
++            tenant = uuid.uuid4() if case == 'foreign' else self.org.pk
++            with patch.object(Organization.objects, 'get') as get:
++                response = self.call(views.get_organization, org_id=tenant)
++            self.assertIn(response.status_code, (400, 403))
++            get.assert_not_called()
++
++    def test_service_list_filters_tenants(self):
++        from apps.integration import views
++        with patch.object(Organization.objects, 'filter', return_value=[self.org]) as filtered:
++            response = self.call(views.list_organizations)
++        self.assertEqual(response.status_code, 200)
++        filtered.assert_called_once_with(status='active', pk__in={str(self.org.pk)})
++
++    def test_service_product_isolation(self):
++        from apps.integration import views
++        with patch.object(Organization.objects, 'get') as get:
++            response = self.call(views.validate_organization_product_access, org_id=self.org.pk, product_code='MEDSUPPLIER')
++        self.assertEqual(response.status_code, 403)
++        get.assert_not_called()
++        with patch.object(Organization.objects, 'get', return_value=self.org), \
++             patch.object(views, '_active_product_entitlements') as entitlements:
++            entitlements.return_value.filter.return_value = []
++            response = self.call(views.get_organization_products, org_id=self.org.pk)
++        self.assertEqual(response.status_code, 200)
++        entitlements.return_value.filter.assert_called_once_with(product__code__in=['ISO_SMART'])
++
++    def test_service_user_lookup_requires_tenant_and_membership(self):
++        from apps.integration import views
++        with patch.object(User.objects, 'get') as get:
++            response = self.call(views.get_user_by_id, {'user_id': str(uuid.uuid4())})
++        self.assertEqual(response.status_code, 400)
++        get.assert_not_called()
++        user = User(email='offline@example.invalid')
++        with patch.object(User.objects, 'get', return_value=user), patch.object(UserOrganization.objects, 'filter') as members:
++            scoped = members.return_value.select_related.return_value.filter.return_value
++            scoped.exists.return_value = False
++            response = self.call(views.get_user_by_id, {'user_id': str(user.pk), 'organization_id': str(self.org.pk)})
++        self.assertEqual(response.status_code, 404)
++
++
++class PlatformBillingTests(TestCase):
++    setUp = ControlPlaneTests.setUp
++    members = ControlPlaneTests.members
++    user = ControlPlaneTests.user
++    call = ControlPlaneTests.call
++    resolved = ControlPlaneTests.resolved
++
++    def test_all_billing_actions_deny_role_only_before_handler(self):
++        from apps.billing import views
++        from apps.users.platform_api_authorization import POLICIES
++        for name, actions in POLICIES.items():
++            cls = getattr(views, name, None)
++            if cls is None:
++                continue
++            for action in actions:
++                with self.subTest(view=name, action=action):
++                    if hasattr(cls, 'get_extra_actions'):
++                        method = ('get' if action in {'list', 'retrieve', 'export_csv', 'compliance_preview', 'mapping_audit'}
++                                  else 'patch' if action == 'partial_update' else 'put' if action == 'update'
++                                  else 'delete' if action == 'destroy' else 'post')
++                        with patch.object(cls, action) as handler:
++                            response = self.call(cls, action, self.user('admin'), method=method)
++                    else:
++                        with patch.object(cls, action) as handler:
++                            request = getattr(self.factory, action)('/offline/', {}, format='json')
++                            force_authenticate(request, user=self.user('admin'))
++                            response = cls.as_view()(request)
++                    self.assertEqual(response.status_code, 403)
++                    handler.assert_not_called()
++
++    def test_billing_catalog_mapping_allow_and_missing_permission_deny(self):
++        from apps.billing.views import ProductCatalogViewSet
++        actor = self.user('admin', is_staff=True)
++        with patch('apps.billing.views.auto_map_product_catalog_candidates', return_value={'items': []}) as service:
++            response = self.call(ProductCatalogViewSet, 'auto_map', actor, {'dry_run': True})
++            self.assertEqual(response.status_code, 200)
++            service.assert_called_once_with(dry_run=True)
++            service.reset_mock()
++            actor.has_perm.side_effect = lambda perm: perm != 'billing.change_productcatalog'
++            response = self.call(ProductCatalogViewSet, 'auto_map', actor, {'dry_run': False})
++            self.assertEqual(response.status_code, 403)
++            service.assert_not_called()
++
++    def test_billing_foreign_subscription_and_price_denied(self):
++        from apps.billing.serializers import IssueInvoiceSerializer
++        from apps.billing.models import ProductCatalog, ProductPrice
++        from apps.subscriptions.models import Subscription
++        from rest_framework.exceptions import ValidationError
++        product = ProductCatalog()
++        price = ProductPrice(product=product)
++        with self.assertRaises(ValidationError):
++            IssueInvoiceSerializer().validate({'organization': self.org, 'product': product, 'product_price': price, 'subscription': Subscription()})
++        price.product = ProductCatalog()
++        with self.assertRaises(ValidationError):
++            IssueInvoiceSerializer().validate({'organization': self.org, 'product': product, 'product_price': price})
++
++    def test_billing_payment_reject_allow_service_effect_and_org_admin_deny(self):
++        from apps.billing.models import PaymentRecord, ElectronicInvoice, ProductCatalog, FiscalProfile
++        from apps.billing.views import PaymentRecordViewSet
++        invoice = ElectronicInvoice(organization=self.org, product=ProductCatalog(), fiscal_profile=FiscalProfile(), invoice_number='OFFLINE')
++        obj = PaymentRecord(organization=self.org, invoice=invoice)
++        for actor, expected in ((self.user('admin', is_staff=True), 200), (self.user('org_admin'), 403)):
++            with self.resolved(PaymentRecordViewSet, obj), \
++                 patch('apps.billing.views.reject_payment_record', return_value=obj) as reject, \
++                 patch('apps.billing.views._create_notification_event') as notify:
++                response = self.call(PaymentRecordViewSet, 'reject', actor, {'notes': 'offline'}, pk=obj.pk)
++            self.assertEqual(response.status_code, expected, response.data)
++            self.assertEqual(reject.call_count, int(expected == 200))
++            self.assertEqual(notify.call_count, int(expected == 200))
++
++    def test_backoffice_readiness_allow_service_and_role_only_deny(self):
++        from apps.api.views import ProductReadinessView
++        for staff, expected in ((True, 200), (False, 403)):
++            request = self.factory.get('/offline/')
++            force_authenticate(request, user=self.user('admin', is_staff=staff))
++            with patch('apps.api.views.build_product_access_readiness_report', return_value={'ok': True}) as service:
++                response = ProductReadinessView.as_view()(request)
++            self.assertEqual(response.status_code, expected)
++            self.assertEqual(service.call_count, int(expected == 200))
++
++    def test_logout_owner_binding_allow_and_foreign_refresh_denied(self):
++        from apps.users.views import LogoutView
++        actor = self.user()
++        for owner, expected in ((str(actor.pk), 200), (str(uuid.uuid4()), 400)):
++            token = MagicMock()
++            token.get.return_value = owner
++            request = self.factory.post('/offline/', {'refresh': 'synthetic'}, format='json')
++            force_authenticate(request, user=actor)
++            with patch('apps.users.services.RefreshToken', return_value=token), \
++                 patch('apps.users.views.log_logout_activity') as log:
++                response = LogoutView.as_view()(request)
++            self.assertEqual(response.status_code, expected)
++            self.assertEqual(token.blacklist.call_count, int(expected == 200))
++            self.assertEqual(log.call_count, int(expected == 200))
++
++    def test_core_mutations_reject_regular_user_before_handler(self):
++        from importlib import import_module
++        from apps.users.api_authorization import POLICIES
++        modules = [import_module('apps.'+name+'.views') for name in ('users', 'organizations', 'products', 'subscriptions')]
++        operations = {'create', 'update', 'partial_update', 'destroy', 'activate', 'deactivate', 'suspend', 'unlock',
++                      'reset_password', 'organization_settings', 'cancel', 'resend', 'toggle', 'bulk_assign', 'set_default', 'mark_paid', 'change_plan'}
++        for name, (_, _, actions) in POLICIES.items():
++            cls = next((getattr(m, name) for m in modules if hasattr(m, name)), None)
++            if cls is None:
++                continue
++            for action in actions & operations:
++                method = 'patch' if action in {'partial_update', 'organization_settings'} else 'put' if action == 'update' else 'delete' if action == 'destroy' else 'post'
++                with self.subTest(view=name, action=action), patch.object(cls, action) as handler:
++                    response = self.call(cls, action, self.user(), method=method)
++                    self.assertEqual(response.status_code, 403)
++                    handler.assert_not_called()
++
++    def test_feature_flags_live_member_allow_and_foreign_id_deny(self):
++        from apps.api.views import FeatureFlagsView
++        from apps.organizations.models import OrganizationFeatureFlag
++        for query, expected in (('', 200), ('?organization_id='+str(self.other.pk), 403)):
++            request = self.factory.get('/offline/'+query)
++            force_authenticate(request, user=self.user())
++            with patch.object(OrganizationFeatureFlag.objects, 'resolve_for_organization', return_value={'test': False}) as flags:
++                response = FeatureFlagsView.as_view()(request)
++            self.assertEqual(response.status_code, expected)
++            self.assertEqual(flags.call_count, int(expected == 200))
++
++    def test_user_create_allow_and_global_role_denied_with_real_serializer(self):
++        actor = self.user('org_admin')
++        data = {'email': 'new@example.invalid', 'first_name': 'New', 'last_name': 'User',
++                'password': 'Synthetic-New-123!', 'password_confirm': 'Synthetic-New-123!', 'role': 'user'}
++        with patch.object(User.objects, 'filter') as existing, patch.object(User, 'save') as save, \
++             patch.object(UserOrganization.objects, 'create') as membership:
++            existing.return_value.first.return_value = None
++            response = self.call(UserViewSet, 'create', actor, data)
++            self.assertEqual(response.status_code, 201, response.data)
++            save.assert_called_once()
++            self.assertEqual(membership.call_args.kwargs['organization'], self.org)
++            self.assertEqual(membership.call_args.kwargs['role'], 'user')
++            save.reset_mock()
++            membership.reset_mock()
++            response = self.call(UserViewSet, 'create', actor, dict(data, role='admin'))
++            self.assertEqual(response.status_code, 400)
++            save.assert_not_called()
++            membership.assert_not_called()
++
++    def test_invitation_create_allow_and_foreign_tenant_deny(self):
++        data = {'email': 'new@example.invalid', 'organization': str(self.org.pk), 'role': 'user'}
++        for org, expected in ((self.org, 201), (self.other, 400)):
++            with patch('django.db.models.query.QuerySet.get', return_value=org), \
++                 patch('django.db.models.query.QuerySet.exists', return_value=False), \
++                 patch.object(OrganizationInvitation.objects, 'create', side_effect=lambda **kw: OrganizationInvitation(**kw)) as create:
++                response = self.call(OrganizationInvitationViewSet, 'create', self.user('org_admin'), dict(data, organization=str(org.pk)))
++            self.assertEqual(response.status_code, expected, response.data)
++            self.assertEqual(create.call_count, int(expected == 201))
++            if expected == 201:
++                self.assertEqual(create.call_args.kwargs['organization'], self.org)
++                self.assertEqual(create.call_args.kwargs['role'], 'user')
++
++    def test_subscription_patch_privileged_fields_only_platform(self):
++        from apps.subscriptions.models import Subscription, Plan
++        obj = Subscription(plan=Plan(), status='active')
++        for actor, expected in ((self.user(), 403), (self.user('admin', is_staff=True), 200)):
++            with self.resolved(SubscriptionViewSet, obj), patch.object(obj, 'save') as save, \
++                 patch('apps.subscriptions.serializers.SubscriptionDetailSerializer._get_organization', return_value=self.org):
++                response = self.call(SubscriptionViewSet, 'partial_update', actor, {'discount_percent': '10.00'}, method='patch', pk=obj.pk)
++            self.assertEqual(response.status_code, expected, response.data)
++            self.assertEqual(save.call_count, int(expected == 200))
++
++    def test_malformed_plan_id_does_not_reach_save(self):
++        obj = NS(save=Mock())
++        with patch.object(SubscriptionViewSet, 'get_object', return_value=obj):
++            response = self.call(SubscriptionViewSet, 'change_plan', self.user('admin', is_staff=True), {'plan_id': 'invalid'})
++        self.assertEqual(response.status_code, 400)
++        obj.save.assert_not_called()
++
++    def test_plan_detail_read_allows_human_without_tenant(self):
++        from apps.subscriptions.models import Plan
++        from apps.subscriptions.views import PlanViewSet
++        plan = Plan(code='read-only', name='Readable', price='15.00', is_active=True)
++        actor = self.user()
++        actor.organization = None
++        with self.resolved(PlanViewSet, plan):
++            response = self.call(PlanViewSet, 'retrieve', actor, method='get', pk=plan.pk)
++        self.assertEqual(response.status_code, 200, response.data)
++        self.assertEqual(response.data['code'], 'read-only')
++
++    def test_plan_read_queryset_keeps_inactive_catalog_hidden(self):
++        from apps.subscriptions.models import Plan
++        from apps.subscriptions.views import PlanViewSet
++        view = PlanViewSet()
++        view.request = NS(user=self.user())
++        with patch.object(Plan.objects, 'all') as plans:
++            view.get_queryset()
++        plans.return_value.filter.assert_called_once_with(is_active=True)
+--- /dev/null
++++ after/backend/apps/integration/api_authorization.py
+@@ -0,0 +1,54 @@
++"""Explicit grants for legacy service data APIs; independent of SSO client trust.
++
++INTEGRATION_API_GRANTS is server-owned configuration keyed by credential_id, with
++operations (exact handler names), tenant_ids and product_codes. Empty/missing
++configuration denies. No name, global user role or SSOClient creates a grant.
++"""
++from functools import wraps
++import json
++import uuid
++
++from django.conf import settings
++from django.http import JsonResponse
++from .models import IntegrationAPIKey
++from .authorization_contract import CATALOG
++
++
++def service_data_access(view):
++    @wraps(view)
++    def wrapped(request, *args, **kwargs):
++        principal = getattr(request, 'integration_principal', None)
++        grants = getattr(settings, 'INTEGRATION_API_GRANTS', {})
++        grant = grants.get(getattr(principal, 'credential_id', None), {}) if isinstance(grants, dict) else {}
++        operations = grant.get('operations', []) if isinstance(grant, dict) else []
++        tenants = grant.get('tenant_ids', []) if isinstance(grant, dict) else []
++        products = grant.get('product_codes', []) if isinstance(grant, dict) else []
++        if (not isinstance(principal, IntegrationAPIKey) or not principal.is_active
++                or principal.status != 'active' or principal.credential_format != 'hashed_v1'
++                or not principal.credential_id or not isinstance(operations, list)
++                or view.__name__ not in operations or not isinstance(tenants, list)
++                or not tenants or not isinstance(products, list)):
++            return JsonResponse({'code': 'service_operation_denied'}, status=403)
++        try:
++            tenant_ids = {str(uuid.UUID(str(value))) for value in tenants}
++            tenant = kwargs.get('org_id')
++            if view.__name__ == 'get_user_by_id':
++                payload = json.loads(request.body)
++                tenant = payload.get('organization_id') if isinstance(payload, dict) else None
++                if not tenant:
++                    raise ValueError()
++                uuid.UUID(str(payload.get('user_id')))
++            if tenant is not None and str(uuid.UUID(str(tenant))) not in tenant_ids:
++                return JsonResponse({'code': 'service_tenant_denied'}, status=403)
++        except (ValueError, TypeError, AttributeError):
++            return JsonResponse({'code': 'invalid_service_tenant'}, status=400)
++        if view.__name__ in {'get_organization_products', 'validate_organization_product_access'}:
++            if not products or any(not isinstance(code, str) or code not in CATALOG for code in products):
++                return JsonResponse({'code': 'service_product_denied'}, status=403)
++            product = kwargs.get('product_code')
++            if product and product.upper() not in products:
++                return JsonResponse({'code': 'service_product_denied'}, status=403)
++        request.authorized_tenant_ids = tenant_ids
++        request.authorized_product_codes = products
++        return view(request, *args, **kwargs)
++    return wrapped
+--- /dev/null
++++ after/backend/apps/users/api_authorization.py
+@@ -0,0 +1,184 @@
++"""Local control-plane boundary, additional to each endpoint's existing policy.
++
++Platform authority requires a live human User, staff admission, the existing role,
++and a Django permission for the precise model operation. Organization authority
++requires a live primary-tenant membership. Neither grants consumer-product scopes.
++"""
++from collections.abc import Mapping
++
++from rest_framework.exceptions import PermissionDenied, ValidationError
++from rest_framework.permissions import SAFE_METHODS
++from .models import User, UserOrganization
++
++
++# Explicit action catalog: new handlers do not inherit administrative authority.
++POLICIES = {
++    'FeatureFlagsView': ('organizations.organizationfeatureflag', 'tenant_read', {'get'}),
++    'PlanViewSet': ('subscriptions.plan', 'catalog', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'featured', 'compare'}),
++    'ProductSystemViewSet': ('products.productsystem', 'platform', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'active'}),
++    'ISOStandardViewSet': ('products.isostandard', 'platform', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'active', 'organizations'}),
++    'OrganizationProductEntitlementViewSet': ('products.organizationproductentitlement', 'platform', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'toggle', 'by_organization', 'audit_logs'}),
++    'OrganizationModuleViewSet': ('products.organizationmodule', 'platform', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'toggle', 'by_organization', 'bulk_assign'}),
++    'ProductEntitlementAuditLogViewSet': ('products.productentitlementauditlog', 'platform', {'list', 'retrieve'}),
++    'ModuleActivityLogViewSet': ('products.moduleactivitylog', 'platform', {'list', 'retrieve'}),
++    'SubscriptionViewSet': ('subscriptions.subscription', 'tenant_read', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'activate', 'cancel', 'change_plan', 'stats', 'invoices'}),
++    'InvoiceViewSet': ('subscriptions.invoice', 'tenant_read', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'mark_paid', 'download'}),
++    'PaymentMethodViewSet': ('subscriptions.paymentmethod', 'tenant_admin', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'set_default'}),
++    'OrganizationViewSet': ('organizations.organization', 'tenant_read', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'organization_settings', 'stats', 'users', 'activate', 'suspend'}),
++    'OrganizationInvitationViewSet': ('organizations.organizationinvitation', 'tenant_admin', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'resend', 'cancel', 'accept'}),
++    'UserViewSet': ('users.user', 'tenant_users', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy', 'activate', 'deactivate', 'unlock', 'reset_password', 'me', 'change_password', 'sessions', 'revoke_sessions', 'activity'}),
++    'UserOrganizationViewSet': ('users.userorganization', 'tenant_admin', {'list', 'retrieve', 'create', 'update', 'partial_update', 'destroy'}),
++    'UserActivityLogViewSet': ('users.useractivitylog', 'tenant_admin', {'list', 'retrieve'}),
++    'UserNotificationViewSet': ('users.useractivitylog', 'tenant_read', {'list', 'unread_count', 'mark_read', 'mark_all_read'}),
++}
++SELF_ACTIONS = {'me', 'change_password', 'sessions', 'revoke_sessions', 'activity'}
++
++ACTION_INPUTS = {
++    'activate': set(), 'deactivate': set(), 'unlock': set(), 'suspend': set(),
++    'cancel': set(), 'resend': set(), 'set_default': set(),
++    'change_plan': {'plan_id'}, 'mark_paid': {'payment_reference'},
++    'reset_password': {'new_password'}, 'revoke_sessions': {'current_token_jti'},
++    'toggle': {'action', 'reason', 'trial_days'},
++    'bulk_assign': {'organization_id', 'iso_standards', 'status'},
++    'mark_read': {'notification_id'}, 'mark_all_read': set(),
++}
++
++
++def require_human(request):
++    user = request.user
++    # Check the authenticated principal, never a role/tenant supplied in a payload.
++    auth = getattr(request, 'auth', None)
++    claims = getattr(auth, 'payload', auth)
++    if (not isinstance(user, User) or not user.is_active or not user.is_authenticated
++            or getattr(request, 'integration_service', None)
++            or request.headers.get('X-API-Key')):
++        raise PermissionDenied('Se requiere una sesión humana local activa.')
++    if isinstance(claims, Mapping) and (
++        claims.get('principal_type', 'human') != 'human'
++        or claims.get('token_family') == 'CENTRAL'
++        or claims.get('client_id') or claims.get('product')
++    ):
++        raise PermissionDenied('La credencial no autoriza el control plane humano.')
++    return user
++
++
++def platform_actor(user):
++    return bool(user.is_active and user.is_staff and user.is_admin)
++
++
++def may_manage_user(actor, target):
++    if getattr(target, 'is_superuser', False) and not actor.is_superuser:
++        return False
++    if getattr(target, 'is_staff', False) and not actor.is_superuser:
++        return False
++    if getattr(target, 'role', None) == 'superadmin' and not actor.is_superadmin:
++        return False
++    if getattr(target, 'role', None) == 'admin' and not actor.is_admin:
++        return False
++    return True
++
++
++def reject_reparenting(instance, attrs, fields):
++    if instance is None:
++        return
++    for field in fields:
++        if field in attrs:
++            value = attrs[field]
++            new_id = getattr(value, 'pk', value)
++            old_id = getattr(instance, field + '_id', None)
++            if str(new_id) != str(old_id):
++                raise ValidationError({field: 'No se puede reasignar esta relación.'})
++
++
++class StrictInputMixin:
++    """Reject ignored inputs explicitly instead of silently accepting privilege probes."""
++    def to_internal_value(self, data):
++        if isinstance(data, Mapping):
++            writable = {name for name, field in self.fields.items() if not field.read_only}
++            invalid = set(data) - writable
++            if invalid:
++                raise ValidationError({name: 'Campo no modificable.' for name in sorted(invalid)})
++        return super().to_internal_value(data)
++
++
++class ControlPlaneMixin:
++    def check_permissions(self, request):
++        name = type(self).__name__
++        policy = POLICIES.get(name)
++        action = getattr(self, 'action', request.method.lower())
++        if not policy or action not in policy[2]:
++            raise PermissionDenied('Operación sin política de autorización.')
++        # Token preview retains its existing public contract; it grants no session.
++        if name == 'OrganizationInvitationViewSet' and action == 'accept':
++            super().check_permissions(request)
++            return
++        user = require_human(request)
++        super().check_permissions(request)
++        if request.method not in SAFE_METHODS and action in ACTION_INPUTS:
++            if not isinstance(request.data, Mapping) or set(request.data) - ACTION_INPUTS[action]:
++                raise ValidationError('Campos no admitidos para esta operación.')
++        write = request.method not in SAFE_METHODS
++        if name == 'UserViewSet' and action in SELF_ACTIONS:
++            return
++        if name == 'UserNotificationViewSet':
++            write = False  # only the caller's read markers are changed
++        if user.is_admin:
++            if not platform_actor(user):
++                raise PermissionDenied('El rol global requiere admisión de plataforma.')
++            model = policy[0]
++            if name == 'OrganizationViewSet' and action == 'organization_settings':
++                model = 'organizations.organizationsettings'
++            app, resource = model.split('.')
++            operation = ('view' if not write else 'add' if action in {'create', 'bulk_assign'}
++                         else 'delete' if action == 'destroy' else 'change')
++            if not user.has_perm(f'{app}.{operation}_{resource}'):
++                raise PermissionDenied('Falta permiso para esta operación de plataforma.')
++            return
++        if policy[1] == 'platform' or (policy[1] == 'catalog' and write):
++            raise PermissionDenied('Se requiere administración de plataforma.')
++        if policy[1] == 'catalog':
++            return
++        if policy[1] == 'tenant_read' and write and not (
++            name == 'OrganizationViewSet' and action == 'organization_settings'
++        ):
++            raise PermissionDenied('Esta mutación requiere administración de plataforma.')
++        if name == 'SubscriptionViewSet' and action == 'stats':
++            raise PermissionDenied('Las estadísticas globales requieren plataforma.')
++        if not user.organization_id:
++            raise PermissionDenied('Se requiere una organización vigente.')
++        members = UserOrganization.objects.filter(
++            user=user, organization_id=user.organization_id, is_active=True,
++            organization__status='active',
++        )
++        if write or policy[1] == 'tenant_admin':
++            members = members.filter(role='org_admin')
++        if not members.exists():
++            raise PermissionDenied('Membresía o autoridad de organización insuficiente.')
++
++    def check_object_permissions(self, request, obj):
++        super().check_object_permissions(request, obj)
++        user = request.user
++        # Plans are a global catalog, not tenant-owned objects. Their read
++        # visibility is still constrained by PlanViewSet.get_queryset().
++        catalog_read = (
++            type(self).__name__ == 'PlanViewSet'
++            and request.method in SAFE_METHODS
++            and obj._meta.label_lower == 'subscriptions.plan'
++        )
++        if not platform_actor(user) and not catalog_read:
++            org_id = obj.pk if obj._meta.label_lower == 'organizations.organization' else getattr(obj, 'organization_id', None)
++            # Subscription has no tenant owner; its queryset uses the canonical link
++            # and rejects ambiguous shared subscriptions.
++            if obj._meta.label_lower != 'subscriptions.subscription' and (
++                not org_id or str(org_id) != str(user.organization_id)
++            ):
++                raise PermissionDenied('Objeto fuera de la organización autorizada.')
++        if request.method not in SAFE_METHODS:
++            target = obj if isinstance(obj, User) else getattr(obj, 'user', None)
++            if target is not None and not may_manage_user(user, target):
++                raise PermissionDenied('No puedes administrar un principal de mayor autoridad.')
++            role = getattr(obj, 'role', None)
++            if role == 'superadmin' and not user.is_superadmin:
++                raise PermissionDenied('Objeto reservado a superadministradores.')
++            if role == 'admin' and not user.is_admin:
++                raise PermissionDenied('Objeto reservado a administradores de plataforma.')
+--- /dev/null
++++ after/backend/apps/users/platform_api_authorization.py
+@@ -0,0 +1,67 @@
++"""Additional platform admission for billing/backoffice APIs.
++
++Existing financial services and governance decisions are not replaced by these
++HTTP authorization checks. Each custom action is explicitly mapped to its model
++operations. Unknown actions fail closed.
++"""
++from rest_framework.exceptions import PermissionDenied
++from .api_authorization import platform_actor, require_human
++
++
++def crud(model, *, readonly=False):
++    app, name = model.split('.')
++    result = {action: (f'{app}.view_{name}',) for action in ('list', 'retrieve')}
++    if not readonly:
++        result.update({action: (f'{app}.{verb}_{name}',) for action, verb in (
++            ('create', 'add'), ('update', 'change'), ('partial_update', 'change'), ('destroy', 'delete'))})
++    return result
++
++
++ISSUE = ('billing.add_electronicinvoice', 'billing.add_paymentrecord', 'billing.add_revenuesnapshot')
++PAY = ('billing.change_electronicinvoice', 'billing.add_paymentrecord', 'billing.change_paymentrecord', 'billing.add_revenuesnapshot')
++BILLING_READ = ('billing.view_electronicinvoice', 'billing.view_paymentrecord',
++                'billing.view_revenuesnapshot', 'billing.view_productcatalog', 'subscriptions.view_subscription')
++POLICIES = {
++    'FiscalProfileViewSet': crud('billing.fiscalprofile'),
++    'ProductCatalogViewSet': dict(crud('billing.productcatalog'), mapping_audit=('billing.view_productcatalog',), auto_map=('billing.change_productcatalog', 'products.view_productsystem')),
++    'ProductPriceViewSet': crud('billing.productprice'),
++    'ElectronicInvoiceViewSet': dict(crud('billing.electronicinvoice', readonly=True),
++        export_csv=('billing.view_electronicinvoice',), compliance_preview=('billing.view_electronicinvoice',),
++        recalculate=('billing.change_electronicinvoice',), issue=ISSUE, issue_from_subscription=ISSUE,
++        run_cycle=ISSUE, run_batch=ISSUE, mark_paid=PAY,
++        prepare_hacienda=('billing.change_electronicinvoice',), update_hacienda_status=('billing.change_electronicinvoice',),
++        generate_xml=('billing.change_electronicinvoice',), credit_note=ISSUE),
++    'PaymentRecordViewSet': dict(crud('billing.paymentrecord', readonly=True),
++        register_pending=('billing.add_paymentrecord', 'billing.view_electronicinvoice'), confirm=PAY,
++        reject=('billing.change_paymentrecord',)),
++    'RevenueSnapshotViewSet': crud('billing.revenuesnapshot', readonly=True),
++    'RecurringReportScheduleViewSet': dict(crud('billing.recurringreportschedule'),
++        run_now=('billing.change_recurringreportschedule',) + BILLING_READ,
++        run_due=('billing.change_recurringreportschedule',) + BILLING_READ),
++    'BillingSummaryView': {'get': BILLING_READ},
++    'AIUsageDashboardView': {'get': ('integration.view_aiusageprojection',)},
++    'RevenueByProductView': {'get': BILLING_READ},
++    'RevenueByOrganizationView': {'get': BILLING_READ},
++    'RevenueTimelineView': {'get': BILLING_READ},
++    'AccountsReceivableView': {'get': BILLING_READ},
++    'SchedulerStatusView': {'get': ('billing.view_schedulerjoblog',), 'post': ISSUE + ('billing.add_schedulerjoblog',)},
++    'BillingChurnAnalyticsView': {'get': BILLING_READ},
++    'BillingReconciliationView': {'get': BILLING_READ, 'post': PAY},
++    'ProductDashboardView': {'get': BILLING_READ + ('products.view_productsystem',)},
++    'BillingAlertsView': {'get': BILLING_READ},
++    'DashboardView': {'get': BILLING_READ + ('organizations.view_organization', 'users.view_user', 'users.view_useractivitylog', 'products.view_organizationmodule', 'products.view_organizationproductentitlement')},
++    'SystemStatsView': {'get': ('organizations.view_organization', 'users.view_user', 'products.view_isostandard', 'products.view_organizationmodule')},
++    'ProductReadinessView': {'get': ('organizations.view_organization', 'products.view_productsystem', 'products.view_organizationproductentitlement')},
++    'QuickActionsView': {'get': ('organizations.view_organization', 'products.view_organizationmodule')},
++    'LandingAnalyticsSummaryView': {'get': ('integration.view_landinganalyticsevent',)},
++}
++
++
++class PlatformOperationMixin:
++    def check_permissions(self, request):
++        user = require_human(request)
++        super().check_permissions(request)
++        action = getattr(self, 'action', request.method.lower())
++        required = POLICIES.get(type(self).__name__, {}).get(action)
++        if not platform_actor(user) or not required or not all(user.has_perm(p) for p in required):
++            raise PermissionDenied('Autoridad de plataforma insuficiente para esta operación.')
+--- /dev/null
++++ after/backend/scripts/rec_sso_03d_api_inventory.py
+@@ -0,0 +1,70 @@
++"""Resolver inventory using the API P0 synthetic harness. Never connects to DB/network."""
++import csv
++import inspect
++import json
++from pathlib import Path
++import re
++import sys
++from types import SimpleNamespace
++
++import rec_sso_03d_api_p0_offline as harness
++from django.urls import URLResolver, get_resolver
++from apps.users.api_authorization import POLICIES, ControlPlaneMixin
++from apps.users.platform_api_authorization import POLICIES as PLATFORM, PlatformOperationMixin
++
++rows = []
++
++def walk(patterns, prefix=''):
++    for pattern in patterns:
++        route = prefix + str(pattern.pattern)
++        if isinstance(pattern, URLResolver):
++            walk(pattern.url_patterns, route)
++            continue
++        if not route.startswith('api/'):
++            continue
++        cb = pattern.callback
++        cls = getattr(cb, 'cls', None) or getattr(cb, 'view_class', None)
++        if cls:
++            actions = getattr(cb, 'actions', None)
++            if actions:
++                methods = dict(actions)
++                if 'get' in methods:
++                    methods['head'] = methods['get']
++                methods['options'] = 'metadata'
++            else:
++                methods = {m: m for m in cls.http_method_names if hasattr(cls, m)}
++            for method, action in methods.items():
++                view = cls(**getattr(cb, 'initkwargs', {}))
++                view.action = action
++                view.request = SimpleNamespace(method=method.upper())
++                permissions = '|'.join(type(p).__name__ for p in view.get_permissions())
++                guard = ('ControlPlaneMixin' if issubclass(cls, ControlPlaneMixin) else
++                         'PlatformOperationMixin' if issubclass(cls, PlatformOperationMixin) else 'EXISTING_REVIEWED')
++                policy = POLICIES.get(cls.__name__) or PLATFORM.get(cls.__name__)
++                rows.append(dict(route=route, method=method.upper(), handler=cls.__module__+'.'+cls.__name__, action=action,
++                                 effective_permissions=permissions, additional_boundary=guard, policy=repr(policy),
++                                 functional_status='SEE_AUTHORIZATION_DELTA_NOT_GLOBAL_PASS'))
++        else:
++            source = inspect.getsource(cb)
++            match = re.search(r'require_http_methods\((\[[^]]+\])\)', source)
++            import ast
++            methods = ast.literal_eval(match.group(1)) if match else ['UNDECLARED']
++            boundary = ('service_data_access' if '@service_data_access' in source else
++                        'require_client + Decision A/B/C/H/D' if '@require_client' in source else
++                        'require_api_key (existing)' if '@require_api_key' in source else 'manual/decorators')
++            for method in methods:
++                rows.append(dict(route=route, method=method, handler=cb.__module__+'.'+cb.__name__, action=cb.__name__,
++                                 effective_permissions='decorator/manual; see boundary', additional_boundary=boundary,
++                                 policy='server-side exact operation/tenant/product grant' if boundary=='service_data_access' else 'existing reviewed; residuals in REPORT',
++                                 functional_status='SEE_AUTHORIZATION_DELTA_NOT_GLOBAL_PASS'))
++
++walk(get_resolver().url_patterns)
++out = Path(sys.argv[1]);out.mkdir(parents=True, exist_ok=True)
++with (out/'endpoint-inventory.csv').open('w') as f:
++    writer = csv.DictWriter(f, fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
++summary = {'resolver_api_entries':len(rows), 'distinct_routes':len({r['route'] for r in rows}),
++           'unique_handler_actions':len({(r['handler'],r['action']) for r in rows}),
++           'database_attempts':harness.db_guard.call_count, 'network_attempts':sum(g.call_count for g in harness.guards)}
++(out/'inventory-summary.json').write_text(json.dumps(summary,indent=2))
++print(json.dumps(summary))
++assert summary['database_attempts']==summary['network_attempts']==0
+--- /dev/null
++++ after/backend/scripts/rec_sso_03d_api_p0_offline.py
+@@ -0,0 +1,55 @@
++"""API P0 dispatch/serializer probes. No project settings, DB, migrations or network."""
++import json
++from pathlib import Path
++import socket
++import sys
++import unittest
++from unittest.mock import patch
++
++sys.dont_write_bytecode = True
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++guards = [patch(target, side_effect=AssertionError('Network forbidden')).start() for target in (
++    'socket.socket.connect', 'socket.socket.connect_ex', 'socket.create_connection', 'socket.getaddrinfo')]
++from django.conf import settings
++settings.configure(
++    SECRET_KEY='offline-api-p0-synthetic-only', USE_TZ=True, ROOT_URLCONF='config.urls',
++    AUTH_USER_MODEL='users.User', ALLOWED_HOSTS=['testserver'], BILLING_SCHEDULER_ENABLED=False,
++    INSTALLED_APPS=['django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes',
++                    'django.contrib.sessions', 'django.contrib.messages', 'rest_framework',
++                    'django_filters', 'apps.users', 'apps.organizations', 'apps.subscriptions',
++                    'apps.products', 'apps.integration', 'apps.billing', 'apps.api',
++                    'rest_framework_simplejwt.token_blacklist'],
++    DATABASES={'default': {'ENGINE': 'django.db.backends.dummy'}},
++    CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}},
++    REST_FRAMEWORK={'DEFAULT_AUTHENTICATION_CLASSES': [
++        'rest_framework_simplejwt.authentication.JWTAuthentication',
++        'rest_framework.authentication.SessionAuthentication']},
++    PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'],
++    MIDDLEWARE=['django.contrib.sessions.middleware.SessionMiddleware',
++                'django.contrib.auth.middleware.AuthenticationMiddleware',
++                'django.contrib.messages.middleware.MessageMiddleware'],
++    TEMPLATES=[{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'APP_DIRS': True,
++                'OPTIONS': {'context_processors': ['django.template.context_processors.request',
++                    'django.contrib.auth.context_processors.auth',
++                    'django.contrib.messages.context_processors.messages']}}],
++    LOGGING_CONFIG=None,
++)
++from django.db.backends.base.base import BaseDatabaseWrapper
++db_guard = patch.object(BaseDatabaseWrapper, 'connect', side_effect=AssertionError('Database forbidden')).start()
++import django
++django.setup()
++
++if __name__ == '__main__':
++    if '--check' in sys.argv:
++        from django.core.management import call_command
++        call_command('check')
++        result = None
++    else:
++        labels = sys.argv[1:] or ['apps.api.test_control_plane']
++        suite = unittest.defaultTestLoader.loadTestsFromNames(labels)
++        result = unittest.TextTestRunner(verbosity=2).run(suite)
++    summary = dict(tests=result.testsRun if result else 0,
++                   failures=len(result.failures) if result else 0, errors=len(result.errors) if result else 0,
++                   database_attempts=db_guard.call_count, network_attempts=sum(g.call_count for g in guards))
++    print(json.dumps(summary))
++    sys.exit(bool(summary['failures'] or summary['errors'] or summary['database_attempts'] or summary['network_attempts']))

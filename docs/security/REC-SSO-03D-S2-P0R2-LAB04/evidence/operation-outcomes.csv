@@ -1,0 +1,122 @@
+suite,case,http_or_sqlstate,classification
+organizations.json,create tenant identity,201,ALLOW
+organizations.json,read organization,200,ALLOW
+organizations.json,authorized rename,200,ALLOW
+organizations.json,settings preferences,200,ALLOW
+organizations.json,settings cross tenant,404,DENY_TENANT_SCOPE
+organizations.json,settings platform field,400,DENY_VALIDATION
+organizations.json,tenant quota held,403,DENY_GOVERNANCE
+organizations.json,tenant trial held,400,DENY_GOVERNANCE
+organizations.json,no physical deletion,405,DENY_RETENTION_POLICY
+organizations.json,suspend,200,ALLOW
+organizations.json,suspended membership,403,DENY_AUTHORIZATION
+organizations.json,reactivate existing contract,200,ALLOW
+organizations.json,invite create,201,ALLOW
+organizations.json,invitation preview,200,ALLOW
+organizations.json,invite foreign,400,DENY_VALIDATION
+organizations.json,invite role escalation,400,DENY_VALIDATION
+organizations.json,invitation reparent,400,DENY_VALIDATION
+organizations.json,viewer cannot invite,403,DENY_AUTHORIZATION
+organizations.json,staff cannot invite,403,DENY_AUTHORIZATION
+organizations.json,technical credential rejected,403,DENY_AUTHORIZATION
+organizations.json,cancel create,201,ALLOW
+organizations.json,cancel,200,ALLOW
+organizations.json,cancelled preview denied,400,DENY_VALIDATION
+organizations.json,membership deactivation,200,ALLOW
+organizations.json,membership reparent denied,400,DENY_VALIDATION
+organizations.json,member physical deletion denied,405,DENY_RETENTION_POLICY
+organizations.json,user physical deletion denied,405,DENY_RETENTION_POLICY
+organizations.json,create membership,201,ALLOW
+organizations.json,audit and tenant event rollback,,PASS_TRANSACTION_INVARIANT
+organizations.json,withdraw inviter membership,200,ALLOW
+organizations.json,revoked invitation authority,400,DENY_VALIDATION
+organizations.json,restore inviter membership,200,ALLOW
+catalog.json,inactive catalog plan,201,ALLOW
+catalog.json,plan update,200,ALLOW
+catalog.json,plan commercial pricing held,403,DENY_GOVERNANCE
+catalog.json,plan quota held,403,DENY_GOVERNANCE
+catalog.json,plan trial held,403,DENY_GOVERNANCE
+catalog.json,plan activation held,403,DENY_GOVERNANCE
+catalog.json,plan platform role insufficient,403,DENY_AUTHORIZATION
+catalog.json,tenant cannot see inactive plan,404,DENY_TENANT_SCOPE
+catalog.json,product create,201,ALLOW
+catalog.json,separate product,201,ALLOW
+catalog.json,product metadata update,200,ALLOW
+catalog.json,product identity immutable,403,DENY_AUTHORIZATION
+catalog.json,product billing held,403,DENY_GOVERNANCE
+catalog.json,unknown field rejected,400,DENY_VALIDATION
+catalog.json,viewer product catalog denied,403,DENY_AUTHORIZATION
+catalog.json,platform catalog read,200,ALLOW
+catalog.json,trial default held,403,DENY_GOVERNANCE
+catalog.json,entitlement create,201,ALLOW
+catalog.json,foreign product scope,400,DENY_VALIDATION
+catalog.json,tenant reparent rejected,400,DENY_VALIDATION
+catalog.json,product reparent rejected,400,DENY_VALIDATION
+catalog.json,trial toggle held,403,DENY_GOVERNANCE
+catalog.json,entitlement disable,200,ALLOW
+catalog.json,entitlement enable explicit,200,ALLOW
+catalog.json,tenant cannot control entitlements,403,DENY_AUTHORIZATION
+catalog.json,entitlement audit,200,ALLOW
+catalog.json,entitlement and audit rollback,,PASS_TRANSACTION_INVARIANT
+catalog.json,standard create,201,ALLOW
+catalog.json,module assignment,201,ALLOW
+catalog.json,module disable,200,ALLOW
+catalog.json,module trial held,403,DENY_GOVERNANCE
+catalog.json,module foreign relation rejected,400,DENY_VALIDATION
+catalog.json,product deactivation,200,ALLOW
+catalog.json,invoice authorized read,200,ALLOW
+catalog.json,invoice write held,403,DENY_GOVERNANCE
+catalog.json,subscription write held,403,DENY_GOVERNANCE
+catalog.json,payment write held,403,DENY_GOVERNANCE
+admin.json,root login,302,ALLOW
+admin.json,root index,200,ALLOW
+admin.json,users.user changelist,200,ALLOW
+admin.json,users.userorganization changelist,200,ALLOW
+admin.json,users.usersession changelist,200,ALLOW
+admin.json,users.useractivitylog changelist,200,ALLOW
+admin.json,organizations.organization changelist,200,ALLOW
+admin.json,organizations.organizationsettings changelist,200,ALLOW
+admin.json,organizations.organizationinvitation changelist,200,ALLOW
+admin.json,organizations.organizationfeatureflag changelist,200,ALLOW
+admin.json,products.productsystem changelist,200,ALLOW
+admin.json,products.organizationproductentitlement changelist,200,ALLOW
+admin.json,products.productentitlementauditlog changelist,200,ALLOW
+admin.json,products.isostandard changelist,200,ALLOW
+admin.json,products.organizationmodule changelist,200,ALLOW
+admin.json,products.moduleactivitylog changelist,200,ALLOW
+admin.json,subscriptions.plan changelist,200,ALLOW
+admin.json,subscriptions.subscription changelist,200,ALLOW
+admin.json,subscriptions.invoice changelist,200,ALLOW
+admin.json,subscriptions.paymentmethod changelist,200,ALLOW
+admin.json,platform login,302,ALLOW
+admin.json,platform index,200,ALLOW
+admin.json,tenant_admin login,302,ALLOW
+admin.json,tenant index,200,ALLOW
+admin.json,tenant users scoped,200,ALLOW
+admin.json,staff login,302,ALLOW
+admin.json,staff no admission,302,DENY_AUTHORIZATION_OR_SCOPE
+admin.json,viewer login,200,DENY_AUTHENTICATION
+admin.json,viewer no admission,302,DENY_AUTHORIZATION_OR_SCOPE
+admin.json,disabled login,200,DENY_AUTHENTICATION
+admin.json,disabled no admission,302,DENY_AUTHORIZATION_OR_SCOPE
+admin.json,technical credential denied,403,DENY_AUTHORIZATION
+admin.json,bearer cannot substitute admin cookie,403,DENY_AUTHORIZATION
+admin.json,tenant foreign target hidden,302,DENY_AUTHORIZATION_OR_SCOPE
+admin.json,platform protected target hidden,302,DENY_AUTHORIZATION_OR_SCOPE
+admin.json,legitimate form,200,ALLOW
+admin.json,CSRF missing,403,DENY_AUTHORIZATION
+admin.json,legitimate user write,302,ALLOW
+admin.json,admin mutation and log rollback,,PASS_TRANSACTION_INVARIANT
+admin.json,privilege payload rejected,403,DENY_AUTHORIZATION
+admin.json,delete retained,403,DENY_AUTHORIZATION
+admin.json,password bypass denied,403,DENY_AUTHORIZATION
+admin.json,higher membership authority denied,403,DENY_AUTHORIZATION
+admin.json,tenant settings form,200,ALLOW
+admin.json,tenant settings write,302,ALLOW
+admin.json,disabled existing cookie,302,DENY_AUTHORIZATION_OR_SCOPE
+admin.json,revoked bearer plus valid cookie denied,403,DENY_AUTHORIZATION
+central-business.json,"tenant, Decision B, fence and both outboxes rollback",,PASS_TRANSACTION_INVARIANT
+central-business.json,tenant suspension revokes B,200,ALLOW
+central-business.json,human session remains separate,200,ALLOW
+central-business.json,reactivate tenant,200,ALLOW
+central-business.json,CP cannot resurrect central authority,P0001,DENY_SQL_POLICY

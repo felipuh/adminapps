@@ -1,0 +1,180 @@
+{
+  "runners": [
+    {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "methods": [
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g01_no_early_jwt_and_challenge_contract",
+      "method": "test_2fa_g01_no_early_jwt_and_challenge_contract",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 401,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g01_no_early_jwt_and_challenge_contract",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g02_no_premature_persistence_attempt",
+      "method": "test_2fa_g02_no_premature_persistence_attempt",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 437,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g02_no_premature_persistence_attempt",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g03_standard_login_contract_and_single_emission",
+      "method": "test_2fa_g03_standard_login_contract_and_single_emission",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 444,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g03_standard_login_contract_and_single_emission",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g04_custom_claims_and_extension_hook",
+      "method": "test_2fa_g04_custom_claims_and_extension_hook",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 478,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g04_custom_claims_and_extension_hook",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g05_invalid_credentials",
+      "method": "test_2fa_g05_invalid_credentials",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 499,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g05_invalid_credentials",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g06_inactive_user",
+      "method": "test_2fa_g06_inactive_user",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 506,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g06_inactive_user",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g07_generated_challenge_completes_totp_and_backup_login",
+      "method": "test_2fa_g07_generated_challenge_completes_totp_and_backup_login",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 517,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g07_generated_challenge_completes_totp_and_backup_login",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g08_emission_failures_are_sanitized_without_partial_success",
+      "method": "test_2fa_g08_emission_failures_are_sanitized_without_partial_success",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 535,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g08_emission_failures_are_sanitized_without_partial_success",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g09_configured_authentication_rule_is_preserved",
+      "method": "test_2fa_g09_configured_authentication_rule_is_preserved",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 588,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g09_configured_authentication_rule_is_preserved",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g09_locked_and_expired_password_gates",
+      "method": "test_2fa_g09_locked_and_expired_password_gates",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 561,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g09_locked_and_expired_password_gates",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g09_temporary_password_warning_and_optional_last_login",
+      "method": "test_2fa_g09_temporary_password_warning_and_optional_last_login",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 574,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g09_temporary_password_warning_and_optional_last_login",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.JWTIssuanceGateTests.test_2fa_g09_two_fa_lookup_error_cannot_bypass_gate",
+      "method": "test_2fa_g09_two_fa_lookup_error_cannot_bypass_gate",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 593,
+      "qualname": "JWTIssuanceGateTests.test_2fa_g09_two_fa_lookup_error_cannot_bypass_gate",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b01_success_returns_signed_jwt_pair",
+      "method": "test_2fa_b01_success_returns_signed_jwt_pair",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 182,
+      "qualname": "TwoFactorContractTests.test_2fa_b01_success_returns_signed_jwt_pair",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b02_view_requires_second_factor_before_issuance",
+      "method": "test_2fa_b02_view_requires_second_factor_before_issuance",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 203,
+      "qualname": "TwoFactorContractTests.test_2fa_b02_view_requires_second_factor_before_issuance",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b03_wrong_otp_does_not_issue",
+      "method": "test_2fa_b03_wrong_otp_does_not_issue",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 224,
+      "qualname": "TwoFactorContractTests.test_2fa_b03_wrong_otp_does_not_issue",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b04_expired_challenge_is_rejected",
+      "method": "test_2fa_b04_expired_challenge_is_rejected",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 234,
+      "qualname": "TwoFactorContractTests.test_2fa_b04_expired_challenge_is_rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b05_signature_scope_purpose_and_identity_are_checked",
+      "method": "test_2fa_b05_signature_scope_purpose_and_identity_are_checked",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 242,
+      "qualname": "TwoFactorContractTests.test_2fa_b05_signature_scope_purpose_and_identity_are_checked",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b06_inactive_user_never_receives_jwt",
+      "method": "test_2fa_b06_inactive_user_never_receives_jwt",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 255,
+      "qualname": "TwoFactorContractTests.test_2fa_b06_inactive_user_never_receives_jwt",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b07_frontend_response_and_route_contract",
+      "method": "test_2fa_b07_frontend_response_and_route_contract",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 264,
+      "qualname": "TwoFactorContractTests.test_2fa_b07_frontend_response_and_route_contract",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b08_issuance_failure_has_no_partial_success",
+      "method": "test_2fa_b08_issuance_failure_has_no_partial_success",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 295,
+      "qualname": "TwoFactorContractTests.test_2fa_b08_issuance_failure_has_no_partial_success",
+      "status": "PASS"
+    },
+    {
+      "id": "__main__.TwoFactorContractTests.test_2fa_b09_existing_attempt_and_backup_reuse_controls",
+      "method": "test_2fa_b09_existing_attempt_and_backup_reuse_controls",
+      "source": "/home/felipe/proyectos/adminapps/backend/apps/users/tests_2fa_contract.py",
+      "line": 330,
+      "qualname": "TwoFactorContractTests.test_2fa_b09_existing_attempt_and_backup_reuse_controls",
+      "status": "PASS"
+    }
+  ]
+}

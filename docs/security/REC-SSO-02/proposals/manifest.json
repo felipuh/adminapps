@@ -1,0 +1,70 @@
+[
+  {
+    "proposal": "A-legacy-deny-2fa.patch",
+    "target": "backend/apps/integration/views.py",
+    "target_sha256": "333459137cbc21e7b5519b27c6c2fa8aa46275cdf6821075ffa83339087515dd",
+    "candidate_syntax": "PASS",
+    "applied": false,
+    "runtime_tests": "NOT_TESTED"
+  },
+  {
+    "proposal": "B-reject-stale-role.patch",
+    "target": "backend/apps/integration/sso_views.py",
+    "target_sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+    "candidate_syntax": "PASS",
+    "applied": false,
+    "runtime_tests": "NOT_TESTED"
+  },
+  {
+    "proposal": "C-register-client-audience.patch",
+    "target": "backend/apps/integration/sso_views.py",
+    "target_sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+    "candidate_syntax": "PASS",
+    "applied": false,
+    "runtime_tests": "NOT_TESTED"
+  },
+  {
+    "proposal": "D-role-product-scopes.patch",
+    "target": "backend/apps/integration/sso_views.py",
+    "target_sha256": "934ecebbe0766c411a04515ae3caafef01497dd89c8cdaeba485f0bf9d1e87b6",
+    "candidate_syntax": "PASS",
+    "applied": false,
+    "runtime_tests": "NOT_TESTED"
+  },
+  {
+    "proposal": "E-trial-subscription-model.patch",
+    "target": "backend/apps/products/models.py",
+    "target_sha256": "ba4ec3e07de9740fb23e7e38b0117245014dc07ea379daa39f26764a9d946193",
+    "candidate_syntax": "PASS",
+    "applied": false,
+    "runtime_tests": "NOT_TESTED"
+  },
+  {
+    "proposal": "E-trial-subscription-serializers.patch",
+    "target": "backend/apps/products/serializers.py",
+    "target_sha256": "0a866337d5e6103bae629d558bbdc88655d5bfbea1ae78716249ec845517fc3c",
+    "candidate_syntax": "PASS",
+    "applied": false,
+    "runtime_tests": "NOT_TESTED"
+  },
+  {
+    "proposal": "F-entitlement-start.patch",
+    "target": "backend/apps/products/models.py",
+    "target_sha256": "ba4ec3e07de9740fb23e7e38b0117245014dc07ea379daa39f26764a9d946193",
+    "candidate_syntax": "PASS",
+    "applied": false,
+    "runtime_tests": "NOT_TESTED"
+  },
+  {
+    "proposal": "G-subscription-binding-contract.patch",
+    "target": "docs/security/contracts/G-proposed.md",
+    "kind": "contract-only; implementation BLOCKED",
+    "applied": false
+  },
+  {
+    "proposal": "H-integration-key-scope-contract.patch",
+    "target": "docs/security/contracts/H-proposed.md",
+    "kind": "contract-only; implementation BLOCKED",
+    "applied": false
+  }
+]

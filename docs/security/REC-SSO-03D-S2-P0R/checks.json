@@ -1,0 +1,40 @@
+{
+  "adminapps": {
+    "compiled": [
+      "backend/apps/api/test_p0r.py",
+      "backend/apps/integration/api_authorization.py",
+      "backend/apps/integration/session_lifecycle.py",
+      "backend/apps/integration/views.py",
+      "backend/apps/organizations/invitation_authority.py",
+      "backend/apps/organizations/views.py",
+      "backend/apps/users/api_authorization.py",
+      "backend/apps/users/serializers.py",
+      "backend/apps/users/services.py",
+      "backend/apps/users/views.py",
+      "backend/scripts/rec_sso_03d_p0r_sessions_offline.py"
+    ],
+    "diff_check_exit": 0,
+    "diff_check_output": "",
+    "tools": "{\"ruff\": false, \"flake8\": false, \"pylint\": false, \"pytest\": false}"
+  },
+  "isosmart": {
+    "compiled": [
+      "backend/integration/client.py"
+    ],
+    "diff_check_exit": 0,
+    "diff_check_output": "",
+    "tools": "{\"ruff\": false, \"flake8\": false, \"pylint\": false, \"pytest\": false}"
+  },
+  "ISO_Smart_MedSupplier": {
+    "compiled": [
+      "backend/integration/client.py"
+    ],
+    "diff_check_exit": 0,
+    "diff_check_output": "",
+    "tools": "{\"ruff\": false, \"flake8\": false, \"pylint\": false, \"pytest\": false}"
+  },
+  "system_linter_paths": {
+    "exit": 1,
+    "output": ""
+  }
+}

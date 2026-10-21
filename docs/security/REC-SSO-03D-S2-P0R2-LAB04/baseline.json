@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-21",
+  "repositories": {
+    "adminapps": {
+      "branch": "checkpoint/rec-git-03-adminapps-20261020",
+      "head": "ef71fdac1aff8d653e2b17a36753c96d39b3e65e",
+      "remote_sha": "ef71fdac1aff8d653e2b17a36753c96d39b3e65e",
+      "clean": true
+    },
+    "isosmart": {
+      "branch": "checkpoint/rec-git-03-isosmart-20261020",
+      "head": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+      "clean": true
+    },
+    "ISO_Smart_MedSupplier": {
+      "branch": "checkpoint/rec-git-03-medsupplier-20261020",
+      "head": "5bfcddc94e0ad5b8f0fe3e7449ba83b66ebc2bca",
+      "clean": true
+    }
+  },
+  "publication_blocker": "Reachable history tracks backend/.env with nonempty signing keys and local dependencies; original history will not be pushed. Reviewed incremental overlay delivered on an independent root."
+}

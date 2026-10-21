@@ -1,0 +1,87 @@
+{
+  "adminapps": {
+    "head": "b144b2505659ad39f756b9bc4530a7f24fe8c3ad",
+    "head_preserved": true,
+    "index_sha256": "183cd78b6013f56801465bf8aeb9dd31f746a5bd43389003fcf4383d1e584da3",
+    "index_preserved": true,
+    "changed_preexisting": [
+      "backend/apps/api/views.py",
+      "backend/apps/billing/serializers.py",
+      "backend/apps/billing/views.py",
+      "backend/apps/integration/views.py",
+      "backend/apps/organizations/serializers.py",
+      "backend/apps/organizations/views.py",
+      "backend/apps/products/serializers.py",
+      "backend/apps/products/views.py",
+      "backend/apps/subscriptions/serializers.py",
+      "backend/apps/subscriptions/views.py",
+      "backend/apps/users/serializers.py",
+      "backend/apps/users/services.py",
+      "backend/apps/users/views.py"
+    ],
+    "deleted_preexisting": [],
+    "added": [
+      "backend/apps/api/test_control_plane.py",
+      "backend/apps/integration/api_authorization.py",
+      "backend/apps/users/api_authorization.py",
+      "backend/apps/users/platform_api_authorization.py",
+      "backend/scripts/rec_sso_03d_api_inventory.py",
+      "backend/scripts/rec_sso_03d_api_p0_offline.py",
+      "docs/security/REC-SSO-03D-S2-API-P0/REPORT.md",
+      "docs/security/REC-SSO-03D-S2-API-P0/api-p0-only-20261016.patch",
+      "docs/security/REC-SSO-03D-S2-API-P0/api-p0-only.patch",
+      "docs/security/REC-SSO-03D-S2-API-P0/authorization-delta-20261016.csv",
+      "docs/security/REC-SSO-03D-S2-API-P0/authorization-delta.csv",
+      "docs/security/REC-SSO-03D-S2-API-P0/endpoint-inventory.csv",
+      "docs/security/REC-SSO-03D-S2-API-P0/evidence-summary-20261016.json",
+      "docs/security/REC-SSO-03D-S2-API-P0/evidence-summary.json",
+      "docs/security/REC-SSO-03D-S2-API-P0/inherited-REPORT.md",
+      "docs/security/REC-SSO-03D-S2-API-P0/inherited-authorization-delta.csv",
+      "docs/security/REC-SSO-03D-S2-API-P0/inherited-authorization-matrix-inherited.csv",
+      "docs/security/REC-SSO-03D-S2-API-P0/inherited-test-matrix.csv",
+      "docs/security/REC-SSO-03D-S2-API-P0/integrity-final-20261016.json",
+      "docs/security/REC-SSO-03D-S2-API-P0/integrity-final.json",
+      "docs/security/REC-SSO-03D-S2-API-P0/inventory-summary.json",
+      "docs/security/REC-SSO-03D-S2-API-P0/resolver-reconciliation.json",
+      "docs/security/REC-SSO-03D-S2-API-P0/test-matrix-20261016.csv",
+      "docs/security/REC-SSO-03D-S2-API-P0/test-matrix.csv"
+    ],
+    "diff_check": 0,
+    "critical_historical_files_unchanged": true,
+    "nonregular_excluded_from_hash_comparison": [
+      "backend/.venv/lib64",
+      "backend/venv_admin/lib64"
+    ],
+    "status_unchanged": false
+  },
+  "isosmart": {
+    "head": "0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e",
+    "head_preserved": true,
+    "index_sha256": "e6def75069870dc31a434d379b14abe9cc7d3cfcdbaa111eb8616af4d435245d",
+    "index_preserved": true,
+    "changed_preexisting": [],
+    "deleted_preexisting": [],
+    "added": [],
+    "diff_check": 0,
+    "critical_historical_files_unchanged": true,
+    "nonregular_excluded_from_hash_comparison": [
+      "backend/.venv/lib64"
+    ],
+    "status_unchanged": true
+  },
+  "ISO_Smart_MedSupplier": {
+    "head": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f",
+    "head_preserved": true,
+    "index_sha256": "cfd4a1341fa59cb5c51acc3c7180121b27aafa392d8027d878f975792d455165",
+    "index_preserved": true,
+    "changed_preexisting": [],
+    "deleted_preexisting": [],
+    "added": [],
+    "diff_check": 0,
+    "critical_historical_files_unchanged": true,
+    "nonregular_excluded_from_hash_comparison": [
+      "backend/.venv/lib64"
+    ],
+    "status_unchanged": true
+  }
+}

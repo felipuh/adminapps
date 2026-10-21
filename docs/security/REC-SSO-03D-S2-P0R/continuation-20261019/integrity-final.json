@@ -1,0 +1,118 @@
+{
+  "adminapps": {
+    "head": "b144b2505659ad39f756b9bc4530a7f24fe8c3ad",
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "changed_preexisting_files": [
+      "backend/apps/subscriptions/serializers.py",
+      "backend/apps/subscriptions/views.py"
+    ],
+    "deleted_preexisting_files": [],
+    "new_files": [
+      "backend/apps/api/test_p0r_continuation.py",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/CONTRACT.md",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/REPORT.md",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/admin-a.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/admin-b.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/admin-ch.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/admin-d.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/admin-mfa.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/api-p0.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/authorization-delta.csv",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/baseline-summary.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/build_evidence.py",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/build_report.py",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/code-hashes.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/continuation-only.patch",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/continuation.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/frontend-checks.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/functional-coverage.csv",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/historical-api-admin.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/historical-reconciliation.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/iso-b.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/iso-ch.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/iso-d.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/iso-d_session.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/iso-decision_a.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/med-b.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/med-ch.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/med-d.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/med-d_session.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/med-decision_a.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/p0r-continuation.openapi.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/p0r-sessions.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/p0r.methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/run_all.py",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/run_final_checks.py",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/run_suite.py",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/runs.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/session-authority.csv",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/snapshot.py",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/test-matrix.csv",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/test-summary.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/tool-availability.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/unique-methods.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/integrity-final.json",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/changed-files.csv",
+      "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/SHA256SUMS"
+    ],
+    "tracked_directory_symlinks": [
+      {
+        "path": "backend/.venv/lib64",
+        "target_matches_unchanged_index": true
+      },
+      {
+        "path": "backend/venv_admin/lib64",
+        "target_matches_unchanged_index": true
+      }
+    ],
+    "diff_check_exit": 0,
+    "diff_check_output": ""
+  },
+  "isosmart": {
+    "head": "0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e",
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "changed_preexisting_files": [
+      "backend/integration/client.py"
+    ],
+    "deleted_preexisting_files": [],
+    "new_files": [
+      "docs/transformation/REC_SSO_03D_S2_P0R_SERVICE_GRANTS_CONTINUATION_2026-10-19.md"
+    ],
+    "tracked_directory_symlinks": [
+      {
+        "path": "backend/.venv/lib64",
+        "target_matches_unchanged_index": true
+      }
+    ],
+    "diff_check_exit": 0,
+    "diff_check_output": ""
+  },
+  "ISO_Smart_MedSupplier": {
+    "head": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f",
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "changed_preexisting_files": [
+      "backend/integration/client.py"
+    ],
+    "deleted_preexisting_files": [],
+    "new_files": [
+      "docs/security/REC_SSO_03D_S2_P0R_SERVICE_GRANTS_CONTINUATION_2026-10-19.md"
+    ],
+    "tracked_directory_symlinks": [
+      {
+        "path": "backend/.venv/lib64",
+        "target_matches_unchanged_index": true
+      }
+    ],
+    "diff_check_exit": 0,
+    "diff_check_output": ""
+  },
+  "preceding_evidence_seal": {
+    "exit": 0,
+    "checked": 90,
+    "failures": [],
+    "stderr": ""
+  }
+}

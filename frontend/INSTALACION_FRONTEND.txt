@@ -1,0 +1,137 @@
+================================================================================
+    INSTALACIÓN FRONTEND - ADMIN APPS
+    Puerto: 3000 | PM2: adminapps-frontend
+================================================================================
+
+================================================================================
+PASO 1: SUBIR ARCHIVOS AL SERVIDOR
+================================================================================
+
+# Descomprimir el ZIP del frontend en:
+/home/aplicacion/projects/adminapps/frontend/
+
+# Estructura esperada:
+/home/aplicacion/projects/adminapps/frontend/
+├── public/
+│   └── favicon.svg
+├── src/
+│   ├── components/
+│   │   └── Layout.jsx
+│   ├── context/
+│   │   └── AuthContext.jsx
+│   ├── pages/
+│   │   ├── Login.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── Organizations.jsx
+│   │   ├── OrganizationDetail.jsx
+│   │   ├── ISOModules.jsx
+│   │   ├── ModuleAssignments.jsx
+│   │   └── ActivityLogs.jsx
+│   ├── services/
+│   │   └── api.js
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── index.html
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.js
+└── ecosystem.config.js
+
+================================================================================
+PASO 2: INSTALAR DEPENDENCIAS
+================================================================================
+
+cd /home/aplicacion/projects/adminapps/frontend
+
+# Instalar Node.js dependencies
+npm install
+
+================================================================================
+PASO 3: CREAR DIRECTORIOS DE LOGS
+================================================================================
+
+mkdir -p /home/aplicacion/projects/adminapps/frontend/logs
+
+================================================================================
+PASO 4: INICIAR CON PM2
+================================================================================
+
+# Iniciar en modo desarrollo
+pm2 start ecosystem.config.js
+
+# Guardar configuración de PM2
+pm2 save
+
+# Ver estado
+pm2 list
+
+# Ver logs
+pm2 logs adminapps-frontend
+
+================================================================================
+PASO 5: VERIFICAR FUNCIONAMIENTO
+================================================================================
+
+# Verificar puerto
+ss -tlnp | grep 3000
+
+# Probar en navegador
+# http://192.168.100.100:3000 (directo)
+# http://adminapps.isosmart.local (vía Nginx - requiere /etc/hosts)
+
+================================================================================
+PASO 6: CONFIGURAR /etc/hosts (OPCIONAL - DESARROLLO LOCAL)
+================================================================================
+
+# En tu máquina local (no el servidor), agregar a /etc/hosts:
+192.168.100.100 adminapps.isosmart.local
+192.168.100.100 isosmart.local
+192.168.100.100 landing.isosmart.local
+
+================================================================================
+COMANDOS ÚTILES PM2
+================================================================================
+
+# Ver estado
+pm2 status
+
+# Reiniciar
+pm2 restart adminapps-frontend
+
+# Ver logs en tiempo real
+pm2 logs adminapps-frontend --lines 100
+
+# Detener
+pm2 stop adminapps-frontend
+
+# Eliminar del PM2
+pm2 delete adminapps-frontend
+
+# Guardar configuración actual
+pm2 save
+
+================================================================================
+RESUMEN DE SERVICIOS ADMIN APPS
+================================================================================
+
+| Componente | Puerto | Proceso          | Comando Reinicio                    |
+|------------|--------|------------------|-------------------------------------|
+| Backend    | 8000   | gunicorn-adminapps| sudo systemctl restart gunicorn-adminapps |
+| Frontend   | 3000   | adminapps-frontend| pm2 restart adminapps-frontend      |
+
+================================================================================
+CREDENCIALES DE ACCESO
+================================================================================
+
+Usar el superusuario creado en Django:
+- Email: (el que configuraste con createsuperuser)
+- Password: (el que configuraste)
+
+Para crear un superusuario si no lo has hecho:
+cd /home/aplicacion/projects/adminapps/backend
+source venv_admin/bin/activate
+python manage.py createsuperuser
+
+================================================================================

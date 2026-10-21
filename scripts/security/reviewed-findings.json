@@ -1,0 +1,1808 @@
+[
+  {
+    "path": "docs/STAGING_TARGET_SMOKE_RUNBOOK_2026-07-08.md",
+    "sha256": "4daece4bf12d943c9e191879073e0e8f15b9208783612e3953973265183b19ab",
+    "rule": "curl-auth-header",
+    "line": 81,
+    "reason": "Deliberately invalid API key in negative-test command"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 317,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 321,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 406,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 523,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 525,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 554,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 579,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 639,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 687,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1635,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1672,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1673,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1674,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1675,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1676,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1677,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1678,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 1900,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 2101,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 2119,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 2121,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 2122,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 2123,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 3058,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 4144,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 4192,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 4589,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 4699,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 4704,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 4706,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 4738,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5307,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5393,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5394,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5452,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5469,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5540,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5730,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5756,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5871,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5872,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5891,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 5972,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6031,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6135,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6145,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6146,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6147,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6149,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6160,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6164,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6226,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6227,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6261,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6338,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6357,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6435,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6436,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6437,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6458,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6471,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6557,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6595,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6603,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6643,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6691,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6692,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6850,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 6996,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7014,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7041,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7055,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7056,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7171,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7329,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7330,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7332,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7381,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7462,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7811,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7900,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7901,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7916,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7922,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7925,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 7926,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8014,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8017,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8035,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8052,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8065,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8069,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8152,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/source-manifest.json",
+    "sha256": "2cbc13faec66dd9e46b0ccb2422ac1e900c0bcce806828a236a946fe62ecde0b",
+    "rule": "generic-api-key",
+    "line": 7,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/ARTIFACT_SHA256.json",
+    "sha256": "ce40029d7e854954ebeec27da3b397a29fe3b020d9391868e12acd32cbf10e71",
+    "rule": "generic-api-key",
+    "line": 40,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/ARTIFACT_SHA256.json",
+    "sha256": "ce40029d7e854954ebeec27da3b397a29fe3b020d9391868e12acd32cbf10e71",
+    "rule": "generic-api-key",
+    "line": 41,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-API-P0/code-hashes.json",
+    "sha256": "7505ba25a2047810cfc5e304824daf80c4b848aa124c55afdecdf10aa720a2d4",
+    "rule": "generic-api-key",
+    "line": 24,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-API-P0/code-hashes.json",
+    "sha256": "7505ba25a2047810cfc5e304824daf80c4b848aa124c55afdecdf10aa720a2d4",
+    "rule": "generic-api-key",
+    "line": 25,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8211,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8213,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8216,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8222,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8225,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8413,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8419,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8617,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8654,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8657,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8658,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8664,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8698,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8725,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8789,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/financial/ADMINAPPS_AI_FINANCIAL_AUTHORITY_SECURITY_AMENDMENT_02_2026-10-09.md",
+    "sha256": "e03022a6ca4da9eeb9022b50972d30ff6628fa5a5ab9614ba3e21d6a5af9ef79",
+    "rule": "generic-api-key",
+    "line": 211,
+    "reason": "Prose punctuation interpreted as key"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8926,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 8943,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/isosmart.decision-a.patch",
+    "sha256": "1907133cbc16130ee3f9cfb2b4f3260491648e294d29b292cc96b8b7d974f169",
+    "rule": "generic-api-key",
+    "line": 1465,
+    "reason": "Python keyword argument, not credential value"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 5,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 8,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 9,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 11,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 13,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 16,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 17,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 18,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 21,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 24,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 26,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 29,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/code-hashes.json",
+    "sha256": "8dc41cfe0911e1374832fd8a693084ddf5d3c7faaa9d5286e99e84659011e07a",
+    "rule": "generic-api-key",
+    "line": 30,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03A-IMPLEMENTATION/ISO_Smart_MedSupplier.decision-a.patch",
+    "sha256": "b2232345819d9fc5b67935aa7a1b1d09c2375df5e56c3f827303ca538efc53e7",
+    "rule": "generic-api-key",
+    "line": 1465,
+    "reason": "Python keyword argument, not credential value"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R/inherited-code-hashes.json",
+    "sha256": "7505ba25a2047810cfc5e304824daf80c4b848aa124c55afdecdf10aa720a2d4",
+    "rule": "generic-api-key",
+    "line": 24,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R/inherited-code-hashes.json",
+    "sha256": "7505ba25a2047810cfc5e304824daf80c4b848aa124c55afdecdf10aa720a2d4",
+    "rule": "generic-api-key",
+    "line": 25,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/B-correction.json",
+    "sha256": "a2351b6d952df9d5a54bd7404f26da9d5bab8fd7afe9d1df4b0aaffc2820e6aa",
+    "rule": "generic-api-key",
+    "line": 301,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/B-correction.json",
+    "sha256": "a2351b6d952df9d5a54bd7404f26da9d5bab8fd7afe9d1df4b0aaffc2820e6aa",
+    "rule": "generic-api-key",
+    "line": 312,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/final-source-hashes.json",
+    "sha256": "056847c484f9296a2e386505abd1b223ee1ef180a2dcf087dbd51783499ead4b",
+    "rule": "generic-api-key",
+    "line": 36,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/E.json",
+    "sha256": "f6db079c074c19964b9d97fe8b9bb9db21fd213a5c55dfdd9f03567202ad77c7",
+    "rule": "generic-api-key",
+    "line": 349,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/E.json",
+    "sha256": "f6db079c074c19964b9d97fe8b9bb9db21fd213a5c55dfdd9f03567202ad77c7",
+    "rule": "generic-api-key",
+    "line": 357,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/E.json",
+    "sha256": "f6db079c074c19964b9d97fe8b9bb9db21fd213a5c55dfdd9f03567202ad77c7",
+    "rule": "generic-api-key",
+    "line": 1162,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/E.json",
+    "sha256": "f6db079c074c19964b9d97fe8b9bb9db21fd213a5c55dfdd9f03567202ad77c7",
+    "rule": "generic-api-key",
+    "line": 1173,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/C.json",
+    "sha256": "6b6873e35a1f318841fdff01541953064c2d9ebb559d78fc42b303b076a65e70",
+    "rule": "generic-api-key",
+    "line": 532,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/C.json",
+    "sha256": "6b6873e35a1f318841fdff01541953064c2d9ebb559d78fc42b303b076a65e70",
+    "rule": "generic-api-key",
+    "line": 543,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/D.json",
+    "sha256": "51607adfc6a10ddeff6c42cc80b8e2c155703050d6eae2f7a4ed4fb984671fd3",
+    "rule": "generic-api-key",
+    "line": 399,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/D.json",
+    "sha256": "51607adfc6a10ddeff6c42cc80b8e2c155703050d6eae2f7a4ed4fb984671fd3",
+    "rule": "generic-api-key",
+    "line": 410,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R/continuation-20261019/run_all.py",
+    "sha256": "45efa4555ba02b94c906203d20e0c81b55a04cab1642d44996812fb7b41a8f73",
+    "rule": "generic-api-key",
+    "line": 13,
+    "reason": "Test script filename, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/A.json",
+    "sha256": "7cfed730eba74f34965eb8860215dc5eae421589dc482b8b47026b05670b981d",
+    "rule": "generic-api-key",
+    "line": 338,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/A.json",
+    "sha256": "7cfed730eba74f34965eb8860215dc5eae421589dc482b8b47026b05670b981d",
+    "rule": "generic-api-key",
+    "line": 349,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/B.json",
+    "sha256": "ad576ca82fbe5220c8676f725f6556dde310d622d395de562b5e428d6a170a95",
+    "rule": "generic-api-key",
+    "line": 315,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/B.json",
+    "sha256": "ad576ca82fbe5220c8676f725f6556dde310d622d395de562b5e428d6a170a95",
+    "rule": "generic-api-key",
+    "line": 326,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 9059,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 9190,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 9215,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 9275,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 9323,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10252,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10289,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10290,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10291,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10292,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10293,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10294,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10295,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10517,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10718,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10736,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10738,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10739,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 10740,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 11675,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 12761,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 12809,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13113,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13114,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13115,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13136,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13149,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13237,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13275,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13283,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13320,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13461,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13605,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13622,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13649,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13663,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13664,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13779,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13828,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13864,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 13878,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14446,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14524,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14525,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14540,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14546,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14549,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14637,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14640,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14658,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14675,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14686,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14690,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14772,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14831,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14833,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14836,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14842,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 14845,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15076,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15097,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15337,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15343,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15435,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15499,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15507,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15512,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15516,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15517,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-SSO-02/evidence/baseline-files.json",
+    "sha256": "48fd9996b3baca8d025c408834c9c567431bd02e0077198db8d3bea130ce9290",
+    "rule": "generic-api-key",
+    "line": 15518,
+    "reason": "Checksum/integrity evidence, not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 88,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 129,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 132,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 133,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 139,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 183,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 212,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 214,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 217,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 286,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 304,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 305,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 330,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 425,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 426,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 437,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 438,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 440,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 443,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 447,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 448,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 450,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 471,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 477,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 486,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 516,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 520,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 539,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 550,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 563,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 579,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 599,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 656,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 664,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 669,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 673,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 674,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  },
+  {
+    "path": "docs/security/REC-GIT-SEC-01/snapshot-manifest.json",
+    "sha256": "42ff502a36dd694a02a3a86fb7d230ea3a4a5267d5f97442cc41d9a9217eab52",
+    "rule": "generic-api-key",
+    "line": 675,
+    "reason": "Verified SHA256 of copied source file; not a credential"
+  }
+]
