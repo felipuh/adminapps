@@ -1,6 +1,6 @@
 {
-  "development_commit": "ef4919cb34a965ce8b8b564c03db419edbb091ea",
-  "objective": "LAB04-E",
+  "development_commit": "047d5868c13402030d1cd01f68b9bc1ca309e57b",
+  "objective": "LAB04-report",
   "files": {
     "backend/apps/organizations/serializers.py": "e466d7ab08748dd65df76214094c1aaa5213bbce47442d392c39acd3ff28ac1f",
     "backend/apps/organizations/views.py": "e38e6db38b6c8cab84946ac13084927460965b6400ff2c2d7d92286ee61af72f",
@@ -39,7 +39,8 @@
     "backend/scripts/provision_runtime_profiles.sql": "8f5651cca51f227eef4f75cf741b097c44f94163806b9a6c70a1a1e30a1fceca",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/ARCHITECTURE.md": "2e14bc71993bcfdf36fb4cc3a0357917c46231e513dd0aff40faf5edcf85863e",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/DELIVERY.md": "e33917018b7eaf5d344cafb7b5a463edd4c1542b5c2dd0a973fa41172148b5b5",
-    "docs/security/REC-SSO-03D-S2-P0R2-LAB04/GIT-LEDGER.json": "bd7802cdf14c92dfcc805ac0bf2b33dcbfbeb9c7d8a29912f5dcf9d0393f5a2a",
+    "docs/security/REC-SSO-03D-S2-P0R2-LAB04/GIT-LEDGER.json": "13eccfbf9ce93dfcd5603a9908f7d104a2f9765a6088f0626bb740a1b5697fcc",
+    "docs/security/REC-SSO-03D-S2-P0R2-LAB04/REPORT.md": "ec6a8abc1e2bac265d329c7bef4f8c9bc61a5ef7816f6ba05e3cabe083a8917c",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/baseline.json": "ce3d2161c5f8f6fe7b79933eeda5d138fe2532286c24f44b877970f2747294f2",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/A-source-hashes.json": "5aa9ed366551852addb1ce8ebddc7ba65c3e3632c5985212a73765fa47658fc9",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/A.json": "7cfed730eba74f34965eb8860215dc5eae421589dc482b8b47026b05670b981d",
@@ -50,6 +51,7 @@
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/E.json": "f6db079c074c19964b9d97fe8b9bb9db21fd213a5c55dfdd9f03567202ad77c7",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/final-source-hashes.json": "056847c484f9296a2e386505abd1b223ee1ef180a2dcf087dbd51783499ead4b",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/offline.json": "7d51db8a643f20e5d1f1d379ab01e025be40890e5ada40ae83fec707543d6206",
+    "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/operation-outcomes.csv": "127692eed702de02258b6a829bdd6ae3e4889867d79b9d4f3b6634fff68b732c",
     "docs/security/REC-SSO-03D-S2-P0R2-LAB04/evidence/privileges.csv": "aa10169698af12a89ddb035f5b0e7b8e4fe14decd2db96d0b52f4967ab192dfd"
   }
 }
