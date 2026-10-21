@@ -5,11 +5,14 @@ from django.db import connection
 from django.contrib.auth.models import Permission
 from apps.users.models import User, UserOrganization
 from apps.organizations.models import Organization, OrganizationSettings
+from apps.products.models import ProductSystem
 
 with connection.cursor() as cursor:
     cursor.execute('SELECT current_user')
     assert cursor.fetchone()[0] == 'lab04_maintenance'
 fixtures = {}
+# Synthetic non-billing fixtures for the seeded product identities, never live data.
+ProductSystem.objects.filter(code='ISO_SMART').update(billing_enabled=False)
 for key in ('tenant', 'foreign'):
     org = Organization.objects.create(code='LAB04-' + key, name=key, email=key + '@example.invalid', status='active')
     OrganizationSettings.objects.create(organization=org)

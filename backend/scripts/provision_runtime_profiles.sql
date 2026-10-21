@@ -139,6 +139,9 @@ BEGIN
   IF profile = 'control_plane' THEN
     EXECUTE format('GRANT SELECT, INSERT, UPDATE ON public.organizations, public.organization_settings, public.organization_invitations TO %I',runtime_name);
     EXECUTE format('GRANT SELECT, INSERT ON public.tenant_integration_outbox TO %I',runtime_name);
+    EXECUTE format('GRANT SELECT, INSERT, UPDATE ON public.product_systems, public.plans, public.organization_product_entitlements, public.iso_standards, public.organization_modules TO %I',runtime_name);
+    EXECUTE format('GRANT SELECT, INSERT ON public.product_entitlement_audit_logs, public.module_activity_logs TO %I',runtime_name);
+    EXECUTE format('GRANT SELECT ON public.invoices, public.payment_methods TO %I',runtime_name);
   END IF;
   -- Only sequences backing a table with legitimate runtime INSERT.
   FOR item IN SELECT c.relname,a.attname FROM pg_class c

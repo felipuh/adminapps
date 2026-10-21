@@ -103,6 +103,9 @@ def main():
             run([sys.executable, str(HERE / 'organizations.py')], 'organizations',
                 {'LAB04_PROFILE': 'control_plane', 'LAB04_ROLE': 'lab04_control_plane'})
             run([sys.executable, str(HERE / 'consume_invitation.py')], 'invitation-consumption', {'LAB04_PROFILE': 'iam'})
+        if args.stage >= 'C':
+            run([sys.executable, str(HERE / 'catalog.py')], 'catalog',
+                {'LAB04_PROFILE': 'control_plane', 'LAB04_ROLE': 'lab04_control_plane'})
         run([sys.executable, str(HERE / 'acceptance.py'), 'fixed'], 'acceptance')
         run(['pg_ctl', '-D', str(data), '-l', str(runtime / 'server.log'),
              '-m', 'fast', '-w', 'restart'], 'restart')

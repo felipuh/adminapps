@@ -14,6 +14,44 @@ def check_held_fields(data, fields):
         raise PermissionDenied('Operación retenida por gobernanza comercial.')
 
 
+def validate_catalog_payload(serializer, attrs):
+    """Restrict writes before granting SQL compatibility to legacy serializers."""
+    if not restricted_runtime():
+        return attrs
+    model = getattr(getattr(serializer, 'Meta', None), 'model', None)
+    label = model._meta.label_lower if model else ''
+    creating = getattr(serializer, 'instance', None) is None
+    if label == 'products.productsystem':
+        check_held_fields(attrs, {'billing_enabled', 'default_plan'})
+        if not creating and 'code' in attrs and attrs['code'] != serializer.instance.code:
+            raise PermissionDenied('La identidad de producto no puede reasignarse.')
+        if creating:
+            attrs['billing_enabled'] = False
+    elif label == 'subscriptions.plan':
+        check_held_fields(attrs, {'price', 'currency', 'billing_cycle', 'max_users',
+                                 'max_documents', 'max_storage_mb', 'max_organizations',
+                                 'modules_included', 'ai_analysis_enabled', 'ai_monthly_quota',
+                                 'is_trial_available', 'trial_days'})
+        if attrs.get('is_active') is True:
+            raise PermissionDenied('Activación comercial de planes retenida.')
+        if creating:
+            attrs.update(is_active=False, is_trial_available=False)
+    elif label in {'products.organizationproductentitlement', 'products.organizationmodule'}:
+        check_held_fields(attrs, {'plan', 'subscription'})
+        if attrs.get('status') == 'trial' or (creating and 'status' not in attrs):
+            raise PermissionDenied('Trials retenidos; indique un estado no comercial autorizado.')
+    elif label == 'products.isostandard':
+        check_held_fields(attrs, {'monthly_price', 'annual_price'})
+    if type(serializer).__name__ in {
+        'OrganizationProductEntitlementToggleSerializer', 'OrganizationModuleToggleSerializer',
+        'OrganizationModuleBulkSerializer',
+    }:
+        if attrs.get('action') == 'trial' or attrs.get('status') == 'trial':
+            raise PermissionDenied('Trials retenidos por gobernanza.')
+        check_held_fields(getattr(serializer, 'initial_data', {}), {'trial_days'})
+    return attrs
+
+
 class AuditedMutationMixin:
     """Keep business mutations and audit atomic, excluding durable IAM lifecycle.
 

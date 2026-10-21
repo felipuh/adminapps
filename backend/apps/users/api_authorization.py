@@ -100,7 +100,8 @@ class StrictInputMixin:
             invalid = set(data) - writable
             if invalid:
                 raise ValidationError({name: 'Campo no modificable.' for name in sorted(invalid)})
-        return super().to_internal_value(data)
+        from .runtime_policy import validate_catalog_payload
+        return validate_catalog_payload(self, super().to_internal_value(data))
 
 
 class ControlPlaneMixin:
@@ -119,6 +120,9 @@ class ControlPlaneMixin:
         from .runtime_policy import restricted_runtime
         if restricted_runtime() and action == 'destroy':
             raise MethodNotAllowed(request.method, 'Borrado físico retenido; use desactivación o cancelación autorizada.')
+        if (restricted_runtime() and request.method not in SAFE_METHODS
+                and name in {'SubscriptionViewSet', 'InvoiceViewSet', 'PaymentMethodViewSet'}):
+            raise PermissionDenied('Mutación comercial o financiera retenida por gobernanza.')
         if request.method not in SAFE_METHODS and action in ACTION_INPUTS:
             if not isinstance(request.data, Mapping) or set(request.data) - ACTION_INPUTS[action]:
                 raise ValidationError('Campos no admitidos para esta operación.')
