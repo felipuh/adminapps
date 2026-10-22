@@ -30,8 +30,11 @@ def main():
                         help='LAB05-B only: real HTTP invitation and tenant authority acceptance')
     parser.add_argument('--http-sso-preflight', action='store_true',
                         help='LAB05-C1 prerequisite evidence only; never declares consumer E2E PASS')
+    parser.add_argument('--http-central-sso', action='store_true',
+                        help='LAB05-C1-R1 isolated central SSO HTTP acceptance only')
     args = parser.parse_args()
-    if sum((args.http_only, args.http_invitations, args.http_sso_preflight)) > 1:
+    profiles = ('iam', 'control_plane', 'admin', 'events') + (('sso',) if args.http_central_sso else ())
+    if sum((args.http_only, args.http_invitations, args.http_sso_preflight, args.http_central_sso)) > 1:
         parser.error('Select only one HTTP objective')
     if os.geteuid() == 0:
         raise RuntimeError('Root execution forbidden')
@@ -72,7 +75,7 @@ def main():
         started = True
         signing_key = secrets.token_urlsafe(48)
         credentials = {}
-        for profile in ('iam', 'control_plane', 'admin', 'events'):
+        for profile in profiles:
             credentials[profile] = {'password': secrets.token_urlsafe(36), 'signing_key': signing_key}
             with open(runtime / ('credentials-lab04_' + profile + '.json'), 'x',
                       opener=lambda p, f: os.open(p, f, 0o600)) as f:
@@ -85,35 +88,40 @@ def main():
             cursor.execute('SELECT datname FROM pg_database ORDER BY datname')
             assert cursor.fetchall() == [('postgres',), ('template0',), ('template1',)]
             cursor.execute('CREATE ROLE lab04_maintenance NOLOGIN')
-            for profile in ('iam', 'control_plane', 'admin', 'events'):
+            for profile in profiles:
                 cursor.execute(sql.SQL('CREATE ROLE {} LOGIN PASSWORD %s').format(sql.Identifier('lab04_' + profile)), [credentials[profile]['password']])
             cursor.execute('CREATE DATABASE lab04_human OWNER lab04_maintenance')
         connection.close()
         (data / 'pg_hba.conf').write_text(
             'local all lab04_bootstrap trust\n'
-            'local lab04_human lab04_iam,lab04_control_plane,lab04_admin,lab04_events scram-sha-256\n'
+            'local lab04_human lab04_iam,lab04_control_plane,lab04_admin,lab04_events' + (',lab04_sso' if args.http_central_sso else '') + ' scram-sha-256\n'
             'local all all reject\nhost all all 0.0.0.0/0 reject\nhost all all ::0/0 reject\n')
         run(['pg_ctl', '-D', str(data), 'reload'], 'reload')
         run([sys.executable, str(HERE / 'migrate.py')], 'migrate', {'LAB04_MIGRATE': '1'})
-        for profile in ('iam', 'control_plane', 'admin', 'events'):
+        for profile in profiles:
             run(['psql', '-X', '-h', str(sock), '-p', '56434', '-U', 'lab04_bootstrap',
                  '-d', 'lab04_human', '-v', 'ON_ERROR_STOP=1', '-v', 'runtime_role=lab04_' + profile,
-                 '-v', 'maintenance_role=lab04_maintenance', '-v', 'runtime_profile=' + profile,
+                 '-v', 'maintenance_role=lab04_maintenance', '-v', 'runtime_profile=' + ('iam' if profile == 'sso' else profile),
                  '-f', str(REPO / 'backend/scripts/provision_runtime_profiles.sql')],
                 'provision-' + profile, {'PGOPTIONS': '-c role=lab04_maintenance'})
-        if args.http_only or args.http_invitations or args.http_sso_preflight:
+        if args.http_only or args.http_invitations or args.http_sso_preflight or args.http_central_sso:
             run([sys.executable, str(HERE / 'fixtures.py')], 'fixtures', {'LAB04_MIGRATE': '1'})
             script = 'invitation_acceptance.py' if args.http_invitations else 'http_acceptance.py'
             if args.http_sso_preflight:
                 script = 'sso_preflight.py'
+            if args.http_central_sso:
+                run([sys.executable, str(REPO / 'backend/lab05/sso_seed.py')],
+                    'sso-seed', {'LAB04_MIGRATE': '1'})
+                script = 'sso_acceptance.py'
             run([sys.executable, str(REPO / 'backend/lab05' / script)], 'http-acceptance')
-            verdict = ('LAB05_C1_BLOCKED_PREREQUISITES' if args.http_sso_preflight else
+            verdict = ('LAB05_C1_R1_CENTRAL_SSO_HTTP_PASS' if args.http_central_sso else
+                       'LAB05_C1_BLOCKED_PREREQUISITES' if args.http_sso_preflight else
                        'LAB05_B_HTTP_INVITATIONS_PASS' if args.http_invitations else
                        'LAB05_A_HTTP_RUNTIME_PASS')
             print(verdict, flush=True)
             return
         run([sys.executable, str(HERE / 'boundaries.py')], 'boundaries')
-        for profile in ('iam', 'control_plane', 'admin', 'events'):
+        for profile in profiles:
             run([sys.executable, str(HERE / 'process_probe.py')], 'process-' + profile,
                 {'LAB04_PROFILE': profile, 'LAB04_ROLE': 'lab04_' + profile})
         if args.stage >= 'B':

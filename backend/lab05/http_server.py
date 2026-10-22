@@ -11,8 +11,8 @@ from django.core.wsgi import get_wsgi_application
 from django.db import connection, connections
 from config.runtime_profiles import verify_connection
 
-profile = settings.ADMINAPPS_RUNTIME_PROFILE
-assert profile in ('iam', 'control_plane')
+profile = os.environ['LAB04_PROFILE']
+assert profile in ('iam', 'control_plane', 'sso')
 root = lab_env.ROOT
 calls = 0
 if profile == 'control_plane':
@@ -23,6 +23,21 @@ if profile == 'control_plane':
         calls += 1
         return original_list(self, *args, **kwargs)
     ProductSystemViewSet.list = counted_list
+
+# Observe successful protected stages without replacing authentication or SQL.
+stages = {'render': 0, 'authorization': 0}
+if profile == 'sso':
+    from apps.integration import sso_views, authorization
+    original_render = sso_views._render_session
+    original_resolve = authorization.resolve
+    def counted_render(*args, **kwargs):
+        stages['render'] += 1
+        return original_render(*args, **kwargs)
+    def counted_resolve(*args, **kwargs):
+        stages['authorization'] += 1
+        return original_resolve(*args, **kwargs)
+    sso_views._render_session = counted_render
+    authorization.resolve = counted_resolve
 
 application = get_wsgi_application()
 
@@ -37,7 +52,7 @@ def observed(environ, start_response):
     response = application(environ, start_response)
     (root / ('http-' + profile + '-state.json')).write_text(json.dumps({
         'principal': principal, 'session_user': session_user,
-        'backend_pid': backend_pid, 'handler_calls': calls,
+        'backend_pid': backend_pid, 'handler_calls': calls, 'protected_stages': stages,
     }))
     return response
 

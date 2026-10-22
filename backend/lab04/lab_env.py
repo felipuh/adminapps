@@ -33,7 +33,12 @@ configuration = dict(
  SIMPLE_JWT={'ALGORITHM':'HS256','SIGNING_KEY':secret['signing_key'],'ROTATE_REFRESH_TOKENS':True,'ACCESS_TOKEN_LIFETIME':timedelta(hours=1),'REFRESH_TOKEN_LIFETIME':timedelta(days=1)})
 if os.environ.get('LAB04_PROFILE'):
  from config.runtime_profiles import configure
- configure(configuration, os.environ['LAB04_PROFILE'], configuration['DATABASES']['default'])
+ profile = os.environ['LAB04_PROFILE']
+ configure(configuration, 'iam' if profile == 'sso' else profile, configuration['DATABASES']['default'])
+ if profile == 'sso':
+  assert os.environ.get('LAB05_HTTP') == '1' and os.environ.get('LAB04_ROLE') == 'lab04_sso'
+  configuration['ROOT_URLCONF'] = 'lab05.sso_urls'
+  configuration['SSO_CENTRAL_TRUST'] = json.loads((ROOT/'runtime/central-trust.json').read_text())
 settings.configure(**configuration)
 import django
 django.setup()

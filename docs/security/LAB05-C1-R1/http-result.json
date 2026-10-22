@@ -1,0 +1,926 @@
+{
+  "status": "LAB05_C1_R1_CENTRAL_SSO_HTTP_PASS",
+  "transport": "real loopback TCP HTTP",
+  "postgresql": "disposable private Unix socket",
+  "consumer_started": false,
+  "consumer_e2e_pass": false,
+  "trust": {
+    "family": "CENTRAL",
+    "algorithm": "RS256",
+    "kid_verified": true,
+    "issuer_verified": true,
+    "audience_verified": true,
+    "tenant_product_verified": true
+  },
+  "pending": [
+    "consumer E2E and protected consumer handlers"
+  ],
+  "sql_cases": [
+    {
+      "statement": "DELETE FROM sso_sessions WHERE id=%s",
+      "sqlstate": "42501"
+    },
+    {
+      "statement": "TRUNCATE sso_sessions",
+      "sqlstate": "42501"
+    },
+    {
+      "statement": "UPDATE sso_sessions SET state='active',revoked_at=NULL,generation=generation+1 WHERE id=%s",
+      "sqlstate": "P0001"
+    },
+    {
+      "statement": "UPDATE integration_sso_clients SET enabled=false",
+      "sqlstate": "42501"
+    },
+    {
+      "statement": "UPDATE product_systems SET billing_enabled=true",
+      "sqlstate": "42501"
+    },
+    {
+      "statement": "UPDATE users SET is_superuser=true",
+      "sqlstate": "42501"
+    }
+  ],
+  "sso_table_grants": [
+    [
+      "integration_api_keys",
+      "SELECT"
+    ],
+    [
+      "integration_sso_clients",
+      "SELECT"
+    ],
+    [
+      "integration_sso_clients_tenants",
+      "SELECT"
+    ],
+    [
+      "organization_product_entitlements",
+      "SELECT"
+    ],
+    [
+      "organizations",
+      "SELECT"
+    ],
+    [
+      "plans",
+      "SELECT"
+    ],
+    [
+      "product_systems",
+      "SELECT"
+    ],
+    [
+      "sso_revocation_outbox",
+      "INSERT"
+    ],
+    [
+      "sso_revocation_outbox",
+      "SELECT"
+    ],
+    [
+      "sso_security_fence",
+      "SELECT"
+    ],
+    [
+      "sso_sessions",
+      "INSERT"
+    ],
+    [
+      "sso_sessions",
+      "SELECT"
+    ],
+    [
+      "sso_sessions",
+      "UPDATE"
+    ],
+    [
+      "subscriptions",
+      "SELECT"
+    ],
+    [
+      "two_factor_auth",
+      "SELECT"
+    ],
+    [
+      "two_factor_auth",
+      "UPDATE"
+    ],
+    [
+      "two_factor_auth_logs",
+      "INSERT"
+    ],
+    [
+      "two_factor_auth_logs",
+      "SELECT"
+    ],
+    [
+      "two_factor_challenges",
+      "INSERT"
+    ],
+    [
+      "two_factor_challenges",
+      "SELECT"
+    ],
+    [
+      "two_factor_challenges",
+      "UPDATE"
+    ],
+    [
+      "user_organizations",
+      "SELECT"
+    ],
+    [
+      "users",
+      "SELECT"
+    ]
+  ],
+  "cases": [
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 728.042,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49300,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 0
+      },
+      "scenario": "registered_login"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 288.42,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49302,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "live_introspection"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 404.348,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49304,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "unregistered_principal",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 226.641,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49306,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_client",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 200.906,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49308,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_audience_request",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 207.221,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49310,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_product_request",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 403,
+      "elapsed_ms": 379.719,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49312,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "foreign_tenant",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 50.519,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49314,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "forged_headers",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 219.973,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49316,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_token_aud",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 242.097,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49319,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_token_iss",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 233.543,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49321,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_token_tenant_id",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 230.369,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49323,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_token_product",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 208.522,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49325,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_token_exp",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 218.916,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49327,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "invalid_signature",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 237.872,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49329,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_algorithm",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 194.705,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49333,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "wrong_kid",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/verify-2fa/",
+      "method": "POST",
+      "status": 400,
+      "elapsed_ms": 188.411,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49336,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 1,
+        "authorization": 1
+      },
+      "scenario": "2fa_route_missing_payload",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/rotate/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 513.903,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49338,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 2,
+        "authorization": 1
+      },
+      "scenario": "rotate"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 214.22,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49341,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 2,
+        "authorization": 1
+      },
+      "scenario": "old_generation",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 272.389,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49343,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 2,
+        "authorization": 2
+      },
+      "scenario": "rotated_active"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/logout/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 233.607,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49351,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 2,
+        "authorization": 2
+      },
+      "scenario": "logout"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 232.848,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49356,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 2,
+        "authorization": 2
+      },
+      "scenario": "revoked_new_connection",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 239.817,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49358,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 2,
+        "authorization": 2
+      },
+      "scenario": "revoked_reconnect_again",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/rotate/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 224.862,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49360,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 2,
+        "authorization": 2
+      },
+      "scenario": "revoked_rotation",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 406.098,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49362,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 2,
+        "authorization": 2
+      },
+      "scenario": "2fa_challenge"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/verify-2fa/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 603.424,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49364,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 2
+      },
+      "scenario": "2fa_verify"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 243.328,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49366,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      },
+      "scenario": "2fa_introspection"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/login/verify-2fa/",
+      "method": "POST",
+      "status": 403,
+      "elapsed_ms": 228.507,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49368,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      },
+      "scenario": "2fa_replay",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/logout/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 234.836,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49370,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      },
+      "scenario": "2fa_logout"
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 401,
+      "elapsed_ms": 209.896,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49373,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      },
+      "scenario": "revocation_retained_after_sql",
+      "protected_stages_unchanged": true
+    },
+    {
+      "profile": "iam",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 275.408,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 49375,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "iam",
+      "path": "/api/integration/sso/login/verify-2fa/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 40.647,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 49377,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "iam",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 46.044,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 49379,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "iam",
+      "path": "/api/integration/sso/logout/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 47.757,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 49381,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "iam",
+      "path": "/api/integration/sso/rotate/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 40.019,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 49383,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "control_plane",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 166.155,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 49385,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "control_plane",
+      "path": "/api/integration/sso/login/verify-2fa/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 40.62,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 49387,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "control_plane",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 37.706,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 49389,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "control_plane",
+      "path": "/api/integration/sso/logout/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 42.676,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 49391,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "control_plane",
+      "path": "/api/integration/sso/rotate/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 55.087,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 49393,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 0,
+        "authorization": 0
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/health/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 223.433,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49395,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/organizations/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 41.934,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49397,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/landing-analytics/events/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 46.307,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49399,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/demo-requests/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 42.513,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49401,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/api/integration/ai-usage/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 46.357,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49403,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/api/products/systems/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 44.458,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49405,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/api/billing/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 39.835,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49407,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 42.528,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49409,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    },
+    {
+      "profile": "sso",
+      "path": "/admin/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 44.807,
+      "principal": "lab04_sso",
+      "session_user": "lab04_sso",
+      "backend_pid": 49411,
+      "handler_calls": 0,
+      "protected_stages": {
+        "render": 3,
+        "authorization": 3
+      }
+    }
+  ]
+}
