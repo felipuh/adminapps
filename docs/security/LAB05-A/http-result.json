@@ -1,0 +1,128 @@
+{
+  "status": "LAB05_A_HTTP_RUNTIME_PASS",
+  "transport": "real loopback TCP HTTP",
+  "postgresql": "private Unix socket, real profile logins, restarted",
+  "revoked_handler_delta": 0,
+  "cases": [
+    {
+      "profile": "iam",
+      "method": "GET",
+      "path": "/api/products/systems/",
+      "status": 404,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 9647,
+      "handler_calls": 0
+    },
+    {
+      "profile": "iam",
+      "method": "GET",
+      "path": "/admin/",
+      "status": 404,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 9649,
+      "handler_calls": 0
+    },
+    {
+      "profile": "control_plane",
+      "method": "POST",
+      "path": "/api/auth/login/",
+      "status": 404,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 9651,
+      "handler_calls": 0
+    },
+    {
+      "profile": "control_plane",
+      "method": "GET",
+      "path": "/admin/",
+      "status": 404,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 9653,
+      "handler_calls": 0
+    },
+    {
+      "profile": "iam",
+      "method": "POST",
+      "path": "/api/auth/login/",
+      "status": 200,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 9655,
+      "handler_calls": 0
+    },
+    {
+      "profile": "control_plane",
+      "method": "GET",
+      "path": "/api/products/systems/",
+      "status": 200,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 9657,
+      "handler_calls": 1
+    },
+    {
+      "profile": "iam",
+      "method": "POST",
+      "path": "/api/auth/logout/",
+      "status": 200,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 9659,
+      "handler_calls": 0
+    },
+    {
+      "profile": "control_plane",
+      "method": "GET",
+      "path": "/api/products/systems/",
+      "status": 401,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 9661,
+      "handler_calls": 1
+    },
+    {
+      "profile": "control_plane",
+      "method": "GET",
+      "path": "/api/products/systems/",
+      "status": 401,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 9663,
+      "handler_calls": 1
+    },
+    {
+      "profile": "control_plane",
+      "method": "GET",
+      "path": "/api/products/systems/",
+      "status": 403,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 9665,
+      "handler_calls": 1
+    },
+    {
+      "profile": "control_plane",
+      "method": "GET",
+      "path": "/api/products/systems/",
+      "status": 401,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 9679,
+      "handler_calls": 1
+    },
+    {
+      "profile": "iam",
+      "method": "POST",
+      "path": "/api/auth/refresh/",
+      "status": 401,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 9681,
+      "handler_calls": 0
+    }
+  ]
+}

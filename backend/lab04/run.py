@@ -24,6 +24,8 @@ REPO = HERE.parents[1]
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--stage', choices=list('ABCDE'), default='A')
+    parser.add_argument('--http-only', action='store_true',
+                        help='LAB05-A only: reuse provisioning, run real loopback HTTP acceptance')
     args = parser.parse_args()
     if os.geteuid() == 0:
         raise RuntimeError('Root execution forbidden')
@@ -34,7 +36,7 @@ def main():
     sock.mkdir(mode=0o700)
     data = runtime / 'data'
     env = {**os.environ, 'LAB04_ROOT': str(root), 'PYTHONDONTWRITEBYTECODE': '1'}
-    for name in ('LAB04_PROFILE', 'LAB04_ROLE', 'LAB04_MIGRATE', 'LAB04_GRAPH_ALL'):
+    for name in ('LAB04_PROFILE', 'LAB04_ROLE', 'LAB04_MIGRATE', 'LAB04_GRAPH_ALL', 'LAB05_HTTP'):
         env.pop(name, None)
     for name in ('DJANGO_SETTINGS_MODULE', 'PGSERVICE', 'PGSERVICEFILE', 'PGOPTIONS', 'PGPASSWORD'):
         env.pop(name, None)
@@ -93,6 +95,11 @@ def main():
                  '-v', 'maintenance_role=lab04_maintenance', '-v', 'runtime_profile=' + profile,
                  '-f', str(REPO / 'backend/scripts/provision_runtime_profiles.sql')],
                 'provision-' + profile, {'PGOPTIONS': '-c role=lab04_maintenance'})
+        if args.http_only:
+            run([sys.executable, str(HERE / 'fixtures.py')], 'fixtures', {'LAB04_MIGRATE': '1'})
+            run([sys.executable, str(REPO / 'backend/lab05/http_acceptance.py')], 'http-acceptance')
+            print('LAB05_A_HTTP_RUNTIME_PASS', flush=True)
+            return
         run([sys.executable, str(HERE / 'boundaries.py')], 'boundaries')
         for profile in ('iam', 'control_plane', 'admin', 'events'):
             run([sys.executable, str(HERE / 'process_probe.py')], 'process-' + profile,

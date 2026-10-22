@@ -17,7 +17,7 @@ from django.conf import settings
 secret=json.loads((ROOT/'runtime'/('credentials-' + os.environ.get('LAB04_ROLE', 'lab04_iam') + '.json')).read_text())
 configuration = dict(
  SECRET_KEY=secret['signing_key'],USE_TZ=True,AUTH_USER_MODEL='users.User',DEFAULT_AUTO_FIELD='django.db.models.BigAutoField',
- ROOT_URLCONF='lab_urls',ALLOWED_HOSTS=['testserver'],BILLING_SCHEDULER_ENABLED=False,
+ ROOT_URLCONF='lab_urls',ALLOWED_HOSTS=['127.0.0.1'] if os.environ.get('LAB05_HTTP') == '1' else ['testserver'],BILLING_SCHEDULER_ENABLED=False,
  INSTALLED_APPS=['django.contrib.admin','django.contrib.messages','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','rest_framework','django_filters',
  'apps.users','apps.organizations','apps.products','apps.subscriptions','apps.integration','apps.billing','apps.api','rest_framework_simplejwt.token_blacklist'],
  DATABASES={'default':{'ENGINE':'django.db.backends.postgresql','NAME':'lab04_human','USER':'lab04_bootstrap' if os.environ.get('LAB04_MIGRATE')=='1' else os.environ.get('LAB04_ROLE', 'lab04_iam'),
