@@ -1,0 +1,130 @@
+{
+  "status": "BLOCKED_BY_PROHIBITED_FINANCIAL_MIGRATION_DEPENDENCY",
+  "consumer_head": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+  "method": "static AST witness; not executed migrations or HTTP consumer coverage",
+  "chain": [
+    {
+      "migration": "authentication.0011_application_auth_runtime_privileges",
+      "path": "backend/authentication/migrations/0011_application_auth_runtime_privileges.py",
+      "sha256": "dc1b25f98d0041def97c96400a54f31e4ec33824b819df920029d011db481c8f",
+      "literal_dependencies": [
+        [
+          "authentication",
+          "0010_alter_refreshtokenblacklist_token_hash"
+        ],
+        [
+          "core",
+          "0019_featureflag"
+        ],
+        [
+          "foundation",
+          "0037_qms_audit_capa_foundation"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0019_featureflag",
+      "path": "backend/core/migrations/0019_featureflag.py",
+      "sha256": "5148da55fba6c6a1ac8365cb95c62068acdcf9394ae93b994eb400e9aee70066",
+      "literal_dependencies": [
+        [
+          "core",
+          "0018_externalcontextsignal_environmentalriskalert_and_more"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0018_externalcontextsignal_environmentalriskalert_and_more",
+      "path": "backend/core/migrations/0018_externalcontextsignal_environmentalriskalert_and_more.py",
+      "sha256": "1ed01320c67b921a38d97b93dd866115caf2d871fabd6818d19476a798eb1748",
+      "literal_dependencies": [
+        [
+          "core",
+          "0017_rename_notificatio_organiz_6e1f3f_idx_notificatio_organiz_a85fc0_idx_and_more"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0017_rename_notificatio_organiz_6e1f3f_idx_notificatio_organiz_a85fc0_idx_and_more",
+      "path": "backend/core/migrations/0017_rename_notificatio_organiz_6e1f3f_idx_notificatio_organiz_a85fc0_idx_and_more.py",
+      "sha256": "2160c6ca3ab839092ce7a5360b9132db1b851752352acfa5c1c1e1c816bf0b23",
+      "literal_dependencies": [
+        [
+          "core",
+          "0016_contextanalysis_climate_fields"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0016_contextanalysis_climate_fields",
+      "path": "backend/core/migrations/0016_contextanalysis_climate_fields.py",
+      "sha256": "121e9e89beb0aab4ad288d0e174486326a8112751ed998ca6754abc43413b3ad",
+      "literal_dependencies": [
+        [
+          "core",
+          "0015_notificationdelivery"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0015_notificationdelivery",
+      "path": "backend/core/migrations/0015_notificationdelivery.py",
+      "sha256": "422069208bc9e419516a1d778118f2311ffb336cdeba9afb28a4937e19136c61",
+      "literal_dependencies": [
+        [
+          "core",
+          "0014_backfill_and_enforce_organization_not_null"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0014_backfill_and_enforce_organization_not_null",
+      "path": "backend/core/migrations/0014_backfill_and_enforce_organization_not_null.py",
+      "sha256": "b2e53af18089c54a77ce33a04efcb2b2bdb5e43762d3c0fb08355c1af4d0ad55",
+      "literal_dependencies": [
+        [
+          "core",
+          "0013_contextanalysis_organization_document_organization_and_more"
+        ],
+        [
+          "authentication",
+          "0004_refresh_token_hash"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0013_contextanalysis_organization_document_organization_and_more",
+      "path": "backend/core/migrations/0013_contextanalysis_organization_document_organization_and_more.py",
+      "sha256": "172bda4b3d82675955b271546d5c90f106512551b44629965a6cba59f5b67c40",
+      "literal_dependencies": [
+        [
+          "core",
+          "0012_billingpayment_evidence_fields"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0012_billingpayment_evidence_fields",
+      "path": "backend/core/migrations/0012_billingpayment_evidence_fields.py",
+      "sha256": "577838bafa8cb700760f916ded48420c2eecb78d37a07f86471d5e3cce56592f",
+      "literal_dependencies": [
+        [
+          "core",
+          "0011_billing_models"
+        ]
+      ]
+    },
+    {
+      "migration": "core.0011_billing_models",
+      "path": "backend/core/migrations/0011_billing_models.py",
+      "sha256": "9ac251d2225eaf6c9bdd433fbfe108b24cfd74218f1ff6528ec92c87e3ce12c6",
+      "literal_dependencies": [
+        [
+          "core",
+          "0010_onboardinginsightsnapshot"
+        ]
+      ]
+    }
+  ],
+  "financial_migrations_executed": 0
+}

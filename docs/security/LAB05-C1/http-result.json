@@ -1,0 +1,100 @@
+{
+  "status": "LAB05_C1_BLOCKED_PREREQUISITES",
+  "transport": "real loopback TCP HTTP",
+  "postgresql": "private Unix socket; IAM and CP runtime principals",
+  "consumer_started": false,
+  "consumer_e2e_pass": false,
+  "sso_authorization_exercised": false,
+  "finding": "Existing SSO login/introspect/logout paths return 404 in both runtime profiles",
+  "latency_scope": "individual prerequisite requests only; not consumer or revocation latency",
+  "cases": [
+    {
+      "profile": "iam",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 496.159,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 38937,
+      "handler_calls": 0
+    },
+    {
+      "profile": "iam",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 80.958,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 38939,
+      "handler_calls": 0
+    },
+    {
+      "profile": "iam",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 54.576,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 38941,
+      "handler_calls": 0
+    },
+    {
+      "profile": "iam",
+      "path": "/api/integration/sso/logout/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 40.757,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 38943,
+      "handler_calls": 0
+    },
+    {
+      "profile": "control_plane",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 137.647,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 38946,
+      "handler_calls": 0
+    },
+    {
+      "profile": "control_plane",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 51.835,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 38948,
+      "handler_calls": 0
+    },
+    {
+      "profile": "control_plane",
+      "path": "/api/integration/sso/logout/",
+      "method": "POST",
+      "status": 404,
+      "elapsed_ms": 37.924,
+      "principal": "lab04_control_plane",
+      "session_user": "lab04_control_plane",
+      "backend_pid": 38950,
+      "handler_calls": 0
+    },
+    {
+      "profile": "iam",
+      "path": "/api/auth/logout/",
+      "method": "POST",
+      "status": 200,
+      "elapsed_ms": 84.248,
+      "principal": "lab04_iam",
+      "session_user": "lab04_iam",
+      "backend_pid": 38952,
+      "handler_calls": 0
+    }
+  ]
+}

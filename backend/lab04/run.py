@@ -28,8 +28,10 @@ def main():
                         help='LAB05-A only: reuse provisioning, run real loopback HTTP acceptance')
     parser.add_argument('--http-invitations', action='store_true',
                         help='LAB05-B only: real HTTP invitation and tenant authority acceptance')
+    parser.add_argument('--http-sso-preflight', action='store_true',
+                        help='LAB05-C1 prerequisite evidence only; never declares consumer E2E PASS')
     args = parser.parse_args()
-    if args.http_only and args.http_invitations:
+    if sum((args.http_only, args.http_invitations, args.http_sso_preflight)) > 1:
         parser.error('Select only one HTTP objective')
     if os.geteuid() == 0:
         raise RuntimeError('Root execution forbidden')
@@ -99,11 +101,16 @@ def main():
                  '-v', 'maintenance_role=lab04_maintenance', '-v', 'runtime_profile=' + profile,
                  '-f', str(REPO / 'backend/scripts/provision_runtime_profiles.sql')],
                 'provision-' + profile, {'PGOPTIONS': '-c role=lab04_maintenance'})
-        if args.http_only or args.http_invitations:
+        if args.http_only or args.http_invitations or args.http_sso_preflight:
             run([sys.executable, str(HERE / 'fixtures.py')], 'fixtures', {'LAB04_MIGRATE': '1'})
             script = 'invitation_acceptance.py' if args.http_invitations else 'http_acceptance.py'
+            if args.http_sso_preflight:
+                script = 'sso_preflight.py'
             run([sys.executable, str(REPO / 'backend/lab05' / script)], 'http-acceptance')
-            print('LAB05_B_HTTP_INVITATIONS_PASS' if args.http_invitations else 'LAB05_A_HTTP_RUNTIME_PASS', flush=True)
+            verdict = ('LAB05_C1_BLOCKED_PREREQUISITES' if args.http_sso_preflight else
+                       'LAB05_B_HTTP_INVITATIONS_PASS' if args.http_invitations else
+                       'LAB05_A_HTTP_RUNTIME_PASS')
+            print(verdict, flush=True)
             return
         run([sys.executable, str(HERE / 'boundaries.py')], 'boundaries')
         for profile in ('iam', 'control_plane', 'admin', 'events'):
