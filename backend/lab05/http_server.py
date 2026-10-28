@@ -50,6 +50,11 @@ def observed(environ, start_response):
         cursor.execute('SELECT session_user, pg_backend_pid()')
         session_user, backend_pid = cursor.fetchone()
     response = application(environ, start_response)
+    if os.environ.get('LAB05_R3') == '1':
+        with (root / 'r3-central-requests.jsonl').open('a') as stream:
+            stream.write(json.dumps({'path': environ['PATH_INFO'],
+                'method': environ['REQUEST_METHOD'], 'principal': principal,
+                'backend_pid': backend_pid}) + '\n')
     (root / ('http-' + profile + '-state.json')).write_text(json.dumps({
         'principal': principal, 'session_user': session_user,
         'backend_pid': backend_pid, 'handler_calls': calls, 'protected_stages': stages,
@@ -62,7 +67,8 @@ class QuietHandler(WSGIRequestHandler):
         pass
 
 
-with make_server('127.0.0.1', 0, observed, handler_class=QuietHandler) as server:
+port = int(os.environ.get('LAB05_R3_PORT', '0')) if os.environ.get('LAB05_R3') == '1' else 0
+with make_server('127.0.0.1', port, observed, handler_class=QuietHandler) as server:
     (root / ('http-' + profile + '-ready.json')).write_text(json.dumps({
         'port': server.server_port, 'principal': verify_connection(), 'pid': os.getpid(),
     }))

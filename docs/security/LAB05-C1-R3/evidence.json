@@ -1,0 +1,2340 @@
+{
+  "verdict": "LAB05_C1_R3_ISOSMART_HTTP_E2E_PASS",
+  "cases": [
+    {
+      "scenario": "anonymous_denied",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17736,
+      "counts": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "login_without_csrf",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 403,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17740,
+      "counts": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "legitimate_login_a_csrf",
+      "path": "/api/auth/csrf/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17743,
+      "counts": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "legitimate_login_a",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17745,
+      "counts": {
+        "sync_identity": 1,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 1,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "INSERT",
+        "SELECT",
+        "SELECT",
+        "INSERT",
+        "UPDATE",
+        "SAVEPOINT",
+        "SELECT",
+        "SAVEPOINT",
+        "SELECT",
+        "INSERT",
+        "RELEASE",
+        "RELEASE",
+        "UPDATE",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "real_central_introspection",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "me_a",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17755,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "authorized_resource_create_a",
+      "path": "/api/resources/",
+      "method": "POST",
+      "status": 201,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17759,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "INSERT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "shared_subject_login_b_csrf",
+      "path": "/api/auth/csrf/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 17768,
+      "counts": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "shared_subject_login_b",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 200,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 17770,
+      "counts": {
+        "sync_identity": 1,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 1,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "INSERT",
+        "SELECT",
+        "SAVEPOINT",
+        "SELECT",
+        "SAVEPOINT",
+        "SELECT",
+        "INSERT",
+        "RELEASE",
+        "RELEASE",
+        "UPDATE",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "shared_subject_me_b_no_elevation",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 17780,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "rls_http_b_cannot_list_a",
+      "path": "/api/resources/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 17784,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 1,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "cross_tenant_object_not_found",
+      "path": "/api/resources/1/",
+      "method": "GET",
+      "status": 404,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 17793,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 1,
+        "retrieve": 1,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 1,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "insufficient_scopes_shared_viewer",
+      "path": "/api/resources/",
+      "method": "POST",
+      "status": 403,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 17801,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 1,
+        "retrieve": 1,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "cross_tenant_query",
+      "path": "/api/resources/?organization_id=2",
+      "method": "GET",
+      "status": 403,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17809,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "cross_tenant_write",
+      "path": "/api/resources/",
+      "method": "POST",
+      "status": 403,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17817,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "valid_central_foreign_tenant_denied_by_instance_csrf",
+      "path": "/api/auth/csrf/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17824,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "valid_central_foreign_tenant_denied_by_instance",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 403,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17827,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "foreign_cookie_replay_fail_closed",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 503,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17837,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "technical_headers_cannot_authenticate",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17842,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "technical_headers_cannot_elevate",
+      "path": "/api/resources/",
+      "method": "POST",
+      "status": 403,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 17846,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 1,
+        "retrieve": 1,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "wrong_audience",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17857,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "wrong_issuer",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17861,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "wrong_client_id",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17865,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "wrong_product",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17869,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "invalid_signature",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17873,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "embedded_central_audience_rejected",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17884,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "embedded_central_issuer_rejected",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17889,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "embedded_central_client_rejected",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17893,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "embedded_central_product_rejected",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17897,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "embedded_central_tenant_rejected",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17901,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "embedded_central_role_rejected",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17908,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "embedded_central_signature_rejected",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17914,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "live_central_scope_removal_revokes_session",
+      "path": "/api/resources/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17920,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "scope_restore_does_not_revive_session",
+      "path": "/api/resources/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17928,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "reauthenticate_after_scope_restore_csrf",
+      "path": "/api/auth/csrf/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17933,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "reauthenticate_after_scope_restore",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17935,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 1,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SAVEPOINT",
+        "SELECT",
+        "UPDATE",
+        "RELEASE",
+        "SELECT",
+        "UPDATE",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "live_central_scopes_restored",
+      "path": "/api/resources/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17947,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 1,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "sql_central_tenant_binding_mismatch",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 503,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17955,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "central_rejects_client",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "central_rejects_audience",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "central_rejects_product",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "central_rejects_forged_technical_headers",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "central_rejects_unregistered_credential",
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "central_logout",
+      "path": "/api/integration/sso/logout/",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "scenario": "revoked_me_reconnect_1",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17975,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "revoked_write_reconnect_1",
+      "path": "/api/resources/",
+      "method": "POST",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17981,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "revoked_me_reconnect_2",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17987,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "revoked_write_reconnect_2",
+      "path": "/api/resources/",
+      "method": "POST",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 17993,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "same_proof_revoked",
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "scenario": "central_outage_protected_get",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 503,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 18002,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 1,
+        "retrieve": 1,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "central_outage_protected_write",
+      "path": "/api/resources/",
+      "method": "POST",
+      "status": 503,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 18006,
+      "counts": {
+        "sync_identity": 1,
+        "me": 1,
+        "list": 1,
+        "retrieve": 1,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "local_password_fallback_forbidden_csrf",
+      "path": "/api/auth/csrf/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 18009,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "local_password_fallback_forbidden",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 503,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 18012,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "central_outage_login_csrf",
+      "path": "/api/auth/csrf/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 18015,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    },
+    {
+      "scenario": "central_outage_login",
+      "path": "/api/auth/login/",
+      "method": "POST",
+      "status": 503,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 18018,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "revocation_survives_central_restart",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 401,
+      "principal": "iso_runtime_a",
+      "session_user": "iso_runtime_a",
+      "backend_pid": 18024,
+      "counts": {
+        "sync_identity": 2,
+        "me": 1,
+        "list": 1,
+        "retrieve": 0,
+        "create": 1,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 0,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false,
+      "protected_handler_not_executed": true,
+      "database_unchanged": true
+    },
+    {
+      "scenario": "active_session_recovers_after_outage",
+      "path": "/api/auth/me/",
+      "method": "GET",
+      "status": 200,
+      "principal": "iso_runtime_b",
+      "session_user": "iso_runtime_b",
+      "backend_pid": 18029,
+      "counts": {
+        "sync_identity": 1,
+        "me": 2,
+        "list": 1,
+        "retrieve": 1,
+        "create": 0,
+        "partial_update": 0
+      },
+      "delta": {
+        "sync_identity": 0,
+        "me": 1,
+        "list": 0,
+        "retrieve": 0,
+        "create": 0,
+        "partial_update": 0
+      },
+      "sql_verbs": [
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT",
+        "SELECT"
+      ],
+      "set_role": false
+    }
+  ],
+  "central_requests": [
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17747
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17749
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17751
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17753
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17757
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17761
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17763
+    },
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17773
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17776
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17778
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17782
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17786
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17788
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17795
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17797
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17803
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17805
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17811
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17813
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17819
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17821
+    },
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17829
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17833
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17849
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17853
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17903
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17910
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17922
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17930
+    },
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17937
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17939
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17943
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17949
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17951
+    },
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17959
+    },
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17961
+    },
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17963
+    },
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17965
+    },
+    {
+      "path": "/api/integration/sso/login/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17967
+    },
+    {
+      "path": "/api/integration/sso/logout/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17971
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17977
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17983
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17989
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17995
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 17998
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 18026
+    },
+    {
+      "path": "/api/integration/sso/introspect/",
+      "method": "POST",
+      "principal": "lab04_sso",
+      "backend_pid": 18031
+    }
+  ],
+  "sql_checks": [
+    {
+      "principal": "iso_runtime_a",
+      "statement": "UPDATE lab_tenant_authority SET tenant_id=%s WHERE principal=session_user",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_a",
+      "statement": "UPDATE auth_user SET is_superuser=true",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_a",
+      "statement": "ALTER TABLE resources_resource DISABLE ROW LEVEL SECURITY",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_a",
+      "statement": "CREATE TABLE forbidden (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_a",
+      "statement": "TRUNCATE resources_resource",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_a",
+      "statement": "UPDATE user_profiles SET organization_id=%s WHERE organization_id=%s",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_a",
+      "statement": "cross-tenant resource UPDATE",
+      "sqlstate": "42501",
+      "rls_with_check": true
+    },
+    {
+      "principal": "iso_runtime_b",
+      "statement": "UPDATE lab_tenant_authority SET tenant_id=%s WHERE principal=session_user",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_b",
+      "statement": "UPDATE auth_user SET is_superuser=true",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_b",
+      "statement": "ALTER TABLE resources_resource DISABLE ROW LEVEL SECURITY",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_b",
+      "statement": "CREATE TABLE forbidden (id integer)",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_b",
+      "statement": "TRUNCATE resources_resource",
+      "sqlstate": "42501"
+    },
+    {
+      "principal": "iso_runtime_b",
+      "statement": "UPDATE user_profiles SET organization_id=%s WHERE organization_id=%s",
+      "sqlstate": "42501"
+    }
+  ],
+  "projection": {
+    "tables": [
+      "audit_logs",
+      "auth_group",
+      "auth_group_permissions",
+      "auth_permission",
+      "auth_user",
+      "auth_user_groups",
+      "auth_user_user_permissions",
+      "django_content_type",
+      "lab_tenant_authority",
+      "organizations",
+      "password_reset_tokens",
+      "refresh_token_blacklist",
+      "resources_resource",
+      "user_profiles"
+    ],
+    "added_real_models": [
+      "resources.Resource"
+    ],
+    "migration_execution": false,
+    "runtime_table_grants": [
+      [
+        "iso_runtime_a",
+        "auth_user",
+        "INSERT"
+      ],
+      [
+        "iso_runtime_a",
+        "auth_user",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_a",
+        "lab_tenant_authority",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_a",
+        "organizations",
+        "INSERT"
+      ],
+      [
+        "iso_runtime_a",
+        "organizations",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_a",
+        "resources_resource",
+        "INSERT"
+      ],
+      [
+        "iso_runtime_a",
+        "resources_resource",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_a",
+        "resources_resource",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_a",
+        "user_profiles",
+        "INSERT"
+      ],
+      [
+        "iso_runtime_a",
+        "user_profiles",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_b",
+        "auth_user",
+        "INSERT"
+      ],
+      [
+        "iso_runtime_b",
+        "auth_user",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_b",
+        "lab_tenant_authority",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_b",
+        "organizations",
+        "INSERT"
+      ],
+      [
+        "iso_runtime_b",
+        "organizations",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_b",
+        "resources_resource",
+        "INSERT"
+      ],
+      [
+        "iso_runtime_b",
+        "resources_resource",
+        "SELECT"
+      ],
+      [
+        "iso_runtime_b",
+        "resources_resource",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_b",
+        "user_profiles",
+        "INSERT"
+      ],
+      [
+        "iso_runtime_b",
+        "user_profiles",
+        "SELECT"
+      ]
+    ],
+    "identity_column_update_grants": [
+      [
+        "iso_runtime_a",
+        "auth_user",
+        "last_login",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_a",
+        "auth_user",
+        "password",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_a",
+        "user_profiles",
+        "avatar",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_a",
+        "user_profiles",
+        "created_at",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_a",
+        "user_profiles",
+        "is_active",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_a",
+        "user_profiles",
+        "role",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_a",
+        "user_profiles",
+        "updated_at",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_b",
+        "auth_user",
+        "last_login",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_b",
+        "auth_user",
+        "password",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_b",
+        "user_profiles",
+        "avatar",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_b",
+        "user_profiles",
+        "created_at",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_b",
+        "user_profiles",
+        "is_active",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_b",
+        "user_profiles",
+        "role",
+        "UPDATE"
+      ],
+      [
+        "iso_runtime_b",
+        "user_profiles",
+        "updated_at",
+        "UPDATE"
+      ]
+    ],
+    "tenant_authority": {
+      "iso_runtime_a": "f8262048-1099-470a-9a54-9502b39ca884",
+      "iso_runtime_b": "f660e61d-67b8-44fc-9b9c-551549de8da2"
+    }
+  },
+  "transport": "real loopback HTTP; three WSGI servers; two disposable PostgreSQL clusters",
+  "central_private_key_in_consumer": false,
+  "same_revoked_cookie_replayed": true,
+  "same_revoked_central_proof_replayed": true,
+  "runtime_set_role": false,
+  "durable_revocation": {
+    "state": "revoked",
+    "reason": "logout",
+    "outbox_records": 1
+  },
+  "production_ready": false,
+  "phase31_5": "EXECUTION_HELD",
+  "S3_DECISION_02A_NOT_CLOSED": true,
+  "NO_DEPLOYMENT": true,
+  "NO_SHARED_DB_MUTATION": true,
+  "cleanup": {
+    "http_processes_stopped": true,
+    "iso_cluster_stopped": true,
+    "iso_root_removed": true
+  }
+}

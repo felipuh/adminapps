@@ -32,10 +32,18 @@ def main():
                         help='LAB05-C1 prerequisite evidence only; never declares consumer E2E PASS')
     parser.add_argument('--http-central-sso', action='store_true',
                         help='LAB05-C1-R1 isolated central SSO HTTP acceptance only')
+    parser.add_argument('--http-isosmart', type=Path,
+                        help='LAB05-C1-R3: path to ISO Smart backend; reuse provisioning only')
     args = parser.parse_args()
-    profiles = ('iam', 'control_plane', 'admin', 'events') + (('sso',) if args.http_central_sso else ())
-    if sum((args.http_only, args.http_invitations, args.http_sso_preflight, args.http_central_sso)) > 1:
+    central_sso = args.http_central_sso or args.http_isosmart is not None
+    profiles = ('iam', 'control_plane', 'admin', 'events') + (('sso',) if central_sso else ())
+    if sum((args.http_only, args.http_invitations, args.http_sso_preflight,
+            args.http_central_sso, args.http_isosmart is not None)) > 1:
         parser.error('Select only one HTTP objective')
+    if args.http_isosmart:
+        args.http_isosmart = args.http_isosmart.resolve()
+        if not (args.http_isosmart / 'lab05_c1_r3/run.py').is_file():
+            parser.error('ISO Smart R3 runner not found')
     if os.geteuid() == 0:
         raise RuntimeError('Root execution forbidden')
     root = Path(tempfile.mkdtemp(prefix='adminapps-lab04-'))
@@ -94,7 +102,7 @@ def main():
         connection.close()
         (data / 'pg_hba.conf').write_text(
             'local all lab04_bootstrap trust\n'
-            'local lab04_human lab04_iam,lab04_control_plane,lab04_admin,lab04_events' + (',lab04_sso' if args.http_central_sso else '') + ' scram-sha-256\n'
+            'local lab04_human lab04_iam,lab04_control_plane,lab04_admin,lab04_events' + (',lab04_sso' if central_sso else '') + ' scram-sha-256\n'
             'local all all reject\nhost all all 0.0.0.0/0 reject\nhost all all ::0/0 reject\n')
         run(['pg_ctl', '-D', str(data), 'reload'], 'reload')
         run([sys.executable, str(HERE / 'migrate.py')], 'migrate', {'LAB04_MIGRATE': '1'})
@@ -104,15 +112,22 @@ def main():
                  '-v', 'maintenance_role=lab04_maintenance', '-v', 'runtime_profile=' + ('iam' if profile == 'sso' else profile),
                  '-f', str(REPO / 'backend/scripts/provision_runtime_profiles.sql')],
                 'provision-' + profile, {'PGOPTIONS': '-c role=lab04_maintenance'})
-        if args.http_only or args.http_invitations or args.http_sso_preflight or args.http_central_sso:
+        if args.http_only or args.http_invitations or args.http_sso_preflight or central_sso:
             run([sys.executable, str(HERE / 'fixtures.py')], 'fixtures', {'LAB04_MIGRATE': '1'})
             script = 'invitation_acceptance.py' if args.http_invitations else 'http_acceptance.py'
             if args.http_sso_preflight:
                 script = 'sso_preflight.py'
-            if args.http_central_sso:
+            if central_sso:
                 run([sys.executable, str(REPO / 'backend/lab05/sso_seed.py')],
                     'sso-seed', {'LAB04_MIGRATE': '1'})
                 script = 'sso_acceptance.py'
+            if args.http_isosmart:
+                run([sys.executable, str(REPO / 'backend/lab05/r3_seed.py')],
+                    'r3-seed', {'LAB04_MIGRATE': '1'})
+                run([sys.executable, str(args.http_isosmart / 'lab05_c1_r3/run.py'),
+                     '--admin-backend', str(REPO / 'backend')], 'r3-http-acceptance')
+                print('LAB05_C1_R3_ISOSMART_HTTP_E2E_PASS', flush=True)
+                return
             run([sys.executable, str(REPO / 'backend/lab05' / script)], 'http-acceptance')
             verdict = ('LAB05_C1_R1_CENTRAL_SSO_HTTP_PASS' if args.http_central_sso else
                        'LAB05_C1_BLOCKED_PREREQUISITES' if args.http_sso_preflight else

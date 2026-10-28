@@ -1,0 +1,12 @@
+{
+  "baseline": "5190c9b0830fa1f85b8a9ac576e9df3d60383a21",
+  "protected_files_unchanged": 73,
+  "protected_path_categories": [
+    "Python migrations",
+    "Python settings",
+    "Python billing modules"
+  ],
+  "protected_source_digest": "1200cb41212febf860940fd62b218f8407f85fe206addb6f365aaba7193dee7e",
+  "test_interpreter": "Python 3.9.25; existing local R1 environment",
+  "dependencies_updated": false
+}
