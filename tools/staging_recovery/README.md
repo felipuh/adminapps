@@ -7,25 +7,37 @@ python3 -B -m unittest discover -s tools/staging_recovery -p 'test_*.py'
 python3 -B tools/staging_recovery/preflight.py tools/staging_recovery/plan.example.json
 ```
 
-The second command intentionally exits 2: it cannot authorize or start infrastructure.
-It reports structural plan errors separately from evidence and authorization blockers.
-It never imports application settings, reads real dotenv files, connects to a database,
-starts a process or performs migrations. The example contains proposed paths and
-ports, not provisioned resources. No credentials are accepted or printed by the plan.
+Preflight always exits 2 and reports execution BLOCKED. Even structurally valid
+local evidence is `STRUCTURALLY_VALID_UNATTESTED`, never deployment PASS. The
+example deliberately has no secret references or dependency lock: these require
+real provenance, not placeholders. Capacity budgets are provisional planning
+reserves; calibrate them with the isolated target's measured workload.
 
-The eight policy tests are standalone. The two source-risk tests expect sibling
-`isosmart` and `ISO_Smart_MedSupplier` repositories beside AdminApps. They extract
-specific functions with AST and execute those functions with synthetic settings;
-they never import the applications. Their PASS confirms a risk reproduction, not
-a secure runtime. Exact consumer SHAs and offline test results are recorded in
-`docs/evidence/staging-recovery-2026-10-29/`.
+Checks include explicit false bypass/fallback flags, product/authority, HTTPS
+endpoint and loopback ports, every PostgreSQL alias, endpoint/role/volume sharing,
+canonical path overlap (including symlinks), running process directories, independent
+venv configuration, installed package/hashed lock agreement and known incompatible
+Django baselines. A lock is metadata evidence, not a vulnerability scan. A declared
+cluster ID, credential reference or endpoint is not proof of network isolation.
+Remote DNS aliases, all service users, ACLs, loaded settings, TLS and egress rules
+remain unverified execution blockers. No app settings or dotenv are loaded by preflight.
 
-This tool is **not an installed startup guard**. Effective settings validation,
-fresh-cluster provenance, role/ACL checks, secret provenance, private TLS, RAM/CPU
-budgets and collision-free ports remain mandatory before a future authorized
-runner can start. The filesystem paths and database names in a plan are not proof
-of isolation. Do not replace these gates with self-asserted manifest approvals.
+20 tests currently cover structural/local checks and historical reproductions.
+The two historical source-risk tests load exact baseline Git objects from sibling
+`isosmart` and `ISO_Smart_MedSupplier` repositories. Their PASS means the former
+risk was reproduced; current regressions live in each consumer's `integration/`.
+Tests use temporary local files, mocked transport and no database.
 
-See the four `docs/STAGING_*_2026-10-29.md` recovery reports for infrastructure,
-security, the execution matrix and the verdict. No operational startup, shutdown,
-SQL, health or smoke runner is claimed ready while capacity and isolation are blocked.
+Additional read-only audit tools are separate from preflight:
+
+- `read_only_inventory.py SOURCE_ROOT OUTPUT`: reads systemd/proc and dotenv as
+  data, without Django; writes only flags, fingerprints and pseudonymous DB refs.
+  Requires the existing `python-dotenv` package. Never writes source configurations.
+- `dependency_audit.py REQUIREMENTS...`: run using the interpreter being audited;
+  reads distribution metadata, canonicalizes package names and checks requirements.
+  Requires existing `packaging`; does not install or import application code.
+- `git_matrix.py`: compares local commit objects and sanitized content manifests;
+  no fetch, merge, cherry-pick, reset or push.
+
+See `docs/P0_REMEDIATION_STAGING_2026-10-29.md` for the consolidated report and
+`docs/evidence/p0-remediation-2026-10-29/` for evidence generated in this execution.

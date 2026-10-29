@@ -4,7 +4,7 @@ A valid plan is NOT proof of infrastructure isolation or permission to execute.
 import argparse
 import json
 from pathlib import Path
-import shutil
+from isolation import inspect_capacity, inspect_local, validate_inventory
 from urllib.parse import urlsplit
 
 PRODUCTS = ('ADMINAPPS', 'ISO_SMART', 'MEDSUPPLIER')
@@ -88,19 +88,23 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('plan', type=Path)
     args = parser.parse_args()
+    plan = None
     try:
         plan = json.loads(args.plan.read_text())
         errors = validate(plan)
     except (OSError, ValueError, TypeError):
         errors = ['plan_unreadable_or_invalid']
-    free = shutil.disk_usage(args.plan.parent).free
-    if free < 10 * 1024**3:
-        errors.append('capacity_below_proposed_10_GiB_disk_reserve')
+    if isinstance(plan, dict):
+        errors += validate_inventory(plan)
+        errors += inspect_capacity(plan.get('target_root', '/nonexistent'), plan.get('capacity_required'))
+        if not validate(plan):
+            errors += inspect_local(plan)
     # Intentionally cannot clear these with self-asserted manifest booleans.
     blockers = ['creation_authorization_required', 'fresh_cluster_identity_and_acl_evidence_required',
                 'effective_settings_and_secret_provenance_required', 'port_and_mount_ownership_required',
-                'private_tls_and_trust_verification_required', 'full_runtime_QA_required']
-    print(json.dumps({'plan_status': 'FAIL' if errors else 'PASS', 'errors': errors,
+                'private_tls_and_trust_verification_required', 'full_runtime_QA_required', 'effective_dependency_resolution_required',
+                'all_service_users_and_settings_inventory_required', 'staging_network_egress_deny_to_operational_required']
+    print(json.dumps({'plan_status': 'FAIL' if errors else 'STRUCTURALLY_VALID_UNATTESTED', 'errors': errors,
                       'execution_status': 'BLOCKED', 'blockers': blockers}))
     return 2
 

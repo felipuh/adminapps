@@ -16,8 +16,15 @@
       "port": 18440,
       "databases": [
         {
-          "identity": "staging_adminapps",
-          "role": "staging_adminapps"
+          "alias": "default",
+          "engine": "django.db.backends.postgresql",
+          "host": "127.0.0.1",
+          "port": "15440",
+          "name": "staging_adminapps_default",
+          "identity": "staging_adminapps_default",
+          "role": "staging_adminapps_default",
+          "cluster_id": "staging_adminapps",
+          "volume_id": "adminapps_postgres_volume"
         }
       ],
       "source_path": "/srv/smart3ai-staging/adminapps/source",
@@ -25,7 +32,14 @@
       "data_path": "/srv/smart3ai-staging/adminapps/data",
       "mounts": [],
       "secrets_policy": "new_independent_credentials",
-      "adminapps_url": "https://127.0.0.1:18440/api/integration"
+      "adminapps_url": "https://127.0.0.1:18440/api/integration",
+      "identity_authority": "ADMINAPPS",
+      "authority_product": "ADMINAPPS",
+      "redis": {
+        "enabled": false
+      },
+      "secret_references": {},
+      "dependency_lock": {}
     },
     "ISO_SMART": {
       "product": "ISO_SMART",
@@ -43,8 +57,37 @@
       "port": 18441,
       "databases": [
         {
-          "identity": "staging_iso_smart",
-          "role": "staging_iso_smart"
+          "alias": "default",
+          "engine": "django.db.backends.postgresql",
+          "host": "127.0.0.1",
+          "port": "15441",
+          "name": "staging_iso_smart_default",
+          "identity": "staging_iso_smart_default",
+          "role": "staging_iso_smart_default",
+          "cluster_id": "staging_iso_smart",
+          "volume_id": "iso_smart_postgres_volume"
+        },
+        {
+          "alias": "ai_db",
+          "engine": "django.db.backends.postgresql",
+          "host": "127.0.0.1",
+          "port": "15441",
+          "name": "staging_iso_smart_ai_db",
+          "identity": "staging_iso_smart_ai_db",
+          "role": "staging_iso_smart_ai_db",
+          "cluster_id": "staging_iso_smart",
+          "volume_id": "iso_smart_postgres_volume"
+        },
+        {
+          "alias": "audit_db",
+          "engine": "django.db.backends.postgresql",
+          "host": "127.0.0.1",
+          "port": "15441",
+          "name": "staging_iso_smart_audit_db",
+          "identity": "staging_iso_smart_audit_db",
+          "role": "staging_iso_smart_audit_db",
+          "cluster_id": "staging_iso_smart",
+          "volume_id": "iso_smart_postgres_volume"
         }
       ],
       "source_path": "/srv/smart3ai-staging/iso_smart/source",
@@ -52,7 +95,14 @@
       "data_path": "/srv/smart3ai-staging/iso_smart/data",
       "mounts": [],
       "secrets_policy": "new_independent_credentials",
-      "adminapps_url": "https://127.0.0.1:18440/api/integration"
+      "adminapps_url": "https://127.0.0.1:18440/api/integration",
+      "identity_authority": "ADMINAPPS",
+      "authority_product": "ISO_SMART",
+      "redis": {
+        "enabled": false
+      },
+      "secret_references": {},
+      "dependency_lock": {}
     },
     "MEDSUPPLIER": {
       "product": "MEDSUPPLIER",
@@ -70,8 +120,37 @@
       "port": 18442,
       "databases": [
         {
-          "identity": "staging_medsupplier",
-          "role": "staging_medsupplier"
+          "alias": "default",
+          "engine": "django.db.backends.postgresql",
+          "host": "127.0.0.1",
+          "port": "15442",
+          "name": "staging_medsupplier_default",
+          "identity": "staging_medsupplier_default",
+          "role": "staging_medsupplier_default",
+          "cluster_id": "staging_medsupplier",
+          "volume_id": "medsupplier_postgres_volume"
+        },
+        {
+          "alias": "ai_db",
+          "engine": "django.db.backends.postgresql",
+          "host": "127.0.0.1",
+          "port": "15442",
+          "name": "staging_medsupplier_ai_db",
+          "identity": "staging_medsupplier_ai_db",
+          "role": "staging_medsupplier_ai_db",
+          "cluster_id": "staging_medsupplier",
+          "volume_id": "medsupplier_postgres_volume"
+        },
+        {
+          "alias": "audit_db",
+          "engine": "django.db.backends.postgresql",
+          "host": "127.0.0.1",
+          "port": "15442",
+          "name": "staging_medsupplier_audit_db",
+          "identity": "staging_medsupplier_audit_db",
+          "role": "staging_medsupplier_audit_db",
+          "cluster_id": "staging_medsupplier",
+          "volume_id": "medsupplier_postgres_volume"
         }
       ],
       "source_path": "/srv/smart3ai-staging/medsupplier/source",
@@ -79,8 +158,21 @@
       "data_path": "/srv/smart3ai-staging/medsupplier/data",
       "mounts": [],
       "secrets_policy": "new_independent_credentials",
-      "adminapps_url": "https://127.0.0.1:18440/api/integration"
+      "adminapps_url": "https://127.0.0.1:18440/api/integration",
+      "identity_authority": "ADMINAPPS",
+      "authority_product": "MEDSUPPLIER",
+      "redis": {
+        "enabled": false
+      },
+      "secret_references": {},
+      "dependency_lock": {}
     }
   },
-  "notice": "DESIGN ONLY. No resources, secrets, certificates or permissions provisioned."
+  "notice": "DESIGN ONLY. No resources, secrets, certificates or permissions provisioned.",
+  "target_root": "/srv/smart3ai-staging",
+  "capacity_required": {
+    "disk_bytes": 32212254720,
+    "memory_bytes": 8589934592,
+    "cpus": 4
+  }
 }

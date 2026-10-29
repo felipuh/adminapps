@@ -1,7 +1,8 @@
-"""Pure-function reproductions from current sources; no Django/settings/.env imports.
+"""Historical pure-function reproductions from pinned baseline commits; no Django/settings/.env imports.
 These tests CONFIRM risk conditions; passing is not a safety certification.
 """
 import ast
+import subprocess
 from pathlib import Path
 from types import SimpleNamespace as NS
 import unittest
@@ -10,7 +11,10 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 def extract(path, names, settings):
-    tree=ast.parse(path.read_text())
+    repo=next(p for p in path.parents if (p/'.git').exists())
+    baseline='61bf5a27' if repo.name=='isosmart' else '5bfcddc9'
+    source=subprocess.check_output(['git','-C',str(repo),'show',baseline+':'+str(path.relative_to(repo))],text=True)
+    tree=ast.parse(source)
     nodes=[n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name in names]
     if len(nodes)!=len(names):
         raise AssertionError('Source contract changed; review extraction')
