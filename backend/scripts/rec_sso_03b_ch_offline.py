@@ -1,6 +1,7 @@
 """CH endpoint contracts. Synthetic RSA, mocked persistence, no DB/network."""
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -267,7 +268,11 @@ class CHTests(h.Fixture):
             foreign = proofs[next(k for k in proofs if k != repo)]
             payload = {'public_key': PUBLIC, 'own': own, 'foreign': foreign}
             backend = ROOT.parent / repo / 'backend'
-            result = subprocess.run([str(backend / '.venv/bin/python'), '-B', 'integration/tests_ch_offline.py', '--coordinated'],
+            interpreter_key = 'REC_SSO_ISO_PYTHON' if repo == 'isosmart' else 'REC_SSO_MED_PYTHON'
+            interpreter = Path(os.environ.get(interpreter_key, str(backend / '.venv/bin/python')))
+            self.assertTrue(interpreter.is_absolute() and interpreter.is_file(),
+                            'Configure an independent offline interpreter with ' + interpreter_key)
+            result = subprocess.run([str(interpreter), '-B', 'integration/tests_ch_offline.py', '--coordinated'],
                                     cwd=backend, input=json.dumps(payload), text=True, capture_output=True, timeout=45)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertIn('CROSS_PRODUCT_PASS', result.stdout)

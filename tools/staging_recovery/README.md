@@ -41,3 +41,16 @@ Additional read-only audit tools are separate from preflight:
 
 See `docs/P0_REMEDIATION_STAGING_2026-10-29.md` for the consolidated report and
 `docs/evidence/p0-remediation-2026-10-29/` for evidence generated in this execution.
+
+The coordinated AdminApps SSO test supports explicit independent interpreters:
+
+```sh
+REC_SSO_ISO_PYTHON=/ISOLATED/iso/venv/bin/python \
+REC_SSO_MED_PYTHON=/ISOLATED/med/venv/bin/python \
+/ADMINAPP_TEST_PYTHON -B backend/scripts/rec_sso_03b_offline.py
+```
+
+The variables affect only the offline subprocess harness. They do not configure
+application authentication, services or deployment. The original checkout-local
+`.venv` default is retained for existing callers; isolated audits should always
+supply both explicit runtimes.
