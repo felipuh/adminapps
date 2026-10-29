@@ -1,0 +1,204 @@
+{
+  "date": "2026-10-29",
+  "timezone": "America/Costa_Rica",
+  "scope": "Local read-only discovery; no staging runtime certified",
+  "target_verdict": "GO WITH RESTRICTIONS",
+  "runtime_tests": "NOT_EXECUTED",
+  "repositories": {
+    "adminapps": {
+      "path": "/home/felipe/proyectos/adminapps",
+      "expected_sha": "bf2d9d646cd671cc834ea9ade79ac1b4758a7236",
+      "expected_branch": "hardening/p0-p1-enterprise-readiness",
+      "git": {
+        "status": {
+          "exit_code": 0,
+          "stdout": "## lab05/c1-r3-http-sso-sanitized-20261028...origin/lab05/c1-r3-http-sso-sanitized-20261028"
+        },
+        "branch": {
+          "exit_code": 0,
+          "stdout": "lab05/c1-r3-http-sso-sanitized-20261028"
+        },
+        "head": {
+          "exit_code": 0,
+          "stdout": "3b6ac6e807b19f02a3e1a8edfec4d57655ac32a3"
+        },
+        "log5": {
+          "exit_code": 0,
+          "stdout": "3b6ac6e8 test(lab05): orchestrate real ISO Smart central SSO integration\n5190c9b0 test(lab05): restore isolated central SSO HTTP runtime\n21961bdb lab05-c1: record HTTP SSO and consumer schema prerequisites\ne4f72061 test(lab05): verify invitation and tenant authority over real HTTP\n71318e52 fix(security): remediate compatible npm advisories for SEC-04"
+        },
+        "expected_object": {
+          "exit_code": 0,
+          "stdout": "commit"
+        },
+        "local_hardening_ref": {
+          "exit_code": 0,
+          "stdout": "e4dac0a96dcb535ce1cbf9550d113aa18a6ec915"
+        },
+        "cached_origin_hardening_ref": {
+          "exit_code": 0,
+          "stdout": "f39acc54f51dd5f2679a66e1cdaace9f80c22621"
+        }
+      },
+      "dotenv_presence_only_not_runtime": {
+        "DJANGO_SETTINGS_MODULE": "ausente",
+        "DATABASE_URL": "ausente",
+        "DB_NAME": "presente",
+        "DB_USER": "presente",
+        "DB_PASSWORD": "presente",
+        "DB_HOST": "presente",
+        "DB_PORT": "presente",
+        "SECRET_KEY": "ausente",
+        "DJANGO_SECRET_KEY": "presente",
+        "ADMINAPPS_INTERNAL_API_KEY": "ausente",
+        "ADMINAPPS_API_KEY": "ausente",
+        "ADMIN_APPS_API_KEY": "ausente",
+        "ALLOWED_HOSTS": "presente",
+        "DEBUG": "presente",
+        "ADMINAPPS_BASE_URL": "ausente",
+        "ADMIN_APPS_BASE_URL": "ausente",
+        "PRODUCT_CODE": "ausente",
+        "ISO_SMART_PRODUCT_CODE": "ausente",
+        "ALLOW_LOCAL_AUTH_FALLBACK": "ausente",
+        "ADMIN_APPS_ALLOW_LOCAL_FALLBACK": "ausente",
+        "ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS": "ausente",
+        "ADMINAPPS_TIMEOUT": "ausente",
+        "ADMIN_APPS_TIMEOUT": "ausente"
+      },
+      "bypass_config_gate": "no inconsistencia detectada en este indicador",
+      "env_git_ignored": {
+        "exit_code": 0,
+        "stdout": "backend/.env"
+      }
+    },
+    "isosmart": {
+      "path": "/home/felipe/proyectos/isosmart",
+      "expected_sha": "fc2a670fa829936e864722ed06ac9f7ed3c04c8b",
+      "expected_branch": "hardening/p0-p1-enterprise-readiness",
+      "git": {
+        "status": {
+          "exit_code": 0,
+          "stdout": "## checkpoint/rec-git-03-isosmart-20261020...origin/checkpoint/rec-git-03-isosmart-20261020"
+        },
+        "branch": {
+          "exit_code": 0,
+          "stdout": "checkpoint/rec-git-03-isosmart-20261020"
+        },
+        "head": {
+          "exit_code": 0,
+          "stdout": "61bf5a27ac49f66cc8b57f083c752e8fe397d108"
+        },
+        "log5": {
+          "exit_code": 0,
+          "stdout": "61bf5a27 feat(docs): Add comprehensive reports and assessments for AI Metering and SSO implementation\ndf9de1b5 feat(ai-usage): checkpoint fail-closed financial metering\n46eb2739 feat(sso): consolidate published Decision B and D checkpoint\n0ce01dff feat: deliver AI usage through durable AdminApps outbox\nf19fbd38 feat: meter AI token usage and estimated provider costs"
+        },
+        "expected_object": {
+          "exit_code": 0,
+          "stdout": "commit"
+        },
+        "local_hardening_ref": {
+          "exit_code": 0,
+          "stdout": "0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e"
+        },
+        "cached_origin_hardening_ref": {
+          "exit_code": 0,
+          "stdout": "52bcdf65e70851480b1a729f5ded2e93774d05c7"
+        }
+      },
+      "dotenv_presence_only_not_runtime": {
+        "DJANGO_SETTINGS_MODULE": "ausente",
+        "DATABASE_URL": "ausente",
+        "DB_NAME": "presente",
+        "DB_USER": "presente",
+        "DB_PASSWORD": "presente",
+        "DB_HOST": "presente",
+        "DB_PORT": "presente",
+        "SECRET_KEY": "presente",
+        "DJANGO_SECRET_KEY": "ausente",
+        "ADMINAPPS_INTERNAL_API_KEY": "ausente",
+        "ADMINAPPS_API_KEY": "ausente",
+        "ADMIN_APPS_API_KEY": "presente",
+        "ALLOWED_HOSTS": "presente",
+        "DEBUG": "presente",
+        "ADMINAPPS_BASE_URL": "ausente",
+        "ADMIN_APPS_BASE_URL": "presente",
+        "PRODUCT_CODE": "ausente",
+        "ISO_SMART_PRODUCT_CODE": "ausente",
+        "ALLOW_LOCAL_AUTH_FALLBACK": "ausente",
+        "ADMIN_APPS_ALLOW_LOCAL_FALLBACK": "ausente",
+        "ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS": "presente",
+        "ADMINAPPS_TIMEOUT": "ausente",
+        "ADMIN_APPS_TIMEOUT": "presente"
+      },
+      "bypass_config_gate": "inconsistencia detectada",
+      "env_git_ignored": {
+        "exit_code": 0,
+        "stdout": "backend/.env"
+      }
+    },
+    "ISO_Smart_MedSupplier": {
+      "path": "/home/felipe/proyectos/ISO_Smart_MedSupplier",
+      "expected_sha": "59678925c918830ade00c713e9a799910fb3b674",
+      "expected_branch": "hardening/p0-p1-enterprise-readiness",
+      "git": {
+        "status": {
+          "exit_code": 0,
+          "stdout": "## checkpoint/rec-git-03-medsupplier-20261020...origin/checkpoint/rec-git-03-medsupplier-20261020"
+        },
+        "branch": {
+          "exit_code": 0,
+          "stdout": "checkpoint/rec-git-03-medsupplier-20261020"
+        },
+        "head": {
+          "exit_code": 0,
+          "stdout": "5bfcddc94e0ad5b8f0fe3e7449ba83b66ebc2bca"
+        },
+        "log5": {
+          "exit_code": 0,
+          "stdout": "5bfcddc9 feat: Implement multi-factor authentication (MFA) support in login flow\ne8f2a2d8 feat(sso): consolidate published Decision B and D checkpoint\n6a5fd036 feat: refine MedSupplier workspace experience\n2fdd9ba2 feat: implement local login fallback using user profiles when AdminApps validation fails\n59678925 feat: add frontend authentication security and QA testing documentation"
+        },
+        "expected_object": {
+          "exit_code": 0,
+          "stdout": "commit"
+        },
+        "local_hardening_ref": {
+          "exit_code": 0,
+          "stdout": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f"
+        },
+        "cached_origin_hardening_ref": {
+          "exit_code": 0,
+          "stdout": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f"
+        }
+      },
+      "dotenv_presence_only_not_runtime": {
+        "DJANGO_SETTINGS_MODULE": "ausente",
+        "DATABASE_URL": "ausente",
+        "DB_NAME": "presente",
+        "DB_USER": "presente",
+        "DB_PASSWORD": "presente",
+        "DB_HOST": "presente",
+        "DB_PORT": "presente",
+        "SECRET_KEY": "presente",
+        "DJANGO_SECRET_KEY": "ausente",
+        "ADMINAPPS_INTERNAL_API_KEY": "ausente",
+        "ADMINAPPS_API_KEY": "ausente",
+        "ADMIN_APPS_API_KEY": "presente",
+        "ALLOWED_HOSTS": "presente",
+        "DEBUG": "presente",
+        "ADMINAPPS_BASE_URL": "ausente",
+        "ADMIN_APPS_BASE_URL": "presente",
+        "PRODUCT_CODE": "ausente",
+        "ISO_SMART_PRODUCT_CODE": "ausente",
+        "ALLOW_LOCAL_AUTH_FALLBACK": "ausente",
+        "ADMIN_APPS_ALLOW_LOCAL_FALLBACK": "ausente",
+        "ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS": "presente",
+        "ADMINAPPS_TIMEOUT": "ausente",
+        "ADMIN_APPS_TIMEOUT": "presente"
+      },
+      "bypass_config_gate": "inconsistencia detectada",
+      "env_git_ignored": {
+        "exit_code": 0,
+        "stdout": "backend/.env"
+      }
+    }
+  }
+}

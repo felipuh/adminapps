@@ -1,0 +1,27 @@
+{
+  "tests_exit": 0,
+  "tests_summary": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.050s\n\nOK",
+  "preflight_exit": 2,
+  "preflight": {
+    "plan_status": "FAIL",
+    "errors": [
+      "capacity_below_proposed_10_GiB_disk_reserve"
+    ],
+    "execution_status": "BLOCKED",
+    "blockers": [
+      "creation_authorization_required",
+      "fresh_cluster_identity_and_acl_evidence_required",
+      "effective_settings_and_secret_provenance_required",
+      "port_and_mount_ownership_required",
+      "private_tls_and_trust_verification_required",
+      "full_runtime_QA_required"
+    ]
+  },
+  "tool_sha256": {
+    "tools/staging_recovery/preflight.py": "7184e98f44c86f570f0308822e7adc7e81e9aa95da99e7523a1b138d0b3f51e3",
+    "tools/staging_recovery/test_preflight.py": "7beca73465edcc918c67f239fcd928f5c60719705ead3e876503705fb8fb5bfa",
+    "tools/staging_recovery/test_source_risks.py": "1776fd754e18a35bbbadb82486e07b00f7e15db06c59643c9395d4c5a0d45007",
+    "tools/staging_recovery/plan.example.json": "6eb2254b3a8b7a37bdcdf9bf90af35fb49697336f1832519f312c297d2b2b74d"
+  },
+  "risk_reproductions": "Tests passing confirm unsafe preconditions; not runtime security PASS."
+}

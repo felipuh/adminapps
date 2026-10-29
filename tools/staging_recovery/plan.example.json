@@ -1,0 +1,86 @@
+{
+  "applications": {
+    "ADMINAPPS": {
+      "product": "ADMINAPPS",
+      "environment": "staging",
+      "flags": {
+        "DEBUG": false,
+        "ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS": false,
+        "ALLOW_LOCAL_AUTH_FALLBACK": false,
+        "ADMIN_APPS_ALLOW_LOCAL_FALLBACK": false,
+        "SMART3AI_SSO_ALLOW_2FA_BYPASS": false,
+        "ALLOW_SESSION_AUTH_FOR_DEV": false,
+        "USE_SQLITE_DATABASE": false
+      },
+      "bind_address": "127.0.0.1",
+      "port": 18440,
+      "databases": [
+        {
+          "identity": "staging_adminapps",
+          "role": "staging_adminapps"
+        }
+      ],
+      "source_path": "/srv/smart3ai-staging/adminapps/source",
+      "venv_path": "/srv/smart3ai-staging/adminapps/venv",
+      "data_path": "/srv/smart3ai-staging/adminapps/data",
+      "mounts": [],
+      "secrets_policy": "new_independent_credentials",
+      "adminapps_url": "https://127.0.0.1:18440/api/integration"
+    },
+    "ISO_SMART": {
+      "product": "ISO_SMART",
+      "environment": "staging",
+      "flags": {
+        "DEBUG": false,
+        "ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS": false,
+        "ALLOW_LOCAL_AUTH_FALLBACK": false,
+        "ADMIN_APPS_ALLOW_LOCAL_FALLBACK": false,
+        "SMART3AI_SSO_ALLOW_2FA_BYPASS": false,
+        "ALLOW_SESSION_AUTH_FOR_DEV": false,
+        "USE_SQLITE_DATABASE": false
+      },
+      "bind_address": "127.0.0.1",
+      "port": 18441,
+      "databases": [
+        {
+          "identity": "staging_iso_smart",
+          "role": "staging_iso_smart"
+        }
+      ],
+      "source_path": "/srv/smart3ai-staging/iso_smart/source",
+      "venv_path": "/srv/smart3ai-staging/iso_smart/venv",
+      "data_path": "/srv/smart3ai-staging/iso_smart/data",
+      "mounts": [],
+      "secrets_policy": "new_independent_credentials",
+      "adminapps_url": "https://127.0.0.1:18440/api/integration"
+    },
+    "MEDSUPPLIER": {
+      "product": "MEDSUPPLIER",
+      "environment": "staging",
+      "flags": {
+        "DEBUG": false,
+        "ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS": false,
+        "ALLOW_LOCAL_AUTH_FALLBACK": false,
+        "ADMIN_APPS_ALLOW_LOCAL_FALLBACK": false,
+        "SMART3AI_SSO_ALLOW_2FA_BYPASS": false,
+        "ALLOW_SESSION_AUTH_FOR_DEV": false,
+        "USE_SQLITE_DATABASE": false
+      },
+      "bind_address": "127.0.0.1",
+      "port": 18442,
+      "databases": [
+        {
+          "identity": "staging_medsupplier",
+          "role": "staging_medsupplier"
+        }
+      ],
+      "source_path": "/srv/smart3ai-staging/medsupplier/source",
+      "venv_path": "/srv/smart3ai-staging/medsupplier/venv",
+      "data_path": "/srv/smart3ai-staging/medsupplier/data",
+      "mounts": [],
+      "secrets_policy": "new_independent_credentials",
+      "adminapps_url": "https://127.0.0.1:18440/api/integration"
+    }
+  },
+  "notice": "DESIGN ONLY. No resources, secrets, certificates or permissions provisioned."
+}

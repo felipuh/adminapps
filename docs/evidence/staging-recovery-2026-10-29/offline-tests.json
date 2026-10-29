@@ -1,0 +1,108 @@
+[
+  {
+    "repository": "adminapps",
+    "sha": "3b6ac6e807b19f02a3e1a8edfec4d57655ac32a3",
+    "script": "backend/scripts/rec_sso_03b_offline.py",
+    "python": "adminapps/backend/.venv312/bin/python",
+    "exit_code": 0,
+    "summary": [
+      {
+        "tests": 43,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0,
+        "scope": "offline simulated ORM/locking/rollback, NOT PostgreSQL concurrency or HTTP E2E"
+      }
+    ],
+    "failure_test_names": [],
+    "exception_classes": []
+  },
+  {
+    "repository": "isosmart",
+    "sha": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+    "script": "integration/tests_b_offline.py",
+    "python": "isosmart/backend/.venv312/bin/python",
+    "exit_code": 0,
+    "summary": [
+      {
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0,
+        "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+      }
+    ],
+    "failure_test_names": [],
+    "exception_classes": []
+  },
+  {
+    "repository": "isosmart",
+    "sha": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+    "script": "integration/tests_d_offline.py",
+    "python": "isosmart/backend/.venv312/bin/python",
+    "exit_code": 1,
+    "summary": [],
+    "failure_test_names": [],
+    "exception_classes": [
+      "TypeError"
+    ]
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "sha": "5bfcddc94e0ad5b8f0fe3e7449ba83b66ebc2bca",
+    "script": "integration/tests_b_offline.py",
+    "python": "isosmart/backend/.venv312/bin/python",
+    "exit_code": 0,
+    "summary": [
+      {
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0,
+        "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+      }
+    ],
+    "failure_test_names": [],
+    "exception_classes": []
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "sha": "5bfcddc94e0ad5b8f0fe3e7449ba83b66ebc2bca",
+    "script": "integration/tests_d_offline.py",
+    "python": "isosmart/backend/.venv312/bin/python",
+    "exit_code": 0,
+    "summary": [
+      {
+        "tests": 533,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "failure_test_names": [],
+    "exception_classes": []
+  },
+  {
+    "repository": "isosmart",
+    "sha": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+    "script": "integration/tests_d_offline.py",
+    "python": "isosmart/backend/.venv/bin/python",
+    "django": "4.2.22",
+    "exit_code": 0,
+    "summary": [
+      {
+        "tests": 361,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "failure_test_names": [],
+    "exception_classes": []
+  }
+]
