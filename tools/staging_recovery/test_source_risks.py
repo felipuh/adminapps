@@ -1,19 +1,16 @@
-"""Historical pure-function reproductions from pinned baseline commits; no Django/settings/.env imports.
+"""Historical pure-function reproductions from reviewed historical fixtures; no Django/settings/.env imports.
 These tests CONFIRM risk conditions; passing is not a safety certification.
 """
 import ast
-import subprocess
 from pathlib import Path
 from types import SimpleNamespace as NS
 import unittest
 
-ROOT = Path(__file__).resolve().parents[3]
+FIXTURES = Path(__file__).with_name("fixtures")
 
 
 def extract(path, names, settings):
-    repo=next(p for p in path.parents if (p/'.git').exists())
-    baseline='61bf5a27' if repo.name=='isosmart' else '5bfcddc9'
-    source=subprocess.check_output(['git','-C',str(repo),'show',baseline+':'+str(path.relative_to(repo))],text=True)
+    source=path.read_text()
     tree=ast.parse(source)
     nodes=[n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name in names]
     if len(nodes)!=len(names):
@@ -26,7 +23,7 @@ def extract(path, names, settings):
 class SourceRiskTests(unittest.TestCase):
     def test_iso_recovery_trusts_spoofed_forwarded_local_ip_when_enabled(self):
         settings=NS(ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS=True,LOCAL_AUTH_BYPASS_HOSTS=set())
-        f=extract(ROOT/'isosmart/backend/authentication/views.py',
+        f=extract(FIXTURES/'iso_recovery.py.txt',
                   {'_request_ip_address','_local_debug_recovery_allowed'},settings)
         request=NS(META={'REMOTE_ADDR':'192.0.2.1','HTTP_X_FORWARDED_FOR':'127.0.0.1'},
                    get_host=lambda:'untrusted.example.invalid')
@@ -38,7 +35,7 @@ class SourceRiskTests(unittest.TestCase):
         for repo in ('isosmart','ISO_Smart_MedSupplier'):
             settings=NS(IS_PRODUCTION=False,ENVIRONMENT='staging',ALLOW_LOCAL_AUTH_FALLBACK=True,
                         ADMIN_APPS_INTEGRATION={'ALLOW_LOCAL_FALLBACK':True})
-            f=extract(ROOT/repo/'backend/integration/client.py',{'_local_fallback_allowed'},settings)
+            f=extract(FIXTURES/('iso_fallback.py.txt' if repo == 'isosmart' else 'med_fallback.py.txt'),{'_local_fallback_allowed'},settings)
             self.assertTrue(f['_local_fallback_allowed'](None))
             settings.IS_PRODUCTION=True
             self.assertFalse(f['_local_fallback_allowed'](None))

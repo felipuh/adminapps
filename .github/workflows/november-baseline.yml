@@ -1,0 +1,49 @@
+name: November development baseline
+on:
+  push:
+    branches: [development/2026-11-product-completion]
+  pull_request:
+    branches: [development/2026-11-product-completion]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install independent locked candidate
+        run: |
+          python -m pip install --require-hashes --only-binary=:all: -r backend/requirements-development.lock
+      - name: Offline product and policy regressions
+        run: python -B scripts/verify_november.py
+      - name: Django check with database and network denied
+        working-directory: backend
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings_test
+          DJANGO_ENV: test
+          BILLING_SCHEDULER_ENABLED: 'false'
+        run: python -B ../scripts/check_without_io.py
+      - name: Reproducible frontend build
+        working-directory: frontend
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run build
+      - name: Install verified Gitleaks
+        run: |
+          curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o "$RUNNER_TEMP/gitleaks.tar.gz"
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check --status
+          mkdir "$RUNNER_TEMP/scanner"
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP/scanner" gitleaks
+      - name: Audit all history reachable from this branch
+        env:
+          GITLEAKS: ${{ runner.temp }}/scanner/gitleaks
+        run: python3 scripts/security/check_secrets.py --ref HEAD

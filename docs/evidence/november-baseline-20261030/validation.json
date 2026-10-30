@@ -1,0 +1,381 @@
+{
+  "date": "2026-10-30",
+  "timezone": "America/Costa_Rica",
+  "product_test_executions": 1124,
+  "unique_cases_claimed": false,
+  "preflight_policy_tests": 21,
+  "consumer_qa": [
+    {
+      "repo": "isosmart",
+      "test": "tests_staging_p0_offline.py",
+      "exit": 0,
+      "seconds": 6.41,
+      "log": "qa-isosmart-tests_staging_p0_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 10,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repo": "isosmart",
+      "test": "tests_b_offline.py",
+      "exit": 0,
+      "seconds": 12.58,
+      "log": "qa-isosmart-tests_b_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 35,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0,
+          "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+        }
+      ]
+    },
+    {
+      "repo": "isosmart",
+      "test": "tests_d_offline.py",
+      "exit": 0,
+      "seconds": 17.13,
+      "log": "qa-isosmart-tests_d_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 361,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repo": "isosmart",
+      "test": "tests_d_session_offline.py",
+      "exit": 0,
+      "seconds": 11.66,
+      "log": "qa-isosmart-tests_d_session_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repo": "isosmart",
+      "test": "tests_recovery_p0_offline.py",
+      "exit": 0,
+      "seconds": 3.9,
+      "log": "qa-isosmart-tests_recovery_p0_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repo": "isosmart",
+      "test": "tests_me_p0_offline.py",
+      "exit": 0,
+      "seconds": 3.15,
+      "log": "qa-isosmart-tests_me_p0_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repo": "ISO_Smart_MedSupplier",
+      "test": "tests_staging_p0_offline.py",
+      "exit": 0,
+      "seconds": 4.91,
+      "log": "qa-ISO_Smart_MedSupplier-tests_staging_p0_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 12,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repo": "ISO_Smart_MedSupplier",
+      "test": "tests_b_offline.py",
+      "exit": 0,
+      "seconds": 9.87,
+      "log": "qa-ISO_Smart_MedSupplier-tests_b_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 35,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0,
+          "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+        }
+      ]
+    },
+    {
+      "repo": "ISO_Smart_MedSupplier",
+      "test": "tests_d_offline.py",
+      "exit": 0,
+      "seconds": 10.45,
+      "log": "qa-ISO_Smart_MedSupplier-tests_d_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 533,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repo": "ISO_Smart_MedSupplier",
+      "test": "tests_d_session_offline.py",
+      "exit": 0,
+      "seconds": 11.06,
+      "log": "qa-ISO_Smart_MedSupplier-tests_d_session_offline.py.txt",
+      "summaries": [
+        {
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    }
+  ],
+  "adminapps_candidate_qa": [
+    {
+      "script": "rec_sso_03b_offline.py",
+      "exit": 0,
+      "summaries": [
+        {
+          "tests": 43,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0,
+          "scope": "offline simulated ORM/locking/rollback, NOT PostgreSQL concurrency or HTTP E2E"
+        }
+      ]
+    },
+    {
+      "script": "rec_sso_03d_p0r2_r1_offline.py",
+      "exit": 0,
+      "summaries": [
+        {
+          "cycle": "login->ALLOW->refresh->old_DENY->revoke->access_401_before_handler->refresh_DENY->relogin_ALLOW"
+        },
+        {
+          "resolved_human_routes": 247,
+          "public_no_default_auth": [
+            "api/auth/login/",
+            "api/auth/2fa/verify/"
+          ],
+          "technical_or_central_paths_preserved": 18
+        },
+        {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "script": "p0_historical_permissions_offline.py",
+      "exit": 0,
+      "summaries": [
+        {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    }
+  ],
+  "frontend": [
+    {
+      "product": "adminapps",
+      "step": "lock",
+      "exit": 0
+    },
+    {
+      "product": "adminapps",
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "product": "adminapps",
+      "step": "build",
+      "exit": 0
+    },
+    {
+      "product": "isosmart",
+      "step": "lock",
+      "exit": 0
+    },
+    {
+      "product": "isosmart",
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "product": "isosmart",
+      "step": "build",
+      "exit": 0
+    },
+    {
+      "product": "ISO_Smart_MedSupplier",
+      "step": "lock",
+      "exit": 0
+    },
+    {
+      "product": "ISO_Smart_MedSupplier",
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "product": "ISO_Smart_MedSupplier",
+      "step": "build",
+      "exit": 0
+    }
+  ],
+  "django_and_dependencies": [
+    {
+      "product": "adminapps",
+      "check": "check",
+      "exit": 0
+    },
+    {
+      "product": "adminapps",
+      "check": "dependencies",
+      "exit": 0,
+      "incompatibilities": [],
+      "manifest_mismatches": {
+        "requirements-development.in": []
+      }
+    },
+    {
+      "product": "isosmart",
+      "check": "check",
+      "exit": 0
+    },
+    {
+      "product": "isosmart",
+      "check": "dependencies",
+      "exit": 0,
+      "incompatibilities": [],
+      "manifest_mismatches": {
+        "requirements-staging.in": []
+      }
+    },
+    {
+      "product": "ISO_Smart_MedSupplier",
+      "check": "check",
+      "exit": 0
+    },
+    {
+      "product": "ISO_Smart_MedSupplier",
+      "check": "dependencies",
+      "exit": 0,
+      "incompatibilities": [],
+      "manifest_mismatches": {
+        "requirements-staging.in": []
+      }
+    }
+  ],
+  "source_artifact_sha256_unchanged": [
+    {
+      "sha256": "6d2358a4ecc503df2298c7f47ecd0b12eccb4eec89a625e6a452a593dd891c78",
+      "source_path": "README.md"
+    },
+    {
+      "sha256": "44dbe4bcf8f6cad1c9d86051ef86e0c2421c8cc5229161ce03145da4e66ebe79",
+      "source_path": "SOURCE_ARTIFACT_MANIFEST.md"
+    },
+    {
+      "sha256": "30e3c052798ed492ba08cc80099fb85f6c9730bd4c041392a5b00b0b9c8bf0a6",
+      "source_path": "ISO_SMART_AI_Aristas_Red.csv"
+    },
+    {
+      "sha256": "11c2b4612d9882d2baaafbb7b29ac59719f2b936cd1c29a06676cdcc41acf0c3",
+      "source_path": "ISO_SMART_AI_Arquitectura_Completa.mmd"
+    },
+    {
+      "sha256": "e0a59c91573e41e6d1bc503ed25ec6d74ddb15c74dc710d7d33b482b8dc98bfa",
+      "source_path": "ISO_SMART_AI_Arquitectura_Completa_Lucidchart.drawio"
+    },
+    {
+      "sha256": "de1b4899e7fcc2facd8e26993706dd943696aff59561515911edd5c6e9ebc22e",
+      "source_path": "ISO_SMART_AI_DDL_PostgreSQL.sql"
+    },
+    {
+      "sha256": "8308bde950c80a53dfe46976b46d135faac7b170ae84c53f748aa73146b6a82c",
+      "source_path": "ISO_SMART_AI_Especificacion_Inicial_Integrada_v1_2026.docx"
+    },
+    {
+      "sha256": "952d8ac9858734915c099c8149537ab1a01108d1a4248a5328675c8a758d22d5",
+      "source_path": "ISO_SMART_AI_Mapa_Maestro_Arquitectura.xlsx"
+    },
+    {
+      "sha256": "c41e847ecc34dbdf7a104f2849263851a29a6f129fac72cc559547077c3515eb",
+      "source_path": "ISO_SMART_AI_Mapa_Maestro_Datos.json"
+    },
+    {
+      "sha256": "ecaecd253ae3f8c1cb9b1b4163cb0a1fed28f158d86d77c88659133ff965bdc3",
+      "source_path": "ISO_SMART_AI_Nodos_Red.csv"
+    },
+    {
+      "sha256": "29ac5c2d6b9cfddac5c4bcb2c24e5b924e2581cf2712412e5cc54ccba1c97fd8",
+      "source_path": "ISO_SMART_AI_OpenAPI.yaml"
+    },
+    {
+      "sha256": "eb42315cfc3b904429b5266bacd595a368049e87b5e260846b2c9aeffe80c3db",
+      "source_path": "LEEME_Importacion_ISO_SMART_AI.txt"
+    }
+  ],
+  "design_system": {
+    "sha256": "ad9d4786d09c96f7579ff4221fd492265c526914d9b9ecc97425591d13235d7e",
+    "source": "/home/felipe/proyectos/design-system",
+    "package": "smart3ai-design-system-1.0.0-beta.1.tgz",
+    "files": 128,
+    "all_package_file_bytes_equal_source": true
+  },
+  "limitations": [
+    "No operational DB/network calls in product harnesses",
+    "No PostgreSQL RLS or migration validation",
+    "No HTTP E2E or browser acceptance",
+    "No deployment or financial activation",
+    "AdminApps historical CH runner directly invoked first failed; current lifecycle-aware B runner passed",
+    "Initial frontend builds failed due sibling design-system; packaged dependency builds passed",
+    "First new workflow YAML validation failed and was corrected before commit"
+  ]
+}

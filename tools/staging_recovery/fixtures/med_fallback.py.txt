@@ -1,0 +1,6 @@
+def _local_fallback_allowed(self):
+        config = getattr(settings, 'ADMIN_APPS_INTEGRATION', {})
+        return bool(config.get('ALLOW_LOCAL_FALLBACK', False)) and not getattr(settings, 'IS_PRODUCTION', False)
+
+# Historical per-call override:
+# else bool(allow_local_fallback) and not getattr(settings, 'IS_PRODUCTION', False)

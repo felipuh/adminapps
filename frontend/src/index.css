@@ -1,4 +1,4 @@
-@import "../../../design-system/styles/platform.css";
+@import "@smart3ai/design-system/styles/platform.css";
 
 @tailwind base;
 @tailwind components;

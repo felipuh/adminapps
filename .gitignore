@@ -41,3 +41,25 @@ staticfiles/
 frontend/dist/
 .pytest_cache/
 .coverage
+
+# Local runtime and reproducible artifacts must never be committed.
+.env
+.env.*
+!*.example
+.venv*/
+venv*/
+node_modules/
+__pycache__/
+*.py[cod]
+*.sqlite*
+*.db
+*.log
+*.pid
+*.pem
+*.key
+staticfiles/
+media/
+logs/
+dist/
+playwright-report/
+test-results/

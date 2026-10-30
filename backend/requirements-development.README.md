@@ -1,0 +1,3 @@
+# AdminApps independent development candidate
+
+Python 3.12.13 / Linux x86_64. Django 5.2.18, DRF 3.17.1 and SimpleJWT 5.5.1 align with the already tested consumer candidate. Updated Django-filter/cors pins resolve with Django 5.2. Other direct operational pins are retained. `requirements-development.lock` records transitive hashes; no operational environment was changed. Hash-enforced installation, metadata compatibility, Django checks and SSO/lifecycle/permission regressions passed. PostgreSQL migrations, billing/signature-provider integration and CVE closure are not certified. See `NOVEMBER_DEVELOPMENT.md` for reproduction.

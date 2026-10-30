@@ -1,14 +1,14 @@
 {
   "name": "adminapps-frontend",
   "version": "1.0.0",
-  "description": "Admin Apps - Sistema de Gestión de Organizaciones y Usuarios",
+  "description": "Admin Apps - Sistema de Gesti\u00f3n de Organizaciones y Usuarios",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 3000",
+    "dev": "vite --host 127.0.0.1 --port 3000",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview --host 0.0.0.0 --port 3000",
+    "preview": "vite preview --host 127.0.0.1 --port 3000",
     "start": "node server.js"
   },
   "dependencies": {
@@ -24,7 +24,8 @@
     "react-router-dom": "^7.18.4",
     "recharts": "^3.8.1",
     "serve-static": "^2.2.1",
-    "sweetalert2": "^11.26.25"
+    "sweetalert2": "^11.26.25",
+    "@smart3ai/design-system": "file:vendor/smart3ai-design-system-1.0.0-beta.1.tgz"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

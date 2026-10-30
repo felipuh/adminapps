@@ -28,7 +28,6 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     resolve: {
       alias: {
-        '@smart3ai/design-system': path.resolve(__dirname, '../../design-system/src/index.js'),
         react: path.resolve(__dirname, 'node_modules/react'),
         'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
         'lucide-react': path.resolve(__dirname, 'node_modules/lucide-react/dist/esm/lucide-react.mjs'),
@@ -36,7 +35,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 3000,
-      host: '0.0.0.0',
+      host: '127.0.0.1',
       ...(hmr ? { hmr } : {}),
       allowedHosts: [
         'sso.smart3ai.local',
