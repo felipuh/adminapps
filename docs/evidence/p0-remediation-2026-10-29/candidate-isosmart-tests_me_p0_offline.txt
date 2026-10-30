@@ -1,0 +1,10 @@
+{"tests": 3, "failures": 0, "errors": 0, "database_attempts": 0, "network_attempts": 0}
+test_missing_central_envelope_denied_before_membership_query (__main__.MeTests.test_missing_central_envelope_denied_before_membership_query) ... ok
+test_revoked_or_foreign_profile_denied (__main__.MeTests.test_revoked_or_foreign_profile_denied) ... ok
+test_valid_central_profile_preserved_without_primary_fallback (__main__.MeTests.test_valid_central_profile_preserved_without_primary_fallback) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.004s
+
+OK
+RESOURCE max_rss_KiB=76156 elapsed_s=2.69

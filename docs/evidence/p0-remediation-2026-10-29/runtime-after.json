@@ -1,0 +1,210 @@
+{
+  "scope": "read-only configuration references, not database or in-memory settings attestation",
+  "services": {
+    "adminapps": {
+      "WorkingDirectory": "/home/felipe/proyectos/adminapps/backend",
+      "MainPID": "1119",
+      "ActiveState": "active",
+      "SubState": "running",
+      "NRestarts": "0",
+      "EnvironmentFiles": null,
+      "FragmentPath": "/etc/systemd/system/adminapps-backend.service",
+      "DropInPaths": "",
+      "exec_paths": [
+        "/home/felipe/proyectos/adminapps/backend/.venv312/bin/gunicorn"
+      ],
+      "binds": [
+        "127.0.0.1:8000"
+      ],
+      "settings_module": "config.settings (WSGI default)",
+      "environment": "development",
+      "flags": {
+        "DEBUG": "False",
+        "SMART3AI_SSO_ALLOW_2FA_BYPASS": "false"
+      },
+      "postgres_variables_present": {
+        "DB_HOST": true,
+        "DB_PORT": true,
+        "DB_NAME": true,
+        "DB_USER": true,
+        "DB_PASSWORD": true
+      },
+      "destinations": {
+        "default": {
+          "endpoint": "ref-43d712e32e4893f2",
+          "database": "ref-5b273edec08f88e7",
+          "role": "ref-4e7c214bbefef444",
+          "declared_only": true
+        }
+      },
+      "fingerprints": {
+        "/home/felipe/proyectos/adminapps/backend/.env": "e2cc9c824397397abc450fbad617f96f8834fab6733828252b80397a2072dbb6",
+        "/home/felipe/proyectos/adminapps/.git/index": "1b53005f2fdd220f3dfe4b9456e15fc6c78b34ca81fa9a1bb23885332b1daa67",
+        "/etc/systemd/system/adminapps-backend.service": "940e62c94545919ba4fc09daa048a8a0000e5455e647a7d937d265d7a7475e03"
+      },
+      "journal_sqlite_guard_count": 0,
+      "journal_references_expected_checkout": false,
+      "head": "9cd64e04dc7e9b33022256dc782da86e36eb7055",
+      "git_status": "",
+      "processes": [
+        {
+          "pid": 1119,
+          "cwd": "/home/felipe/proyectos/adminapps/backend",
+          "rss_KiB": 10408,
+          "executable": "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+        },
+        {
+          "pid": 1357,
+          "cwd": "/home/felipe/proyectos/adminapps/backend",
+          "rss_KiB": 11212,
+          "executable": "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+        }
+      ]
+    },
+    "isosmart": {
+      "WorkingDirectory": "/home/felipe/proyectos/isosmart/backend",
+      "MainPID": "0",
+      "ActiveState": "activating",
+      "SubState": "auto-restart",
+      "NRestarts": "32",
+      "EnvironmentFiles": null,
+      "FragmentPath": "/etc/systemd/system/isosmart-backend.service",
+      "DropInPaths": "",
+      "exec_paths": [
+        "/home/felipe/proyectos/isosmart/backend/.venv312/bin/gunicorn"
+      ],
+      "binds": [
+        "127.0.0.1:8001"
+      ],
+      "settings_module": "backend.settings (WSGI default)",
+      "environment": "development",
+      "flags": {
+        "DEBUG": "False",
+        "USE_SQLITE_DATABASE": "True",
+        "ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS": "True"
+      },
+      "postgres_variables_present": {
+        "DB_HOST": true,
+        "DB_PORT": true,
+        "DB_NAME": true,
+        "DB_USER": true,
+        "DB_PASSWORD": true
+      },
+      "destinations": {
+        "default": {
+          "endpoint": "ref-43d712e32e4893f2",
+          "database": "ref-db3c2dad8d6c1e79",
+          "role": "ref-4837eed90d8abd45",
+          "declared_only": true
+        },
+        "ai_db": {
+          "endpoint": "ref-43d712e32e4893f2",
+          "database": "ref-515c2cad10a4b89f",
+          "role": "ref-4837eed90d8abd45",
+          "declared_only": true
+        },
+        "audit_db": {
+          "endpoint": "ref-43d712e32e4893f2",
+          "database": "ref-0ed4d665d2d5f56a",
+          "role": "ref-4837eed90d8abd45",
+          "declared_only": true
+        }
+      },
+      "fingerprints": {
+        "/home/felipe/proyectos/isosmart/backend/.env": "2b203e1f79102e8849a35b1f2784123a5eb377f28a9a98f1879aa738348dc0f6",
+        "/home/felipe/proyectos/isosmart/.git/index": "47c1cfdf74a2fdecd72bde98007a12631da911e253caab39176d99299a6c426f",
+        "/etc/systemd/system/isosmart-backend.service": "c1a0b5d3a279459d3e76af043cd43f3c2f33594a5d2efac90b22886387d5d3f4"
+      },
+      "journal_sqlite_guard_count": 6,
+      "journal_references_expected_checkout": true,
+      "head": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+      "git_status": "",
+      "processes": []
+    },
+    "medsupplier": {
+      "WorkingDirectory": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+      "MainPID": "1128",
+      "ActiveState": "active",
+      "SubState": "running",
+      "NRestarts": "0",
+      "EnvironmentFiles": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/.env (ignore_errors=yes)",
+      "FragmentPath": "/etc/systemd/system/medsupplier-backend.service",
+      "DropInPaths": "",
+      "exec_paths": [
+        "/home/felipe/proyectos/isosmart/backend/.venv312/bin/gunicorn"
+      ],
+      "binds": [
+        "127.0.0.1:8002"
+      ],
+      "settings_module": "backend.settings (WSGI default)",
+      "environment": "production",
+      "flags": {
+        "DEBUG": "False",
+        "ALLOW_LOCAL_AUTH_BYPASS_FOR_TESTS": "True"
+      },
+      "postgres_variables_present": {
+        "DB_HOST": true,
+        "DB_PORT": true,
+        "DB_NAME": true,
+        "DB_USER": true,
+        "DB_PASSWORD": true
+      },
+      "destinations": {
+        "default": {
+          "endpoint": "ref-43d712e32e4893f2",
+          "database": "ref-db3c2dad8d6c1e79",
+          "role": "ref-4837eed90d8abd45",
+          "declared_only": true
+        },
+        "ai_db": {
+          "endpoint": "ref-43d712e32e4893f2",
+          "database": "ref-515c2cad10a4b89f",
+          "role": "ref-4837eed90d8abd45",
+          "declared_only": true
+        },
+        "audit_db": {
+          "endpoint": "ref-43d712e32e4893f2",
+          "database": "ref-0ed4d665d2d5f56a",
+          "role": "ref-4837eed90d8abd45",
+          "declared_only": true
+        }
+      },
+      "fingerprints": {
+        "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend/.env": "a7c02c7cf547bb56aade093a2da94e67b785828164f82bf3e3867aceb40e9c63",
+        "/home/felipe/proyectos/ISO_Smart_MedSupplier/.git/index": "b3d0ef3260c9eff12e325a5635c319c9da4e3b31d5708eb53d817dde51dbf7f5",
+        "/etc/systemd/system/medsupplier-backend.service": "104125a109b1b8583e2fc356abc69635abed5981f64a9495af67e14073d04706"
+      },
+      "journal_sqlite_guard_count": 0,
+      "journal_references_expected_checkout": false,
+      "head": "5bfcddc94e0ad5b8f0fe3e7449ba83b66ebc2bca",
+      "git_status": "",
+      "processes": [
+        {
+          "pid": 1128,
+          "cwd": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+          "rss_KiB": 9360,
+          "executable": "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+        },
+        {
+          "pid": 1360,
+          "cwd": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+          "rss_KiB": 11052,
+          "executable": "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+        },
+        {
+          "pid": 1376,
+          "cwd": "/home/felipe/proyectos/ISO_Smart_MedSupplier/backend",
+          "rss_KiB": 11060,
+          "executable": "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/bin/python3.12"
+        }
+      ]
+    }
+  },
+  "capacity": {
+    "cpus": 3,
+    "memory_available_bytes": 1067651072,
+    "memory_total_bytes": 3832852480,
+    "home_free_bytes": 152305664,
+    "tmp_free_bytes": 57330405376
+  }
+}

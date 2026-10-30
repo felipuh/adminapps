@@ -1,0 +1,240 @@
+[
+  {
+    "repository": "isosmart",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_recovery_p0_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 1.38,
+    "summaries": [
+      {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "log": "01-isosmart-tests_recovery_p0_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=75568 elapsed_s=1.35"
+    ]
+  },
+  {
+    "repository": "isosmart",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_staging_p0_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 1.15,
+    "summaries": [
+      {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "log": "02-isosmart-tests_staging_p0_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=74328 elapsed_s=1.13"
+    ]
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_staging_p0_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 1.11,
+    "summaries": [
+      {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "log": "03-ISO_Smart_MedSupplier-tests_staging_p0_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=74072 elapsed_s=1.09"
+    ]
+  },
+  {
+    "repository": "isosmart",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_b_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 7.96,
+    "summaries": [
+      {
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0,
+        "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+      }
+    ],
+    "log": "04-isosmart-tests_b_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=75660 elapsed_s=7.94"
+    ]
+  },
+  {
+    "repository": "isosmart",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_d_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 5.64,
+    "summaries": [
+      {
+        "tests": 361,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "log": "05-isosmart-tests_d_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=149788 elapsed_s=5.62"
+    ]
+  },
+  {
+    "repository": "isosmart",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_d_session_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 7.64,
+    "summaries": [
+      {
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "log": "06-isosmart-tests_d_session_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=75364 elapsed_s=7.62"
+    ]
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_b_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 6.98,
+    "summaries": [
+      {
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0,
+        "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+      }
+    ],
+    "log": "07-ISO_Smart_MedSupplier-tests_b_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=75412 elapsed_s=6.97"
+    ]
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_d_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 4.24,
+    "summaries": [
+      {
+        "tests": 533,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "log": "08-ISO_Smart_MedSupplier-tests_d_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=120324 elapsed_s=4.22"
+    ]
+  },
+  {
+    "repository": "ISO_Smart_MedSupplier",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv/bin/python",
+    "script": "integration/tests_d_session_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 6.97,
+    "summaries": [
+      {
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "log": "09-ISO_Smart_MedSupplier-tests_d_session_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=75740 elapsed_s=6.96"
+    ]
+  },
+  {
+    "repository": "adminapps",
+    "python": "/home/felipe/proyectos/adminapps/backend/.venv312/bin/python",
+    "script": "scripts/rec_sso_03b_offline.py",
+    "status": "FAIL",
+    "exit_code": 1,
+    "seconds": 0.26,
+    "summaries": [],
+    "log": "10-adminapps-rec_sso_03b_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=22912 elapsed_s=0.24"
+    ]
+  },
+  {
+    "repository": "adminapps",
+    "python": "/home/felipe/proyectos/adminapps/backend/.venv312/bin/python",
+    "script": "scripts/rec_sso_03d_p0r2_r1_offline.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "seconds": 3.4,
+    "summaries": [
+      {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "database_attempts": 0,
+        "network_attempts": 0
+      }
+    ],
+    "log": "11-adminapps-rec_sso_03d_p0r2_r1_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=85408 elapsed_s=3.38"
+    ]
+  },
+  {
+    "repository": "isosmart",
+    "python": "/home/felipe/proyectos/isosmart/backend/.venv312/bin/python",
+    "script": "integration/tests_d_offline.py",
+    "status": "FAIL",
+    "exit_code": 1,
+    "seconds": 1.22,
+    "summaries": [],
+    "log": "12-isosmart-tests_d_offline.txt",
+    "resource": [
+      "RESOURCE max_rss_KiB=56112 elapsed_s=1.20"
+    ]
+  }
+]

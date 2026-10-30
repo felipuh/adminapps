@@ -1,0 +1,12 @@
+test_explicit_platform_delegate_and_superadmin_allowed (__main__.HistoricalPermissionTests.test_explicit_platform_delegate_and_superadmin_allowed) ... ok
+test_inactive_platform_actor_denied (__main__.HistoricalPermissionTests.test_inactive_platform_actor_denied) ... ok
+test_nonstaff_admin_denied (__main__.HistoricalPermissionTests.test_nonstaff_admin_denied) ... ok
+test_org_admin_cannot_read_cross_tenant_usage_even_with_model_permission (__main__.HistoricalPermissionTests.test_org_admin_cannot_read_cross_tenant_usage_even_with_model_permission) ... ok
+test_service_and_consumer_principals_denied (__main__.HistoricalPermissionTests.test_service_and_consumer_principals_denied) ... ok
+test_staff_admin_without_exact_permission_denied (__main__.HistoricalPermissionTests.test_staff_admin_without_exact_permission_denied) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.008s
+
+OK
+{"tests": 6, "failures": 0, "errors": 0, "database_attempts": 0, "network_attempts": 0}

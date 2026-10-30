@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-30",
+  "scope": "independent AdminApps repository under /tmp only",
+  "observed": [
+    "zero-byte worktree index",
+    "zero-byte remediation branch ref",
+    "five zero-byte loose objects not required by retained commits"
+  ],
+  "cause": "not established; host reboot had previously been observed, but causation is not proven",
+  "preserved_commit": "7d25a894d8ccca83a52c31d0e4a38dfea2c77766",
+  "actions": [
+    "backed up report, evidence and damaged metadata",
+    "quarantined only the five empty objects",
+    "restored exact branch hash verified from reflog and object database",
+    "built a fresh index with git read-tree against the unchanged commit"
+  ],
+  "fsck_full_exit_codes": {
+    "adminapps": 0,
+    "isosmart": 0,
+    "medsupplier": 0
+  },
+  "history_rewritten": false,
+  "active_checkout_modified": false,
+  "evidence_files_before_recovery": 45,
+  "evidence_nonempty_and_json_parse": "PASS",
+  "backup_directory": "/tmp/smart3ai-p0-20261029/git-recovery-20261030"
+}

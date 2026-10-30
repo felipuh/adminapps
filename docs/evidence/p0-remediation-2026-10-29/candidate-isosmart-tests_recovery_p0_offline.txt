@@ -1,0 +1,14 @@
+{"tests": 7, "failures": 0, "errors": 0, "database_attempts": 0, "network_attempts": 0}
+test_baseline_spoof_reproduces_disclosure_and_throttle_bypass (__main__.RecoveryTests.test_baseline_spoof_reproduces_disclosure_and_throttle_bypass) ... ok
+test_delivery_failure_invalidates_token_and_sanitizes_error (__main__.RecoveryTests.test_delivery_failure_invalidates_token_and_sanitizes_error) ... ok
+test_headers_hosts_environments_never_disclose_or_skip_email (__main__.RecoveryTests.test_headers_hosts_environments_never_disclose_or_skip_email) ... ok
+test_no_alternate_debug_endpoint (__main__.RecoveryTests.test_no_alternate_debug_endpoint) ... ok
+test_recovery_not_an_alternate_login_when_authority_unavailable (__main__.RecoveryTests.test_recovery_not_an_alternate_login_when_authority_unavailable) ... ok
+test_throttle_denial_mints_no_recovery_token (__main__.RecoveryTests.test_throttle_denial_mints_no_recovery_token) ... ok
+test_untrusted_forwarded_address_ignored (__main__.RecoveryTests.test_untrusted_forwarded_address_ignored) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.291s
+
+OK
+RESOURCE max_rss_KiB=78196 elapsed_s=2.47

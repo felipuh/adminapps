@@ -1,0 +1,280 @@
+{
+  "date_started": "2026-10-29",
+  "date_completed": "2026-10-30",
+  "timezone": "America/Costa_Rica",
+  "scope": "offline test executions; inherited tests overlap across suites, not unique cases",
+  "product_test_executions": 1124,
+  "preflight_tests": 21,
+  "product_suites": [
+    {
+      "repository": "isosmart",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/isosmart/bin/python",
+      "script": "integration/tests_staging_p0_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.73,
+      "summaries": [
+        {
+          "tests": 10,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ],
+      "log": "candidate-isosmart-tests_staging_p0_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=76764 elapsed_s=2.71"
+      ]
+    },
+    {
+      "repository": "isosmart",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/isosmart/bin/python",
+      "script": "integration/tests_b_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 8.77,
+      "summaries": [
+        {
+          "tests": 35,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0,
+          "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+        }
+      ],
+      "log": "candidate-isosmart-tests_b_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=78324 elapsed_s=8.76"
+      ]
+    },
+    {
+      "repository": "isosmart",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/isosmart/bin/python",
+      "script": "integration/tests_d_session_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 9.35,
+      "summaries": [
+        {
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ],
+      "log": "candidate-isosmart-tests_d_session_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=78420 elapsed_s=9.33"
+      ]
+    },
+    {
+      "repository": "isosmart",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/isosmart/bin/python",
+      "script": "integration/tests_recovery_p0_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.48,
+      "summaries": [
+        {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ],
+      "log": "candidate-isosmart-tests_recovery_p0_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=78196 elapsed_s=2.47"
+      ]
+    },
+    {
+      "repository": "isosmart",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/isosmart/bin/python",
+      "script": "integration/tests_me_p0_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.7,
+      "summaries": [
+        {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ],
+      "log": "candidate-isosmart-tests_me_p0_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=76156 elapsed_s=2.69"
+      ]
+    },
+    {
+      "repository": "ISO_Smart_MedSupplier",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/medsupplier/bin/python",
+      "script": "integration/tests_staging_p0_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 3.75,
+      "summaries": [
+        {
+          "tests": 12,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ],
+      "log": "candidate-ISO_Smart_MedSupplier-tests_staging_p0_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=77288 elapsed_s=3.74"
+      ]
+    },
+    {
+      "repository": "ISO_Smart_MedSupplier",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/medsupplier/bin/python",
+      "script": "integration/tests_b_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 7.51,
+      "summaries": [
+        {
+          "tests": 35,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0,
+          "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"
+        }
+      ],
+      "log": "candidate-ISO_Smart_MedSupplier-tests_b_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=78820 elapsed_s=7.50"
+      ]
+    },
+    {
+      "repository": "ISO_Smart_MedSupplier",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/medsupplier/bin/python",
+      "script": "integration/tests_d_session_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 7.33,
+      "summaries": [
+        {
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ],
+      "log": "candidate-ISO_Smart_MedSupplier-tests_d_session_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=78540 elapsed_s=7.32"
+      ]
+    },
+    {
+      "repository": "ISO_Smart_MedSupplier",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/medsupplier/bin/python",
+      "script": "integration/tests_d_offline.py",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 6.93,
+      "summaries": [
+        {
+          "tests": 533,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ],
+      "log": "candidate-ISO_Smart_MedSupplier-tests_d_offline.txt",
+      "resource": [
+        "RESOURCE max_rss_KiB=125492 elapsed_s=6.92"
+      ]
+    },
+    {
+      "repository": "isosmart",
+      "python": "/tmp/smart3ai-p0-20261029/venvs/isosmart/bin/python",
+      "log": "candidate-isosmart-tests_d_offline.txt",
+      "status": "PASS",
+      "summaries": [
+        {
+          "tests": 361,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repository": "adminapps",
+      "python": "/home/felipe/proyectos/adminapps/backend/.venv312/bin/python",
+      "log": "adminapps-coordinated-final.txt",
+      "status": "PASS",
+      "summaries": [
+        {
+          "tests": 43,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0,
+          "scope": "offline simulated ORM/locking/rollback, NOT PostgreSQL concurrency or HTTP E2E"
+        }
+      ]
+    },
+    {
+      "repository": "adminapps",
+      "python": "/home/felipe/proyectos/adminapps/backend/.venv312/bin/python",
+      "log": "11-adminapps-rec_sso_03d_p0r2_r1_offline.txt",
+      "status": "PASS",
+      "summaries": [
+        {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    },
+    {
+      "repository": "adminapps",
+      "python": "/home/felipe/proyectos/adminapps/backend/.venv312/bin/python",
+      "log": "historical-permissions.txt",
+      "status": "PASS",
+      "summaries": [
+        {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "database_attempts": 0,
+          "network_attempts": 0
+        }
+      ]
+    }
+  ],
+  "prior_failures": [
+    {
+      "log": "10-adminapps-rec_sso_03b_offline.txt",
+      "reason": "incorrect runner working directory; corrected"
+    },
+    {
+      "log": "candidate-adminapps-rec_sso_03b_offline.txt",
+      "reason": "coordinated child picked incomplete tracked legacy venv; explicit isolated interpreters added and PASS"
+    },
+    {
+      "log": "12-isosmart-tests_d_offline.txt",
+      "reason": "Django 6.0.6 rejects CheckConstraint(check=...); still incompatible operational runtime"
+    },
+    {
+      "log": "historical-permissions-first-attempt.txt",
+      "reason": "new test fixture lacked DRF metadata and guard reference; fixed fixture, no application change"
+    }
+  ]
+}

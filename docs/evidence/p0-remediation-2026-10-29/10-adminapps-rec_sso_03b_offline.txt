@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/smart3ai-p0-20261029/adminapps/backend/scripts/rec_sso_03b_offline.py", line 16, in <module>
+    ch = importlib.util.module_from_spec(spec); spec.loader.exec_module(ch)
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1132, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1190, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/smart3ai-p0-20261029/adminapps/backend/backend/scripts/rec_sso_03b_ch_offline.py'
+Command exited with non-zero status 1
+RESOURCE max_rss_KiB=22912 elapsed_s=0.24

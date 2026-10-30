@@ -1,0 +1,29 @@
+{
+  "note": "Final read-only verification. Service management was not performed. PID continuity is not assumed.",
+  "repositories": {
+    "adminapps": {
+      "baseline_head": "9cd64e04dc7e9b33022256dc782da86e36eb7055",
+      "final_head": "9cd64e04dc7e9b33022256dc782da86e36eb7055",
+      "fingerprints_unchanged": true,
+      "git_clean": true,
+      "pid_before": "1135",
+      "pid_after": "1204"
+    },
+    "isosmart": {
+      "baseline_head": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+      "final_head": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+      "fingerprints_unchanged": true,
+      "git_clean": true,
+      "pid_before": "0",
+      "pid_after": "0"
+    },
+    "medsupplier": {
+      "baseline_head": "5bfcddc94e0ad5b8f0fe3e7449ba83b66ebc2bca",
+      "final_head": "5bfcddc94e0ad5b8f0fe3e7449ba83b66ebc2bca",
+      "fingerprints_unchanged": true,
+      "git_clean": true,
+      "pid_before": "1149",
+      "pid_after": "1222"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{"tests": 11, "failures": 0, "errors": 0, "database_attempts": 0, "network_attempts": 0}
+test_authority_allow_denial_and_uncached_entitlements (__main__.PolicyTests.test_authority_allow_denial_and_uncached_entitlements) ... Unexpected AdminApps transport failure
+ok
+test_authority_product_and_secrets_configuration (__main__.PolicyTests.test_authority_product_and_secrets_configuration) ... ok
+test_baseline_staging_guard_and_per_call_override_reproduce (__main__.PolicyTests.test_baseline_staging_guard_and_per_call_override_reproduce) ... ok
+test_environment_conflict_unknown_and_test_settings_rejected (__main__.PolicyTests.test_environment_conflict_unknown_and_test_settings_rejected) ... ok
+test_every_unsafe_flag_and_malformed_boolean_rejected (__main__.PolicyTests.test_every_unsafe_flag_and_malformed_boolean_rejected) ... ok
+test_fail_closed_fallback_even_with_per_call_override (__main__.PolicyTests.test_fail_closed_fallback_even_with_per_call_override) ... Admin Apps unavailable and local fallback disabled. code=connection_error error=offline
+Admin Apps unavailable and local fallback disabled. code=connection_error error=offline
+Admin Apps unavailable and local fallback disabled. code=connection_error error=offline
+Admin Apps unavailable and local fallback disabled. code=connection_error error=offline
+Admin Apps unavailable and local fallback disabled. code=connection_error error=offline
+ok
+test_medsupplier_fixture_password_command_rejects_staging (__main__.PolicyTests.test_medsupplier_fixture_password_command_rejects_staging) ... ok
+test_only_explicit_test_demo_fallback_allowed (__main__.PolicyTests.test_only_explicit_test_demo_fallback_allowed) ... ok
+test_real_settings_load_safe_staging_without_session_auth (__main__.PolicyTests.test_real_settings_load_safe_staging_without_session_auth) ... ok
+test_real_test_settings_cannot_override_staging (__main__.PolicyTests.test_real_test_settings_cannot_override_staging) ... ok
+test_safe_staging_and_production_configuration (__main__.PolicyTests.test_safe_staging_and_production_configuration) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.055s
+
+OK
+RESOURCE max_rss_KiB=74072 elapsed_s=1.09

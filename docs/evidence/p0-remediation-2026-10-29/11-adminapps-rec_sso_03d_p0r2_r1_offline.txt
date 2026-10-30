@@ -1,0 +1,36 @@
+{"cycle": "login->ALLOW->refresh->old_DENY->revoke->access_401_before_handler->refresh_DENY->relogin_ALLOW"}
+{"resolved_human_routes": 247, "public_no_default_auth": ["api/auth/login/", "api/auth/2fa/verify/"], "technical_or_central_paths_preserved": 18}
+{"tests": 7, "failures": 0, "errors": 0, "database_attempts": 0, "network_attempts": 0}
+test_authority_change_between_password_verification_and_issuance_denied (__main__.ClientLifecycleTests.test_authority_change_between_password_verification_and_issuance_denied) ... Unauthorized: /api/auth/login/
+Unauthorized: /api/auth/login/
+ok
+test_concurrent_reset_during_django_hash_upgrade_cannot_be_overwritten (__main__.ClientLifecycleTests.test_concurrent_reset_during_django_hash_upgrade_cannot_be_overwritten) ... Unauthorized: /api/auth/login/
+ok
+test_credential_families_and_no_cookie_fallback_after_bearer_rejection (__main__.ClientLifecycleTests.test_credential_families_and_no_cookie_fallback_after_bearer_rejection) ... Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/users/sessions/
+ok
+test_django_password_hash_upgrade_retains_fresh_authority_snapshot (__main__.ClientLifecycleTests.test_django_password_hash_upgrade_retains_fresh_authority_snapshot) ... ok
+test_login_refresh_revoke_deny_and_relogin_through_real_django_client (__main__.ClientLifecycleTests.test_login_refresh_revoke_deny_and_relogin_through_real_django_client) ... Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/refresh/
+Unauthorized: /api/auth/users/sessions/
+Unauthorized: /api/auth/refresh/
+Unauthorized: /api/auth/users/sessions/
+ok
+test_logout_flushes_only_current_cookie_and_revokes_current_jwt_family (__main__.ClientLifecycleTests.test_logout_flushes_only_current_cookie_and_revokes_current_jwt_family) ... Unauthorized: /api/auth/users/sessions/
+Forbidden: /api/auth/users/sessions/
+Unauthorized: /api/auth/refresh/
+ok
+test_resolved_human_routes_have_new_default_and_particular_paths_stay_separate (__main__.ClientLifecycleTests.test_resolved_human_routes_have_new_default_and_particular_paths_stay_separate) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.445s
+
+OK
+RESOURCE max_rss_KiB=85408 elapsed_s=3.38

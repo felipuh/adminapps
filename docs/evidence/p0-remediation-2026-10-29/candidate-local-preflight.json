@@ -1,0 +1,5 @@
+{
+  "scope": "local dependency evidence only; not staging execution approval",
+  "errors": [],
+  "running_inventory_excluded_reason": "independent process inventory recorded separately; this probe validates dependency locks and paths"
+}

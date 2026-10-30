@@ -1,0 +1,25 @@
+test_active_checkout_and_dependency_isolation (test_isolation.IsolationTests) ... ok
+test_capacity_every_dimension_and_unknown (test_isolation.IsolationTests) ... ok
+test_cli_always_blocks_execution_and_handles_invalid_json (test_isolation.IsolationTests) ... ok
+test_complete_inventory_is_structural_only (test_isolation.IsolationTests) ... ok
+test_database_aliases_and_actual_destinations (test_isolation.IsolationTests) ... ok
+test_local_probe_is_not_execution_attestation (test_isolation.IsolationTests) ... ok
+test_lock_mismatch_unsupported_version_and_no_hash (test_isolation.IsolationTests) ... ok
+test_missing_secrets_redis_and_wrong_authority (test_isolation.IsolationTests) ... ok
+test_nested_or_symlink_paths_overlap (test_isolation.IsolationTests) ... ok
+test_shared_roles_volumes_and_missing_alias (test_isolation.IsolationTests) ... ok
+test_all_unsafe_flags_fail_closed (test_preflight.GuardTests) ... ok
+test_complete_plan_is_only_structurally_valid (test_preflight.GuardTests) ... ok
+test_external_plaintext_or_credential_url_rejected (test_preflight.GuardTests) ... ok
+test_invalid_shapes_rejected (test_preflight.GuardTests) ... ok
+test_missing_flags_rejected (test_preflight.GuardTests) ... ok
+test_shared_database_or_role_rejected (test_preflight.GuardTests) ... ok
+test_shared_dependencies_public_port_and_mount_rejected (test_preflight.GuardTests) ... ok
+test_unknown_or_missing_product_rejected (test_preflight.GuardTests) ... ok
+test_consumer_fallback_guard_excludes_prod_but_not_staging (test_source_risks.SourceRiskTests) ... ok
+test_iso_recovery_trusts_spoofed_forwarded_local_ip_when_enabled (test_source_risks.SourceRiskTests) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.550s
+
+OK

@@ -1,0 +1,51 @@
+test_aba_revocation_cannot_be_undone_by_role_restore (__main__.LifecycleTests.test_aba_revocation_cannot_be_undone_by_role_restore) ... ok
+test_admin_revocation_requires_live_superuser (__main__.LifecycleTests.test_admin_revocation_requires_live_superuser) ... ok
+test_api_key_real_hash_lifecycle (__main__.LifecycleTests.test_api_key_real_hash_lifecycle) ... ok
+test_authentication_authority_change_fails_before_issue (__main__.LifecycleTests.test_authentication_authority_change_fails_before_issue) ... ok
+test_challenge_binding_before_irreversible_consume (__main__.LifecycleTests.test_challenge_binding_before_irreversible_consume) ... ok
+test_claim_matrix (__main__.LifecycleTests.test_claim_matrix) ... ok
+test_coordinated_cross_product_consumers (__main__.LifecycleTests.test_coordinated_cross_product_consumers) ... ok
+test_credential_change_between_resolution_and_use_denied (__main__.LifecycleTests.test_credential_change_between_resolution_and_use_denied) ... ok
+test_deleted_identity_and_membership_denied (__main__.LifecycleTests.test_deleted_identity_and_membership_denied) ... ok
+test_expired_record_rejected_even_signed_token (__main__.LifecycleTests.test_expired_record_rejected_even_signed_token) ... ok
+test_generation_authority_session_and_time_binding (__main__.LifecycleTests.test_generation_authority_session_and_time_binding) ... ok
+test_impersonation_both_directions (__main__.LifecycleTests.test_impersonation_both_directions) ... ok
+test_locked_and_expired_temporary_password_denied (__main__.LifecycleTests.test_locked_and_expired_temporary_password_denied) ... ok
+test_login_mfa_challenge_mints_no_session (__main__.LifecycleTests.test_login_mfa_challenge_mints_no_session) ... ok
+test_login_real_emission_and_tenant (__main__.LifecycleTests.test_login_real_emission_and_tenant) ... ok
+test_login_response_does_not_disclose_other_tenants (__main__.LifecycleTests.test_login_response_does_not_disclose_other_tenants) ... ok
+test_logout_and_rotation_race_has_no_resurrection (__main__.LifecycleTests.test_logout_and_rotation_race_has_no_resurrection) ... ok
+test_logout_idempotent_and_old_signed_proof_denied (__main__.LifecycleTests.test_logout_idempotent_and_old_signed_proof_denied) ... ok
+test_mfa_disabled_and_missing_configuration_denied (__main__.LifecycleTests.test_mfa_disabled_and_missing_configuration_denied) ... ok
+test_mfa_live_generation (__main__.LifecycleTests.test_mfa_live_generation) ... ok
+test_mfa_policy_change_revokes_all_and_invalidates_pending_auth (__main__.LifecycleTests.test_mfa_policy_change_revokes_all_and_invalidates_pending_auth) ... ok
+test_missing_contract_fields_and_credentials (__main__.LifecycleTests.test_missing_contract_fields_and_credentials) ... ok
+test_outbox_contains_no_credentials_and_duplicate_is_idempotent (__main__.LifecycleTests.test_outbox_contains_no_credentials_and_duplicate_is_idempotent) ... ok
+test_outbox_delivery_retry_duplicate_and_late_events (__main__.LifecycleTests.test_outbox_delivery_retry_duplicate_and_late_events) ... ok
+test_postgres_boundary_and_disabled_activation_fail_closed (__main__.LifecycleTests.test_postgres_boundary_and_disabled_activation_fail_closed) ... ok
+test_product_revocation_reloaded (__main__.LifecycleTests.test_product_revocation_reloaded) ... ok
+test_registry_rejects_unapproved_crypto (__main__.LifecycleTests.test_registry_rejects_unapproved_crypto) ... ok
+test_rotation_after_logout_never_restores (__main__.LifecycleTests.test_rotation_after_logout_never_restores) ... ok
+test_rotation_signing_error_rolls_back_logic (__main__.LifecycleTests.test_rotation_signing_error_rolls_back_logic) ... ok
+test_rotation_single_use_and_no_extension (__main__.LifecycleTests.test_rotation_single_use_and_no_extension) ... ok
+test_schema_state_matches_models_without_database (__main__.LifecycleTests.test_schema_state_matches_models_without_database) ... ok
+test_serialized_concurrent_rotation_logic (__main__.LifecycleTests.test_serialized_concurrent_rotation_logic) ... ok
+test_session_model_security_constraints_and_global_scope (__main__.LifecycleTests.test_session_model_security_constraints_and_global_scope) ... ok
+test_signature_algorithm_and_kid (__main__.LifecycleTests.test_signature_algorithm_and_kid) ... ok
+test_signed_legacy_ch_proof_without_session_denied (__main__.LifecycleTests.test_signed_legacy_ch_proof_without_session_denied) ... ok
+test_sql_fence_watches_bulk_authority_and_no_telemetry (__main__.LifecycleTests.test_sql_fence_watches_bulk_authority_and_no_telemetry) ... ok
+test_tenant_user_membership_revocation (__main__.LifecycleTests.test_tenant_user_membership_revocation) ... ok
+test_unconfigured_or_database_down_sanitized (__main__.LifecycleTests.test_unconfigured_or_database_down_sanitized) ... ok
+test_unknown_disabled_revoked_clients (__main__.LifecycleTests.test_unknown_disabled_revoked_clients) ... ok
+test_unreadable_session_fails_closed_sanitized (__main__.LifecycleTests.test_unreadable_session_fails_closed_sanitized) ... ok
+test_valid_contract_least_privilege (__main__.LifecycleTests.test_valid_contract_least_privilege) ... ok
+test_verify_valid_and_postconsume_failure_no_restoration (__main__.LifecycleTests.test_verify_valid_and_postconsume_failure_no_restoration) ... ok
+test_wrong_credential_binding (__main__.LifecycleTests.test_wrong_credential_binding) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 27.037s
+
+OK
+CROSS_PRODUCT_PASS ISO_SMART: own ALLOW, foreign/local DENY, tenant DENY, viewer preserved
+CROSS_PRODUCT_PASS MEDSUPPLIER: own ALLOW, foreign/local DENY, tenant DENY, viewer preserved
+{"tests": 43, "failures": 0, "errors": 0, "database_attempts": 0, "network_attempts": 0, "scope": "offline simulated ORM/locking/rollback, NOT PostgreSQL concurrency or HTTP E2E"}

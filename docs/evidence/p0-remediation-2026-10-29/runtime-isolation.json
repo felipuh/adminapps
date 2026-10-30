@@ -1,0 +1,36 @@
+{
+  "isosmart": {
+    "prefix": "/tmp/smart3ai-p0-20261029/venvs/isosmart",
+    "base_prefix": "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu",
+    "django_path": "/tmp/smart3ai-p0-20261029/venvs/isosmart/lib/python3.12/site-packages/django/__init__.py",
+    "version": "5.2.18",
+    "sys_path": [
+      "",
+      "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python312.zip",
+      "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12",
+      "/home/felipe/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/lib/python3.12/lib-dynload",
+      "/tmp/smart3ai-p0-20261029/venvs/isosmart/lib/python3.12/site-packages"
+    ],
+    "pyvenv_cfg": "home = /home/felipe/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/bin\nimplementation = CPython\nuv = 0.11.23\nversion_info = 3.12.13\ninclude-system-site-packages = false\n",
+    "django_inode": 41529953,
+    "lock_sha256": "1d70f6790ec672bbdd2f1d409aaae2c7e43f1337206e44a8282b07b4ba434099"
+  },
+  "medsupplier": {
+    "prefix": "/tmp/smart3ai-p0-20261029/venvs/medsupplier",
+    "base_prefix": "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu",
+    "django_path": "/tmp/smart3ai-p0-20261029/venvs/medsupplier/lib/python3.12/site-packages/django/__init__.py",
+    "version": "5.2.18",
+    "sys_path": [
+      "",
+      "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python312.zip",
+      "/home/felipe/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12",
+      "/home/felipe/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/lib/python3.12/lib-dynload",
+      "/tmp/smart3ai-p0-20261029/venvs/medsupplier/lib/python3.12/site-packages"
+    ],
+    "pyvenv_cfg": "home = /home/felipe/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/bin\nimplementation = CPython\nuv = 0.11.23\nversion_info = 3.12.13\ninclude-system-site-packages = false\n",
+    "django_inode": 102827846,
+    "lock_sha256": "9cb88b44adcfff2298ce47f0085cd8e86f12cacc9c613bbbb510d80a61e67416"
+  },
+  "independent_package_files": true,
+  "active_site_packages_absent": true
+}

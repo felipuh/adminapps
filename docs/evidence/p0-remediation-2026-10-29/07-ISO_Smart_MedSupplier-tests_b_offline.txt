@@ -1,0 +1,42 @@
+{"tests": 35, "failures": 0, "errors": 0, "database_attempts": 0, "network_attempts": 0, "scope": "offline real JWT/views, simulated central transport; NOT HTTP E2E"}
+test_alg_none_hmac_unknown_kid (__main__.ConsumerBTests.test_alg_none_hmac_unknown_kid) ... ok
+test_central_and_local_keys_must_be_distinct (__main__.ConsumerBTests.test_central_and_local_keys_must_be_distinct) ... ok
+test_central_generation_binding_and_legacy_rejection (__main__.ConsumerBTests.test_central_generation_binding_and_legacy_rejection) ... ok
+test_challenge_and_verify_flow (__main__.ConsumerBTests.test_challenge_and_verify_flow) ... ok
+test_cookie_real_signing_size_and_expiry (__main__.ConsumerBTests.test_cookie_real_signing_size_and_expiry) ... ok
+test_denial_does_not_allow_reuse_cached_authority (__main__.ConsumerBTests.test_denial_does_not_allow_reuse_cached_authority) ... ok
+test_direct_backend_stops_local_chain (__main__.ConsumerBTests.test_direct_backend_stops_local_chain) ... ok
+test_expired_central_never_mints_local (__main__.ConsumerBTests.test_expired_central_never_mints_local) ... ok
+test_foreign_product_audience_tenant_and_issuer (__main__.ConsumerBTests.test_foreign_product_audience_tenant_and_issuer) ... ok
+test_introspection_disagreement_and_revocation (__main__.ConsumerBTests.test_introspection_disagreement_and_revocation) ... ok
+test_local_as_central_and_central_as_local (__main__.ConsumerBTests.test_local_as_central_and_central_as_local) ... ok
+test_local_header_algorithm_and_key_restrictions (__main__.ConsumerBTests.test_local_header_algorithm_and_key_restrictions) ... ok
+test_local_pair_is_tenant_subject_and_expiry_bound (__main__.ConsumerBTests.test_local_pair_is_tenant_subject_and_expiry_bound) ... ok
+test_local_password_and_flags_never_rescue (__main__.ConsumerBTests.test_local_password_and_flags_never_rescue) ... ok
+test_local_password_discriminant (__main__.ConsumerBTests.test_local_password_discriminant) ... ok
+test_logout_calls_central_for_authenticated_session (__main__.ConsumerBTests.test_logout_calls_central_for_authenticated_session) ... ok
+test_logout_outage_is_not_reported_success (__main__.ConsumerBTests.test_logout_outage_is_not_reported_success) ... ok
+test_middleware_uses_verified_local_family (__main__.ConsumerBTests.test_middleware_uses_verified_local_family) ... ok
+test_missing_config_credentials_or_key_material (__main__.ConsumerBTests.test_missing_config_credentials_or_key_material) ... ok
+test_no_email_takeover_without_subject_binding (__main__.ConsumerBTests.test_no_email_takeover_without_subject_binding) ... ok
+test_old_generic_tokens_never_become_local (__main__.ConsumerBTests.test_old_generic_tokens_never_become_local) ... ok
+test_owner_policy (__main__.ConsumerBTests.test_owner_policy) ... ok
+test_projection_rejects_email_and_slug_collision (__main__.ConsumerBTests.test_projection_rejects_email_and_slug_collision) ... ok
+test_refresh_live_authority_and_revocation (__main__.ConsumerBTests.test_refresh_live_authority_and_revocation) ... ok
+test_refresh_with_expired_embedded_proof_is_denied (__main__.ConsumerBTests.test_refresh_with_expired_embedded_proof_is_denied) ... ok
+test_requested_tenant_cannot_be_substituted (__main__.ConsumerBTests.test_requested_tenant_cannot_be_substituted) ... ok
+test_rotation_cannot_change_authority_or_extend_expiry (__main__.ConsumerBTests.test_rotation_cannot_change_authority_or_extend_expiry) ... ok
+test_rotation_outage_mints_no_tokens (__main__.ConsumerBTests.test_rotation_outage_mints_no_tokens) ... ok
+test_schema_failure_sanitized (__main__.ConsumerBTests.test_schema_failure_sanitized) ... ok
+test_session_profile_role_tenant_and_subject (__main__.ConsumerBTests.test_session_profile_role_tenant_and_subject) ... ok
+test_session_transport_preserved (__main__.ConsumerBTests.test_session_transport_preserved) ... ok
+test_tampered_signature_denied_before_transport (__main__.ConsumerBTests.test_tampered_signature_denied_before_transport) ... ok
+test_tenant_switch_and_uuid_binding (__main__.ConsumerBTests.test_tenant_switch_and_uuid_binding) ... ok
+test_transport_and_json_errors_are_sanitized (__main__.ConsumerBTests.test_transport_and_json_errors_are_sanitized) ... ok
+test_valid_login_real_signature_before_projection (__main__.ConsumerBTests.test_valid_login_real_signature_before_projection) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 5.667s
+
+OK
+RESOURCE max_rss_KiB=75412 elapsed_s=6.97

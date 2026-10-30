@@ -1,0 +1,34 @@
+{
+  "planning_floor_not_load_certification": {
+    "cpus": 4,
+    "ram_GiB": 8,
+    "free_disk_GiB": 30
+  },
+  "measured_sizes_MiB": {
+    "admin_operational_venv": 161,
+    "iso_med_shared_operational_venv": 2969,
+    "iso_legacy_test_venv": 657,
+    "iso_candidate_venv": 470,
+    "med_candidate_venv": 483,
+    "candidate_cache": 546,
+    "initial_isolated_git_worktrees_and_mirrors": 788
+  },
+  "maximum_offline_suite_rss_KiB": 149788,
+  "unknown": [
+    "PostgreSQL synthetic dataset size",
+    "WAL peak",
+    "backups retention",
+    "container images (not installed or downloaded)",
+    "application peak under load",
+    "Redis need and peak"
+  ],
+  "current": {
+    "cpus": 3,
+    "memory_available_bytes": 1067651072,
+    "memory_total_bytes": 3832852480,
+    "home_free_bytes": 152305664,
+    "tmp_free_bytes": 57330405376
+  },
+  "uv_version": "uv 0.11.23 (x86_64-unknown-linux-gnu)",
+  "boot_id_after_resume": "aee926da-0e29-411a-9afe-3c36c5acb763"
+}

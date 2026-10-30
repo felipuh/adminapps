@@ -1,0 +1,168 @@
+{
+  "adminapps": {
+    "baseline": "9cd64e04dc7e9b33022256dc782da86e36eb7055",
+    "head": "7d25a894d8ccca83a52c31d0e4a38dfea2c77766",
+    "historical_reference": "047d5868",
+    "historical_ancestor": false,
+    "merge_base": null,
+    "subsequent_commits": [
+      "ab54411a security: publish complete isolated AdminApps snapshot and credential guards"
+    ],
+    "baseline_status": [
+      "?? docs/P0_REMEDIATION_STAGING_2026-10-29.md",
+      "?? docs/evidence/p0-remediation-2026-10-29/"
+    ],
+    "audit_commit_integrity": true,
+    "audit_parent": "3b6ac6e807b19f02a3e1a8edfec4d57655ac32a3",
+    "connectivity_exit_code": 0,
+    "sanitized_manifest": {
+      "source": "047d5868c13402030d1cd01f68b9bc1ca309e57b",
+      "matched_count": 632,
+      "changed": [
+        "backend/lab04/lab_env.py",
+        "backend/lab04/run.py",
+        "frontend/package-lock.json",
+        "frontend/package.json"
+      ],
+      "missing": [],
+      "lab04_matching_count": 35
+    },
+    "historical_fix_files": {
+      "8e67dcb3": [
+        {
+          "path": "backend/apps/billing/views.py",
+          "identical_to_fix": false,
+          "present": true
+        },
+        {
+          "path": "backend/apps/integration/tests_ai_usage.py",
+          "identical_to_fix": false,
+          "present": true
+        }
+      ],
+      "fe671855": [
+        {
+          "path": "backend/apps/organizations/test_urls.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/organizations/urls.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/subscriptions/test_urls.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/subscriptions/urls.py",
+          "identical_to_fix": true,
+          "present": true
+        }
+      ],
+      "dc723be2": [
+        {
+          "path": "backend/apps/integration/sso_views.py",
+          "identical_to_fix": false,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/migrations/0004_transactional_2fa.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/models_2fa.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/rate_limit.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/serializers.py",
+          "identical_to_fix": false,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/tests_2fa.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/tests_2fa_contract.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/tests_2fa_postgres.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/two_factor_service.py",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "backend/apps/users/views_2fa.py",
+          "identical_to_fix": true,
+          "present": true
+        }
+      ],
+      "54d201e5": [
+        {
+          "path": "frontend/src/contexts/AuthContext.jsx",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "frontend/src/services/api.jsx",
+          "identical_to_fix": false,
+          "present": true
+        },
+        {
+          "path": "frontend/src/services/authRefresh.js",
+          "identical_to_fix": true,
+          "present": true
+        },
+        {
+          "path": "frontend/src/services/authRefresh.test.js",
+          "identical_to_fix": true,
+          "present": true
+        }
+      ]
+    }
+  },
+  "isosmart": {
+    "baseline": "61bf5a27ac49f66cc8b57f083c752e8fe397d108",
+    "head": "8fdde717c6ebc7c2a3e7834fa4e34bddffb96c83",
+    "historical_reference": "0ce01dff",
+    "historical_ancestor": true,
+    "merge_base": "0ce01dff4d2ac9fdebb470e5fd746bd16ac38c8e",
+    "subsequent_commits": [
+      "61bf5a27 feat(docs): Add comprehensive reports and assessments for AI Metering and SSO implementation",
+      "46eb2739 feat(sso): consolidate published Decision B and D checkpoint"
+    ],
+    "baseline_status": [],
+    "later_sso_branch": "e212a5ed",
+    "later_sso_merge_base": null,
+    "later_sso_auth_diff": "backend/authentication/views.py | 25 +++++++++++--------------\n 1 file changed, 11 insertions(+), 14 deletions(-)"
+  },
+  "ISO_Smart_MedSupplier": {
+    "baseline": "5bfcddc94e0ad5b8f0fe3e7449ba83b66ebc2bca",
+    "head": "f06ce8890ece361851f1cc686362b145369663a4",
+    "historical_reference": "6a5fd036",
+    "historical_ancestor": true,
+    "merge_base": "6a5fd0366841d0511901e0f41a98dc1d801b9f4f",
+    "subsequent_commits": [
+      "5bfcddc9 feat: Implement multi-factor authentication (MFA) support in login flow",
+      "e8f2a2d8 feat(sso): consolidate published Decision B and D checkpoint"
+    ],
+    "baseline_status": []
+  }
+}
