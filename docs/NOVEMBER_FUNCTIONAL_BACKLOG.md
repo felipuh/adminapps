@@ -1,6 +1,6 @@
 # Smart3AI — functional development plan, November 2026
 
-Baseline: `development/2026-11-product-completion`. Date: 2026-10-30, America/Costa_Rica. Goal: finish usable product flows during November, before a separately authorized cloud move and external validation coordinated by Félix. This is a plan with acceptance criteria, not a completion promise.
+Baseline: `development-2026-11-product-completion`. Date: 2026-10-30, America/Costa_Rica. Goal: finish usable product flows during November, before a separately authorized cloud move and external validation coordinated by Félix. This is a plan with acceptance criteria, not a completion promise.
 
 `PRODUCTION_READY = FALSE`; `PHASE31_5 = EXECUTION_HELD`; `S3_DECISION_02A_NOT_CLOSED`; `NO_DEPLOYMENT`; `NO_SHARED_DB_MUTATION`.
 

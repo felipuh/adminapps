@@ -1,9 +1,9 @@
 name: November development baseline
 on:
   push:
-    branches: [development/2026-11-product-completion]
+    branches: [development-2026-11-product-completion]
   pull_request:
-    branches: [development/2026-11-product-completion]
+    branches: [development-2026-11-product-completion]
   workflow_dispatch:
 permissions:
   contents: read

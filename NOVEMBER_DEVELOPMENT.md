@@ -1,6 +1,6 @@
 # November 2026 development baseline
 
-Work only from `development/2026-11-product-completion`. This is a development baseline, not an operational promotion. Existing service checkouts, databases and environment files remain separate.
+Work only from `development-2026-11-product-completion`. This is a development baseline, not an operational promotion. Existing service checkouts, databases and environment files remain separate.
 
 `PRODUCTION_READY = FALSE` · `PHASE31_5 = EXECUTION_HELD` · `S3_DECISION_02A_NOT_CLOSED` · `NO_DEPLOYMENT` · `NO_SHARED_DB_MUTATION`.
 
