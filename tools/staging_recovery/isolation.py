@@ -13,6 +13,12 @@ def overlaps(a, b):
     return a == b or a in b.parents or b in a.parents
 
 
+def contains_active_path(candidate, active):
+    candidate, active = Path(candidate).resolve(), Path(active).resolve()
+    # An unrelated shell in / or /srv does not execute every descendant repo.
+    return candidate == active or candidate in active.parents
+
+
 def active_paths():
     """Read own visible processes; inability to inspect is a blocker, not absence."""
     paths, incomplete = set(), False
@@ -23,6 +29,10 @@ def active_paths():
             if int(proc.name) == os.getpid():
                 continue
             paths.add(str((proc/'cwd').resolve(strict=True)))
+            for arg in (proc/'cmdline').read_bytes().decode(errors='replace').split('\0'):
+                executable = Path(arg)
+                if executable.is_absolute() and executable.parent.name == 'bin' and executable.name in ('python', 'python3', 'python3.12', 'gunicorn', 'celery'):
+                    paths.add(str(executable.parent.parent.resolve()))
         except FileNotFoundError:
             continue  # exited process
         except (OSError, RuntimeError):
@@ -102,7 +112,7 @@ def inspect_local(plan, running=None):
             value=app.get(key)
             if not isinstance(value,str):continue
             if not Path(value).is_dir():errors.append(prefix+key+'_not_inspectable')
-            if any(overlaps(value,p) for p in running):errors.append(prefix+key+'_used_by_active_process')
+            if any(contains_active_path(value,p) for p in running):errors.append(prefix+key+'_used_by_active_process')
         venv=Path(app.get('venv_path','/nonexistent'))
         try:
             config=dict(line.split('=',1) for line in (venv/'pyvenv.cfg').read_text().splitlines() if '=' in line)

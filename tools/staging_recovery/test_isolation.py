@@ -6,7 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from isolation import inspect_capacity, inspect_local, overlaps, validate_inventory
+from isolation import inspect_capacity, inspect_local, overlaps, validate_inventory, contains_active_path
 from test_preflight import fixture
 
 
@@ -22,6 +22,11 @@ def inventory():
     return p
 
 class IsolationTests(unittest.TestCase):
+    def test_unrelated_parent_cwd_does_not_mark_descendants_active(self):
+        self.assertFalse(contains_active_path('/srv/staging/source', '/'))
+        self.assertFalse(contains_active_path('/srv/staging/source', '/srv'))
+        self.assertTrue(contains_active_path('/srv/staging/source', '/srv/staging/source/backend'))
+        self.assertTrue(contains_active_path('/srv/staging/venv', '/srv/staging/venv'))
     def test_complete_inventory_is_structural_only(self):self.assertEqual(validate_inventory(inventory()),[])
     def test_database_aliases_and_actual_destinations(self):
         for field in ('engine','alias','host','cluster_id','volume_id'):

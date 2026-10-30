@@ -22,7 +22,7 @@ cluster ID, credential reference or endpoint is not proof of network isolation.
 Remote DNS aliases, all service users, ACLs, loaded settings, TLS and egress rules
 remain unverified execution blockers. No app settings or dotenv are loaded by preflight.
 
-20 tests currently cover structural/local checks and historical reproductions.
+21 tests currently cover structural/local checks and historical reproductions.
 The two historical source-risk tests load exact baseline Git objects from sibling
 `isosmart` and `ISO_Smart_MedSupplier` repositories. Their PASS means the former
 risk was reproduced; current regressions live in each consumer's `integration/`.
