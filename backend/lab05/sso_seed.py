@@ -69,5 +69,5 @@ with connection.cursor() as cursor:
     ''')
     cursor.execute("SELECT sequencename FROM pg_sequences WHERE schemaname='public'")
     for (name,) in cursor.fetchall():
-        from psycopg2 import sql
+        from django.db.backends.postgresql.psycopg_any import sql
         cursor.execute(sql.SQL('REVOKE ALL ON SEQUENCE {} FROM lab04_sso').format(sql.Identifier(name)))
