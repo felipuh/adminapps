@@ -13,6 +13,10 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
+from runtime_sso_config import load_runtime_sso_config
+_runtime_sso = load_runtime_sso_config(os.environ, 'ADMINAPPS')
+os.environ.update(_runtime_sso.get('environment', {}))
+
 
 def _env_bool(name, default=False):
     value = os.environ.get(name)
@@ -358,3 +362,7 @@ BILLING_SCHEDULER_HOUR = int(os.environ.get('BILLING_SCHEDULER_HOUR', '6'))
 BILLING_SCHEDULER_MINUTE = int(os.environ.get('BILLING_SCHEDULER_MINUTE', '0'))
 APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+
+# Declarative private SSO keyrings and client binding, validated before startup.
+globals().update(_runtime_sso.get('settings', {}))

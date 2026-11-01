@@ -63,3 +63,6 @@ logs/
 dist/
 playwright-report/
 test-results/
+
+# Private deployment keyrings and credentials
+/backend/.smart3ai-runtime.json
